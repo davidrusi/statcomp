@@ -44,8 +44,6 @@ library(dplyr)
 library(dsbox)
 ```
 
-
-
 # Why Statistical Computing?
 
 ## Data science and Statistics
@@ -62,7 +60,6 @@ Statistical computing is one of its core components. We focus on R
 
 -   One of the most popular programming languages [(r4stats review)](https://r4stats.com/articles/popularity) [(Tiobe index)](https://www.tiobe.com/tiobe-index)
 
-
 Note: Python more popular for Machine learning, lags a bit behind in Statistics
 
 ## Resources
@@ -73,43 +70,41 @@ Alternatively, [posit cloud](https://posit.cloud) has a free plan
 
 **Books and tutorials**
 
-- Jared Lander's *R for everyone* (at Aula Global)
+-   Jared Lander's *R for everyone* (at Aula Global)
 
-- Hadley Wickam's [R for Data Science](https://r4ds.had.co.nz/introduction.html)
+-   Hadley Wickam's [R for Data Science](https://r4ds.had.co.nz/introduction.html)
 
-- RStudio [tutorials](https://education.rstudio.com/learn)
+-   RStudio [tutorials](https://education.rstudio.com/learn)
 
-- RStudio [books](https://www.rstudio.com/resources/books)
-
+-   RStudio [books](https://www.rstudio.com/resources/books)
 
 ## Get RStudio started
 
 When starting a new project, I recommend `File -> New project`
 
-- All R code, data, figures, reports stored in a single folder
+-   All R code, data, figures, reports stored in a single folder
 
-- You can share the entire folder, and upload it at Github
+-   You can share the entire folder, and upload it at Github
 
 Main file types
 
-- Pure R code: `File -> New file -> R script`
+-   Pure R code: `File -> New file -> R script`
 
-- [Markdown](https://rmarkdown.rstudio.com): `File -> New file -> R markdown`
+-   [Markdown](https://rmarkdown.rstudio.com): `File -> New file -> R markdown`
 
-- [Quarto](https://quarto.org): `File -> New file -> Quarto document`
+-   [Quarto](https://quarto.org): `File -> New file -> Quarto document`
 
 Markdown/quarto combine text and R code. Compile into html/pdf/word
 
-- These slides were created with quarto 
+-   These slides were created with quarto
 
-- In quarto you can combine R, Python & Julia code
-
+-   In quarto you can combine R, Python & Julia code
 
 # First examples
 
 ## 
 
-> "The simple graph has brought more information to the data analyst’s mind than any other device" - John Tukey
+> "The simple graph has brought more information to the data analyst's mind than any other device" - John Tukey
 
 Let's dive in! We load dataset `starwars` included in package `dplyr`
 
@@ -140,8 +135,6 @@ ggplot(data = starwars, mapping = aes(x = height, y = mass)) +
   geom_point(data= starwars %>% filter(name=="Jabba Desilijic Tiure"), size=5, pch=1, color="pink", stroke=3)
 ```
 
-
-
 ## Histogram
 
 Duke university student survey data (`student_survey`) from package `dsbox`
@@ -155,24 +148,19 @@ Let's first use R's basic function `hist`
 
 ::: columns
 ::: {.column width="50%"}
-
 ```{r histkiss}
 hist(fk,xlab='Years',main=tt)
 ```
-
 :::
 
 ::: {.column width="50%"}
-
 ```{r histkissprob}
 hist(fk,prob=TRUE,xlab='Years',main=tt)
 ```
-
+:::
 :::
 
-:::
-
----
+------------------------------------------------------------------------
 
 Next use `ggplot` and adjust the bin width
 
@@ -185,7 +173,7 @@ ggplot(student_survey, aes(x = first_kiss)) +
 
 # R basics
 
----
+------------------------------------------------------------------------
 
 Operating with vectors: recycling, accessing elements
 
@@ -203,7 +191,7 @@ z
 z/2
 ```
 
----
+------------------------------------------------------------------------
 
 Basic data types: <small> `numeric`, `double`, `integer`, `logical`, `character`, `factor` </small>
 
@@ -227,7 +215,7 @@ any(z>5)
 all(z>5)
 ```
 
----
+------------------------------------------------------------------------
 
 ## Example
 
@@ -239,7 +227,7 @@ starwars$human_skincolor= ifelse(starwars$skin_color %in% mycols, 'human', 'non-
 boxplot(height ~ human_skincolor, data=starwars, names=c('No','Yes'), xlab='Human skin color')
 ```
 
----
+------------------------------------------------------------------------
 
 Factors are similar to characters, but are treated differently by many R functions (e.g. they can be used in regression models)
 
@@ -276,8 +264,7 @@ mean(x)
 x %>% mean
 ```
 
-Multiple pipes can be concatenated. Sometimes pipes save programming effort, and some people find them easier to read
-(e.g. the [tidyverse](https://www.tidyverse.org) uses lots of pipes)
+Multiple pipes can be concatenated. Sometimes pipes save programming effort, and some people find them easier to read (e.g. the [tidyverse](https://www.tidyverse.org) uses lots of pipes)
 
 ```{r}
 sum(is.na(x))
@@ -288,13 +275,13 @@ Note: the Rstudio shortcut to insert the pipe is ctrl + shift + m
 
 ## Data structures
 
-- `list`: like a vector, but each entry can be of a different type
+-   `list`: like a vector, but each entry can be of a different type
 
-- `matrix`: two-dimensional vector, all entries must be numeric
+-   `matrix`: two-dimensional vector, all entries must be numeric
 
-- `data.frame`: rectangular dataset, each column can have a different type
+-   `data.frame`: rectangular dataset, each column can have a different type
 
-- `tibble`: the tidyverse extension of `data.frame`
+-   `tibble`: the tidyverse extension of `data.frame`
 
 ```{r}
 m= matrix(1:9, nrow=3, ncol=3, byrow=FALSE)
@@ -304,7 +291,7 @@ m[1:2]
 m[1:2,drop=FALSE]
 ```
 
---- 
+------------------------------------------------------------------------
 
 Row and colum names, and recycling (applies column-wise)
 
@@ -333,7 +320,7 @@ x[[1]]  #access 1st element
 
 # ggplot basics
 
----
+------------------------------------------------------------------------
 
 A core member of the tidyverse. gg means "grammar of graphics", a standard syntax to describe elements in a graph. Basic syntax:
 
@@ -342,21 +329,20 @@ ggplot(data= mydata) +
   <GEOMFUNCTION>(mapping = aes(<MAPPINGS>))
 ```
 
-- `ggplot` creates a new (empty) plot, based on data from `mydata`
+-   `ggplot` creates a new (empty) plot, based on data from `mydata`
 
-- GEOMFUNCTION: name of a function that adds elements to the plot, e.g. `geom_point` adds a scatterplot
+-   GEOMFUNCTION: name of a function that adds elements to the plot, e.g. `geom_point` adds a scatterplot
 
-- `aes` describes how variables are mapped to visual properties, e.g. what goes into the x- and y-axis, colors, sizes...
+-   `aes` describes how variables are mapped to visual properties, e.g. what goes into the x- and y-axis, colors, sizes...
 
-
-## {auto-animate="true"}
+##  {auto-animate="true"}
 
 ```{r}
 ggplot(data = starwars) +
   geom_point(mapping = aes(x = height, y = mass))
 ```
 
-## {auto-animate="true"}
+##  {auto-animate="true"}
 
 ```{r}
 ggplot(data = starwars) +
@@ -382,7 +368,6 @@ ggplot(data = starwars, aes(x = height, y = mass)) +
   geom_smooth(method='lm')
 ```
 
-
 ## Facets
 
 Facets allow splitting the plot by one or more variables
@@ -405,22 +390,21 @@ ggplot(mydata, mapping=aes(<MAPPINGS>)) +
   options
 ```
 
-- Options include `xlab`, `ylab`, `theme`, `labs` to set axis styles etc.
+-   Options include `xlab`, `ylab`, `theme`, `labs` to set axis styles etc.
 
-- There are also coordinate functions (e.g. for maps), we don't need them now
+-   There are also coordinate functions (e.g. for maps), we don't need them now
 
 Resources
 
-- [Datacamp cheat sheet](https://res.cloudinary.com/dyd911kmh/image/upload/v1666806657/Marketing/Blog/ggplot2_cheat_sheet.pdf)
+-   [Datacamp cheat sheet](https://res.cloudinary.com/dyd911kmh/image/upload/v1666806657/Marketing/Blog/ggplot2_cheat_sheet.pdf)
 
-- [posit cheat sheet](https://posit.co/wp-content/uploads/2022/10/data-visualization-1.pdf)
+-   [posit cheat sheet](https://posit.co/wp-content/uploads/2022/10/data-visualization-1.pdf)
 
-- [Reference with all functions](https://ggplot2.tidyverse.org/reference)
-
+-   [Reference with all functions](https://ggplot2.tidyverse.org/reference)
 
 # Further ggplot examples
 
-## Line types {auto-animate="true"}
+## Line types
 
 ```{r}
 ggplot(data = starwars, aes(x = height, y = mass, color=human_skincolor)) +
@@ -428,31 +412,33 @@ ggplot(data = starwars, aes(x = height, y = mass, color=human_skincolor)) +
   geom_smooth(aes(linetype= human_skincolor), method='lm', se=TRUE)
 ```
 
-## Line types {auto-animate="true"}
+## Customizing labels and legends
+
+`labs` allows setting labels for axes, title and any aesthetic such as `color`, `shape` and `linetype`.
+We need to set all aesthetic labels, else a separate legend is created for each
 
 ```{r}
+mylab= 'Human character?'
 ggplot(data = starwars, aes(x = height, y = mass, color=human_skincolor)) +
   geom_point(aes(shape=human_skincolor)) +
   geom_smooth(aes(linetype= human_skincolor), method='lm', se=TRUE) +
-  labs(x='Height(cm)', y='Mass (kg)', title='Starwars characters', color='Human character?', shape='Human character?', linetype='Human character?') +
+  labs(x='Height(cm)', y='Mass (kg)', title='Starwars characters', color=mylab, shape=mylab, linetype=mylab) +
   theme(legend.position = c(0.1,0.7))
 ```
 
 ## Non-linear trends
 
-By default `geom_smooth` shows a non-linear regression (`method="loess"`).
-Consider the `mpg` data, where
+By default `geom_smooth` shows a non-linear regression (`method="loess"`). Consider the `mpg` data, where
 
-- `displ`: engine size
+-   `displ`: engine size
 
-- `hwy`: highway miles per galon
+-   `hwy`: highway miles per galon
 
 ```{r}
 ggplot(mpg, aes(x = displ, y = hwy)) + 
   geom_point() +
   geom_smooth(color='black')
 ```
-
 
 ## Violin plot
 
@@ -477,9 +463,7 @@ ggplot(starwars, aes(x=human_skincolor, y=height)) +
   geom_point() +
   geom_violin()
 ```
-
 :::
-
 
 ## Barplot (counts)
 
@@ -511,7 +495,6 @@ ggplot(diamonds) +
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold"))
 ```
 
-
 ## Multiple barplots
 
 `fill` aesthetic split counts according to the specified variable (diamond clarity)
@@ -530,10 +513,7 @@ ggplot(diamonds) +
   geom_bar(aes(x = cut, fill = clarity), position = "dodge")
 ```
 
-
-
 # Other stuff
-
 
 ## Speeding up loops
 
@@ -546,8 +526,7 @@ system.time(mysum2 <- apply(x, 2, sum))
 system.time(mysum3 <- colSums(x))
 ```
 
-
----
+------------------------------------------------------------------------
 
 ```{r comment='#'}
 # a boring regression
