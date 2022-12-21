@@ -1,0 +1,651 @@
+---
+title: "Modern Statistical Computing"
+subtitle: "3. Data wrangling"
+author: "David Rossell"
+institute: "Pompeu Fabra University"
+execute:
+  echo: true
+format:
+  revealjs:
+    theme: [default, custom.scss]
+    scrollable: true
+toc: true
+toc-depth: 1
+number-sections: false
+mouse-wheel: true
+code-overflow: scroll
+code-line-numbers: false
+code-copy: true
+cache: true
+title-slide-style: pandoc
+bibliography: references.bib
+---
+
+## Reproducing these lecture notes
+
+Required R packages
+
+```{r, eval=FALSE}
+install.packages("tidyverse")
+install.packages("nycflights13")
+install.packages('Lahman')
+#install.packages("devtools")
+#devtools::install_github("rstudio-education/dsbox")
+```
+
+Once they're installed, load them.
+
+```{r, warning=FALSE}
+library(tidyverse)
+library(nycflights13)
+library(Lahman)
+```
+
+
+##
+
+Before doing data analysis you need to put data in the right format, define variables etc.
+
+R offers a number of base functions
+
+The tidyverse package `dplyr` has many convenient functions
+
+
+## Dataset NYC flights
+
+All 336,776 flights departing from New York in 2013. We display a few rows (type `View(flights)` to open the full data in RStudio)
+
+The data are stored in a `tibble`, an extension of `data.frame` that prints nicer and shows some info:
+`int` means integer, `dbl` real numbers, `chr` character vectors,`lgl` logical, `fctr` factor, `date` dates, `dttm` date-time
+
+```{r}
+flights
+```
+
+# dplyr basics
+
+The 5 main functions
+
+- Select observations (rows) in a dataset (`filter()`).
+
+- Reorder the rows (`arrange()`).
+
+- Select variables by their names (`select()`)
+
+- Create new variables (`mutate()`)
+
+- Compute numerical summaries (`summarise()`)
+
+When used with `group_by()` these functions operate group-by-group
+
+## Filter {auto-animate="true"}
+
+```{r}
+jan1= filter(flights, month == 1, day == 1)
+jan1
+```
+
+## Filter {auto-animate="true"}
+
+```{r}
+jan1= filter(flights, month == 1 & day == 1)
+jan1
+```
+
+## Data frames and matrices
+
+::: panel-tabset
+
+`filter` etc work on tibbles and data frames, but not matrices. They always return a tibble
+
+```{r}
+class(flights)
+```
+
+### data.frame
+
+
+```{r}
+flightsdf= as.data.frame(flights)
+class(flightsdf)
+filter(flights, month == 1 & day == 1)
+```
+
+### matrix
+
+`filter` doesn't work on matrices
+
+```{r, error=TRUE}
+flightsm= as.matrix(flights[,1:3])
+filter(flightsm, month == 1 & day == 1)
+```
+
+But we can easily select rows/columns with R's base functionality
+
+```{r}
+sel= (flights[,'month']==1) & (flightsm[,'day']==1)
+flightsel= flightsm[sel,]
+flightsel[1:5,1:3]
+```
+
+:::
+
+
+## Missing values
+
+`filter` returns rows where the specified criterion is `TRUE`. 
+Missing's (`NA`) are excluded
+
+```{r}
+# Let x be Mary's age. We don't know how old she is.
+x <- NA
+x == 20 #is Mary 20?
+
+# Let y be John's age. We don't know how old he is.
+y <- NA
+x == y # Are John and Mary the same age?
+```
+
+To select rows with missing values, use `is.na`
+
+```{r}
+df <- tibble(x = c(1, NA, 3))
+filter(df, is.na(x) | x > 1)
+```
+
+## Arrange
+
+You can sort by several variables
+
+```{r}
+arrange(flights, year, month, day)
+```
+
+To sort in a descending fashion use `desc`
+
+```{r}
+arrange(flights, desc(year), desc(month), desc(day))
+```
+
+## R's base order
+
+```{r}
+o= order(flights$year, flights$month, flights$day, decreasing=TRUE)
+flights[o,]
+```
+
+## Select
+
+Selecting a subset of variables
+
+```{r}
+select(flights, year, month, day, dep_delay)
+```
+
+---
+
+Useful functions to select variables by name
+
+- starts_with("abc"): matches names that begin with "abc"
+
+- ends_with("abc"): matches names that end with "abc"
+
+- contains("abc"): matches names that contain "abc"
+
+- num_range("x", 1:3): matches x1, x2 and x3.
+
+```{r}
+select(flights, contains("delay"))
+```
+
+---
+
+Trick to put some columns at the start. Select them, then use `everything`
+
+```{r}
+select(flights, time_hour, air_time, everything())
+```
+
+
+## Rename
+
+Change variable names
+
+```{r}
+rename(flights, deptime = dep_time)
+```
+
+
+
+## Mutate
+
+Select a subset of columns a create 2 new ones
+
+```{r}
+flights_sml= select(flights, year:day, contains("delay"), distance, air_time)
+
+mutate(flights_sml, gain=dep_delay - arr_delay, speed = distance / air_time * 60)
+```
+
+---
+
+To only keep the new variables use `transmute`
+
+```{r}
+transmute(flights, gain = dep_delay - arr_delay, hours = air_time / 60)
+```
+
+## Beyond trasmute
+
+Sometimes easier to create variable separately, then add it to the dataframe.
+
+Example. Companies get fined 100eur per hour of delay in departure, and 200eur/h of delay in arrival. There's no reward for being early
+
+- United airlines negotiates a discount from 100 to 75
+
+- American airlines gets a discount from 200 to 150
+
+```{r}
+uaflight= flights$carrier == 'UA'
+cost1= cost2= double(nrow(flights))
+cost1[uaflight]= 75 * flights$dep_delay[uaflight]/60
+cost1[!uaflight]= 100 * flights$dep_delay[!uaflight]/60
+cost1[cost1<0]= 0
+
+aaflight= flights$carrier == 'AA'
+cost2[aaflight]= 150 * flights$arr_delay[aaflight]/60
+cost2[!aaflight] = 200 * flights$arr_delay[!aaflight]/60
+cost2[cost2<0]= 0
+
+flights$cost= cost1 + cost2
+```
+
+---
+
+Let's inspect the results
+
+```{r}
+select(flights, carrier, dep_delay, arr_delay, cost)
+```
+
+
+# Summarizing data
+
+## Basics
+
+Base R has `aggregate` to compute a single summary (e.g. the mean)
+
+- For >1 summaries `dplyr` is more convenient
+
+- `dplyr` also runs faster
+
+```{r}
+aggregate(dep_delay ~ year + month + day, data=flights, FUN=mean, na.rm=TRUE)
+```
+
+## Basics
+
+dplyr has two key functions are `summarise` and `group_by`
+
+```{r}
+by_day= group_by(flights, year, month, day) #create new tibble
+summarise(by_day, delay = mean(dep_delay, na.rm = TRUE))
+```
+
+## Example
+
+Distance vs. delay, for each destination airport with >20 flights. Note the use of `count` 
+
+::: panel-tabset
+
+### R code
+
+```{r}
+by_dest= group_by(flights, dest)
+delay= summarise(by_dest, count = n(),
+  dist = mean(distance, na.rm = TRUE),
+  delay = mean(arr_delay, na.rm = TRUE)
+)
+delay= filter(delay, count > 20, dest != "HNL") #remove Hololulu
+delay
+```
+
+### Plot
+
+```{r}
+ggplot(data = delay, mapping = aes(x = dist, y = delay)) +
+  geom_point(aes(size = count), alpha = 1/3) +
+  geom_smooth(se = FALSE)
+```
+
+:::
+
+## Same using pipes
+
+Avoid creating intermediate datasets (`by_dest` in the previous slide)
+
+```{r}
+delays= flights %>% 
+  group_by(dest) %>% 
+  summarise(count = n(),
+    dist = mean(distance, na.rm = TRUE),
+    delay = mean(arr_delay, na.rm = TRUE)
+  ) %>% 
+  filter(count > 20, dest != "HNL")
+```
+
+## Useful summaries
+
+- Classical: `mean`, `sd`, `sum`, `min`, `max`
+
+- Robust to outliers: `median`, `mad`, `quantile`, `IQR`  
+
+- Counts: `n`, `sum(is.na())`, `n_distinct()` 
+
+Example: number of flights with early departure (<5:00am)
+
+```{r}
+flights %>% 
+  group_by(year, month, day) %>% 
+  summarise(n_early = sum(dep_time < 500, na.rm=TRUE))
+```
+
+## Grouping by multiple variables
+
+```{r}
+daily= group_by(flights, year, month, day)
+summarise(daily, flights = n())
+```
+
+Ungrouping
+
+```{r}
+daily= ungroup(daily)
+summarise(daily, flights = n())
+```
+
+
+# Further examples
+
+Cancelled flights have NA departure/arrival delays. Select other flights, look mean delay for each airplane (`tailnum`)
+
+```{r}
+not_cancelled= filter(flights, !is.na(dep_delay), !is.na(arr_delay))
+```
+
+```{r}
+delays= not_cancelled %>% 
+  group_by(tailnum) %>% 
+  summarise(count= n(), delay = mean(arr_delay))
+
+ggplot(data = delays, mapping = aes(x = delay)) + 
+  geom_freqpoly(binwidth = 10)
+```
+
+---
+
+Extreme mean delays mostly in planes with few flights (central limit theorem in action!).
+The mean delay is actually pretty constant
+
+```{r}
+ggplot(delays, aes(x=count, y=delay)) +
+  geom_point() +
+  geom_smooth()
+```
+
+## Batting averages
+
+For each player, compute batting average (hits `H` / opportunities to hit the ball `AB`)
+
+```{r}
+batting= as_tibble(Lahman::Batting)
+
+batters= batting %>% 
+  group_by(playerID) %>% 
+  summarise(
+    ba = sum(H, na.rm = TRUE) / sum(AB, na.rm = TRUE),
+    ab = sum(AB, na.rm = TRUE)
+  )
+```
+
+---
+
+Both the mean and variance of the batting average associated with opportunities to hit
+
+```{r}
+batters %>% 
+  filter(ab > 100) %>% 
+  ggplot(mapping = aes(x = ab, y = ba)) +
+    geom_point() + 
+    geom_smooth(se = FALSE) +
+    labs(x='Opportunities to hit', y='Batting average')
+```
+
+## Counts
+
+Two equivalent ways to count
+
+```{r, message=FALSE, warning=FALSE}
+tab= group_by(diamonds, color, cut) %>% 
+  summarise(count=n())
+tab
+```
+
+```{r}
+tab= count(diamonds, color, cut)
+tab
+```
+
+## Counts
+
+We can visualize the counts with `geom_tile` 
+
+```{r}
+ggplot(tab, mapping = aes(x = color, y = cut)) +
+    geom_tile(mapping = aes(fill = n))
+```
+
+
+## Discretize continuous variables
+
+`cut_interval`, `cut_number` and `cut_width` divide a continuous variable into groups
+
+Ex. Boxplot of diamond price vs. (discretized) carats
+
+
+::: panel-tabset
+
+### Mutate
+
+```{r}
+diam2= mutate(diamonds, carat_disc= cut_width(carat, 0.1))
+ggplot(diam2, mapping = aes(x = carat, y = price)) + 
+  geom_boxplot(mapping = aes(group = carat_disc))
+```
+
+### Aesthetic
+
+Same result, using `cut_width` within an aesthetic
+
+```{r, eval=FALSE}
+ggplot(diamonds, mapping = aes(x = carat, y = price)) + 
+  geom_boxplot(mapping = aes(group = cut_width(carat, 0.1)))
+```
+
+:::
+
+
+# Data import and export
+
+
+## Main functions
+
+In RStudio: `File -> Import Dataset` makes life easy
+
+Main functions to import data
+
+- `read.table`, `read.csv`: R base functions for text files
+
+- `read_csv`, `read_tsv`: (faster) tidyverse functions for comma/tab separated files
+
+- `readxl`: Excel (.xls and .xlsx)
+
+- `DBI`: database queries (SQL)
+
+Web scraping and much more (packages `purrr`,`jsonlite`,`xml2`, `rio`...)
+
+Export data
+
+- `write.table`, `write.csv`
+
+
+## .RData files
+
+`save` stores any specified objects in an `.RData` file. For large files use `compress=TRUE'
+
+
+```{r, run=FALSE}
+x= rnorm(20)
+y= 10 + 5*x + rnorm(20)
+fit= lm(y ~ x)
+save(x, y, fit, file='myfile.RData', compress=TRUE)
+```
+
+```{r, run=FALSE}
+load('myfile.RData')
+fit
+```
+
+
+# Tidying data
+
+---
+
+Data can be stored in different format. In a tidy dataset, each variable is a column, each observation a row
+
+This dataset is tidy
+
+```{r}
+country= c('UK','UK','Spain','Spain')
+year= c(2022,2023,2022,2023)
+population= c(80.5,81.4,50.1,50.0)
+tab= tibble(country, year, population)
+tab
+```
+
+This one has the same data, but is not tidy
+
+```{r}
+country= c('UK','Spain')
+y2022= c(80.5,50.1)
+y2023= c(81.4,50.0)
+tab2= tibble(country, y2022, y2023)
+names(tab2)[2:3]= c('2022','2023')
+tab2
+```
+
+
+## Tidying a dataset
+
+Often a dataset is not tidy for one these two reasons
+
+1. A single variable is stored in several columns
+
+2. A single individual is stored in multiple rows
+
+`pivot_longer` deals with 1 (data are made longer, i.e. more rows). `pivot_shorter` deals with 2
+
+## Example
+
+Below 2022-2023 are values of the variable year
+
+```{r}
+tab2
+```
+
+- Take columns 2022, 2023
+
+- The column names should be values of variable `year`
+
+- Their values should be in a variable `population`
+
+```{r}
+pivot_longer(tab2, cols=c('2022','2023'), names_to="year", values_to= "population")
+```
+
+## Separating and uniting columns
+
+Sometimes a character needs to be separated into several ones
+
+```{r}
+tab= tibble(date=c("25/12/22","26/12/22"), date2=c("251222","261222"))
+tab
+```
+
+`separate`: indicate character to split by. `convert=TRUE` tries to convert into numeric
+
+```{r}
+separate(tab, col=date, sep='/', into=c('day','month','year'), convert=TRUE)
+```
+
+Or positions at which to split
+
+```{r}
+separate(tab, col=date2, sep=c(2,4), into=c('day','month','year'))
+```
+
+
+# Relational data
+
+---
+
+Databases may be stored in different tables (saves space and transfer time)
+
+```{r}
+library(nycflights13)
+```
+
+::: panel-tabset
+
+### flights
+
+```{r}
+flights
+```
+
+
+### airlines
+
+```{r}
+airlines
+```
+
+:::
+
+
+## Basic functions
+
+- R base: `merge`
+
+- dplyr (tidyverse): `left_join`, `right_join`, `inner_join`, `full_join`
+
+Similar functionality, `dplyr` usually faster
+
+
+| dplyr           | Base R                            |
+|-----------------|-----------------------------------|
+|`left_join(x,y)` | `merge(x,y,all.x=TRUE)`           |
+|`right_join(x,y)`| `merge(x,y,all.y=TRUE)`           |
+|`inner_join(x,y)`| `merge(x,y)`                      |
+|`left_join(x,y)` | `merge(x,y,all.x=TRUE,all.y=TRUE)`|
+
+
+
+## Merge
+
+```{r}
+flightsdep= select(flights, c('year','month','day','dep_time','carrier'))
+left_join(flightsdep, airlines, by='carrier')
+```
+
+

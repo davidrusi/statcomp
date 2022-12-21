@@ -232,6 +232,14 @@ ggplot(starwars, aes(x=height, fill=human_skincolor)) +
   geom_histogram(alpha=0.2, color='black')  
 ```
 
+### Frequency polygram
+
+```{r}
+ggplot(starwars, aes(x=height, color=human_skincolor)) +
+  geom_freqpoly(alpha=0.2)  
+```
+
+
 ### Density plot
 ```{r}
 ggplot(starwars, aes(x=height, color=human_skincolor)) +
