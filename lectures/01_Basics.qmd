@@ -317,40 +317,15 @@ x[1]    #sub-list with one element
 x[[1]]  #access 1st element
 ```
 
-
-# Other stuff
-
-## Speeding up loops
+## Concatenating
 
 ```{r}
-n= 100; p=1000
-x= matrix(n*p, nrow=n, ncol=p)
-mysum= double(p)
-system.time(for (i in 1:p) { mysum[i]= sum(x[,i]) })
-system.time(mysum2 <- apply(x, 2, sum))
-system.time(mysum3 <- colSums(x))
+x= c(1,2,3); y= c(4,5,6)
+c(x,y)
+cbind(x,y)
+rbind(x,y)
+cbind(1,x)
 ```
 
-------------------------------------------------------------------------
 
-```{r comment='#'}
-# a boring regression
-fit = lm(dist ~ 1 + speed, data = cars)
-coef(summary(fit))
-```
 
-```{r cars, fig.height=4, dev='svg'}
-#| code-fold: show
-#| code-line-numbers: "3"
-par(mar = c(4, 4, 1, .1))
-plot(cars, pch = 19, col = 'darkgray', las = 1)
-abline(fit, lwd = 2)
-```
-
-## 
-
-<small> Slides created with [**Quarto**](https://quarto.org) </small>
-
-```{r}
-sessionInfo()
-```

@@ -1,0 +1,392 @@
+---
+title: "Modern Statistical Computing"
+subtitle: "4. Programming"
+author: "David Rossell"
+institute: "Pompeu Fabra University"
+execute:
+  echo: true
+format:
+  revealjs:
+    theme: [default, custom.scss]
+    scrollable: true
+toc: true
+toc-depth: 1
+number-sections: false
+mouse-wheel: true
+code-overflow: scroll
+code-line-numbers: false
+code-copy: true
+cache: true
+title-slide-style: pandoc
+bibliography: references.bib
+---
+
+## Reproducing these lecture notes
+
+Required R packages
+
+```{r, eval=FALSE}
+install.packages("tidyverse")
+install.packages("fivethirtyeight")
+install.packages("compiler")
+```
+
+Once they're installed, load them.
+
+```{r, warning=FALSE}
+library(tidyverse)
+library(fivethirtyeight)
+library(compiler)
+```
+
+## Functions and iteration
+
+Hadley Wickam
+
+> When you copied and pasted a block of text more than twice, it's time to use a function / iteration
+
+- Saves time
+
+- Avoids mistakes (copy/paste etc.)
+
+- Code is usually easier to read
+
+
+# Functions
+
+## Basics
+
+```{r}
+describe_contvar= function(x) {
+  ans= c(mean(x), sd(x), quantile(x, probs=c(0.25,0.75)))
+  names(ans)= c('mean','sd','p25','p75')
+  return(round(ans,1))
+}
+
+describe_discvar= function(x) {
+  require(tidyverse) #if package not loaded, load it
+  n= table(x)
+  p= round(100 * n / sum(n), 1)
+  ans= tibble(value= names(n), count= n, percentage= p)
+  return(ans)
+}
+
+describe_var= function(x, vartype) {
+  if (vartype == 'continuous') {
+    ans= describe_contvar(x)
+  } else if (vartype == 'discrete') {
+    ans= describe_discvar(x)
+  } else {
+    stop("vartype must be 'continuous' or 'discrete'")
+  }
+  return(ans)
+}
+```
+
+## Example
+
+Describe movie ratings at [Fandango](https://www.fandango.com)
+
+```{r}
+data(fandango)
+names(fandango)
+fandango
+```
+
+---
+
+Rotten Tomatoes film's score (normalized to 0-5)
+
+```{r}
+describe_var(fandango$rt_norm, vartype='continuous')
+```
+
+Number of stars in Fandango movie page
+
+```{r}
+describe_var(fandango$fandango_stars, vartype='discrete')
+```
+
+## Function arguments
+
+If you don't specify an argument name, it's taken by order
+
+Arguments may have default values
+
+```{r}
+fun= function(x,y=0) {
+  return(sum(x) + sum(y))
+}
+
+fun(x=1:2, y=10)
+
+fun(1:2, 10)
+
+fun(1:2)
+```
+
+## The ... argument
+
+Allows passing arguments that are not explicitly defined
+
+```{r, error=TRUE}
+fun= function(x, y=0, ...) {
+  return(sum(x, ...) + sum(y, ...))
+}
+
+fun(x=c(1,2,NA), y=10)
+```
+
+Here, any arguments beyond `x` and `y` are passed to `fun`
+
+```{r, error=TRUE}
+fun(x=c(1,2,NA), y=10, na.rm=TRUE)
+```
+
+
+## Debugging
+
+`debug(fun)` sets function `fun` in debugging mode. When next called, it runs line-by-line interactively
+
+**Example.** We wish to find when a function is 0
+
+```{r}
+fobj= function(x) { exp(x) -2 }
+xseq= seq(0,1,length=200)
+plot(xseq, fobj(xseq), type='l', xlab='x', ylab='Objective function')
+```
+
+## Binary search algorithm
+
+The function below contains a mistake
+
+```{r}
+binary_search= function(f, low, up, iter=1, maxit=100) {
+  if (iter == maxit) stop("Reached the maximum iteration limit")
+  if (f(low) > 0) stop("f(low) should be <=0")
+  if (f(up) < 0) stop("f(up) should be >=0")
+  m= (low+up)/2
+  if (abs(f(m)) < 0.001) {
+    ans= m
+  } else if (f(m)< -0.001) {
+    ans= binary_search(f, low=m, up=up, iter+1)
+  } else {
+    ans= binary_search(f, low=low, up=up, iter+1)
+  }
+  return(ans)
+}
+```
+
+When running it, it doesn't find the solution
+
+```{r, error=TRUE}
+binary_search(fobj, 0, 1)
+```
+
+## Debugging in RStudio
+
+Place your function in a separate file (it's good practice anyway)
+
+![](figs/debug1.jpeg)
+---
+
+Click on the left of a line to add watchpoint. A red mark appears
+
+![](figs/debug2.jpeg)
+
+---
+
+Source the file where you added the watchpoint. When calling the function again, it runs interactively
+
+![](figs/debug3.jpeg)
+
+
+## {auto-animate="true"}
+
+We found the issue
+
+```{r}
+binary_search= function(f, low, up, iter=1, maxit=100) {
+  if (iter == maxit) stop("Reached the maximum iteration limit")
+  if (f(low) > 0) stop("f(low) should be <=0")
+  if (f(up) < 0) stop("f(up) should be >=0")
+  m= (low+up)/2
+  if (abs(f(m)) < 0.001) {
+    ans= m
+  } else if (f(m)< -0.001) {
+    ans= binary_search(f, low=m, up=up, iter+1)
+  } else {
+    ans= binary_search(f, low=low, up=up, iter+1)
+  }
+  return(ans)
+}
+```
+
+## {auto-animate="true"}
+
+We found the issue
+
+```{r}
+binary_search= function(f, low, up, iter=1, maxit=100) {
+  if (iter == maxit) stop("Reached the maximum iteration limit")
+  if (f(low) > 0) stop("f(low) should be <=0")
+  if (f(up) < 0) stop("f(up) should be >=0")
+  m= (low+up)/2
+  if (abs(f(m)) < 0.001) {
+    ans= m
+  } else if (f(m)< -0.001) {
+    ans= binary_search(f, low=m, up=up, iter+1)
+  } else {
+    ans= binary_search(f, low=low, up=m, iter+1)
+  }
+  return(ans)
+}
+```
+
+##
+
+```{r}
+opt= binary_search(fobj, 0, 1)
+opt
+```
+
+
+```{r}
+plot(xseq, fobj(xseq), type='l', xlab='x', ylab='Objective function')
+abline(h=0, col='gray')
+abline(v= opt, lty=2)
+```
+
+
+# Loops
+
+## Basics. `for` and `while`
+
+Function to produce descriptive analysis for all variables in a dataset
+
+- `describe_discvar` for factors
+
+- `describe_contvar` for numeric
+
+```{r}
+describe_dataset= function(data) {
+  ans= vector("list", length=ncol(data))
+  names(ans)= names(data)
+  for (i in 1:ncol(data)) {
+    if (is.factor(data[[i]])) {
+      ans[[i]]= describe_discvar(data[[i]])
+    } else if (is.numeric(data[[i]])) {
+      ans[[i]]= describe_contvar(data[[i]])
+    }
+  }
+  return(ans)
+}
+```
+
+---
+
+Convert year into factor, and select normalized film scores
+
+```{r}
+fandango= mutate(fandango, year= as.factor(year))
+fandango_norm= select(fandango, c('year','rt_norm','rt_user_norm','metacritic_norm','imdb_norm'))
+```
+
+```{r}
+describe_dataset(fandango_norm)
+```
+
+## Functions can also be arguments
+
+```{r}
+describe_contvar_custom= function(x, funs) {
+  ans= double(length(funs))
+  for (i in 1:length(funs)) {
+    ans[i]= funs[[i]](x)
+  }  
+  return(round(ans,1))
+}
+```
+
+```{r}
+describe_contvar_custom(fandango$rt_norm, funs=list(mean,sd))
+```
+
+
+
+# Speeding up loops
+
+---
+
+Loops are slow in R (things like `[` are functions, and cost time to evaluate)
+
+1. Operate with vectors when possible
+
+2. If available, use R's purpose-built functions
+
+3. Compile functions with `cmpfun`
+
+**Example.** Sum of two vectors
+
+```{r}
+n=100000; x= rnorm(n); y= runif(n)
+z= double(n)
+system.time(for (i in 1:n) z[i]= x[i] + y[i])
+system.time(z <- x + y)
+```
+
+## Example. Sum of each variable in a matrix
+
+```{r}
+n= 100; p=5000
+x= matrix(rnorm(n*p), nrow=n, ncol=p)
+mysum= double(p)
+system.time(for (i in 1:p) { mysum[i]= sum(x[,i]) })
+
+mycolSums= function(x) {
+  p= ncol(x); ans= double(p)
+  for (i in 1:p) { ans[i]= sum(x[,i]) }
+  return(ans)
+}
+
+library(compiler)
+mycolSums_cmp= cmpfun(mycolSums)
+system.time(mysum <- mycolSums_cmp(x))
+
+system.time(mysum <- colSums(x))
+```
+
+
+# Iteration
+
+
+## `map_something`
+
+Package `purrr` has functions for looping over an object and returning a value
+
+* `map()`: returns a list
+* `map_dbl()`, `map_int()`: returns a double/integer vector
+* `map_lgl()`, `map_chr()`: returns a logical/character vector
+* `map_df()`: formats results into a data frame
+
+```{r}
+map(fandango_norm[,-1], mean)
+```
+
+```{r}
+map_dbl(fandango_norm[,-1], mean)
+```
+
+---
+
+```{r}
+map(fandango_norm[,-1], describe_contvar)
+```
+
+```{r}
+fandango_sum= map_df(fandango_norm[,-1], describe_contvar)
+fandango_sum$varname= names(fandango_norm)[-1]
+fandango_sum= relocate(fandango_sum, varname) #put varname as 1st column
+fandango_sum
+```
+

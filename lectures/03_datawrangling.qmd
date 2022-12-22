@@ -504,14 +504,14 @@ Export data
 `save` stores any specified objects in an `.RData` file. For large files use `compress=TRUE'
 
 
-```{r, run=FALSE}
+```{r, eval=FALSE}
 x= rnorm(20)
 y= 10 + 5*x + rnorm(20)
 fit= lm(y ~ x)
 save(x, y, fit, file='myfile.RData', compress=TRUE)
 ```
 
-```{r, run=FALSE}
+```{r, eval=FALSE}
 load('myfile.RData')
 fit
 ```
