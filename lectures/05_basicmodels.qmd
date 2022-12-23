@@ -1,0 +1,421 @@
+---
+title: "Modern Statistical Computing"
+subtitle: "5. Basic models"
+author: "David Rossell"
+institute: "Pompeu Fabra University"
+execute:
+  echo: true
+format:
+  revealjs:
+    theme: [default, custom.scss]
+    scrollable: true
+toc: true
+toc-depth: 1
+number-sections: false
+mouse-wheel: true
+code-overflow: scroll
+code-line-numbers: false
+code-copy: true
+cache: true
+title-slide-style: pandoc
+bibliography: references.bib
+---
+
+## Reproducing these lecture notes
+
+Required R packages
+
+```{r, eval=FALSE}
+install.packages("tidyverse")
+install.packages("modelr")
+install.packages("ggpubr")
+```
+
+Once they're installed, load them.
+
+```{r, warning=FALSE}
+library(tidyverse)
+library(modelr)
+library(ggpubr)
+```
+
+## Models
+
+George Box's famous mantra
+
+> All models are wrong, but some are useful
+
+Its less well-known context
+
+> Now it would be very remarkable if any system existing in the real world could be exactly represented by any simple model. However, cunningly chosen parsimonious models often do provide remarkably useful approximations. For example, the law PV = RT relating pressure P, volume V and temperature T of an "ideal" gas via a constant R is not exactly true for any real gas, but it frequently provides a useful approximation and furthermore its structure is informative since it springs from a physical view of the behavior of gas molecules.
+
+> For such a model there is no need to ask the question "Is the model true?". If "truth" is to be the "whole truth" the answer must be "No". The only question of interest is "Is the model illuminating and useful?".
+
+
+# Linear models
+
+Models help interpret what's going on in a dataset
+
+$$
+y_i = \beta_0 + \sum_{j=1}^p \beta_j x_{ij} + \epsilon_i
+$$
+where $\epsilon_i \sim N(0,\sigma^2)$ indep $i=1,\ldots,n$
+
+- `lm` fits a linear regression by least-squares in R
+
+- `glm` fits generalized linear models (for non-normal outcomes, e.g. binary)
+
+- `gam` fits generalized additive models
+
+$$
+y_i= \sum_{j=1}^p f_j(x_{ij}) + \epsilon_i \mbox{, unknown } f_j
+$$
+
+
+## Reminder
+
+$$y= \begin{pmatrix} y_1 \\ \ldots \\ y_n \end{pmatrix};
+X=\begin{pmatrix}
+1 & x_{11} & \ldots & x_{1n} \\
+\ldots \\
+1 & x_{n1} & \ldots & x_{nn}
+\end{pmatrix}
+$$
+
+Then
+$$\hat{\beta}= (X^T X)^{-1} X^T y$$
+
+Further, if the model assumptions hold
+
+$$\hat{\beta} \sim N(\beta, \sigma^2 (X^T X)^{-1})$$
+Which gives confidence intervals and P-values
+
+
+## Example. Diamonds data
+
+<small>
+What drives diamond prices?
+Exploration suggests that low-quality diamonds are more expensive
+
+Worst diamond color is J (yellow-ish), worst clarity is l1
+
+</small>
+
+::: panel-tabset
+
+### Price vs. cut
+
+```{r}
+ggplot(diamonds, aes(cut, price)) + geom_boxplot()
+```
+
+### Price vs. color
+
+```{r}
+ggplot(diamonds, aes(color, price)) + geom_boxplot()
+```
+
+### Price vs. clarity
+
+```{r}
+ggplot(diamonds, aes(clarity, price)) + geom_boxplot()
+```
+:::
+
+
+## Diagnosing the issue
+
+Price is strongly associated with carats
+
+```{r}
+ggplot(diamonds, aes(carat, price)) + 
+  geom_hex(bins = 50) +
+  geom_smooth(method='lm')
+```
+
+---
+
+Carats also associated with cut, color and clarity
+
+::: panel-tabset
+
+### Carats vs. cut
+
+```{r}
+ggplot(diamonds, aes(cut, carat)) + geom_boxplot()
+```
+
+### Carats vs. color
+
+```{r}
+ggplot(diamonds, aes(color, carat)) + geom_boxplot()
+```
+
+### Carats vs. clarity
+
+```{r}
+ggplot(diamonds, aes(clarity, carat)) + geom_boxplot()
+```
+:::
+
+
+---
+
+The most important assumption in a linear model: **linearity!**
+
+```{r}
+diamonds2= mutate(diamonds, lprice=log2(price), lcarat=log2(carat))
+ggplot(diamonds2, aes(lcarat, lprice)) + 
+  geom_hex(bins = 50) +
+  geom_smooth(method='lm')
+```
+
+Note: log2 facilitates interpretation a bit
+
+---
+
+Fit linear model and save residuals
+
+```{r}
+lmfit= lm(lprice ~ lcarat, data = diamonds2)
+diamonds2$res= residuals(lmfit)
+```
+
+Recall that worst diamond color is J (yellow-ish), worst clarity is l1
+
+::: panel-tabset
+
+### Residuals vs. cut
+
+```{r}
+ggplot(diamonds2, aes(cut, res)) + geom_boxplot()
+```
+
+### Residuals vs. color
+
+```{r}
+ggplot(diamonds2, aes(color, res)) + geom_boxplot()
+```
+
+### Residuals vs. clarity
+
+```{r}
+ggplot(diamonds2, aes(clarity, res)) + geom_boxplot()
+```
+:::
+
+
+
+## Fitting full model
+
+```{r}
+lmfit2= lm(lprice ~ lcarat + cut + color + clarity, data=diamonds2)
+```
+
+Second model has better $R^2$ coefficient. Careful though, comparison not fully reliable due to over-fitting (to be discussed)
+
+```{r}
+summary(lmfit)$r.squared
+summary(lmfit2)$r.squared
+```
+
+Many statistically signif. coefficients in 2nd model
+
+```{r}
+summary(lmfit2)
+```
+
+
+---
+
+Let's plot their predictive accuracy
+
+```{r}
+diamonds2$pred1= predict(lmfit)
+diamonds2$pred2= predict(lmfit2)
+```
+
+:::panel-tabset
+
+### Model 1
+
+```{r}
+ggplot(diamonds2, aes(x=pred1, y=lprice)) + geom_point() + geom_abline(color='blue')
+```
+
+### Model 2
+
+```{r}
+ggplot(diamonds2, aes(x=pred2, y=lprice)) + geom_point() + geom_abline(color='blue')
+```
+
+:::
+
+
+## Intervals and P-values
+
+
+# Residual analysis
+
+## Residuals vs predicted values
+
+```{r}
+ggplot(diamonds2, aes(x=lcarat, y=res)) +
+  geom_point()
+```
+
+
+## Residual normality
+
+:::panel-tabset
+
+### Histogram (qqplot)
+
+```{r}
+library(ggpubr)
+ggplot(diamonds2, aes(x=res)) +
+  geom_histogram(aes(y= ..density..)) +
+  stat_overlay_normal_density(linetype = "dashed") +
+  labs(x='Residuals')
+```
+
+### Histogram (base R)
+
+```{r}
+hist(scale(diamonds2$res), xlab='Residuals', prob=TRUE, main='')
+xseq= seq(-4,4,length=200)
+lines(xseq, dnorm(xseq))
+```
+### qq-plot
+
+```{r}
+ggplot(diamonds2, aes(sample=scale(res))) +
+  geom_qq() +
+  geom_abline(slope=1, intercept=0)
+```
+
+:::
+
+# Interpreting the coefficients
+
+## Factors
+
+To interpret the coefficients of categorical variables, we must understand how they're coded
+
+To avoid problems, let's store them as standard unordered factors
+
+```{r}
+unique(diamonds2$cut)
+unique(diamonds2$color)
+unique(diamonds2$clarity)
+```
+
+```{r}
+diamonds2$cut= factor(diamonds2$cut, ordered=FALSE)
+diamonds2$color= factor(diamonds2$color, ordered=FALSE)
+diamonds2$clarity= factor(diamonds2$clarity, ordered=FALSE)
+unique(diamonds2$cut)
+```
+
+## model.matrix
+
+Check how R codes internally the variables
+
+```{r}
+x= model.matrix(~ lcarat + cut + color + clarity, data=diamonds2)
+x[1:5,]
+```
+
+```{r}
+unique(levels(diamonds2$cut))
+```
+
+For `cut`, "Fair" is the reference category.
+
+---
+
+More precisely, the model is
+
+$$
+\mbox{lprice}_i= \beta_0 + \beta_1 \mbox{good}_i + \beta_2 \mbox{very good}_i + \beta_3 \mbox{premium}_i + \beta_4 \mbox{ideal}_i + \ldots + \epsilon_i 
+$$
+When `cut` is fair and good we get (respectively) 
+
+$$E(\log_2 \mbox{price}_i \mid \mbox{fair}_i)= \beta_0$$
+
+$$
+E(\log_2 \mbox{price}_i \mid \mbox{good}_i=1)= \beta_0 + \beta_1  
+$$
+
+Hence
+
+$$
+\frac{2^{E(\log_2 \mbox{price}_i \mid \mbox{good}_i=1)}}{2^{E(\log_2 \mbox{price}_i \mid \mbox{fair}_i=1)}}= 2^{\beta_1}
+$$
+
+
+##
+
+```{r}
+lmfit2= lm(lprice ~ lcarat + cut + color + clarity, data=diamonds2)
+b= cbind(summary(lmfit2)$coef[,c(1,4)], confint(lmfit2))
+b[,-2]= round(b[,-2],3)
+b
+```
+
+---
+
+Fair -> Good increases price by 1.08, Fair -> Very good by 1.12, etc.
+
+```{r}
+b[,-2]= 2^b[,-2]
+b[,-2]= round(b[,-2],3)
+b[-1,]
+```
+
+
+
+## Displaying the predictions
+
+`data_grid` in package `modelr` 
+
+```{r}
+mygrid= data_grid(diamonds2, cut, color, clarity, .model=lmfit2)
+mygrid
+```
+
+```{r}
+lmpred2= add_predictions(mygrid, model=lmfit2)
+lmpred2
+```
+
+
+---
+
+
+```{r}
+ggplot(lmpred2, aes(x=clarity, y=pred, color=color)) +
+  geom_point() +
+  facet_wrap(~ cut) +
+  labs(y='log2 (price)')
+```
+
+# Interactions
+
+
+
+# Missing values
+
+Discrete: code NAs as a category
+
+Continuous: similar trick
+
+
+
+# Nested models
+
+## gapminder data
+
+Data on country life expectancy over time popularized by Dr. Hans Rosling
+
+{{< video https://www.youtube.com/watch?v=jbkSRLYSojo&ab_channel=GapminderFoundation width="750" height="400">}}
