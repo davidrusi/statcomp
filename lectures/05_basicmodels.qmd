@@ -29,6 +29,7 @@ Required R packages
 install.packages("tidyverse")
 install.packages("modelr")
 install.packages("ggpubr")
+install.packages("gapminder")
 ```
 
 Once they're installed, load them.
@@ -37,6 +38,7 @@ Once they're installed, load them.
 library(tidyverse)
 library(modelr)
 library(ggpubr)
+library(gapminder)
 ```
 
 ## Models
@@ -76,19 +78,22 @@ $$
 
 $$y= \begin{pmatrix} y_1 \\ \ldots \\ y_n \end{pmatrix};
 X=\begin{pmatrix}
-1 & x_{11} & \ldots & x_{1n} \\
+1 & x_{11} & \ldots & x_{1p} \\
 \ldots \\
-1 & x_{n1} & \ldots & x_{nn}
+1 & x_{n1} & \ldots & x_{np}
 \end{pmatrix}
 $$
 
-Then
-$$\hat{\beta}= (X^T X)^{-1} X^T y$$
+Then (assuming $X^TX$ is invertible)
+$$\hat{\beta}= (X^T X)^{-1} X^T y= \arg\min_\beta \sum_{i=1}^n (y_i - x_i^T \beta)^2$$
 
 Further, if the model assumptions hold
 
 $$\hat{\beta} \sim N(\beta, \sigma^2 (X^T X)^{-1})$$
-Which gives confidence intervals and P-values
+Which gives confidence intervals and P-values, e.g.
+$$
+\hat{\beta}_j \pm 1.96 \hat{V}(\hat{\beta_j})
+$$
 
 
 ## Example. Diamonds data
@@ -233,6 +238,7 @@ Let's plot their predictive accuracy
 ```{r}
 diamonds2$pred1= predict(lmfit)
 diamonds2$pred2= predict(lmfit2)
+diamonds2$res2= residuals(lmfit2)
 ```
 
 :::panel-tabset
@@ -254,15 +260,100 @@ ggplot(diamonds2, aes(x=pred2, y=lprice)) + geom_point() + geom_abline(color='bl
 
 ## Intervals and P-values
 
+`summary` and `confint` extract the required info
+
+```{r}
+summary(lmfit2)$coef
+confint(lmfit2)
+```
+
+---
+
+Easier to define a function that summarizes any fitted model
+
+```{r}
+coefSummary= function(lmfit, level=0.95, digits=3) {
+  if (class(lmfit) != 'lm') stop('lmfit must be of class lm')
+  b= round(coef(lmfit), digits)
+  ci= round(confint(lmfit, level=level), digits)
+  ci= paste('(',ci[,1],',',ci[,2],')',sep='')
+  pval= round(summary(lmfit)$coef[,'Pr(>|t|)'],5)
+  pval[pval < 0.00001]= '<0.00001'
+  ans= tibble(names(b), b, ci, pval)
+  names(ans)= c('Parameter','Estimate','Conf. Int.','P-value')
+  return(ans)
+}
+```
+
+```{r}
+coefSummary(lmfit2)
+```
+
+
+## Organizing code
+
+It's useful to store useful functions separately
+
+- Put `coefSummary` in file `routines.R`. Source it when starting R
+
+```{r, eval=FALSE}
+source('routines.R') #recall to set path to directory
+```
+
+
+- Create your own R package (to be seen), document and share the code
+
 
 # Residual analysis
 
-## Residuals vs predicted values
+## Linear model assumptions
+
+- Linearity
+
+- Constant error variance
+
+- Error normality (if $n$ large, only important for prediction)
+
+- Uncorrelated errors
+
+Residuals vs predicted values
 
 ```{r}
-ggplot(diamonds2, aes(x=lcarat, y=res)) +
-  geom_point()
+ggplot(diamonds2, aes(x=pred2, y=res2)) + geom_point()
 ```
+
+
+## Assessing linearity
+
+```{r}
+ggplot(diamonds2, aes(pred2, res2)) +
+  geom_point() +
+  geom_smooth() +
+  geom_abline(slope=0, intercept=0, col='gray') +
+  labs(x='Model prediction', y='Residuals')
+```
+
+
+---
+
+Here non-linearity seems mostly due to (log) carats
+
+```{r}
+ggplot(diamonds2, aes(lcarat, lprice)) +
+  geom_point() +
+  geom_smooth(method='lm', col='blue') +
+  geom_smooth(col='red')
+```
+
+
+## Assessing constant variance
+
+```{r}
+ggplot(diamonds2, aes(x=pred2, y=res2)) + 
+  geom_boxplot(mapping = aes(group = cut_width(pred2, 0.2))) +
+  labs(x='Model prediction', y='Residuals')
+```
+
 
 
 ## Residual normality
@@ -377,12 +468,20 @@ b[-1,]
 
 ## Displaying the predictions
 
-`data_grid` in package `modelr` 
+Functions `data_grid` and `add_predictions` in package `modelr` 
+
+- Define grid of predictor values
+
+- Store prediction for each
+
+- Unspecified predictors set to mean  (continuous) or reference category (discrete)
 
 ```{r}
 mygrid= data_grid(diamonds2, cut, color, clarity, .model=lmfit2)
 mygrid
 ```
+
+---
 
 ```{r}
 lmpred2= add_predictions(mygrid, model=lmfit2)
@@ -402,20 +501,227 @@ ggplot(lmpred2, aes(x=clarity, y=pred, color=color)) +
 
 # Interactions
 
+The effect of a covariate may depend on others
+
+**Example.** Does effect of carats depend on cut?
+
+```{r}
+#| code-fold: true
+ggplot(diamonds2, aes(lcarat, lprice, color=cut)) +
+  geom_point() +
+  geom_smooth(method='lm', se=FALSE)
+```
+
+---
+
+Let's fit a model with interactions. All coefficients are statistically significant
+
+```{r}
+lmfit3= lm(lprice ~ lcarat + cut + lcarat:cut, data=diamonds2)
+coefSummary(lmfit3)
+```
+
+---
+
+We just fitted the model
+
+$$
+\begin{aligned}
+&\mbox{lprice}_i= \beta_0 + \beta_1 \mbox{lcarat}_i + \beta_2 \mbox{good}_i + \beta_3 \mbox{vgood}_i + \beta_4 \mbox{premium}_i + \beta_5 \mbox{ideal}_i +
+\\
+&
+\beta_6 \mbox{lcarat}_i \mbox{good}_i + \beta_7 \mbox{lcarat}_i \mbox{vgood}_i + \beta_8 \mbox{lcarat}_i \mbox{premium}_i + \beta_9 \mbox{lcarat}_i \mbox{ideal}_i + \epsilon_i
+\end{aligned}
+$$
+
+For example, when cut="fair"
+$$
+\mbox{lprice}_i= \beta_0 + \beta_1 \mbox{lcarat}_i
+$$
+and when cut="good"
+$$
+\mbox{lprice}_i= \beta_0 + \beta_2 + (\beta_1 + \beta_6) \mbox{lcarat}_i 
+$$
+
+How do we interpret $\beta_6$?
+
+---
+
+If $H_0: \beta_6=\beta_7=\beta_8=\beta_9=0$, then no interactions needed
+
+1. Fit models with and without interactions
+
+2. Compare with likelihood-ratio test (=ANOVA for linear models)
+
+```{r}
+lmfit4= lm(lprice ~ lcarat + cut, data=diamonds2)
+anova(lmfit4, lmfit3)
+```
 
 
-# Missing values
+## The full exercise
 
-Discrete: code NAs as a category
+Consider all possible interactions. All P-values are highly statistically significant
 
-Continuous: similar trick
+```{r}
+lmfull= lm(lprice ~ lcarat + cut + color + clarity + lcarat:cut + lcarat:color + lcarat:clarity, data=diamonds2)
+lmdrop1= lm(lprice ~ lcarat + cut + color + clarity + lcarat:color + lcarat:clarity, data=diamonds2)
+pvalue1= anova(lmdrop1, lmfull)[['Pr(>F)']][2]
 
+lmdrop2= lm(lprice ~ lcarat + cut + color + clarity + lcarat:cut + lcarat:clarity, data=diamonds2)
+pvalue2= anova(lmdrop2, lmfull)[['Pr(>F)']][2]
+
+lmdrop3= lm(lprice ~ lcarat + cut + color + clarity + lcarat:cut + lcarat:color, data=diamonds2)
+pvalue3= anova(lmdrop3, lmfull)[['Pr(>F)']][2]
+c(pvalue1, pvalue2, pvalue3)
+```
+
+However, predictions are nearly identical
+
+
+```{r}
+summary(lmfit2)$r.squared
+summary(lmfull)$r.squared
+```
+
+```{r}
+diamonds2$predfull= predict(lmfull)
+cor(diamonds2$pred2, diamonds2$predfull)
+```
+
+---
+
+This happens because, after adding all covariates, estimated interaction coef. became smaller.
+
+::: panel-tabset
+
+### Carat & Cut
+
+```{r, echo=FALSE}
+s= coefSummary(lmfit3)
+sel= grep("lcarat:",s$Parameter)
+knitr::kable(s[sel,])
+```
+
+### All covariates
+
+```{r, echo=FALSE}
+s= coefSummary(lmfull)
+sel= grep("lcarat:",s$Parameter)
+knitr::kable(s[sel,])
+```
+
+
+:::
 
 
 # Nested models
 
-## gapminder data
+---
 
-Data on country life expectancy over time popularized by Dr. Hans Rosling
+A particular type of interaction is when data are nested within units (e.g. countries), and we wanna fit a model for each unit
+
+**gapminder data:** country life expectancy over time popularized by Dr. Hans Rosling
 
 {{< video https://www.youtube.com/watch?v=jbkSRLYSojo&ab_channel=GapminderFoundation width="750" height="400">}}
+
+
+---
+
+```{r}
+library(gapminder)
+gapminder
+```
+
+
+---
+
+```{r}
+ggplot(gapminder, aes(year, lifeExp, group = country)) +
+  geom_line() + facet_wrap(~ continent)
+```
+
+---
+
+To fit a model separately for each country we can: 
+
+- `lm` plus interaction with country. Check which is the reference country, recover intercept/slopes for the rest
+
+- Use `group_by` and `map_df` 
+
+Note: better alternatives to fit nested models (random effects/hierarchical models)
+
+First, group by country and define nested dataset: each row is a country, and column `$data` is a list of tibbles
+
+```{r}
+gm_country= group_by(gapminder, country, continent) %>% nest() 
+gm_country
+```
+
+---
+
+Second, define a function to be applied to each dataset
+
+```{r}
+fitmodel= function(df) {
+  fit= lm(lifeExp ~ year, data=df)
+  ans= c(coef(fit), summary(fit)$r.squared)
+  names(ans)= c('b0','b1','R2')
+  return(ans)
+}
+```
+
+Finally, use `dplyr`'s `map_df` to apply the function to each entry of the list
+
+```{r}
+coef_gm = map_df(gm_country$data, fitmodel)
+coef_gm = cbind(gm_country, coef_gm)
+coef_gm
+```
+
+---
+
+The $R^2$ coefficient is large for most countries, but pretty small for a few
+
+
+:::panel-tabset
+
+### $R^2$ histogram
+
+```{r}
+ggplot(coef_gm, aes(x=R2)) + geom_histogram()
+```
+
+### Countries
+
+```{r}
+filter(coef_gm, R2 < 0.5) %>% select(country, continent, R2)
+```
+---
+
+:::
+
+---
+
+Unnest the dataset and add predictions
+
+```{r}
+coef_gmu= unnest(coef_gm, cols=names(coef_gm)) 
+coef_gmu$pred= coef_gmu$b0 + coef_gmu$b1 * coef_gmu$year
+coef_gmu
+```
+
+---
+
+```{r}
+poorfit= filter(coef_gmu, R2 < 0.25)
+ggplot(poorfit) +
+  geom_line(aes(year, lifeExp)) +
+  geom_line(aes(year, pred), col='red') +
+  facet_wrap(~ country)
+```
+
+Can you explain any of these patterns?
+
+
+
