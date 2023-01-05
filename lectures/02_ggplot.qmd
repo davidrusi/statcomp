@@ -340,3 +340,11 @@ ggplot(data=df, aes(x=dose, y=len, group=supp, color=supp)) +
   geom_point()
 ```
 
+
+# ggplot extensions
+
+
+Many user-contributed extensions to ggplot. To get a feeling for what's available, see the [gallery](https://exts.ggplot2.tidyverse.org/gallery)
+
+A particularly cool one is `gganimate` to create animations (to be discussed)
+

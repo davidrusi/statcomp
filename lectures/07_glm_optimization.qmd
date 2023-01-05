@@ -1,0 +1,734 @@
+---
+title: "Modern Statistical Computing"
+subtitle: "7. GLMs and optimization"
+author: "David Rossell"
+institute: "Pompeu Fabra University"
+execute:
+  echo: true
+format:
+  revealjs:
+    theme: [default, custom.scss]
+    scrollable: true
+toc: true
+toc-depth: 1
+number-sections: false
+mouse-wheel: true
+code-overflow: scroll
+code-line-numbers: false
+code-copy: true
+cache: true
+title-slide-style: pandoc
+bibliography: references.bib
+---
+
+## Reproducing these lecture notes
+
+Load required R packages
+
+```{r, warning=FALSE}
+library(tidyverse)
+library(boot)
+library(coefplot)
+library(modelr)
+library(openintro)
+```
+
+We also source routines.R, which has auxiliary functions
+
+```{r}
+source('../code/routines.R')
+```
+
+
+##
+
+Many tasks in data analysis and decision-making require optimizing a function
+
+We focus on cases where the function is a criterion to fit the data
+
+**Example.** Least-squares criterion
+$$
+\min_\beta \sum_{i=1}^n (y_i - x_i^T \beta)^2
+$$
+
+## Maximum likelihood estimation
+
+Given a model for the observed data $y=(y_1,\ldots,y_n)$, set parameter value $\theta$ making $\theta$ "probable" as possible
+
+**Def.** Likelihood function is the joint density/mass function $p(y \mid \theta)$, seen as a function of $\theta$
+
+**Def.** The MLE is $\hat{\theta}= \arg\max_\theta p(y \mid \theta)$
+
+
+## Least-squares as MLE
+
+Let $y_i \sim N(x_i^T \beta, \sigma^2)$ indep. $i=1,\ldots,n$, then
+$$
+p(y \mid \beta,\sigma^2)= \prod_{i=1}^n p(y_i \mid \beta,\sigma^2)=
+\frac{1}{(2\pi\sigma^2)^{n/2}} \exp \left\{ -\frac{1}{2 \sigma^2} \sum_{i=1}^n (y_i - x_i^T \beta)^2  \right\}
+$$
+
+Then $(\hat{\beta},\hat{\sigma}^2)$ obtained by maximizing
+$$
+\log p(y \mid \beta,\sigma^2)=
+- \frac{n}{2} \log(2\pi\sigma^2) -\frac{1}{2 \sigma^2} \sum_{i=1}^n (y_i - x_i^T \beta)^2
+$$
+
+Equivalently, $\hat{\beta}$ minimizes $\sum_{i=1}^n (y_i - x_i^T \beta)^2$
+
+
+## Properties
+
+Assume that data truly generated from $p(y \mid \theta^*)$, where $\log p(y \mid \theta)$ satisfies certain regularity conditions (e.g. twice continuously differentiable) and $\theta^*$ is in the interior of the parameter space
+
+As $n \rightarrow \infty$,
+$$
+\hat{\theta} \stackrel{D}{\longrightarrow} N(\theta^*, H(\theta^*)^{-1}) 
+$$
+$H(\theta^*)$ is the hessian of $\log p(y \mid \theta)$ (Fisher information matrix) evaluated at $\theta^*$
+
+Hence $\hat{\theta}$ attains smallest variance among all unbiased estimators (Cramer-Rao lower bound)
+
+
+# Logistic regression
+
+## Logistic regression
+
+Let $Y_i \sim \mbox{Bern}(\pi_i)$, where
+$$
+\log \left( \frac{\pi_i}{1 - \pi_i} \right)= x_i^T \beta
+\Longleftrightarrow
+\pi_i = \frac{1}{1 + e^{-x_i^T \beta}}
+$$
+To estimate $\beta$ we consider MLE. Recall: if $Y_i \sim \mbox{Bern}(\pi_i)$,
+$$
+P(Y_i=y_i)= \pi_i^{y_i} (1-\pi_i)^{1-y_i} = \begin{cases} \pi_i \mbox{ if } y_i=1 \\ 1-\pi_i \mbox{ if } y_i=0 \end{cases}
+$$
+where $y_i$ is the observed value of $Y_i$
+
+## Log. reg. likelihood
+
+$$
+\begin{aligned}
+&\log p(y \mid \beta)= \sum_{i=1}^n \log \left( \pi_i^{y_i} (1-\pi_i)^{1-y_i} \right) \\
+&=\sum_{i=1}^n y_i \log \left( \frac{\pi_i}{1-\pi_i} \right) + \log(1-\pi_i) 
+=\sum_{i=1}^n y_i x_i^T \beta - \log(1 + e^{x_i^T \beta})
+\end{aligned}
+$$
+
+No closed-form solution. However, 
+
+- $\log p(y \mid \beta)$ has a negative-semidefinite hessian $H(\beta)$ (it's concave)
+
+- Strictly concave, if $X$ has full column rank
+
+- Many efficient numerical optimization algorithms
+
+
+## Example. Spam filter
+
+The dataset `email` (package `openintro`) have $n=3921$ emails
+
+- $y_i$: email is spam yes/no
+
+- $x_i$: $p=20$ covariates (number of characters, whether email had "Re:" in the subject etc.)
+
+```{r}
+email
+```
+
+
+## Exploratory data analysis
+
+:::panel-tabset
+
+### Spam vs. Number char.
+
+```{r}
+ggplot(email, aes(x=num_char)) + geom_density(aes(color=spam))
+```
+
+### Spam vs. Re: in subject
+
+```{r}
+ggplot(email) + geom_bar(aes(x=spam, y=after_stat(prop), group=1)) + facet_wrap(~ re_subj)
+```
+:::
+
+
+
+
+##
+
+We can fit a logistic regression, as a particular case of a Generalized Linear Model
+
+```{r}
+fit= glm(spam ~ num_char + re_subj, data=email, family=binomial())
+coefSummary(fit)
+```
+
+Both coefficients are negative
+
+- More characters --> lower spam probability
+
+- Containing Re: in the subject --> lower spam probability
+
+
+## Odds-ratios
+
+Consider individuals $(i,j)$ with the same covariate values, except $x_{i1} \neq x_{j1}$
+
+The odds for an email being spam are
+$$
+\frac{\pi_i}{1-\pi_i}= e^{x_i^T \beta}; \frac{\pi_j}{1-\pi_j}= e^{x_j^T \beta}
+$$
+
+Hence the odds-ratio is
+$$
+\frac{\pi_i / (1-\pi_i)}{\pi_j/(1-\pi_j)}= e^{x_i^T\beta - x_j^T \beta}=  e^{\beta_1 (x_{i1} - x_{j1})}
+$$
+
+- Increase characters by +10: $e^{-0.064 \times 10}= 0.527$
+
+- Re: vs without Re: $e^{-2.97}= 0.051$
+
+
+
+## Plotting the predictions
+
+We use goodies from package `modelr`
+
+```{r}
+mygrid= data_grid(email, num_char, re_subj, .model=fit)
+fitpred= add_predictions(mygrid, model=fit)
+fitpred$predprob= 1/(1+ exp(-fitpred$pred))
+ggplot(fitpred, aes(x=num_char,y=predprob,color=re_subj)) + geom_line()
+```
+
+
+## Exercise
+
+Is there an interaction between number char and Re?
+
+
+
+
+
+# Convex optimization
+
+---
+
+Two popular strategies to minimize a convex $f(\theta)$ (equiv. maximize concave $-f(\theta)$)
+
+1. Newton-Raphson algorithm
+
+2. Coordinate descent algorithm
+
+Note: if $f(\theta)$ differentiable, we equivalently seek $f'(\theta)=0$
+
+
+## Newton-Raphson
+
+- Initialize $\hat{\theta}^{(0)} \in \mathbb{R}^p$, $t=0$
+
+- Quadratic approximation to $f(\theta)$ at current guess $\hat{\theta}^{(t)}$
+
+- Set $\hat{\theta}^{(t+1)}$ to value maximizing the quadratic approx
+
+- Iterate until convergence
+
+See this [animation](https://commons.wikimedia.org/wiki/File:NewtonIteration_Ani.gif)
+
+
+## Newton-Raphson
+
+Let $z= \hat{\theta}^{(t)}$, $g()$ the gradient and $H()$ the hessian
+
+$$
+f(\theta) \approx \hat{f}(\theta)= f(z) + g(z)^T (z - \theta) + \frac{1}{2} (z-\theta)^T H(z) (z - \theta)
+$$
+
+Take gradient of $\hat{f}(\theta)$ wrt $\theta$ gives (using standard vector derivatives)
+$$
+g(z) + H(z) (z - \theta)=0 \Rightarrow \theta= z-H^{-1}(z) g(z)
+$$
+
+If $f$ strictly convex then $H$ is strictly positive-definite, hence invertible. Else an adjustment is applied, e.g. $(H + \lambda I)^{-1}$ for small $\lambda>0$
+
+- The good: converges in few iterations (quadratic convergence once $\hat{\theta}^{(t)}$ close to the optimum)
+
+- The bad: if $p$ is large, each iteration can be costly (matrix inverse has cost $O(p^3)$)
+
+
+## Coordinate descent
+
+- Initialize $\hat{\theta}= (\hat{\theta}_1,\ldots, \hat{\theta}_p)$
+
+- Set $\hat{\theta}_1= \arg\min_{\theta_1} f(\theta_1, \hat{\theta}_2,\ldots, \hat{\theta}_p)$
+
+- Set $\hat{\theta}_2= \arg\min_{\theta_2} f(\hat{\theta}_1, \theta_2,\ldots, \hat{\theta}_p)$
+
+- $\ldots$
+
+- Set $\hat{\theta}_p= \arg\min_{\theta_p} f(\hat{\theta}_1, \hat{\theta}_2,\ldots, \theta_p)$
+
+Remarks
+
+- Requires more iterations than Newton-Raphson. But each iteration cheaper
+
+- No need to exactly solve each univariate optim. Enough to set $\hat{\theta}_j$ to improve $f$, e.g. gradient descent
+
+
+## Newton-Raphson in practice
+
+Let's do the optimization. First, store outcome and covariates. We also create `ytX` so that evaluating the log-likelihood is faster
+
+```{r}
+y= ifelse(email$spam=='1',1,0)
+x2= ifelse(email$re_subj=='1',1,0)
+X= cbind(intercept=1, num_char=email$num_char, re_subj=x2)
+ytX= matrix(y,nrow=1) %*% X
+```
+
+Next, we define the negative log-likelihood
+
+```{r}
+flogreg= function(beta, y, X, ytX, logscale=TRUE) {
+  if (missing(ytX)) ytX = matrix(y,nrow=1) %*% X
+  if (any(beta != 0)) {
+    Xbeta= as.vector(X %*% matrix(beta,ncol=1))
+    ans= -sum(ytX * beta) + sum(log(1+exp(Xbeta)))
+  } else {
+    n= length(y)
+    ans= n * log(2)
+  }
+  if (!logscale) ans= exp(ans)
+  return(ans)
+}
+```
+
+---
+
+Finally we call `nlm`. If gradient/hessian not provided, they're approximated numerically
+
+```{r}
+opt1= nlm(flogreg, rep(0,3), y=y, X=X, ytX=ytX, hessian=TRUE, print.level=2)
+```
+
+## Comparison to glm
+
+Check that the gradient is 0
+```{r}
+opt1$gradient #should be 0
+```
+
+The inverse hessian gives the MLE covariance matrix
+
+```{r}
+thhat= opt1$estimate
+H= opt1$hessian
+se= sqrt(diag(solve(H)))
+```
+
+Compare to the results from `glm`
+
+```{r}
+round(cbind(thhat, se, summary(fit)$coef[,1:2]),3)
+```
+
+
+## Optimization in R
+
+- `nlm`: Newton-Raphson like
+
+- `optim`: general optim methods (quasi-Newton, conjugate gradient...) and box constraints
+
+- `optimx` package (function `opm`)
+
+
+
+# Poisson regression
+
+
+## Poisson regression
+
+Generalized linear models are an ample model family based on two components
+
+1. $p(y_i \mid x_i)$ belongs to the so-called exponential family (includes Normal, Binomial, Poisson...)
+
+2. Only the expectation of $p(y_i \mid x_i)$ depends on $x_i$, and does so via $x_i^T \beta$
+
+
+*Example.* Logistic regression. $y_i \sim \mbox{Bern}(\pi_i)$
+$$
+\pi_i = E(y_i \mid x_i)= \frac{1}{1+e^{-x_i^T \beta}}
+$$
+
+*Example.* Poisson regression. $y_i \sim \mbox{Poi}(\mu_i)$
+$$
+\mu_i =E(y_i \mid x_i)= e^{x_i^T \beta}
+$$
+
+## Poisson likelihood
+
+Recall: if $Y \sim \mbox{Poi}(\lambda)$ then $P(Y=y)= \lambda^y  e^{-\lambda} / y!$
+
+If $y_i \sim \mbox{Poi}(e^{x_i^T \beta})$ indep $i=1,\ldots,n$,
+
+$$
+\begin{aligned}
+&\log p(y \mid \beta)= \sum_{i=1}^n \log p(y_i \mid \beta)=
+\sum_{i=1}^n \log \left( \frac{e^{x_i^T\beta y_i} e^{-e^{x_i^T \beta}}}{y_i!}  \right) \\
+&=\sum_{i=1}^n x_i^T \beta y_i - e^{x_i^T \beta} - \log(y_i!)
+\end{aligned}
+$$
+Log-likelihood is concave (strictly concave if $X$ has full column rank)
+
+
+## Philippinnes household survey
+
+<small> Example from the [Beyond MLR book](https://bookdown.org/roback/bookdown-BeyondMLR) </small>
+
+Philippines household survey from 2015 (Philippines Stat. Authority)
+
+- `total`: number of people living in household other than the head (poverty indicator)
+
+- `location`: region where household is located
+
+- `age`: age of household head
+
+- `numLT5`: number in the household $<$5 years of age
+
+- `roof`: type of roof (Light/Salvaged Material, Strong Material)
+
+---
+
+```{r}
+fHH= as_tibble(read.table("../datasets/fHH1.txt", header=TRUE))
+fHH
+```
+
+
+## Exploratory data analysis
+
+:::panel-tabset
+
+### Barplot
+
+```{r}
+ggplot(fHH, aes(x=total)) + geom_bar()
+```
+
+
+### Scatterplot
+
+```{r}
+ggplot(fHH, aes(x=age, y=total)) + geom_point()
+```
+
+### Jittered scatterplot
+
+```{r}
+ggplot(fHH, aes(x=age, y=total)) + geom_point(position="jitter") + geom_smooth()
+```
+
+### By region
+
+```{r}
+ggplot(fHH, aes(x=age,y=total, color=location)) + geom_point(position="jitter") + geom_smooth()
+```
+
+### By roof
+
+```{r}
+ggplot(fHH, aes(x=age,y=total, color=roof)) + geom_point(position="jitter") + geom_smooth()
+```
+
+:::
+
+
+
+## Data pre-processing
+
+Age has a non-linear effect. Two simple options
+
+- Discretize it in 5 year groups
+
+- Add a quadratic effect
+
+```{r}
+fHH= mutate(fHH, aged= cut_width(age, 5), age2= age^2)
+fHH$roof= recode(fHH$roof, `Predominantly Strong Material`="Strong", `Predominantly Light/Salvaged Material`="Light")
+fHH
+```
+
+
+## Model fit
+
+:::panel-tabset
+
+### Discretized age
+
+```{r}
+fit= glm(total ~ location + roof + aged, data=fHH, family=poisson())
+summary(fit)$coef
+```
+### Quadratic age effect
+
+```{r}
+fit2= glm(total ~ location + roof + age + age2, data=fHH, family=poisson())
+summary(fit2)$coef
+```
+
+:::
+
+
+## Plotting the fit
+
+:::panel-tabset
+
+### aged, location
+
+```{r}
+#| code-fold: true
+mygrid= data_grid(fHH, aged, location, .model=fit)
+fitpred= add_predictions(mygrid, model=fit)
+fitpred$predmean= exp(fitpred$pred)
+ggplot(fitpred, aes(x=aged,y=predmean,group=location, color=location)) + 
+  geom_point() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+  labs(x='Age of household head', y='Expected number of people in household')
+```
+
+
+### aged, roof
+
+```{r}
+#| code-fold: true
+mygrid= data_grid(fHH, aged, roof, .model=fit)
+fitpred= add_predictions(mygrid, model=fit)
+fitpred$predmean= exp(fitpred$pred)
+ggplot(fitpred, aes(x=aged,y=predmean,group=roof, color=roof)) + 
+  geom_point() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+  labs(x='Age of household head', y='Expected number of people in household')
+```
+
+### age2, location
+
+```{r}
+#| code-fold: true
+mygrid= data_grid(fHH, age, location, .model=fit2)
+mygrid= mutate(mygrid, age2= age^2)
+fitpred= add_predictions(mygrid, model=fit2)
+fitpred$predmean= exp(fitpred$pred)
+
+ggplot(fitpred, aes(x=age,y=predmean,group=location,color=location)) + 
+  geom_line() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+  labs(x='Age of household head', y='Expected number of people in household') +
+  ylim(0,5)
+```
+
+### age2, roof
+
+```{r}
+#| code-fold: true
+mygrid= data_grid(fHH, age, roof, .model=fit2)
+mygrid= mutate(mygrid, age2= age^2)
+fitpred= add_predictions(mygrid, model=fit2)
+fitpred$predmean= exp(fitpred$pred)
+
+ggplot(fitpred, aes(x=age,y=predmean,group=roof,color=roof)) + 
+  geom_line() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+  labs(x='Age of household head', y='Expected number of people in household') +
+  ylim(0,5)
+```
+
+:::
+
+
+
+## Exercise
+
+Based on the plot below, an age vs. roof interaction may be needed. Add it to the model and inspect whether it seems necessary
+
+```{r}
+ggplot(fHH, aes(x=age,y=total, color=roof)) + geom_point(position="jitter") + geom_smooth()
+```
+
+
+
+```{r, eval=FALSE, echo=FALSE}
+fit3= glm(total ~ location + roof + age + age2 + age:roof + age2:roof, data=fHH, family=poisson())
+coefSummary(fit3)
+
+anova(fit2, fit3, test="Chisq")
+```
+
+
+## A possible solution
+
+```{r, echo=FALSE}
+fHHint= mutate(fHH, strong= (roof=='Strong'), agestrong= age*(roof=='Strong'), age2strong= age2*(roof=='Strong'))
+fit4= glm(total ~ strong + age + age2 + agestrong + age2strong, data=fHHint, family=poisson())
+
+mygrid= data_grid(fHHint, strong, age)
+mygrid= mutate(mygrid, age2= age^2, agestrong= age*strong, age2strong= age^2 * strong)
+mygrid= add_predictions(mygrid, model=fit4) %>% mutate(predmean= exp(pred))
+
+ggplot(mygrid, aes(x=age,y=predmean,group=strong,color=strong)) + 
+  geom_line() +
+  labs(x='Age of household head', y='Expected number of people in household') +
+  ylim(0,5)
+```
+
+
+# Residuals and over-dispersion
+
+## Residuals in GLMs
+
+Two popular types of residuals
+
+- Pearson residual: $(y_i - \hat{y}_i) / \sqrt{\hat{V}(y_i)}$. In logistic reg. $\hat{V}(y_i)= \hat{y}_i (1-\hat{y_i})$, in Poisson reg. $V(y_i)= \hat{y}_i$
+
+- Deviance residual: compares the log-likelihood of $y_i$ relative to a model with perfect prediction $\hat{y}_i=y_i$
+
+Both can be used like residuals in standard Gaussian linear regression
+
+
+## Example
+
+Take the household occupancy data with a quadratic age effect
+
+```{r}
+fHHres= mutate(fHH, pred= predict(fit2), resdev= residuals(fit2, type='deviance'), respearson= residuals(fit2, type='pearson'))
+```
+
+:::panel-tabset
+
+### Deviance res.
+
+```{r}
+ggplot(fHHres, aes(pred, resdev)) + geom_point() + geom_smooth() + labs(x='Predicted (log)', y='Deviance residual')
+```
+
+### Pearson res.
+
+```{r}
+ggplot(fHHres, aes(pred, respearson)) + geom_point() + geom_smooth() + labs(x='Predicted (log)', y='Pearson residual')
+```
+
+### Constant variance
+
+```{r}
+fHHres= mutate(fHHres, predcut= cut_number(pred, 10))
+ggplot(fHHres, aes(x=predcut, y=respearson)) + geom_boxplot()
+```
+
+:::
+
+
+## Over-dispersion
+
+Important assumption in logistic/Poisson regression: $E(y_i)$ determines $V(y_i)$
+
+- Logistic: $V(y_i)= E(y_i) [1 - E(y_i)]$
+
+- Poisson: $V(y_i)= E(y_i)$
+
+If the assumed $V(y_i)$ is correct, the variance of Pearson residuals $e_i= (y_i - \hat{E}(y_i))/\sqrt{\hat{V(y_i)}}$ 
+
+- Should be $\approx 1$
+
+- Should be constant as $\hat{y}_i$ varies
+
+
+## Over-dispersion
+
+A popular way to estimate over-dispersion $\phi$.
+$$
+\hat{\phi}= \frac{\sum_{i=1}^n e_i^2}{n-p}
+$$
+where $e_i$ are Pearson residuals. If $\hat{\phi}$ much larger than 1, there is over-dispersion
+
+One may then adjust the MLE variance $V(\hat{\beta})$ into 
+$$V_Q(\hat{\beta})= \hat{\phi} V(\hat{\beta})$$
+where $V_Q$ stands for "quasi-likelihood"
+
+
+## Example
+
+```{r}
+fit2q= glm(total ~ location + roof + age + age2, data=fHH, family=quasipoisson)
+```
+
+:::panel-tabset
+
+### No over-dispersion
+
+```{r}
+summary(fit2)
+```
+
+### Over-dispersion
+
+```{r}
+summary(fit2q)
+```
+
+:::
+
+
+## Over-dispersion
+
+Easier to compare visually with `multiplot` from package `coefplot`
+
+```{r}
+multiplot(fit2, fit2q)
+```
+
+## Bootstrap
+
+Function `bootGLM` at `routines.R` implements the bootstrap for GLMs
+
+```{r}
+f= formula(total ~ location + roof + age + age2)
+fit2.bootci= bootGLM(fHH, formula=f, family=poisson(), level=0.95)
+```
+
+The bootstrap intervals are also wider than those from MLE theory
+
+```{r}
+allci= round(cbind(fit2.bootci[,-1], confint(fit2), confint(fit2q)), 3)
+names(allci)= paste(c('Boot','Boot','MLE','MLE','Q','Q'), names(allci), sep='')
+allci
+```
+
+# Exercise. Campus crime data
+
+Dataset `campuscrime.txt` from the [Beyond MLR book](https://bookdown.org/roback/bookdown-BeyondMLR) has number of crimes for $n=81$ institutions
+
+- `type`: college (C) or university (U)
+
+- `nv`: number of violent crimes for the institution in 1 year
+
+- `enroll1000`: number of students enrolled at the school (thousands)
+
+- `region`: region of the USA (C = Central, MW = Midwest, NE = Northeast, SE = Southeast, SW = Southwest, and W = West)
+
+**Goal.** Are there differences between college and university, after accounting for enrollment and region? If so, provide a point estimate and a 95% interval for the ratio of expected crimes in university / college
+
+---
+
+You can load the data as follows
+
+```{r}
+crime= as_tibble(read.table("../datasets/campuscrime.txt", header=TRUE, sep="\t"))
+crime
+```
+
+
+
+
