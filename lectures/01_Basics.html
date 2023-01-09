@@ -808,7 +808,11 @@ r2  3  6  9
 r3  5  8 11</code></pre>
 </div>
 </div>
-<div class="cell" data-hash="01_Basics_cache/revealjs/unnamed-chunk-17_51c9ca14ad9492696635ee83debc57e8">
+</section>
+<section id="data-frame" class="slide level2">
+<h2>Data frame</h2>
+<p>Similar to matrix, but columns may be of different types</p>
+<div class="cell" data-hash="01_Basics_cache/revealjs/unnamed-chunk-17_2bc0d4fa49948a630c33f79c91b013bb">
 <div class="sourceCode cell-code" id="cb86"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb86-1"><a href="#cb86-1" aria-hidden="true" tabindex="-1"></a>mdf<span class="ot">=</span> <span class="fu">as.data.frame</span>(m); mdf<span class="sc">$</span>name<span class="ot">=</span> <span class="fu">c</span>(<span class="st">'Laura'</span>,<span class="st">'Paul'</span>,<span class="st">'Lyz'</span>)</span>
 <span id="cb86-2"><a href="#cb86-2" aria-hidden="true" tabindex="-1"></a>mdf</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -817,17 +821,53 @@ r1  1  4  7 Laura
 r2  2  5  8  Paul
 r3  3  6  9   Lyz</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb88"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb88-1"><a href="#cb88-1" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(mdf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb88"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb88-1"><a href="#cb88-1" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(mdf)  <span class="co">#colnames doesn't work on data frames</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "c1"   "c2"   "c3"   "name"</code></pre>
+</div>
+</div>
+<div class="cell" data-hash="01_Basics_cache/revealjs/unnamed-chunk-18_8b24797e367e2a007600334fa58a6eda">
+<div class="sourceCode cell-code" id="cb90"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb90-1"><a href="#cb90-1" aria-hidden="true" tabindex="-1"></a>mdf<span class="sc">$</span>name      <span class="co">#access column with $</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Laura" "Paul"  "Lyz"  </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb92"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb92-1"><a href="#cb92-1" aria-hidden="true" tabindex="-1"></a>mdf[,<span class="st">'name'</span>]  <span class="co">#access column as in a matrix</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Laura" "Paul"  "Lyz"  </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb94"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb94-1"><a href="#cb94-1" aria-hidden="true" tabindex="-1"></a>mdf[,<span class="dv">4</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Laura" "Paul"  "Lyz"  </code></pre>
+</div>
+</div>
+</section>
+<section id="tibbles" class="slide level2">
+<h2>tibbles</h2>
+<p>The class <code>tibble</code> extends <code>data.frame</code></p>
+<ul>
+<li><p>All operations that work on data frames work on tibbles</p></li>
+<li><p>Tibbles have some extra operations (methods)</p></li>
+<li><p><code>as_tibble</code> converts a matrix/data frame into a tibble</p></li>
+</ul>
+<p>For now, let’s just say that tibbles print prettier on the screen (just a few rows are shown, info is given on each column)</p>
+<div class="cell" data-hash="01_Basics_cache/revealjs/unnamed-chunk-19_d2454dfce53c643409cd1ff030eed954">
+<div class="sourceCode cell-code" id="cb96"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb96-1"><a href="#cb96-1" aria-hidden="true" tabindex="-1"></a>mtbl<span class="ot">=</span> <span class="fu">as_tibble</span>(mdf)</span>
+<span id="cb96-2"><a href="#cb96-2" aria-hidden="true" tabindex="-1"></a>mtbl</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 4
+     c1    c2    c3 name 
+  &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;chr&gt;
+1     1     4     7 Laura
+2     2     5     8 Paul 
+3     3     6     9 Lyz  </code></pre>
 </div>
 </div>
 </section>
 <section id="lists" class="slide level2">
 <h2>Lists</h2>
-<div class="cell" data-hash="01_Basics_cache/revealjs/unnamed-chunk-18_cea21467bf5b0a204a9c737072d12dbf">
-<div class="sourceCode cell-code" id="cb90"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb90-1"><a href="#cb90-1" aria-hidden="true" tabindex="-1"></a>x<span class="ot">=</span> <span class="fu">list</span>(<span class="at">a=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="at">b=</span><span class="fu">c</span>(<span class="st">'hey'</span>,<span class="st">'you'</span>), <span class="at">c=</span>m)</span>
-<span id="cb90-2"><a href="#cb90-2" aria-hidden="true" tabindex="-1"></a>x</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="01_Basics_cache/revealjs/unnamed-chunk-20_449ed19e0017015f6161f11f18b0351c">
+<div class="sourceCode cell-code" id="cb98"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb98-1"><a href="#cb98-1" aria-hidden="true" tabindex="-1"></a>x<span class="ot">=</span> <span class="fu">list</span>(<span class="at">a=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="at">b=</span><span class="fu">c</span>(<span class="st">'hey'</span>,<span class="st">'you'</span>), <span class="at">c=</span>m)</span>
+<span id="cb98-2"><a href="#cb98-2" aria-hidden="true" tabindex="-1"></a>x</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>$a
 [1] 1 2 3 4 5
@@ -841,7 +881,7 @@ r1  1  4  7
 r2  2  5  8
 r3  3  6  9</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb92"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb92-1"><a href="#cb92-1" aria-hidden="true" tabindex="-1"></a>x[<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>]  <span class="co">#sub-list</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb100"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb100-1"><a href="#cb100-1" aria-hidden="true" tabindex="-1"></a>x[<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>]  <span class="co">#sub-list</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>$a
 [1] 1 2 3 4 5
@@ -849,12 +889,12 @@ r3  3  6  9</code></pre>
 $b
 [1] "hey" "you"</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb94"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb94-1"><a href="#cb94-1" aria-hidden="true" tabindex="-1"></a>x[<span class="dv">1</span>]    <span class="co">#sub-list with one element</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb102"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb102-1"><a href="#cb102-1" aria-hidden="true" tabindex="-1"></a>x[<span class="dv">1</span>]    <span class="co">#sub-list with one element</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>$a
 [1] 1 2 3 4 5</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb96"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb96-1"><a href="#cb96-1" aria-hidden="true" tabindex="-1"></a>x[[<span class="dv">1</span>]]  <span class="co">#access 1st element</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb104"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb104-1"><a href="#cb104-1" aria-hidden="true" tabindex="-1"></a>x[[<span class="dv">1</span>]]  <span class="co">#access 1st element</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 1 2 3 4 5</code></pre>
 </div>
@@ -862,26 +902,26 @@ $b
 </section>
 <section id="concatenating" class="slide level2">
 <h2>Concatenating</h2>
-<div class="cell" data-hash="01_Basics_cache/revealjs/unnamed-chunk-19_cd2777d7de4f6930381a00b99ad4f996">
-<div class="sourceCode cell-code" id="cb98"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb98-1"><a href="#cb98-1" aria-hidden="true" tabindex="-1"></a>x<span class="ot">=</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>); y<span class="ot">=</span> <span class="fu">c</span>(<span class="dv">4</span>,<span class="dv">5</span>,<span class="dv">6</span>)</span>
-<span id="cb98-2"><a href="#cb98-2" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(x,y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="01_Basics_cache/revealjs/unnamed-chunk-21_5ccb252e3815265d3afbe496bc6ce336">
+<div class="sourceCode cell-code" id="cb106"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb106-1"><a href="#cb106-1" aria-hidden="true" tabindex="-1"></a>x<span class="ot">=</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>); y<span class="ot">=</span> <span class="fu">c</span>(<span class="dv">4</span>,<span class="dv">5</span>,<span class="dv">6</span>)</span>
+<span id="cb106-2"><a href="#cb106-2" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(x,y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 1 2 3 4 5 6</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb100"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb100-1"><a href="#cb100-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cbind</span>(x,y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb108"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb108-1"><a href="#cb108-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cbind</span>(x,y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>     x y
 [1,] 1 4
 [2,] 2 5
 [3,] 3 6</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb102"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb102-1"><a href="#cb102-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rbind</span>(x,y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb110"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb110-1"><a href="#cb110-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rbind</span>(x,y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  [,1] [,2] [,3]
 x    1    2    3
 y    4    5    6</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb104"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb104-1"><a href="#cb104-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cbind</span>(<span class="dv">1</span>,x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb112"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb112-1"><a href="#cb112-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cbind</span>(<span class="dv">1</span>,x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>       x
 [1,] 1 1
@@ -889,7 +929,20 @@ y    4    5    6</code></pre>
 [3,] 1 3</code></pre>
 </div>
 </div>
-<div class="footer footer-default">
+</section>
+<section id="exercise" class="slide level2">
+<h2>Exercise</h2>
+<p>In the <code>starwars</code> data we saw an outlier in mass. Select the character (row) such that mass is not missing and mass &gt;500 kg</p>
+<ul>
+<li><p>What is its name and home world?</p></li>
+<li><p>In which films did (s)he appear? (note: variable <code>starwars$films</code> is a list)</p></li>
+</ul>
+<div class="cell" data-hash="01_Basics_cache/revealjs/unnamed-chunk-22_ad52bcc3c60f7c52d0b780be2e656464">
+<div class="sourceCode cell-code" id="cb114"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb114-1"><a href="#cb114-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">4</span>, <span class="dv">1</span>, .<span class="dv">1</span>))</span>
+<span id="cb114-2"><a href="#cb114-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(starwars<span class="sc">$</span>height, starwars<span class="sc">$</span>mass, <span class="at">xlab=</span><span class="st">'Height (cm)'</span>, <span class="at">ylab=</span><span class="st">'Mass (kg)'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+
+</div>
+<img data-src="01_Basics_files/figure-revealjs/unnamed-chunk-22-1.png" width="960" class="r-stretch"><div class="footer footer-default">
 
 </div>
 </section></section>

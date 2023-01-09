@@ -301,11 +301,41 @@ m[c('r1','r2'),c('c1','c2')]
 m + c(0,1,2)
 ```
 
+## Data frame
+
+Similar to matrix, but columns may be of different types
+
+
 ```{r}
 mdf= as.data.frame(m); mdf$name= c('Laura','Paul','Lyz')
 mdf
 names(mdf)  #colnames doesn't work on data frames
 ```
+
+```{r}
+mdf$name      #access column with $
+mdf[,'name']  #access column as in a matrix
+mdf[,4]
+```
+
+
+## tibbles
+
+The class `tibble` extends `data.frame`
+
+- All operations that work on data frames work on tibbles
+
+- Tibbles have some extra operations (methods)
+
+- `as_tibble` converts a matrix/data frame into a tibble
+
+For now, let's just say that tibbles print prettier on the screen (just a few rows are shown, info is given on each column)
+
+```{r}
+mtbl= as_tibble(mdf)
+mtbl
+```
+
 
 ## Lists
 
@@ -326,6 +356,21 @@ cbind(x,y)
 rbind(x,y)
 cbind(1,x)
 ```
+
+## Exercise
+
+In the `starwars` data we saw an outlier in mass. Select the character (row) such that
+mass is not missing and mass >500 kg
+
+- What is its name and home world?
+
+- In which films did (s)he appear? (note: variable `starwars$films` is a list)
+
+```{r}
+par(mar = c(4, 4, 1, .1))
+plot(starwars$height, starwars$mass, xlab='Height (cm)', ylab='Mass (kg)')
+```
+
 
 
 
