@@ -61,6 +61,28 @@ Statistical computing is one of its core components. We focus on R
 
 Note: Python more popular for Machine learning, lags a bit behind in Statistics
 
+
+## Statistical computing
+
+Our definition of statistical computing
+
+- Includes programming, but is not just programming
+
+- Includes data analysis, but is not just data analysis
+
+A road map
+
+- Data visualization
+
+- Models for continuous/binary/count data, interpretation, model-checking
+
+- Computationally-intensive methods for inference (to relax assumptions)
+
+- Reproducible & interactive reports
+
+- Bits of cool topics in data science
+
+
 ## Resources
 
 Install R from [here](https://www.r-project.org/), then posit (RStudio) from [here](https://posit.co/)
@@ -71,7 +93,7 @@ Alternatively, [posit cloud](https://posit.cloud) has a free plan
 
 -   Jared Lander's *R for everyone*
 
--   Hadley Wickam's [R for Data Science](https://r4ds.had.co.nz/introduction.html)
+-   Hadley Wickam's [R for Data Science](https://r4ds.had.co.nz). [Second edition (in progress)](https://r4ds.hadley.nz)
 
 -   RStudio [tutorials](https://education.rstudio.com/learn)
 
@@ -253,24 +275,43 @@ is.na(x)
 
 ## Pipes
 
-A new paradigm for calling functions is the pipe `%>%`. It takes the output of an expression and inserts it as the 1st argument of the function on the right-hand side
+- Base R: `|>` (newer, simpler options)
+- magrittr package: `%>%` (advanced options)
 
-That is, `x %>% f` is the same as `f(x)`
+Both take the output of an expression and insert it as the 1st argument of the function on the right-hand side. That is, `x %>% f()` is the same as `f(x)`
+
 
 ```{r}
-x= 1:10
-mean(x)
-x %>% mean
+x= 1:10; mean(x)
+x %>% mean()
+x |> mean()  #pipe from base R
 ```
-
-Multiple pipes can be concatenated. Sometimes pipes save programming effort, and some people find them easier to read (e.g. the [tidyverse](https://www.tidyverse.org) uses lots of pipes)
+Multiple pipes can be concatenated. Sometimes pipes save programming effort, some people find them easier to read (e.g. the [tidyverse](https://www.tidyverse.org) uses lots of pipes)
 
 ```{r}
 sum(is.na(x))
 x %>% is.na %>% sum
 ```
 
-Note: the Rstudio shortcut to insert the pipe is ctrl + shift + m
+## Pipes
+
+You can pass the output to an argument other than the first
+
+```{r}
+#magrittr uses . as place-holder
+4 %>% log(base=2)  #log(4, base=2)
+4 %>% log(2,.)     #log(2, base=4)
+```
+
+
+```{r}
+#R base uses _ as place-holder. The argument name must be specified
+4 |> log(base=2)   #log(4, base=2)
+4 |> log(2,base=_) #log(2, base=4)
+```
+
+The Rstudio shortcut to insert the pipe is ctrl + shift + m. To use `|>` instead of `%>%` go to `Tools -> Global options -> Code -> "Use native pipe operator"`
+
 
 ## Data structures
 
