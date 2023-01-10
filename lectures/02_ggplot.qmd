@@ -28,6 +28,7 @@ Required R packages
 ```{r, eval=FALSE}
 install.packages("dplyr")
 install.packages("ggplot2")
+install.packages("fivethirtyeight")
 install.packages("tidyverse")
 install.packages("devtools")
 devtools::install_github("rstudio-education/dsbox")
@@ -39,6 +40,7 @@ Once they're installed, load them.
 library(tidyverse)  #also loads ggplot2
 library(dplyr)
 library(dsbox)
+library(fivethirtyeight)
 ```
 
 # ggplot basics
@@ -56,7 +58,12 @@ ggplot(data= mydata) +
 
 -   GEOMFUNCTION: name of a function that adds elements to the plot, e.g. `geom_point` adds a scatterplot
 
--   `aes` describes how variables are mapped to visual properties, e.g. what goes into the x- and y-axis, colors, sizes...
+-   `aes` (aesthetics) describes how variables are mapped to visual properties, e.g. what goes into the x- and y-axis, colors, sizes...
+
+ggplot likes having all variables in a tibble or data.frame. If you create new variables, add them to your tibble
+
+Common error: the + sign cannot be at the beginning of a line
+
 
 ##  {auto-animate="true"}
 
@@ -70,8 +77,17 @@ ggplot(data = starwars) +
 ```{r}
 ggplot(data = starwars) +
   geom_point(mapping = aes(x = height, y = mass)) +
-  geom_smooth(method='lm', mapping = aes(x = height, y=mass))
+  geom_smooth(mapping = aes(x = height, y=mass), method='lm')
 ```
+
+##  {auto-animate="true"}
+
+```{r}
+ggplot(data = starwars) +
+  geom_point(mapping = aes(x = height, y = mass)) +
+  geom_smooth(mapping = aes(x = height, y=mass), method='lm', se=FALSE) #remove standard error
+```
+
 
 ## 
 
@@ -80,10 +96,10 @@ ggplot(data = starwars) +
 ```{r}
 ggplot(data = starwars, mapping = aes(x = height, y = mass)) +
   geom_point() +
-  geom_smooth(method='lm')
+  geom_smooth(method='lm', se=FALSE)
 ```
 
-## Set point color and shape
+## Point color and shape
 
 Set point color and shape according to `human_skincolor`
 
@@ -93,12 +109,12 @@ starwars$human_skincolor= ifelse(starwars$skin_color %in% mycols, 'human', 'non-
 
 ggplot(data = starwars, aes(x = height, y = mass)) +
   geom_point(aes(color= human_skincolor, shape= human_skincolor)) +
-  geom_smooth(method='lm')
+  geom_smooth(method='lm', se=FALSE)
 ```
 
 ## Facets
 
-Facets allow splitting the plot by one or more variables
+Facets split the plot by one or more variables
 
 ```{r}
 ggplot(data = starwars, aes(x = height, y = mass)) +
@@ -107,14 +123,27 @@ ggplot(data = starwars, aes(x = height, y = mass)) +
   facet_wrap(~ human_skincolor)
 ```
 
+## Facets
+
+By default, all panels use the same x and y scales. Alternatively, set `scale` to `free`, `free_x` or `free_y`
+
+```{r}
+ggplot(data = starwars, aes(x = height, y = mass)) +
+  geom_point() +
+  geom_smooth(method='lm') +
+  facet_wrap(~ human_skincolor, scale="free_y")
+```
+
+
+
 ## Summary
 
 ```{r, eval=FALSE}
 ggplot(mydata, mapping=aes(<MAPPINGS>)) +
-  <GEOMFUNC1>(aes(<MAPPINGS>)) +
+  <GEOMFUNCTION1>(aes(<MAPPINGS>)) +
   ...
-  <GEOMFUNCn>(aes(<MAPPINGS>)) +
-  <FACETFUNC>() +
+  <GEOMFUNCTIONn>(aes(<MAPPINGS>)) +
+  <FACETFUNCTION>() +
   options
 ```
 
@@ -128,9 +157,7 @@ Resources
 
 -   [Reference with all functions](https://ggplot2.tidyverse.org/reference)
 
----
-
-Common geoms
+## Common geoms
 
 - `geom_line`: lines plot
 - `geom_point`: scatter-plot
@@ -171,6 +198,8 @@ ggplot(data = starwars, aes(x = height, y = mass, color=human_skincolor)) +
 
 ## Customizing labels and legends
 
+Same, but now change the default axis limits
+
 ```{r}
 mylab= 'Human character?'
 ggplot(data = starwars, aes(x = height, y = mass, color=human_skincolor)) +
@@ -192,8 +221,78 @@ By default `geom_smooth` shows a non-linear regression (`method="loess"`). Consi
 ```{r}
 ggplot(mpg, aes(x = displ, y = hwy)) + 
   geom_point() +
-  geom_smooth(color='black')
+  geom_smooth(color='black') +
+  geom_smooth(method='lm', color='blue')
 ```
+
+
+# Exercise
+
+---
+
+The blog FiveThirtyEight featured this [post](https://fivethirtyeight.com/features/higher-rates-of-hate-crimes-are-tied-to-income-inequality) on hate crimes around the 2016 USA elections
+
+Dataset `hate_crimes` (package `fivethirtyeight`) has this info for each state:
+
+- `avg_hatecrimes_per_100k_fbi`: pre-election number of hate crimes per 100,000 population by the FBI
+
+- `hate_crimes_per_100k_splc`: post-election crimes in 10-day period from SPLC (southern poverty law center)
+
+- education (% adults $\geq$ 25 with high school degree
+
+- % of people who voted Donald Trump
+
+- Income inequality (Gini index)
+
+Plus variables related to racial diversity, geographic heterogeneity and economic indicators (see `help(hate_crimes)`)
+
+---
+
+A simple scatterplot shows that FBI-reported hate crimes are lower in states with more Trump voters. 
+However, according to the blog Trump voters were not statistically significant, after accounting for inequality and education
+
+> two variables remained significant (...): income inequality and percent population with a high school degree
+
+To study this issue, use `ggplot` to produce:
+
+1. Scatter-plots of FBI-related crimes vs. Trump voters, vs. Gini index and vs. high-school. Add a regression line to the plot (without standard errors) and label the x- and y-axes
+
+2. Scatter-plot of FBI-related crimes vs. Trump voters, with different panels (facets) for states in each of 4 categories for the Gini index (see next slide)
+
+3. Same as 2, now with panels for 4 categories in the % of high-school education
+
+Turn in an html with your solution [here](https://drive.google.com/drive/folders/1jhh1CrXM3hqc7qTrOYeQzo2pV8Vly1NY?usp=sharing).
+Name your file firstname_lastname.html
+
+---
+
+To help you get started, load the data and create a smaller version with only the relevant variables
+
+```{r, warning=FALSE}
+library(fivethirtyeight)
+sel= c('state_abbrev','avg_hatecrimes_per_100k_fbi','share_vote_trump','gini_index','share_pop_hs')
+hc= hate_crimes[,sel]
+names(hc)= c('state','hatecrimes_fbi','votes_trump','gini','hs')
+```
+
+For fun, we obtain their pairwise correlations
+
+```{r, warning=FALSE}
+round(cor(hc[,-1], use='complete.obs'),3)
+```
+
+Finally, we discretize the Gini index and education into 4 groups
+
+```{r}
+hc$ginic= cut(hc$gini, breaks=c(0,0.43,0.45,0.47,1))
+levels(hc$ginic)= c('Gini <= 0.43','0.43 < Gini <= 0.45','0.45 < Gini <= 0.47','Gini > 0.47')
+
+hc$hsc= cut(hc$hs, breaks=c(0,0.83,0.86,0.9,1))
+levels(hc$hsc)= c('hs <= 0.83', '0.83 < hs <= 0.86', '0.86 < hs <= 0.9', 'hs > 0.9')
+```
+
+Hint: see `help(hate_crimes)` for how to create a scatterplot. Then add facets based on `ginic` and `hsc` created above 
+
 
 # Beyond scatter plots
 
@@ -229,14 +328,14 @@ ggplot(starwars, aes(x=human_skincolor, y=height)) +
 ### Histogram
 ```{r}
 ggplot(starwars, aes(x=height, fill=human_skincolor)) +
-  geom_histogram(alpha=0.2, color='black')  
+  geom_histogram(alpha=0.2, color='black')  #alpha is the color transparency
 ```
 
 ### Frequency polygram
 
 ```{r}
 ggplot(starwars, aes(x=height, color=human_skincolor)) +
-  geom_freqpoly(alpha=0.2)  
+  geom_freqpoly()  
 ```
 
 
@@ -343,8 +442,10 @@ ggplot(data=df, aes(x=dose, y=len, group=supp, color=supp)) +
 
 # ggplot extensions
 
+## ggplot extensions
 
-Many user-contributed extensions to ggplot. To get a feeling for what's available, see the [gallery](https://exts.ggplot2.tidyverse.org/gallery)
+There are many user-contributed extensions to ggplot. To get a feeling for what's available, see the [gallery](https://exts.ggplot2.tidyverse.org/gallery)
 
-A particularly cool one is `gganimate` to create animations (to be discussed)
+For example, a cool one is `gganimate` to create animations (to be discussed)
+
 

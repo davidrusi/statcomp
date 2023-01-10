@@ -399,6 +399,7 @@
 <ul>
 <li><a href="#/ggplot-basics" id="/toc-ggplot-basics">ggplot basics</a></li>
 <li><a href="#/customizing-the-plots" id="/toc-customizing-the-plots">Customizing the plots</a></li>
+<li><a href="#/exercise" id="/toc-exercise">Exercise</a></li>
 <li><a href="#/beyond-scatter-plots" id="/toc-beyond-scatter-plots">Beyond scatter plots</a></li>
 <li><a href="#/ggplot-extensions" id="/toc-ggplot-extensions">ggplot extensions</a></li>
 </ul>
@@ -407,18 +408,20 @@
 <section id="reproducing-these-lecture-notes" class="slide level2">
 <h2>Reproducing these lecture notes</h2>
 <p>Required R packages</p>
-<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-1_a89fcdfbb51ede6c486300b73b3b9cfc">
+<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-1_e860db9de31d697af57c5ab4b5d29f9f">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"dplyr"</span>)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"ggplot2"</span>)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"tidyverse"</span>)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"devtools"</span>)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"rstudio-education/dsbox"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"fivethirtyeight"</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"tidyverse"</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"devtools"</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"rstudio-education/dsbox"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Once they’re installed, load them.</p>
-<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-2_726fd0b41c9f755e7c68b97be7dfb5ed">
+<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-2_c9afba4e0528630025c58aa5d70521c7">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)  <span class="co">#also loads ggplot2</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dsbox)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dsbox)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fivethirtyeight)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section>
@@ -436,8 +439,10 @@
 <ul>
 <li><p><code>ggplot</code> creates a new (empty) plot, based on data from <code>mydata</code></p></li>
 <li><p>GEOMFUNCTION: name of a function that adds elements to the plot, e.g.&nbsp;<code>geom_point</code> adds a scatterplot</p></li>
-<li><p><code>aes</code> describes how variables are mapped to visual properties, e.g.&nbsp;what goes into the x- and y-axis, colors, sizes…</p></li>
+<li><p><code>aes</code> (aesthetics) describes how variables are mapped to visual properties, e.g.&nbsp;what goes into the x- and y-axis, colors, sizes…</p></li>
 </ul>
+<p>ggplot likes having all variables in a tibble or data.frame. If you create new variables, add them to your tibble</p>
+<p>Common error: the + sign cannot be at the beginning of a line</p>
 </section>
 <section id="section" class="slide level2" data-auto-animate="true">
 <h2 data-id="quarto-animate-title"></h2>
@@ -449,56 +454,76 @@
 <img data-src="02_ggplot_files/figure-revealjs/unnamed-chunk-4-1.png" width="960" class="r-stretch"></section>
 <section id="section-1" class="slide level2" data-auto-animate="true">
 <h2 data-id="quarto-animate-title"></h2>
-<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-5_a122c71536929763ae1e566d425d52e0">
+<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-5_353094bf03cbb96dcc27fc0ab8cf48d2">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb5-1" class="hljs-ln-code"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> starwars) <span class="sc">+</span></span>
 <span id="cb5-2" class="hljs-ln-code"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> height, <span class="at">y =</span> mass)) <span class="sc">+</span></span>
-<span id="cb5-3" class="hljs-ln-code"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method=</span><span class="st">'lm'</span>, <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> height, <span class="at">y=</span>mass))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb5-3" class="hljs-ln-code"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> height, <span class="at">y=</span>mass), <span class="at">method=</span><span class="st">'lm'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 </div>
 <img data-src="02_ggplot_files/figure-revealjs/unnamed-chunk-5-1.png" width="960" class="r-stretch"></section>
-<section id="section-2" class="slide level2">
-<h2></h2>
-<p><code>mapping</code> is shared, pass it to <code>ggplot</code> and all geoms will use it (by default)</p>
-<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-6_67ce96a762e40556dae6ee35d713046d">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> starwars, <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> height, <span class="at">y =</span> mass)) <span class="sc">+</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method=</span><span class="st">'lm'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="section-2" class="slide level2" data-auto-animate="true">
+<h2 data-id="quarto-animate-title"></h2>
+<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-6_37950af5a7c76d665edf3d05115e0ac1">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb6-1" class="hljs-ln-code"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> starwars) <span class="sc">+</span></span>
+<span id="cb6-2" class="hljs-ln-code"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> height, <span class="at">y =</span> mass)) <span class="sc">+</span></span>
+<span id="cb6-3" class="hljs-ln-code"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> height, <span class="at">y=</span>mass), <span class="at">method=</span><span class="st">'lm'</span>, <span class="at">se=</span><span class="cn">FALSE</span>) <span class="co">#remove standard error</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 </div>
 <img data-src="02_ggplot_files/figure-revealjs/unnamed-chunk-6-1.png" width="960" class="r-stretch"></section>
-<section id="set-point-color-and-shape" class="slide level2">
-<h2>Set point color and shape</h2>
-<p>Set point color and shape according to <code>human_skincolor</code></p>
-<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-7_feb74f73b931f66d8ba7940126ea0095">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>mycols<span class="ot">=</span> <span class="fu">c</span>(<span class="st">'fair'</span>,<span class="st">'white'</span>,<span class="st">'light'</span>,<span class="st">'brown'</span>,<span class="st">'dark'</span>)</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>starwars<span class="sc">$</span>human_skincolor<span class="ot">=</span> <span class="fu">ifelse</span>(starwars<span class="sc">$</span>skin_color <span class="sc">%in%</span> mycols, <span class="st">'human'</span>, <span class="st">'non-human'</span>)</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> starwars, <span class="fu">aes</span>(<span class="at">x =</span> height, <span class="at">y =</span> mass)) <span class="sc">+</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">color=</span> human_skincolor, <span class="at">shape=</span> human_skincolor)) <span class="sc">+</span></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method=</span><span class="st">'lm'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="section-3" class="slide level2">
+<h2></h2>
+<p><code>mapping</code> is shared, pass it to <code>ggplot</code> and all geoms will use it (by default)</p>
+<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-7_1fb0c355038ebf404ba14ecfa071ee9f">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> starwars, <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> height, <span class="at">y =</span> mass)) <span class="sc">+</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method=</span><span class="st">'lm'</span>, <span class="at">se=</span><span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 </div>
 <img data-src="02_ggplot_files/figure-revealjs/unnamed-chunk-7-1.png" width="960" class="r-stretch"></section>
-<section id="facets" class="slide level2">
-<h2>Facets</h2>
-<p>Facets allow splitting the plot by one or more variables</p>
-<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-8_e67b882a16be2f47989a480324d0c2a4">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> starwars, <span class="fu">aes</span>(<span class="at">x =</span> height, <span class="at">y =</span> mass)) <span class="sc">+</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method=</span><span class="st">'lm'</span>) <span class="sc">+</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> human_skincolor)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="point-color-and-shape" class="slide level2">
+<h2>Point color and shape</h2>
+<p>Set point color and shape according to <code>human_skincolor</code></p>
+<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-8_c76a94ea69e4c17925ff7d268596a75e">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>mycols<span class="ot">=</span> <span class="fu">c</span>(<span class="st">'fair'</span>,<span class="st">'white'</span>,<span class="st">'light'</span>,<span class="st">'brown'</span>,<span class="st">'dark'</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>starwars<span class="sc">$</span>human_skincolor<span class="ot">=</span> <span class="fu">ifelse</span>(starwars<span class="sc">$</span>skin_color <span class="sc">%in%</span> mycols, <span class="st">'human'</span>, <span class="st">'non-human'</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> starwars, <span class="fu">aes</span>(<span class="at">x =</span> height, <span class="at">y =</span> mass)) <span class="sc">+</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">color=</span> human_skincolor, <span class="at">shape=</span> human_skincolor)) <span class="sc">+</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method=</span><span class="st">'lm'</span>, <span class="at">se=</span><span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 </div>
 <img data-src="02_ggplot_files/figure-revealjs/unnamed-chunk-8-1.png" width="960" class="r-stretch"></section>
+<section id="facets" class="slide level2">
+<h2>Facets</h2>
+<p>Facets split the plot by one or more variables</p>
+<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-9_72a0b5b0139633f034d05b67696d0638">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> starwars, <span class="fu">aes</span>(<span class="at">x =</span> height, <span class="at">y =</span> mass)) <span class="sc">+</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method=</span><span class="st">'lm'</span>) <span class="sc">+</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> human_skincolor)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+
+</div>
+<img data-src="02_ggplot_files/figure-revealjs/unnamed-chunk-9-1.png" width="960" class="r-stretch"></section>
+<section id="facets-1" class="slide level2">
+<h2>Facets</h2>
+<p>By default, all panels use the same x and y scales. Alternatively, set <code>scale</code> to <code>free</code>, <code>free_x</code> or <code>free_y</code></p>
+<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-10_9a9b5f94989b56916ded27632dfd0446">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> starwars, <span class="fu">aes</span>(<span class="at">x =</span> height, <span class="at">y =</span> mass)) <span class="sc">+</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method=</span><span class="st">'lm'</span>) <span class="sc">+</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> human_skincolor, <span class="at">scale=</span><span class="st">"free_y"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+
+</div>
+<img data-src="02_ggplot_files/figure-revealjs/unnamed-chunk-10-1.png" width="960" class="r-stretch"></section>
 <section id="summary" class="slide level2">
 <h2>Summary</h2>
-<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-9_0ea95a85dcfcdfb8f34749c4ea64f64f">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(mydata, <span class="at">mapping=</span><span class="fu">aes</span>(<span class="sc">&lt;</span>MAPPINGS<span class="sc">&gt;</span>)) <span class="sc">+</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="er">&lt;</span>GEOMFUNC1<span class="sc">&gt;</span>(<span class="fu">aes</span>(<span class="sc">&lt;</span>MAPPINGS<span class="sc">&gt;</span>)) <span class="sc">+</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  ...</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="sc">&lt;</span>GEOMFUNCn<span class="sc">&gt;</span>(<span class="fu">aes</span>(<span class="sc">&lt;</span>MAPPINGS<span class="sc">&gt;</span>)) <span class="sc">+</span></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="er">&lt;</span>FACETFUNC<span class="sc">&gt;</span>() <span class="sc">+</span></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  options</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-11_5928b6ffe90d1a7ac6728de8381c4eb9">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(mydata, <span class="at">mapping=</span><span class="fu">aes</span>(<span class="sc">&lt;</span>MAPPINGS<span class="sc">&gt;</span>)) <span class="sc">+</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="er">&lt;</span>GEOMFUNCTION1<span class="sc">&gt;</span>(<span class="fu">aes</span>(<span class="sc">&lt;</span>MAPPINGS<span class="sc">&gt;</span>)) <span class="sc">+</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  ...</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="sc">&lt;</span>GEOMFUNCTIONn<span class="sc">&gt;</span>(<span class="fu">aes</span>(<span class="sc">&lt;</span>MAPPINGS<span class="sc">&gt;</span>)) <span class="sc">+</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="er">&lt;</span>FACETFUNCTION<span class="sc">&gt;</span>() <span class="sc">+</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  options</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <ul>
 <li><p>Options include <code>labs</code> and <code>theme</code> to set titles, labels, axis styles…</p></li>
@@ -510,9 +535,8 @@
 <li><p><a href="https://ggplot2.tidyverse.org/reference">Reference with all functions</a></p></li>
 </ul>
 </section>
-<section class="slide level2">
-
-<p>Common geoms</p>
+<section id="common-geoms" class="slide level2">
+<h2>Common geoms</h2>
 <ul>
 <li><code>geom_line</code>: lines plot</li>
 <li><code>geom_point</code>: scatter-plot</li>
@@ -530,40 +554,41 @@
 </section>
 <section id="line-types" class="slide level2">
 <h2>Line types</h2>
-<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-10_962b9b98199cfd48082b795519120989">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> starwars, <span class="fu">aes</span>(<span class="at">x =</span> height, <span class="at">y =</span> mass, <span class="at">color=</span>human_skincolor)) <span class="sc">+</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">shape=</span>human_skincolor)) <span class="sc">+</span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="fu">aes</span>(<span class="at">linetype=</span> human_skincolor), <span class="at">method=</span><span class="st">'lm'</span>, <span class="at">se=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-12_3c7b936c6bae459b87c1752c2c6f08c7">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> starwars, <span class="fu">aes</span>(<span class="at">x =</span> height, <span class="at">y =</span> mass, <span class="at">color=</span>human_skincolor)) <span class="sc">+</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">shape=</span>human_skincolor)) <span class="sc">+</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="fu">aes</span>(<span class="at">linetype=</span> human_skincolor), <span class="at">method=</span><span class="st">'lm'</span>, <span class="at">se=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 </div>
-<img data-src="02_ggplot_files/figure-revealjs/unnamed-chunk-10-1.png" width="960" class="r-stretch"></section>
+<img data-src="02_ggplot_files/figure-revealjs/unnamed-chunk-12-1.png" width="960" class="r-stretch"></section>
 <section id="customizing-labels-and-legends" class="slide level2">
 <h2>Customizing labels and legends</h2>
 <p><code>labs</code> sets title and labels of axis and aesthetics (e.g.&nbsp;<code>color</code>, <code>shape</code>, <code>linetype</code>)</p>
 <p>We need to set all aesthetic labels, else a separate legend is created for each</p>
-<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-11_c44a9435dfd229869a841dc36f457aa2">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>mylab<span class="ot">=</span> <span class="st">'Human character?'</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> starwars, <span class="fu">aes</span>(<span class="at">x =</span> height, <span class="at">y =</span> mass, <span class="at">color=</span>human_skincolor)) <span class="sc">+</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">shape=</span>human_skincolor)) <span class="sc">+</span></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="fu">aes</span>(<span class="at">linetype=</span> human_skincolor), <span class="at">method=</span><span class="st">'lm'</span>, <span class="at">se=</span><span class="cn">TRUE</span>) <span class="sc">+</span></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">'Height(cm)'</span>, <span class="at">y=</span><span class="st">'Mass (kg)'</span>, <span class="at">title=</span><span class="st">'Starwars characters'</span>, <span class="at">color=</span>mylab, <span class="at">shape=</span>mylab, <span class="at">linetype=</span>mylab) <span class="sc">+</span></span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="fu">c</span>(<span class="fl">0.1</span>,<span class="fl">0.7</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-13_e5a4419c1b3b0be91a353424cd5ff487">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>mylab<span class="ot">=</span> <span class="st">'Human character?'</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> starwars, <span class="fu">aes</span>(<span class="at">x =</span> height, <span class="at">y =</span> mass, <span class="at">color=</span>human_skincolor)) <span class="sc">+</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">shape=</span>human_skincolor)) <span class="sc">+</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="fu">aes</span>(<span class="at">linetype=</span> human_skincolor), <span class="at">method=</span><span class="st">'lm'</span>, <span class="at">se=</span><span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">'Height(cm)'</span>, <span class="at">y=</span><span class="st">'Mass (kg)'</span>, <span class="at">title=</span><span class="st">'Starwars characters'</span>, <span class="at">color=</span>mylab, <span class="at">shape=</span>mylab, <span class="at">linetype=</span>mylab) <span class="sc">+</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="fu">c</span>(<span class="fl">0.1</span>,<span class="fl">0.7</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 </div>
-<img data-src="02_ggplot_files/figure-revealjs/unnamed-chunk-11-1.png" width="960" class="r-stretch"></section>
+<img data-src="02_ggplot_files/figure-revealjs/unnamed-chunk-13-1.png" width="960" class="r-stretch"></section>
 <section id="customizing-labels-and-legends-1" class="slide level2">
 <h2>Customizing labels and legends</h2>
-<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-12_b711dc62846102407cb3f97c824fc17c">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>mylab<span class="ot">=</span> <span class="st">'Human character?'</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> starwars, <span class="fu">aes</span>(<span class="at">x =</span> height, <span class="at">y =</span> mass, <span class="at">color=</span>human_skincolor)) <span class="sc">+</span></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">shape=</span>human_skincolor)) <span class="sc">+</span></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="fu">aes</span>(<span class="at">linetype=</span> human_skincolor), <span class="at">method=</span><span class="st">'lm'</span>, <span class="at">se=</span><span class="cn">TRUE</span>) <span class="sc">+</span></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">'Height(cm)'</span>, <span class="at">y=</span><span class="st">'Mass (kg)'</span>, <span class="at">title=</span><span class="st">'Starwars characters'</span>, <span class="at">color=</span>mylab, <span class="at">shape=</span>mylab, <span class="at">linetype=</span>mylab) <span class="sc">+</span></span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="fu">c</span>(<span class="fl">0.1</span>,<span class="fl">0.7</span>)) <span class="sc">+</span></span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_cartesian</span>(<span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">200</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Same, but now change the default axis limits</p>
+<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-14_fbfcbb60c719fa346a18a47edd26d5ce">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>mylab<span class="ot">=</span> <span class="st">'Human character?'</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> starwars, <span class="fu">aes</span>(<span class="at">x =</span> height, <span class="at">y =</span> mass, <span class="at">color=</span>human_skincolor)) <span class="sc">+</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">shape=</span>human_skincolor)) <span class="sc">+</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="fu">aes</span>(<span class="at">linetype=</span> human_skincolor), <span class="at">method=</span><span class="st">'lm'</span>, <span class="at">se=</span><span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">'Height(cm)'</span>, <span class="at">y=</span><span class="st">'Mass (kg)'</span>, <span class="at">title=</span><span class="st">'Starwars characters'</span>, <span class="at">color=</span>mylab, <span class="at">shape=</span>mylab, <span class="at">linetype=</span>mylab) <span class="sc">+</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="fu">c</span>(<span class="fl">0.1</span>,<span class="fl">0.7</span>)) <span class="sc">+</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_cartesian</span>(<span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">200</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 </div>
-<img data-src="02_ggplot_files/figure-revealjs/unnamed-chunk-12-1.png" width="960" class="r-stretch"></section>
+<img data-src="02_ggplot_files/figure-revealjs/unnamed-chunk-14-1.png" width="960" class="r-stretch"></section>
 <section id="non-linear-trends" class="slide level2">
 <h2>Non-linear trends</h2>
 <p>By default <code>geom_smooth</code> shows a non-linear regression (<code>method="loess"</code>). Consider the <code>mpg</code> data, where</p>
@@ -571,13 +596,76 @@
 <li><p><code>displ</code>: engine size</p></li>
 <li><p><code>hwy</code>: highway miles per galon</p></li>
 </ul>
-<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-13_4d3e97c23ce7842998aeb63f3e0c9f7b">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(mpg, <span class="fu">aes</span>(<span class="at">x =</span> displ, <span class="at">y =</span> hwy)) <span class="sc">+</span> </span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">color=</span><span class="st">'black'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-15_acc92078f0d7dafd5fa2233c41e35ef6">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(mpg, <span class="fu">aes</span>(<span class="at">x =</span> displ, <span class="at">y =</span> hwy)) <span class="sc">+</span> </span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">color=</span><span class="st">'black'</span>) <span class="sc">+</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method=</span><span class="st">'lm'</span>, <span class="at">color=</span><span class="st">'blue'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 </div>
-<img data-src="02_ggplot_files/figure-revealjs/unnamed-chunk-13-1.png" width="960" class="r-stretch"></section></section>
+<img data-src="02_ggplot_files/figure-revealjs/unnamed-chunk-15-1.png" width="960" class="r-stretch"></section></section>
+<section>
+<section id="exercise" class="title-slide slide level1 center">
+<h1>Exercise</h1>
+
+</section>
+<section class="slide level2">
+
+<p>The blog FiveThirtyEight featured this <a href="https://fivethirtyeight.com/features/higher-rates-of-hate-crimes-are-tied-to-income-inequality">post</a> on hate crimes around the 2016 USA elections</p>
+<p>Dataset <code>hate_crimes</code> (package <code>fivethirtyeight</code>) has this info for each state:</p>
+<ul>
+<li><p><code>avg_hatecrimes_per_100k_fbi</code>: pre-election number of hate crimes per 100,000 population by the FBI</p></li>
+<li><p><code>hate_crimes_per_100k_splc</code>: post-election crimes in 10-day period from SPLC (southern poverty law center)</p></li>
+<li><p>education (% adults <span class="math inline">\(\geq\)</span> 25 with high school degree</p></li>
+<li><p>% of people who voted Donald Trump</p></li>
+<li><p>Income inequality (Gini index)</p></li>
+</ul>
+<p>Plus variables related to racial diversity, geographic heterogeneity and economic indicators (see <code>help(hate_crimes)</code>)</p>
+</section>
+<section class="slide level2">
+
+<p>A simple scatterplot shows that FBI-reported hate crimes are lower in states with more Trump voters. However, according to the blog Trump voters were not statistically significant, after accounting for inequality and education</p>
+<blockquote>
+<p>two variables remained significant (…): income inequality and percent population with a high school degree</p>
+</blockquote>
+<p>To study this issue, use <code>ggplot</code> to produce:</p>
+<ol type="1">
+<li><p>Scatter-plots of FBI-related crimes vs.&nbsp;Trump voters, vs.&nbsp;Gini index and vs.&nbsp;high-school. Add a regression line to the plot (without standard errors) and label the x- and y-axes</p></li>
+<li><p>Scatter-plot of FBI-related crimes vs.&nbsp;Trump voters, with different panels (facets) for states in each of 4 categories for the Gini index (see next slide)</p></li>
+<li><p>Same as 2, now with panels for 4 categories in the % of high-school education</p></li>
+</ol>
+<p>Turn in an html with your solution <a href="https://drive.google.com/drive/folders/1jhh1CrXM3hqc7qTrOYeQzo2pV8Vly1NY?usp=sharing">here</a>. Name your file firstname_lastname.html</p>
+</section>
+<section class="slide level2">
+
+<p>To help you get started, load the data and create a smaller version with only the relevant variables</p>
+<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-16_f00d9f90e268ffde17fdb91893509883">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fivethirtyeight)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>sel<span class="ot">=</span> <span class="fu">c</span>(<span class="st">'state_abbrev'</span>,<span class="st">'avg_hatecrimes_per_100k_fbi'</span>,<span class="st">'share_vote_trump'</span>,<span class="st">'gini_index'</span>,<span class="st">'share_pop_hs'</span>)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>hc<span class="ot">=</span> hate_crimes[,sel]</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(hc)<span class="ot">=</span> <span class="fu">c</span>(<span class="st">'state'</span>,<span class="st">'hatecrimes_fbi'</span>,<span class="st">'votes_trump'</span>,<span class="st">'gini'</span>,<span class="st">'hs'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>For fun, we obtain their pairwise correlations</p>
+<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-17_7abf620994a75f4582c9f7d79bca1956">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">cor</span>(hc[,<span class="sc">-</span><span class="dv">1</span>], <span class="at">use=</span><span class="st">'complete.obs'</span>),<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>               hatecrimes_fbi votes_trump   gini     hs
+hatecrimes_fbi          1.000      -0.505  0.421  0.164
+votes_trump            -0.505       1.000 -0.461 -0.127
+gini                    0.421      -0.461  1.000 -0.583
+hs                      0.164      -0.127 -0.583  1.000</code></pre>
+</div>
+</div>
+<p>Finally, we discretize the Gini index and education into 4 groups</p>
+<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-18_39ec113b8e6549494b362e029adf0e5a">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>hc<span class="sc">$</span>ginic<span class="ot">=</span> <span class="fu">cut</span>(hc<span class="sc">$</span>gini, <span class="at">breaks=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="fl">0.43</span>,<span class="fl">0.45</span>,<span class="fl">0.47</span>,<span class="dv">1</span>))</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="fu">levels</span>(hc<span class="sc">$</span>ginic)<span class="ot">=</span> <span class="fu">c</span>(<span class="st">'Gini &lt;= 0.43'</span>,<span class="st">'0.43 &lt; Gini &lt;= 0.45'</span>,<span class="st">'0.45 &lt; Gini &lt;= 0.47'</span>,<span class="st">'Gini &gt; 0.47'</span>)</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>hc<span class="sc">$</span>hsc<span class="ot">=</span> <span class="fu">cut</span>(hc<span class="sc">$</span>hs, <span class="at">breaks=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="fl">0.83</span>,<span class="fl">0.86</span>,<span class="fl">0.9</span>,<span class="dv">1</span>))</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="fu">levels</span>(hc<span class="sc">$</span>hsc)<span class="ot">=</span> <span class="fu">c</span>(<span class="st">'hs &lt;= 0.83'</span>, <span class="st">'0.83 &lt; hs &lt;= 0.86'</span>, <span class="st">'0.86 &lt; hs &lt;= 0.9'</span>, <span class="st">'hs &gt; 0.9'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Hint: see <code>help(hate_crimes)</code> for how to create a scatterplot. Then add facets based on <code>ginic</code> and <code>hsc</code> created above</p>
+</section></section>
 <section>
 <section id="beyond-scatter-plots" class="title-slide slide level1 center">
 <h1>Beyond scatter plots</h1>
@@ -590,7 +678,7 @@
 <div class="tab-content">
 <div id="tabset-1-1">
 <div class="cell" data-hash="02_ggplot_cache/revealjs/swboxplot2_e2bbf9b4bc3e7ae1924f1e7b74a1695e">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(height <span class="sc">~</span> human_skincolor, <span class="at">data=</span>starwars, <span class="at">names=</span><span class="fu">c</span>(<span class="st">'No'</span>,<span class="st">'Yes'</span>), <span class="at">xlab=</span><span class="st">'Human skin color'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(height <span class="sc">~</span> human_skincolor, <span class="at">data=</span>starwars, <span class="at">names=</span><span class="fu">c</span>(<span class="st">'No'</span>,<span class="st">'Yes'</span>), <span class="at">xlab=</span><span class="st">'Human skin color'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img data-src="02_ggplot_files/figure-revealjs/swboxplot2-1.png" width="960"></p>
 </div>
@@ -598,8 +686,8 @@
 </div>
 <div id="tabset-1-2">
 <div class="cell" data-hash="02_ggplot_cache/revealjs/scatter_9c24a3a579242eedec7aab388fc697f7">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(starwars, <span class="fu">aes</span>(<span class="at">x=</span>human_skincolor, <span class="at">y=</span>height)) <span class="sc">+</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(starwars, <span class="fu">aes</span>(<span class="at">x=</span>human_skincolor, <span class="at">y=</span>height)) <span class="sc">+</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img data-src="02_ggplot_files/figure-revealjs/scatter-1.png" width="960"></p>
 </div>
@@ -607,9 +695,9 @@
 </div>
 <div id="tabset-1-3">
 <div class="cell" data-hash="02_ggplot_cache/revealjs/swviolin_c32dac278c46a971926829f3380528b6">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(starwars, <span class="fu">aes</span>(<span class="at">x=</span>human_skincolor, <span class="at">y=</span>height)) <span class="sc">+</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_violin</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(starwars, <span class="fu">aes</span>(<span class="at">x=</span>human_skincolor, <span class="at">y=</span>height)) <span class="sc">+</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_violin</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img data-src="02_ggplot_files/figure-revealjs/swviolin-1.png" width="960"></p>
 </div>
@@ -624,29 +712,29 @@
 <ul id="tabset-2" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-2-1">Histogram</a></li><li><a href="#tabset-2-2">Frequency polygram</a></li><li><a href="#tabset-2-3">Density plot</a></li></ul>
 <div class="tab-content">
 <div id="tabset-2-1">
-<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-14_1a3ddd9503807ca1b6f8f251f2ceed1e">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(starwars, <span class="fu">aes</span>(<span class="at">x=</span>height, <span class="at">fill=</span>human_skincolor)) <span class="sc">+</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">alpha=</span><span class="fl">0.2</span>, <span class="at">color=</span><span class="st">'black'</span>)  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-19_2948678951f606d077fdd1fde55f669d">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(starwars, <span class="fu">aes</span>(<span class="at">x=</span>height, <span class="at">fill=</span>human_skincolor)) <span class="sc">+</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">alpha=</span><span class="fl">0.2</span>, <span class="at">color=</span><span class="st">'black'</span>)  <span class="co">#alpha is the color transparency</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img data-src="02_ggplot_files/figure-revealjs/unnamed-chunk-14-1.png" width="960"></p>
+<p><img data-src="02_ggplot_files/figure-revealjs/unnamed-chunk-19-1.png" width="960"></p>
 </div>
 </div>
 </div>
 <div id="tabset-2-2">
-<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-15_346dd9422b93a5ce8b6aee9a5d838a6e">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(starwars, <span class="fu">aes</span>(<span class="at">x=</span>height, <span class="at">color=</span>human_skincolor)) <span class="sc">+</span></span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_freqpoly</span>(<span class="at">alpha=</span><span class="fl">0.2</span>)  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-20_db303cfd762998871fd962ad22f76901">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(starwars, <span class="fu">aes</span>(<span class="at">x=</span>height, <span class="at">color=</span>human_skincolor)) <span class="sc">+</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_freqpoly</span>()  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img data-src="02_ggplot_files/figure-revealjs/unnamed-chunk-15-1.png" width="960"></p>
+<p><img data-src="02_ggplot_files/figure-revealjs/unnamed-chunk-20-1.png" width="960"></p>
 </div>
 </div>
 </div>
 <div id="tabset-2-3">
-<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-16_524bcb1f47f4abff3f958467f4621978">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(starwars, <span class="fu">aes</span>(<span class="at">x=</span>height, <span class="at">color=</span>human_skincolor)) <span class="sc">+</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>()  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-21_d64572d2a604e770d813b7ff34f092e4">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(starwars, <span class="fu">aes</span>(<span class="at">x=</span>height, <span class="at">color=</span>human_skincolor)) <span class="sc">+</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>()  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img data-src="02_ggplot_files/figure-revealjs/unnamed-chunk-16-1.png" width="960"></p>
+<p><img data-src="02_ggplot_files/figure-revealjs/unnamed-chunk-21-1.png" width="960"></p>
 </div>
 </div>
 </div>
@@ -660,22 +748,22 @@
 <ul id="tabset-3" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-3-1">scatterplot</a></li><li><a href="#tabset-3-2">2d histogram</a></li></ul>
 <div class="tab-content">
 <div id="tabset-3-1">
-<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-17_8fd866be35434767dfc83b1d37a3cd50">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(diamonds, <span class="fu">aes</span>(<span class="at">x=</span>carat, <span class="at">y=</span>price)) <span class="sc">+</span></span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_log10</span>() <span class="sc">+</span> <span class="fu">scale_y_log10</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-22_b431aa8fc9636634e3db03f57d6d1155">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(diamonds, <span class="fu">aes</span>(<span class="at">x=</span>carat, <span class="at">y=</span>price)) <span class="sc">+</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_log10</span>() <span class="sc">+</span> <span class="fu">scale_y_log10</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img data-src="02_ggplot_files/figure-revealjs/unnamed-chunk-17-1.png" width="960"></p>
+<p><img data-src="02_ggplot_files/figure-revealjs/unnamed-chunk-22-1.png" width="960"></p>
 </div>
 </div>
 </div>
 <div id="tabset-3-2">
-<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-18_33c1d7f1acd252948977ce69a5f7f913">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(diamonds, <span class="fu">aes</span>(<span class="at">x=</span>carat, <span class="at">y=</span>price)) <span class="sc">+</span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bin2d</span>() <span class="sc">+</span></span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_log10</span>() <span class="sc">+</span> <span class="fu">scale_y_log10</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-23_4481102d79bd8ebbdf37b61c08f965a3">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(diamonds, <span class="fu">aes</span>(<span class="at">x=</span>carat, <span class="at">y=</span>price)) <span class="sc">+</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bin2d</span>() <span class="sc">+</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_log10</span>() <span class="sc">+</span> <span class="fu">scale_y_log10</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img data-src="02_ggplot_files/figure-revealjs/unnamed-chunk-18-1.png" width="960"></p>
+<p><img data-src="02_ggplot_files/figure-revealjs/unnamed-chunk-23-1.png" width="960"></p>
 </div>
 </div>
 </div>
@@ -685,59 +773,59 @@
 <section id="barplot-counts" class="slide level2">
 <h2>Barplot (counts)</h2>
 <p>Count the number of diamonds with each cut quality (variable <code>cut</code>)</p>
-<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-19_181e590225e2bff3032c99e0425f786d">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(diamonds) <span class="sc">+</span> </span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="fu">aes</span>(<span class="at">x =</span> cut))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-24_9d4f8a629a6839f2e9df741c53cc108d">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(diamonds) <span class="sc">+</span> </span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="fu">aes</span>(<span class="at">x =</span> cut))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 </div>
-<img data-src="02_ggplot_files/figure-revealjs/unnamed-chunk-19-1.png" width="960" class="r-stretch"></section>
+<img data-src="02_ggplot_files/figure-revealjs/unnamed-chunk-24-1.png" width="960" class="r-stretch"></section>
 <section id="barplot-percentage" class="slide level2">
 <h2>Barplot (percentage)</h2>
 <p>To plot percentages we use <code>y=after_stat(prop)</code>, for some funny reason we must also set <code>group=1</code>.</p>
-<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-20_d7c004bec01a563c3ae734d9d8134d80">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(diamonds) <span class="sc">+</span> </span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="fu">aes</span>(<span class="at">x =</span> cut, <span class="at">y=</span><span class="fu">after_stat</span>(prop), <span class="at">group=</span><span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-25_15a8624fdbafc8ed503308b9cd43a3dd">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(diamonds) <span class="sc">+</span> </span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="fu">aes</span>(<span class="at">x =</span> cut, <span class="at">y=</span><span class="fu">after_stat</span>(prop), <span class="at">group=</span><span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 </div>
-<img data-src="02_ggplot_files/figure-revealjs/unnamed-chunk-20-1.png" width="960" class="r-stretch"></section>
+<img data-src="02_ggplot_files/figure-revealjs/unnamed-chunk-25-1.png" width="960" class="r-stretch"></section>
 <section id="barplot-percentage-1" class="slide level2">
 <h2>Barplot (percentage)</h2>
 <p>Finally, <code>scale_y_continuous</code> changes the 0-1 scale to %. We also set axis labels and increase their default size</p>
-<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-21_fb0f956931e0d80301ce7ab0671413b4">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(diamonds) <span class="sc">+</span> </span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="fu">aes</span>(<span class="at">x =</span> cut, <span class="at">y=</span><span class="fu">after_stat</span>(prop), <span class="at">group=</span><span class="dv">1</span>)) <span class="sc">+</span></span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span><span class="fu">percent_format</span>()) <span class="sc">+</span></span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">'Diamond cut'</span>, <span class="at">y=</span><span class="st">'Percentage'</span>) <span class="sc">+</span></span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text=</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">12</span>), <span class="at">axis.title=</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">14</span>,<span class="at">face=</span><span class="st">"bold"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-26_68ed975a994e9807a1079356aa24bddb">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(diamonds) <span class="sc">+</span> </span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="fu">aes</span>(<span class="at">x =</span> cut, <span class="at">y=</span><span class="fu">after_stat</span>(prop), <span class="at">group=</span><span class="dv">1</span>)) <span class="sc">+</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span><span class="fu">percent_format</span>()) <span class="sc">+</span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">'Diamond cut'</span>, <span class="at">y=</span><span class="st">'Percentage'</span>) <span class="sc">+</span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text=</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">12</span>), <span class="at">axis.title=</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">14</span>,<span class="at">face=</span><span class="st">"bold"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 </div>
-<img data-src="02_ggplot_files/figure-revealjs/unnamed-chunk-21-1.png" width="960" class="r-stretch"></section>
+<img data-src="02_ggplot_files/figure-revealjs/unnamed-chunk-26-1.png" width="960" class="r-stretch"></section>
 <section id="multiple-barplots" class="slide level2">
 <h2>Multiple barplots</h2>
 <p><code>fill</code> aesthetic split counts according to the specified variable (diamond clarity)</p>
-<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-22_e199aad9b47ea935ddd5890f4d842932">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(diamonds) <span class="sc">+</span> </span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="fu">aes</span>(<span class="at">x =</span> cut, <span class="at">fill =</span> clarity))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-27_11518711fc443c5db3f1ffe3fe9439fb">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(diamonds) <span class="sc">+</span> </span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="fu">aes</span>(<span class="at">x =</span> cut, <span class="at">fill =</span> clarity))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 </div>
-<img data-src="02_ggplot_files/figure-revealjs/unnamed-chunk-22-1.png" width="960" class="r-stretch"></section>
+<img data-src="02_ggplot_files/figure-revealjs/unnamed-chunk-27-1.png" width="960" class="r-stretch"></section>
 <section id="multiple-barplots-1" class="slide level2">
 <h2>Multiple barplots</h2>
 <p><code>position="dodge"</code> places bars beside each other</p>
-<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-23_f7c79ac69018d616da681521120962ac">
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(diamonds) <span class="sc">+</span> </span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="fu">aes</span>(<span class="at">x =</span> cut, <span class="at">fill =</span> clarity), <span class="at">position =</span> <span class="st">"dodge"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-28_0c52c0b1ca75fca1182a81c43a8e999f">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(diamonds) <span class="sc">+</span> </span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="fu">aes</span>(<span class="at">x =</span> cut, <span class="at">fill =</span> clarity), <span class="at">position =</span> <span class="st">"dodge"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 </div>
-<img data-src="02_ggplot_files/figure-revealjs/unnamed-chunk-23-1.png" width="960" class="r-stretch"></section>
+<img data-src="02_ggplot_files/figure-revealjs/unnamed-chunk-28-1.png" width="960" class="r-stretch"></section>
 <section id="lines-plot" class="slide level2">
 <h2>Lines plot</h2>
 <p>Effect of vitamin C on tooth growth in guinea pigs vs dose, separately for two delivery methods (orange juice, ascorbic acid)</p>
-<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-24_2049829b17293c697488315f57b473c2">
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>df<span class="ot">=</span> <span class="fu">data.frame</span>(<span class="at">supp=</span><span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"VC"</span>, <span class="st">"OJ"</span>), <span class="at">each=</span><span class="dv">3</span>),</span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">dose=</span><span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"D0.5"</span>, <span class="st">"D1"</span>, <span class="st">"D2"</span>),<span class="dv">2</span>),</span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>                <span class="at">len=</span><span class="fu">c</span>(<span class="fl">6.8</span>, <span class="dv">15</span>, <span class="dv">33</span>, <span class="fl">4.2</span>, <span class="dv">10</span>, <span class="fl">29.5</span>))</span>
-<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-29_97b92c80b46fbf2286f83d925501559c">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>df<span class="ot">=</span> <span class="fu">data.frame</span>(<span class="at">supp=</span><span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"VC"</span>, <span class="st">"OJ"</span>), <span class="at">each=</span><span class="dv">3</span>),</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">dose=</span><span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"D0.5"</span>, <span class="st">"D1"</span>, <span class="st">"D2"</span>),<span class="dv">2</span>),</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>                <span class="at">len=</span><span class="fu">c</span>(<span class="fl">6.8</span>, <span class="dv">15</span>, <span class="dv">33</span>, <span class="fl">4.2</span>, <span class="dv">10</span>, <span class="fl">29.5</span>))</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  supp dose  len
 1   VC D0.5  6.8
@@ -748,25 +836,30 @@
 6   OJ   D2 29.5</code></pre>
 </div>
 </div>
-<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-25_cb795cc04dea6c30add9205f2209ede6">
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data=</span>df, <span class="fu">aes</span>(<span class="at">x=</span>dose, <span class="at">y=</span>len, <span class="at">group=</span>supp, <span class="at">color=</span>supp)) <span class="sc">+</span></span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>()<span class="sc">+</span></span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-30_6ebedbc88dee169249cede0ade413193">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data=</span>df, <span class="fu">aes</span>(<span class="at">x=</span>dose, <span class="at">y=</span>len, <span class="at">group=</span>supp, <span class="at">color=</span>supp)) <span class="sc">+</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>()<span class="sc">+</span></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 
-</section><section id="lines-plot-output" class="slide level2 output-location-slide"><h2>Lines plot</h2><div class="cell output-location-slide" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-25_cb795cc04dea6c30add9205f2209ede6">
+</section><section id="lines-plot-output" class="slide level2 output-location-slide"><h2>Lines plot</h2><div class="cell output-location-slide" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-30_6ebedbc88dee169249cede0ade413193">
 <div class="cell-output-display">
-<p><img data-src="02_ggplot_files/figure-revealjs/unnamed-chunk-25-1.png" width="960"></p>
+<p><img data-src="02_ggplot_files/figure-revealjs/unnamed-chunk-30-1.png" width="960"></p>
 </div>
 </div></section></section>
+<section>
 <section id="ggplot-extensions" class="title-slide slide level1 center">
 <h1>ggplot extensions</h1>
-<p>Many user-contributed extensions to ggplot. To get a feeling for what’s available, see the <a href="https://exts.ggplot2.tidyverse.org/gallery">gallery</a></p>
-<p>A particularly cool one is <code>gganimate</code> to create animations (to be discussed)</p>
+
+</section>
+<section id="ggplot-extensions-1" class="slide level2">
+<h2>ggplot extensions</h2>
+<p>There are many user-contributed extensions to ggplot. To get a feeling for what’s available, see the <a href="https://exts.ggplot2.tidyverse.org/gallery">gallery</a></p>
+<p>For example, a cool one is <code>gganimate</code> to create animations (to be discussed)</p>
 <div class="footer footer-default">
 
 </div>
-</section>
+</section></section>
     </div>
   </div>
 
