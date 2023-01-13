@@ -27,6 +27,8 @@ Required R packages
 
 ```{r, eval=FALSE}
 install.packages("dplyr")
+install.packages("gapminder")
+install.packages("gganimate")
 install.packages("ggplot2")
 install.packages("fivethirtyeight")
 install.packages("tidyverse")
@@ -41,6 +43,8 @@ library(tidyverse)  #also loads ggplot2
 library(dplyr)
 library(dsbox)
 library(fivethirtyeight)
+library(gapminder)
+library(gganimate)
 ```
 
 # ggplot basics
@@ -439,6 +443,47 @@ ggplot(data=df, aes(x=dose, y=len, group=supp, color=supp)) +
   geom_point()
 ```
 
+# Saving a ggplot
+
+---
+
+`ggsave` saves the last (by default) ggplot into the specified file and directory (option `path`). It guesses the format from the file extension
+
+```{r, eval=FALSE}
+ggplot(mtcars, aes(mpg, wt)) + geom_point()
+ggsave("mtcars.pdf", plot=last_plot()) #ggsave("mtcars.png") for png format
+```
+
+Or, use `print` and combined with functions like `png` or `pdf`
+
+```{r, eval=FALSE}
+p = ggplot(mtcars, aes(mpg, wt)) + geom_point()
+png("mtcars.png")  #use pdf("mtcars.pdf") for a pdf format
+print(p)
+dev.off() #close the plotting device (saves the file)
+```
+
+Base R plots can be saved similarly
+
+```{r, eval=FALSE}
+png("mtcars.png")
+plot(mtcars[,c('mpg','wt')])
+dev.off()
+```
+
+
+## Building and saving in multiple steps
+
+
+```{r, eval=FALSE}
+p= ggplot(data = starwars, aes(x = height, y = mass, color=human_skincolor)) +
+  geom_point(aes(shape=human_skincolor)) 
+#you can call ggsave() here
+p + geom_smooth(aes(linetype= human_skincolor), method='lm', se=FALSE)
+#call ggsave() again to save in a different file
+```
+
+
 
 # ggplot extensions
 
@@ -446,6 +491,131 @@ ggplot(data=df, aes(x=dose, y=len, group=supp, color=supp)) +
 
 There are many user-contributed extensions to ggplot. To get a feeling for what's available, see the [gallery](https://exts.ggplot2.tidyverse.org/gallery)
 
-For example, a cool one is `gganimate` to create animations (to be discussed)
+A cool one is `gganimate` to create animations.
+
+**gapminder data:** country life expectancy over time popularized by Dr. Hans Rosling
+
+{{< video https://www.youtube.com/watch?v=jbkSRLYSojo&ab_channel=GapminderFoundation width="750" height="400">}}
 
 
+## gganimate
+
+Adds animation layers to your ggplot. The main layer are transitions, specifying how data should be spread as the animation progresses
+
+- `transition_states()`: transition according to a discrete variable
+
+- `transition_time()`: transition according to time
+
+
+Other layers
+
+- `ease_aes()`: how aesthetics should be eased during transitions (linear, gain momentum over time...)
+
+- `enter_*()`/`exit_*()`: how new data should appear and how old data should disappear (fade in/out etc)
+
+- `shadow_*()`: how to present data from other times
+
+- `view_*()`: how to change positional scales
+
+The full list of options is [here](https://gganimate.com/reference/index.html)
+
+
+## Saving an animation
+
+`anim_save()` saves your last animated plot into a specified file and directory ("myfile.gif" and "mydirectory" below)
+
+```{r, eval=FALSE}
+anim_save(myfile.gif, animation=last_animation(), path="mydirectory")
+```
+
+By default the output is a .gif. You can choose other formats (e.g. an MPEG video) by calling `animate` before saving
+
+
+```{r, eval=FALSE}
+animate(p, renderer = ffmpeg_renderer())
+anim_save(myfile.gif, animation=last_animation(), path="mydirectory")
+```
+
+
+
+## Life expentancy data
+
+Dataset `gapminder` in package `gapminder`
+
+```{r}
+gapminder
+```
+
+## Non-animated plot
+
+A non-animated plot (all years are shown simultaneously)
+
+```{r}
+ggplot(gapminder, aes(gdpPercap, lifeExp)) +
+  geom_point(aes(colour=continent, size=pop), alpha = 0.7, show.legend = TRUE) +
+  scale_size(range = c(2, 12)) +
+  scale_x_log10() +
+  labs(x='GDP per capita', y='Life expectancy')
+```
+
+## transition_time
+
+We add a transition_time according to year.
+
+- frame_title can be used to label each year
+
+- Output appears in "Viewer" (RStudio's bottom-right panel)
+
+
+```{r, eval=FALSE}
+ggplot(gapminder, aes(gdpPercap, lifeExp)) +
+  geom_point(aes(colour=continent, size=pop), alpha = 0.7, show.legend = TRUE) +
+  scale_size(range = c(2, 12)) +
+  scale_x_log10() +
+#  geom_text(aes(label = country)) + #to add country labels
+  #add gganimate layers
+  transition_time(year) +
+  labs(title = 'Year: {frame_time}', x = 'GDP per capita', y = 'life expectancy')
+```
+
+---
+
+![](figs/gapminder.gif)
+
+
+## transition_states
+
+transition_time treats time as continuous, e.g. adding intermediate frames between years
+
+transition_states evolves in a more "discrete" manner
+
+**Example:** airquality data
+
+```{r, eval=FALSE}
+ggplot(airquality, aes(Day, Temp)) + 
+  geom_point(colour = 'steelblue') +
+  transition_states(Month) +
+  labs(title='Month: {closest_state}')
+```
+
+
+![](figs/airquality.gif)
+## transition_reveal
+
+You can reveal new points in an increasing fashion. For example, one may create this plot.
+
+![](figs/airquality_byday.gif)
+
+
+## Exercise
+
+Load the Gini dataset at the course's GitHub site.
+
+```{r}
+gini= as_tibble(read.csv("~/github/statcomp/datasets/gini.csv"))
+gini
+```
+
+1. Do a (non-animated) line plot of Gini vs time, with a different line colour per country
+
+2. Add `transition_reveal(Year)` to add an animation over time

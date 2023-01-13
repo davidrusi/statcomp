@@ -23,20 +23,11 @@ bibliography: references.bib
 
 ## Reproducing these lecture notes
 
-Required R packages
-
-```{r, eval=FALSE}
-install.packages("tidyverse")
-install.packages("nycflights13")
-install.packages('Lahman')
-#install.packages("devtools")
-#devtools::install_github("rstudio-education/dsbox")
-```
-
-Once they're installed, load them.
+Load the required R packages.
 
 ```{r, warning=FALSE}
 library(tidyverse)
+library(gapminder)
 library(nycflights13)
 library(Lahman)
 ```
@@ -138,18 +129,18 @@ Missing's (`NA`) are excluded
 
 ```{r}
 # Let x be Mary's age. We don't know how old she is.
-x <- NA
+x= NA
 x == 20 #is Mary 20?
 
 # Let y be John's age. We don't know how old he is.
-y <- NA
+y= NA
 x == y # Are John and Mary the same age?
 ```
 
 To select rows with missing values, use `is.na`
 
 ```{r}
-df <- tibble(x = c(1, NA, 3))
+df= tibble(x = c(1, NA, 3))
 filter(df, is.na(x) | x > 1)
 ```
 
@@ -219,7 +210,7 @@ rename(flights, deptime = dep_time)
 
 ## Mutate
 
-Select a subset of columns a create 2 new ones
+We select a subset of columns and create 2 new ones
 
 ```{r}
 flights_sml= select(flights, year:day, contains("delay"), distance, air_time)
@@ -237,27 +228,27 @@ transmute(flights, gain = dep_delay - arr_delay, hours = air_time / 60)
 
 ## Beyond trasmute
 
-Sometimes easier to create variable separately, then add it to the dataframe.
+Sometimes easier to create a variable separately, then add it to the tibble
 
-Example. Companies get fined 100eur per hour of delay in departure, and 200eur/h of delay in arrival. There's no reward for being early
+**Example.** Companies get fined 100eur per hour of delay in departure, and 200eur/h of delay in arrival. There's no reward for being early
 
 - United airlines negotiates a discount from 100 to 75
 
 - American airlines gets a discount from 200 to 150
 
 ```{r}
-uaflight= flights$carrier == 'UA'
-cost1= cost2= double(nrow(flights))
-cost1[uaflight]= 75 * flights$dep_delay[uaflight]/60
-cost1[!uaflight]= 100 * flights$dep_delay[!uaflight]/60
-cost1[cost1<0]= 0
+uaflight= (flights$carrier == 'UA')
+finedep= finearr= double(nrow(flights))
+finedep[uaflight]= 75 * flights$dep_delay[uaflight]/60
+finedep[!uaflight]= 100 * flights$dep_delay[!uaflight]/60
+finedep[finedep<0]= 0
 
 aaflight= flights$carrier == 'AA'
-cost2[aaflight]= 150 * flights$arr_delay[aaflight]/60
-cost2[!aaflight] = 200 * flights$arr_delay[!aaflight]/60
-cost2[cost2<0]= 0
+finearr[aaflight]= 150 * flights$arr_delay[aaflight]/60
+finearr[!aaflight] = 200 * flights$arr_delay[!aaflight]/60
+finearr[finearr<0]= 0
 
-flights$cost= cost1 + cost2
+flights$fine= finedep + finearr
 ```
 
 ---
@@ -265,7 +256,7 @@ flights$cost= cost1 + cost2
 Let's inspect the results
 
 ```{r}
-select(flights, carrier, dep_delay, arr_delay, cost)
+select(flights, carrier, dep_delay, arr_delay, fine)
 ```
 
 
@@ -285,16 +276,16 @@ aggregate(dep_delay ~ year + month + day, data=flights, FUN=mean, na.rm=TRUE)
 
 ## Basics
 
-dplyr has two key functions are `summarise` and `group_by`
+dplyr has two key functions: `summarise` and `group_by`
 
 ```{r}
-by_day= group_by(flights, year, month, day) #create new tibble
+by_day= group_by(flights, year, month, day) #create new (grouped) tibble
 summarise(by_day, delay = mean(dep_delay, na.rm = TRUE))
 ```
 
 ## Example
 
-Distance vs. delay, for each destination airport with >20 flights. Note the use of `count` 
+Distance vs. delay, for each destination airport with >20 flights other than Honolulu. Note the use of `n()` 
 
 ::: panel-tabset
 
@@ -325,13 +316,14 @@ ggplot(data = delay, mapping = aes(x = dist, y = delay)) +
 Avoid creating intermediate datasets (`by_dest` in the previous slide)
 
 ```{r}
-delays= flights %>% 
-  group_by(dest) %>% 
+delays= flights |>
+  group_by(dest) |> 
   summarise(count = n(),
     dist = mean(distance, na.rm = TRUE),
     delay = mean(arr_delay, na.rm = TRUE)
-  ) %>% 
+  ) |> 
   filter(count > 20, dest != "HNL")
+delays
 ```
 
 ## Useful summaries
@@ -345,8 +337,8 @@ delays= flights %>%
 Example: number of flights with early departure (<5:00am)
 
 ```{r}
-flights %>% 
-  group_by(year, month, day) %>% 
+flights |>
+  group_by(year, month, day) |>
   summarise(n_early = sum(dep_time < 500, na.rm=TRUE))
 ```
 
@@ -367,20 +359,30 @@ summarise(daily, flights = n())
 
 # Further examples
 
-Cancelled flights have NA departure/arrival delays. Select other flights, look mean delay for each airplane (`tailnum`)
+Cancelled flights have NA departure/arrival delays. Select non-cancelled flights and compute mean delay for each airplane (variable `tailnum`)
+
+::: columns
+::: {.column width="70%"}
 
 ```{r}
 not_cancelled= filter(flights, !is.na(dep_delay), !is.na(arr_delay))
-```
-
-```{r}
-delays= not_cancelled %>% 
-  group_by(tailnum) %>% 
+delays= not_cancelled |> 
+  group_by(tailnum) |>
   summarise(count= n(), delay = mean(arr_delay))
 
 ggplot(data = delays, mapping = aes(x = delay)) + 
   geom_freqpoly(binwidth = 10)
 ```
+
+:::
+
+::: {.column width="30%"}
+
+Some airplanes have very large mean delays! What is the reason?
+
+:::
+
+:::
 
 ---
 
@@ -399,9 +401,10 @@ For each player, compute batting average (hits `H` / opportunities to hit the ba
 
 ```{r}
 batting= as_tibble(Lahman::Batting)
+batting
 
-batters= batting %>% 
-  group_by(playerID) %>% 
+batters= batting |>
+  group_by(playerID) |> 
   summarise(
     ba = sum(H, na.rm = TRUE) / sum(AB, na.rm = TRUE),
     ab = sum(AB, na.rm = TRUE)
@@ -410,11 +413,10 @@ batters= batting %>%
 
 ---
 
-Both the mean and variance of the batting average associated with opportunities to hit
+Batting average's mean & variance associated with opportunities to hit. Can you think of a reason why?
 
 ```{r}
-batters %>% 
-  filter(ab > 100) %>% 
+  filter(batters, ab > 100) |>
   ggplot(mapping = aes(x = ab, y = ba)) +
     geom_point() + 
     geom_smooth(se = FALSE) +
@@ -423,18 +425,27 @@ batters %>%
 
 ## Counts
 
-Two equivalent ways to count
+Two equivalent ways to count: `summarise` and `count`
+
+**Example.** Data `diamonds`. How many diamonds of each (color, cut)?
+
+:::panel-tabset
+
+### summarize
 
 ```{r, message=FALSE, warning=FALSE}
-tab= group_by(diamonds, color, cut) %>% 
-  summarise(count=n())
+tab= group_by(diamonds, color, cut) |> summarise(count=n())
 tab
 ```
+
+### count
 
 ```{r}
 tab= count(diamonds, color, cut)
 tab
 ```
+
+:::
 
 ## Counts
 
@@ -450,7 +461,7 @@ ggplot(tab, mapping = aes(x = color, y = cut)) +
 
 `cut_interval`, `cut_number` and `cut_width` divide a continuous variable into groups
 
-Ex. Boxplot of diamond price vs. (discretized) carats
+**Example.** Boxplot of diamond price vs. (discretized) carats
 
 
 ::: panel-tabset
@@ -473,6 +484,19 @@ ggplot(diamonds, mapping = aes(x = carat, y = price)) +
 ```
 
 :::
+
+
+# Exercise
+
+## Continent-wide life expectancy
+
+1. Compute the mean life expectancy and GDP per capita for each (continent, year)
+
+2. Do an animated scatterplot of continent life expectancy vs. GDP (`transition_time(year)`)
+
+```{r}
+gapminder
+```
 
 
 # Data import and export
@@ -501,15 +525,16 @@ Export data
 
 ## .RData files
 
-`save` stores any specified objects in an `.RData` file. For large files use `compress=TRUE'
-
+`save` stores any specified objects in an `.RData` file (for large files use `compress=TRUE`). 
 
 ```{r, eval=FALSE}
 x= rnorm(20)
-y= 10 + 5*x + rnorm(20)
+y= 10 + 5*x + rnorm(20)  #simulate data from a linear regression, errors N(0,1)
 fit= lm(y ~ x)
 save(x, y, fit, file='myfile.RData', compress=TRUE)
 ```
+
+`load` loads the file and all objects saved therein
 
 ```{r, eval=FALSE}
 load('myfile.RData')
@@ -521,7 +546,7 @@ fit
 
 ---
 
-Data can be stored in different format. In a tidy dataset, each variable is a column, each observation a row
+Data can be stored in different formats. In a tidy dataset, each variable is a column, each observation a row
 
 This dataset is tidy
 
@@ -537,8 +562,7 @@ This one has the same data, but is not tidy
 
 ```{r}
 country= c('UK','Spain')
-y2022= c(80.5,50.1)
-y2023= c(81.4,50.0)
+y2022= c(80.5,50.1); y2023= c(81.4,50.0)
 tab2= tibble(country, y2022, y2023)
 names(tab2)[2:3]= c('2022','2023')
 tab2

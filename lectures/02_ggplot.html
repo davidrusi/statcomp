@@ -401,6 +401,7 @@
 <li><a href="#/customizing-the-plots" id="/toc-customizing-the-plots">Customizing the plots</a></li>
 <li><a href="#/exercise" id="/toc-exercise">Exercise</a></li>
 <li><a href="#/beyond-scatter-plots" id="/toc-beyond-scatter-plots">Beyond scatter plots</a></li>
+<li><a href="#/saving-a-ggplot" id="/toc-saving-a-ggplot">Saving a ggplot</a></li>
 <li><a href="#/ggplot-extensions" id="/toc-ggplot-extensions">ggplot extensions</a></li>
 </ul>
 </nav>
@@ -408,20 +409,24 @@
 <section id="reproducing-these-lecture-notes" class="slide level2">
 <h2>Reproducing these lecture notes</h2>
 <p>Required R packages</p>
-<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-1_e860db9de31d697af57c5ab4b5d29f9f">
+<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-1_56b4e4c5d52617a5c6b27055d3babbcf">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"dplyr"</span>)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"ggplot2"</span>)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"fivethirtyeight"</span>)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"tidyverse"</span>)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"devtools"</span>)</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"rstudio-education/dsbox"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"gapminder"</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"gganimate"</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"ggplot2"</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"fivethirtyeight"</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"tidyverse"</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"devtools"</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"rstudio-education/dsbox"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Once they’re installed, load them.</p>
-<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-2_c9afba4e0528630025c58aa5d70521c7">
+<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-2_eefad4ac27fcd2b851bedfe4161a8ee7">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)  <span class="co">#also loads ggplot2</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dsbox)</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fivethirtyeight)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fivethirtyeight)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gapminder)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gganimate)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section>
@@ -848,6 +853,42 @@ hs                      0.164      -0.127 -0.583  1.000</code></pre>
 </div>
 </div></section></section>
 <section>
+<section id="saving-a-ggplot" class="title-slide slide level1 center">
+<h1>Saving a ggplot</h1>
+
+</section>
+<section class="slide level2">
+
+<p><code>ggsave</code> saves the last (by default) ggplot into the specified file and directory (option <code>path</code>). It guesses the format from the file extension</p>
+<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-31_ccbf2708ab50e7b08723338c0d633f9f">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(mtcars, <span class="fu">aes</span>(mpg, wt)) <span class="sc">+</span> <span class="fu">geom_point</span>()</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">"mtcars.pdf"</span>, <span class="at">plot=</span><span class="fu">last_plot</span>()) <span class="co">#ggsave("mtcars.png") for png format</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Or, use <code>print</code> and combined with functions like <code>png</code> or <code>pdf</code></p>
+<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-32_bfd18315ff817f71718b7a4dfb3b74f4">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>p <span class="ot">=</span> <span class="fu">ggplot</span>(mtcars, <span class="fu">aes</span>(mpg, wt)) <span class="sc">+</span> <span class="fu">geom_point</span>()</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"mtcars.png"</span>)  <span class="co">#use pdf("mtcars.pdf") for a pdf format</span></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(p)</span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a><span class="fu">dev.off</span>() <span class="co">#close the plotting device (saves the file)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Base R plots can be saved similarly</p>
+<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-33_069e1a90cf4d615eced10c59444bdbf0">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"mtcars.png"</span>)</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(mtcars[,<span class="fu">c</span>(<span class="st">'mpg'</span>,<span class="st">'wt'</span>)])</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="building-and-saving-in-multiple-steps" class="slide level2">
+<h2>Building and saving in multiple steps</h2>
+<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-34_6d0474dbc8cc2cb9713bd650a0aa04a4">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>p<span class="ot">=</span> <span class="fu">ggplot</span>(<span class="at">data =</span> starwars, <span class="fu">aes</span>(<span class="at">x =</span> height, <span class="at">y =</span> mass, <span class="at">color=</span>human_skincolor)) <span class="sc">+</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">shape=</span>human_skincolor)) </span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a><span class="co">#you can call ggsave() here</span></span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>p <span class="sc">+</span> <span class="fu">geom_smooth</span>(<span class="fu">aes</span>(<span class="at">linetype=</span> human_skincolor), <span class="at">method=</span><span class="st">'lm'</span>, <span class="at">se=</span><span class="cn">FALSE</span>)</span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a><span class="co">#call ggsave() again to save in a different file</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section></section>
+<section>
 <section id="ggplot-extensions" class="title-slide slide level1 center">
 <h1>ggplot extensions</h1>
 
@@ -855,7 +896,137 @@ hs                      0.164      -0.127 -0.583  1.000</code></pre>
 <section id="ggplot-extensions-1" class="slide level2">
 <h2>ggplot extensions</h2>
 <p>There are many user-contributed extensions to ggplot. To get a feeling for what’s available, see the <a href="https://exts.ggplot2.tidyverse.org/gallery">gallery</a></p>
-<p>For example, a cool one is <code>gganimate</code> to create animations (to be discussed)</p>
+<p>A cool one is <code>gganimate</code> to create animations.</p>
+<p><strong>gapminder data:</strong> country life expectancy over time popularized by Dr.&nbsp;Hans Rosling</p>
+<iframe src="https://www.youtube.com/embed/jbkSRLYSojo" width="750" height="400" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe>
+</section>
+<section id="gganimate" class="slide level2">
+<h2>gganimate</h2>
+<p>Adds animation layers to your ggplot. The main layer are transitions, specifying how data should be spread as the animation progresses</p>
+<ul>
+<li><p><code>transition_states()</code>: transition according to a discrete variable</p></li>
+<li><p><code>transition_time()</code>: transition according to time</p></li>
+</ul>
+<p>Other layers</p>
+<ul>
+<li><p><code>ease_aes()</code>: how aesthetics should be eased during transitions (linear, gain momentum over time…)</p></li>
+<li><p><code>enter_*()</code>/<code>exit_*()</code>: how new data should appear and how old data should disappear (fade in/out etc)</p></li>
+<li><p><code>shadow_*()</code>: how to present data from other times</p></li>
+<li><p><code>view_*()</code>: how to change positional scales</p></li>
+</ul>
+<p>The full list of options is <a href="https://gganimate.com/reference/index.html">here</a></p>
+</section>
+<section id="saving-an-animation" class="slide level2">
+<h2>Saving an animation</h2>
+<p><code>anim_save()</code> saves your last animated plot into a specified file and directory (“myfile.gif” and “mydirectory” below)</p>
+<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-35_82b99b92ca85c823c01db12a63b053a0">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anim_save</span>(myfile.gif, <span class="at">animation=</span><span class="fu">last_animation</span>(), <span class="at">path=</span><span class="st">"mydirectory"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>By default the output is a .gif. You can choose other formats (e.g.&nbsp;an MPEG video) by calling <code>animate</code> before saving</p>
+<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-36_38f9d3684bfd83d547d3cf6041daee00">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">animate</span>(p, <span class="at">renderer =</span> <span class="fu">ffmpeg_renderer</span>())</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="fu">anim_save</span>(myfile.gif, <span class="at">animation=</span><span class="fu">last_animation</span>(), <span class="at">path=</span><span class="st">"mydirectory"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="life-expentancy-data" class="slide level2">
+<h2>Life expentancy data</h2>
+<p>Dataset <code>gapminder</code> in package <code>gapminder</code></p>
+<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-37_c278b1727f47955b2f85ec5c1166494e">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>gapminder</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1,704 × 6
+   country     continent  year lifeExp      pop gdpPercap
+   &lt;fct&gt;       &lt;fct&gt;     &lt;int&gt;   &lt;dbl&gt;    &lt;int&gt;     &lt;dbl&gt;
+ 1 Afghanistan Asia       1952    28.8  8425333      779.
+ 2 Afghanistan Asia       1957    30.3  9240934      821.
+ 3 Afghanistan Asia       1962    32.0 10267083      853.
+ 4 Afghanistan Asia       1967    34.0 11537966      836.
+ 5 Afghanistan Asia       1972    36.1 13079460      740.
+ 6 Afghanistan Asia       1977    38.4 14880372      786.
+ 7 Afghanistan Asia       1982    39.9 12881816      978.
+ 8 Afghanistan Asia       1987    40.8 13867957      852.
+ 9 Afghanistan Asia       1992    41.7 16317921      649.
+10 Afghanistan Asia       1997    41.8 22227415      635.
+# … with 1,694 more rows</code></pre>
+</div>
+</div>
+</section>
+<section id="non-animated-plot" class="slide level2">
+<h2>Non-animated plot</h2>
+<p>A non-animated plot (all years are shown simultaneously)</p>
+<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-38_4b451aeef29561b43d4c0a1f5c8225b0">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(gapminder, <span class="fu">aes</span>(gdpPercap, lifeExp)) <span class="sc">+</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">colour=</span>continent, <span class="at">size=</span>pop), <span class="at">alpha =</span> <span class="fl">0.7</span>, <span class="at">show.legend =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_size</span>(<span class="at">range =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">12</span>)) <span class="sc">+</span></span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_log10</span>() <span class="sc">+</span></span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">'GDP per capita'</span>, <span class="at">y=</span><span class="st">'Life expectancy'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+
+</div>
+<img data-src="02_ggplot_files/figure-revealjs/unnamed-chunk-38-1.png" width="960" class="r-stretch"></section>
+<section id="transition_time" class="slide level2">
+<h2>transition_time</h2>
+<p>We add a transition_time according to year.</p>
+<ul>
+<li><p>frame_title can be used to label each year</p></li>
+<li><p>Output appears in “Viewer” (RStudio’s bottom-right panel)</p></li>
+</ul>
+<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-39_8e661cc152f9680ab7e69339197009c0">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(gapminder, <span class="fu">aes</span>(gdpPercap, lifeExp)) <span class="sc">+</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">colour=</span>continent, <span class="at">size=</span>pop), <span class="at">alpha =</span> <span class="fl">0.7</span>, <span class="at">show.legend =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_size</span>(<span class="at">range =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">12</span>)) <span class="sc">+</span></span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_log10</span>() <span class="sc">+</span></span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a><span class="co">#  geom_text(aes(label = country)) + #to add country labels</span></span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>  <span class="co">#add gganimate layers</span></span>
+<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">transition_time</span>(year) <span class="sc">+</span></span>
+<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">'Year: {frame_time}'</span>, <span class="at">x =</span> <span class="st">'GDP per capita'</span>, <span class="at">y =</span> <span class="st">'life expectancy'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section class="slide level2">
+
+
+<img data-src="figs/gapminder.gif" class="r-stretch"></section>
+<section id="transition_states" class="slide level2">
+<h2>transition_states</h2>
+<p>transition_time treats time as continuous, e.g.&nbsp;adding intermediate frames between years</p>
+<p>transition_states evolves in a more “discrete” manner</p>
+<p><strong>Example:</strong> airquality data</p>
+<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-40_19605e774297b93bd7de9dd3e226f618">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(airquality, <span class="fu">aes</span>(Day, Temp)) <span class="sc">+</span> </span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">colour =</span> <span class="st">'steelblue'</span>) <span class="sc">+</span></span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">transition_states</span>(Month) <span class="sc">+</span></span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title=</span><span class="st">'Month: {closest_state}'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><img data-src="figs/airquality.gif"> ## transition_reveal</p>
+<p>You can reveal new points in an increasing fashion. For example, one may create this plot.</p>
+<p><img data-src="figs/airquality_byday.gif"></p>
+</section>
+<section id="exercise-1" class="slide level2">
+<h2>Exercise</h2>
+<p>Load the Gini dataset at the course’s GitHub site.</p>
+<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-41_79688fb52d576ed79136d8e1df2384e4">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>gini<span class="ot">=</span> <span class="fu">as_tibble</span>(<span class="fu">read.csv</span>(<span class="st">"~/github/statcomp/datasets/gini.csv"</span>))</span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>gini</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 624 × 4
+   Entity    Code   Year  Gini
+   &lt;chr&gt;     &lt;chr&gt; &lt;int&gt; &lt;dbl&gt;
+ 1 Argentina ARG    1961  38.8
+ 2 Argentina ARG    1972  32.7
+ 3 Argentina ARG    1974  32.7
+ 4 Argentina ARG    1980  38.1
+ 5 Argentina ARG    1986  41.1
+ 6 Argentina ARG    1987  43.7
+ 7 Argentina ARG    1988  44.3
+ 8 Argentina ARG    1991  44.8
+ 9 Argentina ARG    1992  43  
+10 Argentina ARG    1993  42.4
+# … with 614 more rows</code></pre>
+</div>
+</div>
+<ol type="1">
+<li><p>Do a (non-animated) line plot of Gini vs time, with a different line colour per country</p></li>
+<li><p>Add <code>transition_reveal(Year)</code> to add an animation over time</p></li>
+</ol>
 <div class="footer footer-default">
 
 </div>

@@ -1,0 +1,625 @@
+"Entity","Code","Year","Gini"
+"Argentina","ARG",1961,38.76
+"Argentina","ARG",1972,32.66
+"Argentina","ARG",1974,32.66
+"Argentina","ARG",1980,38.13
+"Argentina","ARG",1986,41.08
+"Argentina","ARG",1987,43.71
+"Argentina","ARG",1988,44.32
+"Argentina","ARG",1991,44.83
+"Argentina","ARG",1992,43
+"Argentina","ARG",1993,42.4
+"Argentina","ARG",1994,43.2
+"Argentina","ARG",1995,46.11
+"Argentina","ARG",1996,46.41
+"Argentina","ARG",1997,46.21
+"Argentina","ARG",1998,48.11
+"Argentina","ARG",1999,47.11
+"Argentina","ARG",2000,48.52
+"Argentina","ARG",2001,50.43
+"Argentina","ARG",2002,51.54
+"Argentina","ARG",2003,50.93
+"Argentina","ARG",2004,47.95
+"Argentina","ARG",2005,46.85
+"Argentina","ARG",2006,45.75
+"Argentina","ARG",2007,44.65
+"Argentina","ARG",2008,43.7
+"Argentina","ARG",2009,43.15
+"Argentina","ARG",2010,41.95
+"Argentina","ARG",2011,40.9
+"Argentina","ARG",2012,39.95
+"Argentina","ARG",2013,39.45
+"Argentina","ARG",2014,39.45
+"Australia","AUS",1981,27.01
+"Australia","AUS",1985,28.06
+"Australia","AUS",1989,29.22
+"Australia","AUS",1994,30.2
+"Australia","AUS",1995,29.6
+"Australia","AUS",1996,29.2
+"Australia","AUS",1997,30.3
+"Australia","AUS",1999,31
+"Australia","AUS",2000,31.1
+"Australia","AUS",2002,30.9
+"Australia","AUS",2003,30.6
+"Australia","AUS",2005,31.4
+"Australia","AUS",2007,32.6
+"Australia","AUS",2009,31.9
+"Australia","AUS",2011,31
+"Australia","AUS",2013,32.3
+"Brazil","BRA",1981,54.72
+"Brazil","BRA",1982,55.32
+"Brazil","BRA",1983,55.92
+"Brazil","BRA",1984,55.42
+"Brazil","BRA",1985,52.63
+"Brazil","BRA",1986,55.72
+"Brazil","BRA",1987,56.81
+"Brazil","BRA",1988,58.8
+"Brazil","BRA",1989,60.69
+"Brazil","BRA",1990,58.21
+"Brazil","BRA",1993,58.21
+"Brazil","BRA",1995,57.41
+"Brazil","BRA",1996,57.71
+"Brazil","BRA",1997,57.71
+"Brazil","BRA",1998,57.41
+"Brazil","BRA",1999,56.8
+"Brazil","BRA",2001,57
+"Brazil","BRA",2002,56.5
+"Brazil","BRA",2003,55.7
+"Brazil","BRA",2004,54.6
+"Brazil","BRA",2005,54.4
+"Brazil","BRA",2006,53.7
+"Brazil","BRA",2007,52.8
+"Brazil","BRA",2008,52
+"Brazil","BRA",2009,51.8
+"Brazil","BRA",2011,50.7
+"Brazil","BRA",2012,50.2
+"Brazil","BRA",2013,50.5
+"Brazil","BRA",2014,49.5
+"Canada","CAN",1976,30
+"Canada","CAN",1977,28.6
+"Canada","CAN",1978,29.1
+"Canada","CAN",1979,28.6
+"Canada","CAN",1980,28.6
+"Canada","CAN",1981,28.5
+"Canada","CAN",1982,28.8
+"Canada","CAN",1983,29.6
+"Canada","CAN",1984,29.3
+"Canada","CAN",1985,29
+"Canada","CAN",1986,29
+"Canada","CAN",1987,28.7
+"Canada","CAN",1988,28.2
+"Canada","CAN",1989,28.1
+"Canada","CAN",1990,28.6
+"Canada","CAN",1991,29.2
+"Canada","CAN",1992,29.1
+"Canada","CAN",1993,28.9
+"Canada","CAN",1994,29
+"Canada","CAN",1995,29.3
+"Canada","CAN",1996,30.1
+"Canada","CAN",1997,30.4
+"Canada","CAN",1998,31.1
+"Canada","CAN",1999,31
+"Canada","CAN",2000,31.7
+"Canada","CAN",2001,31.8
+"Canada","CAN",2002,31.8
+"Canada","CAN",2003,31.6
+"Canada","CAN",2004,32.2
+"Canada","CAN",2005,31.7
+"Canada","CAN",2006,31.8
+"Canada","CAN",2007,31.5
+"Canada","CAN",2008,31.8
+"Canada","CAN",2009,31.6
+"Canada","CAN",2010,31.5
+"Canada","CAN",2011,31.2
+"Canada","CAN",2012,31.8
+"Canada","CAN",2013,31.9
+"Finland","FIN",1966,31.1
+"Finland","FIN",1971,27
+"Finland","FIN",1976,21.5
+"Finland","FIN",1981,20.9
+"Finland","FIN",1987,20.2
+"Finland","FIN",1988,20.7
+"Finland","FIN",1989,21
+"Finland","FIN",1990,20.8
+"Finland","FIN",1991,20.7
+"Finland","FIN",1992,20.5
+"Finland","FIN",1993,20.9
+"Finland","FIN",1994,20.8
+"Finland","FIN",1995,21.4
+"Finland","FIN",1996,21.9
+"Finland","FIN",1997,23
+"Finland","FIN",1998,23.8
+"Finland","FIN",1999,24.5
+"Finland","FIN",2000,24.9
+"Finland","FIN",2001,25.7
+"Finland","FIN",2002,25.2
+"Finland","FIN",2003,25.6
+"Finland","FIN",2004,26.1
+"Finland","FIN",2005,25.9
+"Finland","FIN",2006,26.2
+"Finland","FIN",2007,26.4
+"Finland","FIN",2008,26
+"Finland","FIN",2009,25.5
+"Finland","FIN",2010,25.9
+"Finland","FIN",2011,25.9
+"Finland","FIN",2012,25.5
+"Finland","FIN",2013,25.6
+"Finland","FIN",2014,25.2
+"France","FRA",1962,39.89
+"France","FRA",1965,38.26
+"France","FRA",1970,35.82
+"France","FRA",1975,34.74
+"France","FRA",1979,32.56
+"France","FRA",1984,31.48
+"France","FRA",1990,30.39
+"France","FRA",1996,29.42
+"France","FRA",1997,29.31
+"France","FRA",1998,29.09
+"France","FRA",1999,29.2
+"France","FRA",2000,29.53
+"France","FRA",2001,29.53
+"France","FRA",2002,28.98
+"France","FRA",2003,28.98
+"France","FRA",2004,28.87
+"France","FRA",2005,28.98
+"France","FRA",2006,29.49
+"France","FRA",2007,29.29
+"France","FRA",2008,29.29
+"France","FRA",2009,29.39
+"France","FRA",2010,30.3
+"France","FRA",2011,30.6
+"France","FRA",2012,30.3
+"France","FRA",2013,28.9
+"Germany","DEU",1962,29.2
+"Germany","DEU",1969,25.8
+"Germany","DEU",1973,24.81
+"Germany","DEU",1978,24.73
+"Germany","DEU",1983,24.7
+"Germany","DEU",1984,25.2
+"Germany","DEU",1985,24
+"Germany","DEU",1986,23.9
+"Germany","DEU",1987,23.6
+"Germany","DEU",1988,24.2
+"Germany","DEU",1989,24.5
+"Germany","DEU",1990,24.8
+"Germany","DEU",1991,24.8
+"Germany","DEU",1992,25.2
+"Germany","DEU",1993,25.3
+"Germany","DEU",1994,26
+"Germany","DEU",1995,25.5
+"Germany","DEU",1996,25
+"Germany","DEU",1997,25
+"Germany","DEU",1998,25
+"Germany","DEU",1999,24.9
+"Germany","DEU",2000,25.5
+"Germany","DEU",2001,25.7
+"Germany","DEU",2002,26.8
+"Germany","DEU",2003,26.9
+"Germany","DEU",2004,27.4
+"Germany","DEU",2005,28.8
+"Germany","DEU",2006,28.5
+"Germany","DEU",2007,28.6
+"Germany","DEU",2008,28.3
+"Germany","DEU",2009,28.3
+"Germany","DEU",2010,28
+"Germany","DEU",2011,28.6
+"Germany","DEU",2012,28.8
+"Iceland","ISL",2003,24.1
+"Iceland","ISL",2004,25.1
+"Iceland","ISL",2005,26.3
+"Iceland","ISL",2006,28
+"Iceland","ISL",2007,27.3
+"Iceland","ISL",2008,29.6
+"Iceland","ISL",2009,25.7
+"Iceland","ISL",2010,23.6
+"Iceland","ISL",2011,24
+"Iceland","ISL",2012,24
+"Iceland","ISL",2013,22.7
+"India","IND",2004,47.2
+"India","IND",2011,47.9
+"Indonesia","IDN",1964,35
+"Indonesia","IDN",1969,35
+"Indonesia","IDN",1976,34
+"Indonesia","IDN",1978,38
+"Indonesia","IDN",1980,34
+"Indonesia","IDN",1981,33
+"Indonesia","IDN",1984,33
+"Indonesia","IDN",1987,32
+"Indonesia","IDN",1990,32
+"Indonesia","IDN",1993,34
+"Indonesia","IDN",1996,36.6
+"Indonesia","IDN",1999,37.3
+"Indonesia","IDN",2001,31
+"Indonesia","IDN",2002,32.9
+"Indonesia","IDN",2005,36.3
+"Indonesia","IDN",2007,36.4
+"Indonesia","IDN",2008,35
+"Indonesia","IDN",2009,37
+"Indonesia","IDN",2010,38
+"Indonesia","IDN",2011,41
+"Indonesia","IDN",2012,41
+"Indonesia","IDN",2013,41.3
+"Indonesia","IDN",2014,41
+"Indonesia","IDN",2015,41
+"Italy","ITA",1967,39.1
+"Italy","ITA",1968,40.8
+"Italy","ITA",1969,39.7
+"Italy","ITA",1970,38.3
+"Italy","ITA",1971,39.7
+"Italy","ITA",1972,38.5
+"Italy","ITA",1973,40
+"Italy","ITA",1974,39.1
+"Italy","ITA",1975,35.2
+"Italy","ITA",1977,34.9
+"Italy","ITA",1978,33.3
+"Italy","ITA",1979,34.6
+"Italy","ITA",1980,32.5
+"Italy","ITA",1981,31.9
+"Italy","ITA",1982,29.5
+"Italy","ITA",1983,30.1
+"Italy","ITA",1984,31.9
+"Italy","ITA",1986,31
+"Italy","ITA",1987,32.2
+"Italy","ITA",1989,29.6
+"Italy","ITA",1991,29.3
+"Italy","ITA",1993,32.7
+"Italy","ITA",1995,33.2
+"Italy","ITA",1998,33.6
+"Italy","ITA",2000,33.3
+"Italy","ITA",2002,33.3
+"Italy","ITA",2004,34.9
+"Italy","ITA",2006,33.8
+"Italy","ITA",2008,33.3
+"Italy","ITA",2010,34.7
+"Italy","ITA",2012,35
+"Japan","JPN",1962,24.71
+"Japan","JPN",1967,23.56
+"Japan","JPN",1972,22.55
+"Japan","JPN",1975,24.85
+"Japan","JPN",1978,24.27
+"Japan","JPN",1981,22.55
+"Japan","JPN",1982,22.1
+"Japan","JPN",1983,22.22
+"Japan","JPN",1984,22.17
+"Japan","JPN",1985,23.07
+"Japan","JPN",1986,23.14
+"Japan","JPN",1987,23.21
+"Japan","JPN",1988,23.94
+"Japan","JPN",1989,24.01
+"Japan","JPN",1990,23.97
+"Japan","JPN",1991,24.32
+"Japan","JPN",1992,24.14
+"Japan","JPN",1993,23.61
+"Japan","JPN",1994,24.21
+"Japan","JPN",1995,24.38
+"Japan","JPN",1996,24.19
+"Japan","JPN",1997,23.98
+"Japan","JPN",1998,24.37
+"Japan","JPN",1999,23.78
+"Japan","JPN",2000,24.56
+"Japan","JPN",2001,24.83
+"Japan","JPN",2002,25.54
+"Japan","JPN",2003,25.22
+"Japan","JPN",2004,25.22
+"Japan","JPN",2005,25.87
+"Japan","JPN",2006,24.78
+"Japan","JPN",2007,25.43
+"Japan","JPN",2008,25.44
+"Malaysia","MYS",1967,49.8
+"Malaysia","MYS",1970,51.3
+"Malaysia","MYS",1976,52.9
+"Malaysia","MYS",1979,50.5
+"Malaysia","MYS",1984,48.3
+"Malaysia","MYS",1987,45.8
+"Malaysia","MYS",1990,44.6
+"Malaysia","MYS",1993,45.9
+"Malaysia","MYS",1995,45.6
+"Malaysia","MYS",1997,45.9
+"Malaysia","MYS",1999,44.3
+"Malaysia","MYS",2002,46.1
+"Malaysia","MYS",2004,46
+"Malaysia","MYS",2007,44
+"Malaysia","MYS",2009,44.1
+"Malaysia","MYS",2012,43.1
+"Malaysia","MYS",2014,40.1
+"Mauritius","MUS",1962,50
+"Mauritius","MUS",1975,41.9
+"Mauritius","MUS",1980,45.7
+"Mauritius","MUS",1986,39.8
+"Mauritius","MUS",1991,37
+"Mauritius","MUS",1996,38.7
+"Mauritius","MUS",2001,37.1
+"Mauritius","MUS",2006,38.9
+"Mauritius","MUS",2012,41.3
+"Netherlands","NLD",1970,27.69
+"Netherlands","NLD",1977,24.84
+"Netherlands","NLD",1981,25.05
+"Netherlands","NLD",1985,24.95
+"Netherlands","NLD",1989,25.9
+"Netherlands","NLD",1990,27.39
+"Netherlands","NLD",1991,27.39
+"Netherlands","NLD",1992,27.17
+"Netherlands","NLD",1993,27.28
+"Netherlands","NLD",1994,27.07
+"Netherlands","NLD",1995,26.86
+"Netherlands","NLD",1996,27.28
+"Netherlands","NLD",1997,26.96
+"Netherlands","NLD",1998,27.17
+"Netherlands","NLD",1999,27.39
+"Netherlands","NLD",2000,27.49
+"Netherlands","NLD",2001,26.5
+"Netherlands","NLD",2002,26.6
+"Netherlands","NLD",2003,26.6
+"Netherlands","NLD",2004,26.9
+"Netherlands","NLD",2005,26.4
+"Netherlands","NLD",2006,27.6
+"Netherlands","NLD",2007,27.6
+"Netherlands","NLD",2008,27.2
+"Netherlands","NLD",2009,25.5
+"Netherlands","NLD",2010,25.8
+"Netherlands","NLD",2011,25.4
+"Netherlands","NLD",2012,25.1
+"Netherlands","NLD",2013,26.2
+"Netherlands","NLD",2014,26.4
+"New Zealand","NZL",1982,25.8
+"New Zealand","NZL",1984,27
+"New Zealand","NZL",1988,26.2
+"New Zealand","NZL",1990,30
+"New Zealand","NZL",1992,31.1
+"New Zealand","NZL",1994,31.8
+"New Zealand","NZL",1996,32.5
+"New Zealand","NZL",1998,32.7
+"New Zealand","NZL",2001,33.4
+"New Zealand","NZL",2004,32.9
+"New Zealand","NZL",2007,32
+"New Zealand","NZL",2009,32.9
+"New Zealand","NZL",2010,32.4
+"New Zealand","NZL",2011,35.1
+"New Zealand","NZL",2012,32.4
+"New Zealand","NZL",2013,33.4
+"New Zealand","NZL",2014,34.2
+"Norway","NOR",1986,21
+"Norway","NOR",1987,21
+"Norway","NOR",1988,21.1
+"Norway","NOR",1989,22.8
+"Norway","NOR",1990,21.7
+"Norway","NOR",1991,21.9
+"Norway","NOR",1992,22.3
+"Norway","NOR",1993,22.9
+"Norway","NOR",1994,24.1
+"Norway","NOR",1995,23.6
+"Norway","NOR",1996,24.5
+"Norway","NOR",1997,24.9
+"Norway","NOR",1998,23.8
+"Norway","NOR",1999,24.2
+"Norway","NOR",2000,26.2
+"Norway","NOR",2001,22.9
+"Norway","NOR",2002,26.4
+"Norway","NOR",2003,27.4
+"Norway","NOR",2004,28.3
+"Norway","NOR",2006,24.3
+"Norway","NOR",2007,25.2
+"Norway","NOR",2008,24.8
+"Norway","NOR",2009,24.1
+"Norway","NOR",2010,24.5
+"Norway","NOR",2011,24.7
+"Norway","NOR",2012,24.9
+"Norway","NOR",2013,25
+"Norway","NOR",2014,25.6
+"Portugal","PRT",1993,38.7
+"Portugal","PRT",1994,37.4
+"Portugal","PRT",1995,36.1
+"Portugal","PRT",1996,36.3
+"Portugal","PRT",1997,36.8
+"Portugal","PRT",1998,36.3
+"Portugal","PRT",1999,35.7
+"Portugal","PRT",2000,36.9
+"Portugal","PRT",2003,37.8
+"Portugal","PRT",2004,38.1
+"Portugal","PRT",2005,37.7
+"Portugal","PRT",2006,36.8
+"Portugal","PRT",2007,35.8
+"Portugal","PRT",2008,35.4
+"Portugal","PRT",2009,33.7
+"Portugal","PRT",2010,34.2
+"Portugal","PRT",2011,34.5
+"Portugal","PRT",2012,34.2
+"Portugal","PRT",2013,34.5
+"Singapore","SGP",2000,41.4
+"Singapore","SGP",2001,41.9
+"Singapore","SGP",2002,41.4
+"Singapore","SGP",2003,42.2
+"Singapore","SGP",2004,41.9
+"Singapore","SGP",2005,42.2
+"Singapore","SGP",2006,41.8
+"Singapore","SGP",2007,43.9
+"Singapore","SGP",2008,42.4
+"Singapore","SGP",2009,42.2
+"Singapore","SGP",2010,42.5
+"Singapore","SGP",2011,42.3
+"Singapore","SGP",2012,43.2
+"Singapore","SGP",2013,40.9
+"Singapore","SGP",2014,41.1
+"Singapore","SGP",2015,41
+"South Africa","ZAF",1975,67
+"South Africa","ZAF",1991,67.01
+"South Africa","ZAF",1993,67
+"South Africa","ZAF",2000,67
+"South Africa","ZAF",2005,72
+"South Africa","ZAF",2006,72
+"South Africa","ZAF",2009,70
+"South Africa","ZAF",2011,69
+"Spain","ESP",1980,29.22
+"Spain","ESP",1985,28.86
+"Spain","ESP",1990,27.75
+"Spain","ESP",1994,32.44
+"Spain","ESP",1995,32.44
+"Spain","ESP",1996,33.39
+"Spain","ESP",1997,32.44
+"Spain","ESP",1998,31.49
+"Spain","ESP",1999,30.53
+"Spain","ESP",2000,31.49
+"Spain","ESP",2002,31.49
+"Spain","ESP",2003,31.49
+"Spain","ESP",2004,32.7
+"Spain","ESP",2005,32.4
+"Spain","ESP",2006,32.4
+"Spain","ESP",2007,32.4
+"Spain","ESP",2008,32.9
+"Spain","ESP",2009,33.5
+"Spain","ESP",2010,34
+"Spain","ESP",2011,34.2
+"Spain","ESP",2012,33.7
+"Spain","ESP",2013,34.7
+"Spain","ESP",2014,34.6
+"Sweden","SWE",1975,23.84
+"Sweden","SWE",1978,22.52
+"Sweden","SWE",1980,22.08
+"Sweden","SWE",1981,21.86
+"Sweden","SWE",1982,22.3
+"Sweden","SWE",1983,22.08
+"Sweden","SWE",1984,23.07
+"Sweden","SWE",1985,23.18
+"Sweden","SWE",1986,24.17
+"Sweden","SWE",1987,22.96
+"Sweden","SWE",1988,22.96
+"Sweden","SWE",1989,23.4
+"Sweden","SWE",1990,23.7
+"Sweden","SWE",1991,24.9
+"Sweden","SWE",1992,24.1
+"Sweden","SWE",1993,24.3
+"Sweden","SWE",1994,27.1
+"Sweden","SWE",1995,24.4
+"Sweden","SWE",1996,25.3
+"Sweden","SWE",1997,27.7
+"Sweden","SWE",1998,26.3
+"Sweden","SWE",1999,28.1
+"Sweden","SWE",2000,31.3
+"Sweden","SWE",2001,28.2
+"Sweden","SWE",2002,28
+"Sweden","SWE",2003,27.6
+"Sweden","SWE",2004,28.1
+"Sweden","SWE",2005,29.6
+"Sweden","SWE",2006,31.1
+"Sweden","SWE",2007,33.2
+"Sweden","SWE",2008,31.4
+"Sweden","SWE",2009,32
+"Sweden","SWE",2010,32.5
+"Sweden","SWE",2011,32.6
+"Sweden","SWE",2012,32
+"Sweden","SWE",2013,33
+"Switzerland","CHE",2006,30.3
+"Switzerland","CHE",2007,32
+"Switzerland","CHE",2008,30.2
+"Switzerland","CHE",2009,29.6
+"Switzerland","CHE",2010,29.7
+"Switzerland","CHE",2011,28.8
+"Switzerland","CHE",2012,28.5
+"United Kingdom","GBR",1961,26.1
+"United Kingdom","GBR",1962,24.8
+"United Kingdom","GBR",1963,27.1
+"United Kingdom","GBR",1964,26.4
+"United Kingdom","GBR",1965,25.1
+"United Kingdom","GBR",1966,26.1
+"United Kingdom","GBR",1967,25.1
+"United Kingdom","GBR",1968,25
+"United Kingdom","GBR",1969,25.7
+"United Kingdom","GBR",1970,25.9
+"United Kingdom","GBR",1971,26.6
+"United Kingdom","GBR",1972,26.9
+"United Kingdom","GBR",1973,25.9
+"United Kingdom","GBR",1974,25.1
+"United Kingdom","GBR",1975,24.3
+"United Kingdom","GBR",1976,24.3
+"United Kingdom","GBR",1977,23.9
+"United Kingdom","GBR",1978,24
+"United Kingdom","GBR",1979,25.3
+"United Kingdom","GBR",1980,25.7
+"United Kingdom","GBR",1981,26.3
+"United Kingdom","GBR",1982,26.1
+"United Kingdom","GBR",1983,26.8
+"United Kingdom","GBR",1984,27
+"United Kingdom","GBR",1985,28.2
+"United Kingdom","GBR",1986,29.1
+"United Kingdom","GBR",1987,30.5
+"United Kingdom","GBR",1988,32.3
+"United Kingdom","GBR",1989,32.7
+"United Kingdom","GBR",1990,33.9
+"United Kingdom","GBR",1991,34.1
+"United Kingdom","GBR",1992,34
+"United Kingdom","GBR",1993,34
+"United Kingdom","GBR",1994,33.3
+"United Kingdom","GBR",1995,33.3
+"United Kingdom","GBR",1996,33.3
+"United Kingdom","GBR",1997,34.1
+"United Kingdom","GBR",1998,34.8
+"United Kingdom","GBR",1999,34.6
+"United Kingdom","GBR",2000,35.3
+"United Kingdom","GBR",2001,34.9
+"United Kingdom","GBR",2002,34.28
+"United Kingdom","GBR",2003,33.87
+"United Kingdom","GBR",2004,33.97
+"United Kingdom","GBR",2005,34.46
+"United Kingdom","GBR",2006,35.06
+"United Kingdom","GBR",2007,35.7
+"United Kingdom","GBR",2008,35.55
+"United Kingdom","GBR",2009,35.67
+"United Kingdom","GBR",2010,33.66
+"United Kingdom","GBR",2011,33.96
+"United Kingdom","GBR",2012,33.55
+"United Kingdom","GBR",2013,34.2
+"United States","USA",1960,37.98
+"United States","USA",1961,38.79
+"United States","USA",1962,37.8
+"United States","USA",1963,37.53
+"United States","USA",1964,37.62
+"United States","USA",1965,37.44
+"United States","USA",1966,37.08
+"United States","USA",1967,37.35
+"United States","USA",1968,36.25
+"United States","USA",1969,36.45
+"United States","USA",1970,36.85
+"United States","USA",1971,37.05
+"United States","USA",1972,37.35
+"United States","USA",1973,37.15
+"United States","USA",1974,36.55
+"United States","USA",1975,37.05
+"United States","USA",1976,37.05
+"United States","USA",1977,37.35
+"United States","USA",1978,37.45
+"United States","USA",1979,37.75
+"United States","USA",1980,37.85
+"United States","USA",1981,38.45
+"United States","USA",1982,39.55
+"United States","USA",1983,40.05
+"United States","USA",1984,40.05
+"United States","USA",1985,40.55
+"United States","USA",1986,40.85
+"United States","USA",1987,41.05
+"United States","USA",1988,41.35
+"United States","USA",1989,41.95
+"United States","USA",1990,41.75
+"United States","USA",1991,41.75
+"United States","USA",1992,42.45
+"United States","USA",1993,43.6
+"United States","USA",1994,43.6
+"United States","USA",1995,43.3
+"United States","USA",1996,43.7
+"United States","USA",1997,44
+"United States","USA",1998,43.9
+"United States","USA",1999,44.1
+"United States","USA",2000,44.2
+"United States","USA",2001,44.6
+"United States","USA",2002,44.3
+"United States","USA",2003,44.5
+"United States","USA",2004,44.7
+"United States","USA",2005,45
+"United States","USA",2006,45.2
+"United States","USA",2007,44.4
+"United States","USA",2008,45
+"United States","USA",2009,45.6
+"United States","USA",2010,45.6
+"United States","USA",2011,46.3
+"United States","USA",2012,46.3
+"United States","USA",2013,45.9
+"United States","USA",2014,45.6

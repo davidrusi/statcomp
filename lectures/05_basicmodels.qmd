@@ -716,12 +716,7 @@ multiplot(lmfull, lmfit3, intercept=FALSE)
 
 A particular type of interaction is when data are nested within units (e.g. countries), and we wanna fit a model for each unit
 
-**gapminder data:** country life expectancy over time popularized by Dr. Hans Rosling
-
-{{< video https://www.youtube.com/watch?v=jbkSRLYSojo&ab_channel=GapminderFoundation width="750" height="400">}}
-
-
----
+**Example** gapminder data (country life expectancy over time)
 
 ```{r}
 library(gapminder)
