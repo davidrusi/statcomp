@@ -403,6 +403,7 @@
 <li><a href="#/beyond-scatter-plots" id="/toc-beyond-scatter-plots">Beyond scatter plots</a></li>
 <li><a href="#/saving-a-ggplot" id="/toc-saving-a-ggplot">Saving a ggplot</a></li>
 <li><a href="#/ggplot-extensions" id="/toc-ggplot-extensions">ggplot extensions</a></li>
+<li><a href="#/further-example.-gdp-over-time" id="/toc-further-example.-gdp-over-time">Further example. GDP over time</a></li>
 </ul>
 </nav>
 </section>
@@ -1027,6 +1028,78 @@ hs                      0.164      -0.127 -0.583  1.000</code></pre>
 <li><p>Do a (non-animated) line plot of Gini vs time, with a different line colour per country</p></li>
 <li><p>Add <code>transition_reveal(Year)</code> to add an animation over time</p></li>
 </ol>
+</section></section>
+<section>
+<section id="further-example.-gdp-over-time" class="title-slide slide level1 center">
+<h1>Further example. GDP over time</h1>
+
+</section>
+<section id="animated-histogram" class="slide level2">
+<h2>Animated histogram</h2>
+<p>Distribution of GDP/capita over time</p>
+<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-42_6d697452cf7440b0bd8891c406ef7c30">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>b<span class="ot">=</span> <span class="fu">c</span>(<span class="dv">1000</span>, <span class="dv">2500</span>, <span class="dv">5000</span>, <span class="dv">10000</span>, <span class="dv">25000</span>, <span class="dv">50000</span>, <span class="dv">100000</span>)</span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>l<span class="ot">=</span> <span class="fu">c</span>(<span class="st">'1K'</span>,<span class="st">'2.5K'</span>,<span class="st">'5K'</span>,<span class="st">'10K'</span>,<span class="st">'25K'</span>,<span class="st">'50K'</span>,<span class="st">'100K'</span>)</span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(gapminder, <span class="fu">aes</span>(<span class="at">x=</span>gdpPercap)) <span class="sc">+</span></span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins=</span><span class="dv">20</span>) <span class="sc">+</span></span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_log10</span>(<span class="at">breaks=</span>b, <span class="at">labels=</span>l) <span class="sc">+</span></span>
+<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">transition_states</span>(year) <span class="sc">+</span></span>
+<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title=</span><span class="st">'Year: {closest_state}'</span>, <span class="at">x=</span><span class="st">'GDP per capita'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+
+<img data-src="figs/gdp_per_year.png" class="r-stretch"></section>
+<section id="a-non-animated-violin-plot" class="slide level2">
+<h2>A (non-animated) violin plot</h2>
+<p>Sometimes a non-animated figure is more effective</p>
+<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-43_a700a4b7945c57884922b67409d12007">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>p<span class="ot">=</span> <span class="fu">ggplot</span>(gapminder, <span class="fu">aes</span>(<span class="at">x=</span><span class="fu">factor</span>(year), <span class="at">y=</span>gdpPercap)) <span class="sc">+</span></span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_violin</span>() <span class="sc">+</span></span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"Year"</span>, <span class="at">y=</span><span class="st">"GDP per capita"</span>)</span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a>p</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+
+</div>
+<img data-src="02_ggplot_files/figure-revealjs/unnamed-chunk-43-1.png" width="960" class="r-stretch"></section>
+<section id="who-are-the-outliers" class="slide level2">
+<h2>Who are the outliers?</h2>
+<div class="panel-tabset">
+<ul id="tabset-4" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-4-1">Find country</a></li><li><a href="#tabset-4-2">Add labels</a></li></ul>
+<div class="tab-content">
+<div id="tabset-4-1">
+<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-44_270203d2b452c5a2ff19a73ca7ea2ed9">
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>maxgdp<span class="ot">=</span> <span class="fu">group_by</span>(gapminder, year) <span class="sc">|&gt;</span></span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">top_n</span>(<span class="dv">1</span>, gdpPercap)</span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>maxgdp</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 12 × 6
+# Groups:   year [12]
+   country      continent  year lifeExp      pop gdpPercap
+   &lt;fct&gt;        &lt;fct&gt;     &lt;int&gt;   &lt;dbl&gt;    &lt;int&gt;     &lt;dbl&gt;
+ 1 Kuwait       Asia       1952    55.6   160000   108382.
+ 2 Kuwait       Asia       1957    58.0   212846   113523.
+ 3 Kuwait       Asia       1962    60.5   358266    95458.
+ 4 Kuwait       Asia       1967    64.6   575003    80895.
+ 5 Kuwait       Asia       1972    67.7   841934   109348.
+ 6 Kuwait       Asia       1977    69.3  1140357    59265.
+ 7 Kuwait       Asia       1992    75.2  1418095    34933.
+ 8 Norway       Europe     1987    75.9  4186147    31541.
+ 9 Norway       Europe     1997    78.3  4405672    41283.
+10 Norway       Europe     2002    79.0  4535591    44684.
+11 Norway       Europe     2007    80.2  4627926    49357.
+12 Saudi Arabia Asia       1982    63.0 11254672    33693.</code></pre>
+</div>
+</div>
+</div>
+<div id="tabset-4-2">
+<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-45_fe2f14fa7c997eaa6182246d1e474a2c">
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>p <span class="sc">+</span> <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label=</span>country), <span class="at">data=</span>maxgdp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img data-src="02_ggplot_files/figure-revealjs/unnamed-chunk-45-1.png" width="960"></p>
+</div>
+</div>
+</div>
+</div>
+</div>
 <div class="footer footer-default">
 
 </div>

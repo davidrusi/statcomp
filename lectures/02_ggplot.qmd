@@ -619,3 +619,56 @@ gini
 1. Do a (non-animated) line plot of Gini vs time, with a different line colour per country
 
 2. Add `transition_reveal(Year)` to add an animation over time
+
+
+
+# Further example. GDP over time
+
+## Animated histogram
+
+Distribution of GDP/capita over time
+
+```{r, eval=FALSE}
+ggplot(gapminder, aes(x=gdpPercap)) +
+  geom_histogram(bins=20) +
+  transition_states(year) +
+  labs(title='Year: {closest_state}', x='GDP per capita')
+```
+
+![](figs/gdp_per_year.png)
+
+
+
+## A (non-animated) violin plot
+
+Sometimes a non-animated figure is more effective
+
+```{r}
+p= ggplot(gapminder, aes(x=factor(year), y=gdpPercap)) +
+  geom_point() +
+  geom_violin() +
+  labs(x="Year", y="GDP per capita")
+p
+```
+
+## Who are the outliers?
+
+:::panel-tabset
+
+### Find country
+
+```{r}
+maxgdp= group_by(gapminder, year) |>
+  top_n(1, gdpPercap)
+maxgdp
+```
+
+### Add labels
+
+```{r}
+p + geom_text(aes(label=country), data=maxgdp)
+```
+
+:::
+
+
