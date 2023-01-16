@@ -397,7 +397,7 @@
 <nav role="doc-toc"> 
 <h2 id="toc-title">Table of contents</h2>
 <ul>
-<li><a href="#/dplyr-basics" id="/toc-dplyr-basics">dplyr basics</a></li>
+<li><a href="#/dplyr-summary" id="/toc-dplyr-summary">dplyr summary</a></li>
 <li><a href="#/summarizing-data" id="/toc-summarizing-data">Summarizing data</a></li>
 <li><a href="#/further-examples" id="/toc-further-examples">Further examples</a></li>
 <li><a href="#/exercise" id="/toc-exercise">Exercise</a></li>
@@ -420,8 +420,10 @@
 <section id="section" class="slide level2">
 <h2></h2>
 <p>Before doing data analysis you need to put data in the right format, define variables etc.</p>
-<p>R offers a number of base functions</p>
-<p>The tidyverse package <code>dplyr</code> has many convenient functions</p>
+<ul>
+<li><p>R offers a number of base functions</p></li>
+<li><p>Tidyverse package <code>dplyr</code> adds many convenient functions</p></li>
+</ul>
 </section>
 <section id="dataset-nyc-flights" class="slide level2">
 <h2>Dataset NYC flights</h2>
@@ -451,17 +453,17 @@
 </div>
 </section>
 <section>
-<section id="dplyr-basics" class="title-slide slide level1 center">
-<h1>dplyr basics</h1>
+<section id="dplyr-summary" class="title-slide slide level1 center">
+<h1>dplyr summary</h1>
 <p>The 5 main functions</p>
 <ul>
-<li><p>Select observations (rows) in a dataset (<code>filter()</code>).</p></li>
-<li><p>Reorder the rows (<code>arrange()</code>).</p></li>
-<li><p>Select variables by their names (<code>select()</code>)</p></li>
-<li><p>Create new variables (<code>mutate()</code>)</p></li>
-<li><p>Compute numerical summaries (<code>summarise()</code>)</p></li>
+<li><p>Select observations (rows) in a dataset: <code>filter()</code></p></li>
+<li><p>Reorder the rows: <code>arrange()</code></p></li>
+<li><p>Select variables by their names: <code>select()</code></p></li>
+<li><p>Create new variables: <code>mutate()</code></p></li>
+<li><p>Compute numerical summaries: <code>summarise()</code>. If used with <code>group_by()</code>, it operates by groups</p></li>
 </ul>
-<p>When used with <code>group_by()</code> these functions operate group-by-group</p>
+<p>Other functions: <code>rename</code>, <code>mutate</code>, <code>transmute</code></p>
 </section>
 <section id="filter" class="slide level2" data-auto-animate="true">
 <h2 data-id="quarto-animate-title">Filter</h2>
@@ -1290,18 +1292,18 @@
 </section>
 <section id="example" class="slide level2">
 <h2>Example</h2>
-<p>Distance vs.&nbsp;delay, for each destination airport with &gt;20 flights other than Honolulu. Note the use of <code>n()</code></p>
+<p>Flight distance vs.&nbsp;delay, for each destination airport with &gt;20 flights other than Honolulu. Note the use of <code>n()</code></p>
 <div class="panel-tabset">
 <ul id="tabset-2" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-2-1">R code</a></li><li><a href="#tabset-2-2">Plot</a></li></ul>
 <div class="tab-content">
 <div id="tabset-2-1">
-<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-24_bca700510a16b20fa2a4c3d78b9d9cfe">
+<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-24_93315a5d193482e6aad5c0dc8de21b03">
 <div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>by_dest<span class="ot">=</span> <span class="fu">group_by</span>(flights, dest)</span>
 <span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>delay<span class="ot">=</span> <span class="fu">summarise</span>(by_dest, <span class="at">count =</span> <span class="fu">n</span>(),</span>
 <span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">dist =</span> <span class="fu">mean</span>(distance, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
 <span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">delay =</span> <span class="fu">mean</span>(arr_delay, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
 <span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a>delay<span class="ot">=</span> <span class="fu">filter</span>(delay, count <span class="sc">&gt;</span> <span class="dv">20</span>, dest <span class="sc">!=</span> <span class="st">"HNL"</span>) <span class="co">#remove Hololulu</span></span>
+<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a>delay<span class="ot">=</span> <span class="fu">filter</span>(delay, count <span class="sc">&gt;</span> <span class="dv">20</span>, dest <span class="sc">!=</span> <span class="st">"HNL"</span>) <span class="co">#&gt;20 flights, remove Hololulu</span></span>
 <span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a>delay</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 96 × 4
@@ -1590,9 +1592,12 @@
 </div>
 <div id="tabset-4-2">
 <p>Same result, using <code>cut_width</code> within an aesthetic</p>
-<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-38_f9a233f5aac7e6ea9af43339c746248d">
+<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-38_2349dfde4a8174c213af1a1c79ee2449">
 <div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(diamonds, <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> carat, <span class="at">y =</span> price)) <span class="sc">+</span> </span>
 <span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">group =</span> <span class="fu">cut_width</span>(carat, <span class="fl">0.1</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img data-src="03_datawrangling_files/figure-revealjs/unnamed-chunk-38-1.png" width="960"></p>
+</div>
 </div>
 </div>
 </div>

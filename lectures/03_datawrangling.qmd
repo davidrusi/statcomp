@@ -37,9 +37,9 @@ library(Lahman)
 
 Before doing data analysis you need to put data in the right format, define variables etc.
 
-R offers a number of base functions
+- R offers a number of base functions
 
-The tidyverse package `dplyr` has many convenient functions
+- Tidyverse package `dplyr` adds many convenient functions
 
 
 ## Dataset NYC flights
@@ -53,21 +53,22 @@ The data are stored in a `tibble`, an extension of `data.frame` that prints nice
 flights
 ```
 
-# dplyr basics
+# dplyr summary
 
 The 5 main functions
 
-- Select observations (rows) in a dataset (`filter()`).
+- Select observations (rows) in a dataset: `filter()`
 
-- Reorder the rows (`arrange()`).
+- Reorder the rows: `arrange()`
 
-- Select variables by their names (`select()`)
+- Select variables by their names: `select()`
 
-- Create new variables (`mutate()`)
+- Create new variables: `mutate()`
 
-- Compute numerical summaries (`summarise()`)
+- Compute numerical summaries: `summarise()`. If used with `group_by()`, it operates by groups
 
-When used with `group_by()` these functions operate group-by-group
+Other functions: `rename`, `mutate`, `transmute`
+
 
 ## Filter {auto-animate="true"}
 
@@ -285,7 +286,7 @@ summarise(by_day, delay = mean(dep_delay, na.rm = TRUE))
 
 ## Example
 
-Distance vs. delay, for each destination airport with >20 flights other than Honolulu. Note the use of `n()` 
+Flight distance vs. delay, for each destination airport with >20 flights other than Honolulu. Note the use of `n()` 
 
 ::: panel-tabset
 
@@ -297,7 +298,7 @@ delay= summarise(by_dest, count = n(),
   dist = mean(distance, na.rm = TRUE),
   delay = mean(arr_delay, na.rm = TRUE)
 )
-delay= filter(delay, count > 20, dest != "HNL") #remove Hololulu
+delay= filter(delay, count > 20, dest != "HNL") #>20 flights, remove Hololulu
 delay
 ```
 
@@ -478,7 +479,7 @@ ggplot(diam2, mapping = aes(x = carat, y = price)) +
 
 Same result, using `cut_width` within an aesthetic
 
-```{r, eval=FALSE}
+```{r}
 ggplot(diamonds, mapping = aes(x = carat, y = price)) + 
   geom_boxplot(mapping = aes(group = cut_width(carat, 0.1)))
 ```

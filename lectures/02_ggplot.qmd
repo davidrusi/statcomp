@@ -454,7 +454,7 @@ ggplot(mtcars, aes(mpg, wt)) + geom_point()
 ggsave("mtcars.pdf", plot=last_plot()) #ggsave("mtcars.png") for png format
 ```
 
-Or, use `print` and combined with functions like `png` or `pdf`
+Or, use `print` and combine with functions like `png` or `pdf`
 
 ```{r, eval=FALSE}
 p = ggplot(mtcars, aes(mpg, wt)) + geom_point()
@@ -500,16 +500,19 @@ A cool one is `gganimate` to create animations.
 
 ## gganimate
 
-Adds animation layers to your ggplot. The main layer are transitions, specifying how data should be spread as the animation progresses
+To animate your ggplot you add transitions: how to organize successive frames
 
-- `transition_states()`: transition according to a discrete variable
+- `transition_states()`: new plot according to a discrete variable
 
-- `transition_time()`: transition according to time
+- `transition_time()`: new plot according to cont var (time)
+
+- `transition_reveal()`: add elements to plot incrementally
 
 
-Other layers
+Other layers (the full list of options is [here](https://gganimate.com/reference/index.html)
+)
 
-- `ease_aes()`: how aesthetics should be eased during transitions (linear, gain momentum over time...)
+- `ease_aes()`: how to ease aesthetics over transitions (linear, gain momentum...)
 
 - `enter_*()`/`exit_*()`: how new data should appear and how old data should disappear (fade in/out etc)
 
@@ -517,7 +520,6 @@ Other layers
 
 - `view_*()`: how to change positional scales
 
-The full list of options is [here](https://gganimate.com/reference/index.html)
 
 
 ## Saving an animation
@@ -525,6 +527,7 @@ The full list of options is [here](https://gganimate.com/reference/index.html)
 `anim_save()` saves your last animated plot into a specified file and directory ("myfile.gif" and "mydirectory" below)
 
 ```{r, eval=FALSE}
+ggplot(mydata, ...) #code to produce the animation
 anim_save(myfile.gif, animation=last_animation(), path="mydirectory")
 ```
 
@@ -532,6 +535,7 @@ By default the output is a .gif. You can choose other formats (e.g. an MPEG vide
 
 
 ```{r, eval=FALSE}
+p= ggplot(mydata, ...)  #code to produce the animation
 animate(p, renderer = ffmpeg_renderer())
 anim_save(myfile.gif, animation=last_animation(), path="mydirectory")
 ```
@@ -572,8 +576,7 @@ ggplot(gapminder, aes(gdpPercap, lifeExp)) +
   geom_point(aes(colour=continent, size=pop), alpha = 0.7, show.legend = TRUE) +
   scale_size(range = c(2, 12)) +
   scale_x_log10() +
-#  geom_text(aes(label = country)) + #to add country labels
-  #add gganimate layers
+  #we add gganimate layers below
   transition_time(year) +
   labs(title = 'Year: {frame_time}', x = 'GDP per capita', y = 'life expectancy')
 ```
@@ -585,9 +588,7 @@ ggplot(gapminder, aes(gdpPercap, lifeExp)) +
 
 ## transition_states
 
-transition_time treats time as continuous, e.g. adding intermediate frames between years
-
-transition_states evolves in a more "discrete" manner
+`transition_time` treats time as continuous, e.g. adds intermediate frames between years. `transition_states` evolves in a more "discrete" manner
 
 **Example:** airquality data
 
@@ -600,9 +601,10 @@ ggplot(airquality, aes(Day, Temp)) +
 
 
 ![](figs/airquality.gif)
+
 ## transition_reveal
 
-You can reveal new points in an increasing fashion. For example, one may create this plot.
+You can reveal new points in an increasing fashion, as done below
 
 ![](figs/airquality_byday.gif)
 
