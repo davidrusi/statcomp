@@ -1603,31 +1603,27 @@
 <h1>Exercise</h1>
 
 </section>
-<section id="continent-wide-life-expectancy" class="slide level2">
-<h2>Continent-wide life expectancy</h2>
+<section class="slide level2">
+
+<p>To do Exercises 1-2 below load the gapminder data</p>
+<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-39_a95c3f30b04ad5cc949a96d2dbfdff96">
+<div class="sourceCode cell-code" id="cb71"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gapminder)</span>
+<span id="cb71-2"><a href="#cb71-2" aria-hidden="true" tabindex="-1"></a>gapminder</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Turn in a single html with your solutions <a href="https://drive.google.com/drive/folders/1jhh1CrXM3hqc7qTrOYeQzo2pV8Vly1NY?usp=sharing">here</a>. Name your file firstname_lastname.html</p>
+</section>
+<section id="exercises" class="slide level2">
+<h2>Exercises</h2>
+<p><strong>Exercise 1.</strong> Continent-wide life expectancy</p>
 <ol type="1">
 <li><p>Compute the mean life expectancy and GDP per capita for each (continent, year)</p></li>
 <li><p>Do an animated scatterplot of continent life expectancy vs.&nbsp;GDP (<code>transition_time(year)</code>)</p></li>
 </ol>
-<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-39_5dfab3172beccc365a428702b0e76eab">
-<div class="sourceCode cell-code" id="cb71"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a>gapminder</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 1,704 × 6
-   country     continent  year lifeExp      pop gdpPercap
-   &lt;fct&gt;       &lt;fct&gt;     &lt;int&gt;   &lt;dbl&gt;    &lt;int&gt;     &lt;dbl&gt;
- 1 Afghanistan Asia       1952    28.8  8425333      779.
- 2 Afghanistan Asia       1957    30.3  9240934      821.
- 3 Afghanistan Asia       1962    32.0 10267083      853.
- 4 Afghanistan Asia       1967    34.0 11537966      836.
- 5 Afghanistan Asia       1972    36.1 13079460      740.
- 6 Afghanistan Asia       1977    38.4 14880372      786.
- 7 Afghanistan Asia       1982    39.9 12881816      978.
- 8 Afghanistan Asia       1987    40.8 13867957      852.
- 9 Afghanistan Asia       1992    41.7 16317921      649.
-10 Afghanistan Asia       1997    41.8 22227415      635.
-# … with 1,694 more rows</code></pre>
-</div>
-</div>
+<p><strong>Exercise 2.</strong> Inequality of GDP/capita across countries over time</p>
+<ol type="1">
+<li><p>For each year, compute the inter-quartile range or the GDP/capita across countries</p></li>
+<li><p>Do a scatter-plot of IQR vs.&nbsp;year. Add lines to the plot</p></li>
+</ol>
 </section></section>
 <section>
 <section id="data-import-and-export" class="title-slide slide level1 center">
@@ -1654,15 +1650,15 @@
 <h2>.RData files</h2>
 <p><code>save</code> stores any specified objects in an <code>.RData</code> file (for large files use <code>compress=TRUE</code>).</p>
 <div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-40_5b633f9018a562ac4417d20eff5dd16b">
-<div class="sourceCode cell-code" id="cb73"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a>x<span class="ot">=</span> <span class="fu">rnorm</span>(<span class="dv">20</span>)</span>
-<span id="cb73-2"><a href="#cb73-2" aria-hidden="true" tabindex="-1"></a>y<span class="ot">=</span> <span class="dv">10</span> <span class="sc">+</span> <span class="dv">5</span><span class="sc">*</span>x <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="dv">20</span>)  <span class="co">#simulate data from a linear regression, errors N(0,1)</span></span>
-<span id="cb73-3"><a href="#cb73-3" aria-hidden="true" tabindex="-1"></a>fit<span class="ot">=</span> <span class="fu">lm</span>(y <span class="sc">~</span> x)</span>
-<span id="cb73-4"><a href="#cb73-4" aria-hidden="true" tabindex="-1"></a><span class="fu">save</span>(x, y, fit, <span class="at">file=</span><span class="st">'myfile.RData'</span>, <span class="at">compress=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a>x<span class="ot">=</span> <span class="fu">rnorm</span>(<span class="dv">20</span>)</span>
+<span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a>y<span class="ot">=</span> <span class="dv">10</span> <span class="sc">+</span> <span class="dv">5</span><span class="sc">*</span>x <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="dv">20</span>)  <span class="co">#simulate data from a linear regression, errors N(0,1)</span></span>
+<span id="cb72-3"><a href="#cb72-3" aria-hidden="true" tabindex="-1"></a>fit<span class="ot">=</span> <span class="fu">lm</span>(y <span class="sc">~</span> x)</span>
+<span id="cb72-4"><a href="#cb72-4" aria-hidden="true" tabindex="-1"></a><span class="fu">save</span>(x, y, fit, <span class="at">file=</span><span class="st">'myfile.RData'</span>, <span class="at">compress=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p><code>load</code> loads the file and all objects saved therein</p>
 <div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-41_48f641819a9ab952db176e59ef49272f">
-<div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">'myfile.RData'</span>)</span>
-<span id="cb74-2"><a href="#cb74-2" aria-hidden="true" tabindex="-1"></a>fit</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb73"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">'myfile.RData'</span>)</span>
+<span id="cb73-2"><a href="#cb73-2" aria-hidden="true" tabindex="-1"></a>fit</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section></section>
 <section>
@@ -1675,11 +1671,11 @@
 <p>Data can be stored in different formats. In a tidy dataset, each variable is a column, each observation a row</p>
 <p>This dataset is tidy</p>
 <div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-42_90d7d3d825d007dc32049a8e85994da3">
-<div class="sourceCode cell-code" id="cb75"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a>country<span class="ot">=</span> <span class="fu">c</span>(<span class="st">'UK'</span>,<span class="st">'UK'</span>,<span class="st">'Spain'</span>,<span class="st">'Spain'</span>)</span>
-<span id="cb75-2"><a href="#cb75-2" aria-hidden="true" tabindex="-1"></a>year<span class="ot">=</span> <span class="fu">c</span>(<span class="dv">2022</span>,<span class="dv">2023</span>,<span class="dv">2022</span>,<span class="dv">2023</span>)</span>
-<span id="cb75-3"><a href="#cb75-3" aria-hidden="true" tabindex="-1"></a>population<span class="ot">=</span> <span class="fu">c</span>(<span class="fl">80.5</span>,<span class="fl">81.4</span>,<span class="fl">50.1</span>,<span class="fl">50.0</span>)</span>
-<span id="cb75-4"><a href="#cb75-4" aria-hidden="true" tabindex="-1"></a>tab<span class="ot">=</span> <span class="fu">tibble</span>(country, year, population)</span>
-<span id="cb75-5"><a href="#cb75-5" aria-hidden="true" tabindex="-1"></a>tab</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a>country<span class="ot">=</span> <span class="fu">c</span>(<span class="st">'UK'</span>,<span class="st">'UK'</span>,<span class="st">'Spain'</span>,<span class="st">'Spain'</span>)</span>
+<span id="cb74-2"><a href="#cb74-2" aria-hidden="true" tabindex="-1"></a>year<span class="ot">=</span> <span class="fu">c</span>(<span class="dv">2022</span>,<span class="dv">2023</span>,<span class="dv">2022</span>,<span class="dv">2023</span>)</span>
+<span id="cb74-3"><a href="#cb74-3" aria-hidden="true" tabindex="-1"></a>population<span class="ot">=</span> <span class="fu">c</span>(<span class="fl">80.5</span>,<span class="fl">81.4</span>,<span class="fl">50.1</span>,<span class="fl">50.0</span>)</span>
+<span id="cb74-4"><a href="#cb74-4" aria-hidden="true" tabindex="-1"></a>tab<span class="ot">=</span> <span class="fu">tibble</span>(country, year, population)</span>
+<span id="cb74-5"><a href="#cb74-5" aria-hidden="true" tabindex="-1"></a>tab</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 4 × 3
   country  year population
@@ -1692,11 +1688,11 @@
 </div>
 <p>This one has the same data, but is not tidy</p>
 <div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-43_2758f348d3707c302fecf839b826cfdb">
-<div class="sourceCode cell-code" id="cb77"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a>country<span class="ot">=</span> <span class="fu">c</span>(<span class="st">'UK'</span>,<span class="st">'Spain'</span>)</span>
-<span id="cb77-2"><a href="#cb77-2" aria-hidden="true" tabindex="-1"></a>y2022<span class="ot">=</span> <span class="fu">c</span>(<span class="fl">80.5</span>,<span class="fl">50.1</span>); y2023<span class="ot">=</span> <span class="fu">c</span>(<span class="fl">81.4</span>,<span class="fl">50.0</span>)</span>
-<span id="cb77-3"><a href="#cb77-3" aria-hidden="true" tabindex="-1"></a>tab2<span class="ot">=</span> <span class="fu">tibble</span>(country, y2022, y2023)</span>
-<span id="cb77-4"><a href="#cb77-4" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(tab2)[<span class="dv">2</span><span class="sc">:</span><span class="dv">3</span>]<span class="ot">=</span> <span class="fu">c</span>(<span class="st">'2022'</span>,<span class="st">'2023'</span>)</span>
-<span id="cb77-5"><a href="#cb77-5" aria-hidden="true" tabindex="-1"></a>tab2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb76"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a>country<span class="ot">=</span> <span class="fu">c</span>(<span class="st">'UK'</span>,<span class="st">'Spain'</span>)</span>
+<span id="cb76-2"><a href="#cb76-2" aria-hidden="true" tabindex="-1"></a>y2022<span class="ot">=</span> <span class="fu">c</span>(<span class="fl">80.5</span>,<span class="fl">50.1</span>); y2023<span class="ot">=</span> <span class="fu">c</span>(<span class="fl">81.4</span>,<span class="fl">50.0</span>)</span>
+<span id="cb76-3"><a href="#cb76-3" aria-hidden="true" tabindex="-1"></a>tab2<span class="ot">=</span> <span class="fu">tibble</span>(country, y2022, y2023)</span>
+<span id="cb76-4"><a href="#cb76-4" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(tab2)[<span class="dv">2</span><span class="sc">:</span><span class="dv">3</span>]<span class="ot">=</span> <span class="fu">c</span>(<span class="st">'2022'</span>,<span class="st">'2023'</span>)</span>
+<span id="cb76-5"><a href="#cb76-5" aria-hidden="true" tabindex="-1"></a>tab2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 2 × 3
   country `2022` `2023`
@@ -1719,7 +1715,7 @@
 <h2>Example</h2>
 <p>Below 2022-2023 are values of the variable year</p>
 <div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-44_8ae52dc9d70be46a91dd55411e810a84">
-<div class="sourceCode cell-code" id="cb79"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a href="#cb79-1" aria-hidden="true" tabindex="-1"></a>tab2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb78"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a>tab2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 2 × 3
   country `2022` `2023`
@@ -1734,7 +1730,7 @@
 <li><p>Their values should be in a variable <code>population</code></p></li>
 </ul>
 <div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-45_1c114f64fdc7273151c142b1e6e6025a">
-<div class="sourceCode cell-code" id="cb81"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb81-1"><a href="#cb81-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pivot_longer</span>(tab2, <span class="at">cols=</span><span class="fu">c</span>(<span class="st">'2022'</span>,<span class="st">'2023'</span>), <span class="at">names_to=</span><span class="st">"year"</span>, <span class="at">values_to=</span> <span class="st">"population"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb80"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pivot_longer</span>(tab2, <span class="at">cols=</span><span class="fu">c</span>(<span class="st">'2022'</span>,<span class="st">'2023'</span>), <span class="at">names_to=</span><span class="st">"year"</span>, <span class="at">values_to=</span> <span class="st">"population"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 4 × 3
   country year  population
@@ -1750,8 +1746,8 @@
 <h2>Separating and uniting columns</h2>
 <p>Sometimes a character needs to be separated into several ones</p>
 <div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-46_3fa735b962f3d38ff00770b400b88994">
-<div class="sourceCode cell-code" id="cb83"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb83-1"><a href="#cb83-1" aria-hidden="true" tabindex="-1"></a>tab<span class="ot">=</span> <span class="fu">tibble</span>(<span class="at">date=</span><span class="fu">c</span>(<span class="st">"25/12/22"</span>,<span class="st">"26/12/22"</span>), <span class="at">date2=</span><span class="fu">c</span>(<span class="st">"251222"</span>,<span class="st">"261222"</span>))</span>
-<span id="cb83-2"><a href="#cb83-2" aria-hidden="true" tabindex="-1"></a>tab</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb82"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb82-1"><a href="#cb82-1" aria-hidden="true" tabindex="-1"></a>tab<span class="ot">=</span> <span class="fu">tibble</span>(<span class="at">date=</span><span class="fu">c</span>(<span class="st">"25/12/22"</span>,<span class="st">"26/12/22"</span>), <span class="at">date2=</span><span class="fu">c</span>(<span class="st">"251222"</span>,<span class="st">"261222"</span>))</span>
+<span id="cb82-2"><a href="#cb82-2" aria-hidden="true" tabindex="-1"></a>tab</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 2 × 2
   date     date2 
@@ -1762,7 +1758,7 @@
 </div>
 <p><code>separate</code>: indicate character to split by. <code>convert=TRUE</code> tries to convert into numeric</p>
 <div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-47_ba8a878d36c0408739f5e4deb3a28bde">
-<div class="sourceCode cell-code" id="cb85"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb85-1"><a href="#cb85-1" aria-hidden="true" tabindex="-1"></a><span class="fu">separate</span>(tab, <span class="at">col=</span>date, <span class="at">sep=</span><span class="st">'/'</span>, <span class="at">into=</span><span class="fu">c</span>(<span class="st">'day'</span>,<span class="st">'month'</span>,<span class="st">'year'</span>), <span class="at">convert=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb84"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb84-1"><a href="#cb84-1" aria-hidden="true" tabindex="-1"></a><span class="fu">separate</span>(tab, <span class="at">col=</span>date, <span class="at">sep=</span><span class="st">'/'</span>, <span class="at">into=</span><span class="fu">c</span>(<span class="st">'day'</span>,<span class="st">'month'</span>,<span class="st">'year'</span>), <span class="at">convert=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 2 × 4
     day month  year date2 
@@ -1773,7 +1769,7 @@
 </div>
 <p>Or positions at which to split</p>
 <div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-48_4de67efd818fd268a9ae895ff77b1612">
-<div class="sourceCode cell-code" id="cb87"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb87-1"><a href="#cb87-1" aria-hidden="true" tabindex="-1"></a><span class="fu">separate</span>(tab, <span class="at">col=</span>date2, <span class="at">sep=</span><span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">4</span>), <span class="at">into=</span><span class="fu">c</span>(<span class="st">'day'</span>,<span class="st">'month'</span>,<span class="st">'year'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb86"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb86-1"><a href="#cb86-1" aria-hidden="true" tabindex="-1"></a><span class="fu">separate</span>(tab, <span class="at">col=</span>date2, <span class="at">sep=</span><span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">4</span>), <span class="at">into=</span><span class="fu">c</span>(<span class="st">'day'</span>,<span class="st">'month'</span>,<span class="st">'year'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 2 × 4
   date     day   month year 
@@ -1792,14 +1788,14 @@
 
 <p>Databases may be stored in different tables (saves space and transfer time)</p>
 <div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-49_ad838643c08f7d6043707a9223e8a142">
-<div class="sourceCode cell-code" id="cb89"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb89-1"><a href="#cb89-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(nycflights13)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb88"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb88-1"><a href="#cb88-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(nycflights13)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="panel-tabset">
 <ul id="tabset-5" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-5-1">flights</a></li><li><a href="#tabset-5-2">airlines</a></li></ul>
 <div class="tab-content">
 <div id="tabset-5-1">
 <div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-50_05e4d8b01557099b738879bb66876235">
-<div class="sourceCode cell-code" id="cb90"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb90-1"><a href="#cb90-1" aria-hidden="true" tabindex="-1"></a>flights</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb89"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb89-1"><a href="#cb89-1" aria-hidden="true" tabindex="-1"></a>flights</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 336,776 × 20
     year month   day dep_time sched_de…¹ dep_d…² arr_t…³ sched…⁴ arr_d…⁵ carrier
@@ -1823,7 +1819,7 @@
 </div>
 <div id="tabset-5-2">
 <div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-51_5adde2c3775e49d8d9c07e4d327cbdcb">
-<div class="sourceCode cell-code" id="cb92"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb92-1"><a href="#cb92-1" aria-hidden="true" tabindex="-1"></a>airlines</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb91"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb91-1"><a href="#cb91-1" aria-hidden="true" tabindex="-1"></a>airlines</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 16 × 2
    carrier name                       
@@ -1887,8 +1883,8 @@
 <section id="merge" class="slide level2">
 <h2>Merge</h2>
 <div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-52_10b4f05337d2e7b6b0473d29b942c50d">
-<div class="sourceCode cell-code" id="cb94"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb94-1"><a href="#cb94-1" aria-hidden="true" tabindex="-1"></a>flightsdep<span class="ot">=</span> <span class="fu">select</span>(flights, <span class="fu">c</span>(<span class="st">'year'</span>,<span class="st">'month'</span>,<span class="st">'day'</span>,<span class="st">'dep_time'</span>,<span class="st">'carrier'</span>))</span>
-<span id="cb94-2"><a href="#cb94-2" aria-hidden="true" tabindex="-1"></a><span class="fu">left_join</span>(flightsdep, airlines, <span class="at">by=</span><span class="st">'carrier'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb93"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb93-1"><a href="#cb93-1" aria-hidden="true" tabindex="-1"></a>flightsdep<span class="ot">=</span> <span class="fu">select</span>(flights, <span class="fu">c</span>(<span class="st">'year'</span>,<span class="st">'month'</span>,<span class="st">'day'</span>,<span class="st">'dep_time'</span>,<span class="st">'carrier'</span>))</span>
+<span id="cb93-2"><a href="#cb93-2" aria-hidden="true" tabindex="-1"></a><span class="fu">left_join</span>(flightsdep, airlines, <span class="at">by=</span><span class="st">'carrier'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 336,776 × 6
     year month   day dep_time carrier name                    

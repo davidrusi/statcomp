@@ -488,15 +488,33 @@ ggplot(diamonds, mapping = aes(x = carat, y = price)) +
 
 # Exercise
 
-## Continent-wide life expectancy
+---
+
+To do Exercises 1-2 below load the gapminder data
+
+```{r, eval=FALSE}
+library(gapminder)
+gapminder
+```
+
+Turn in a single html with your solutions [here](https://drive.google.com/drive/folders/1jhh1CrXM3hqc7qTrOYeQzo2pV8Vly1NY?usp=sharing).
+Name your file firstname_lastname.html
+
+
+## Exercises
+
+**Exercise 1.** Continent-wide life expectancy
 
 1. Compute the mean life expectancy and GDP per capita for each (continent, year)
 
 2. Do an animated scatterplot of continent life expectancy vs. GDP (`transition_time(year)`)
 
-```{r}
-gapminder
-```
+
+**Exercise 2.** Inequality of GDP/capita across countries over time
+
+1. For each year, compute the inter-quartile range or the GDP/capita across countries
+
+2. Do a scatter-plot of IQR vs. year. Add lines to the plot
 
 
 # Data import and export
