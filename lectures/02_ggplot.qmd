@@ -498,7 +498,7 @@ A cool one is `gganimate` to create animations.
 {{< video https://www.youtube.com/watch?v=jbkSRLYSojo&ab_channel=GapminderFoundation width="750" height="400">}}
 
 
-## gganimate
+## Package `gganimate`
 
 To animate your ggplot you add transitions: how to organize successive frames
 
@@ -523,6 +523,8 @@ Other layers (the full list of options is [here](https://gganimate.com/reference
 
 
 ## Saving an animation
+
+**Important.** in Win/Mac you may need the `gifski` package
 
 `anim_save()` saves your last animated plot into a specified file and directory ("myfile.gif" and "mydirectory" below)
 
@@ -614,6 +616,8 @@ You can reveal new points in an increasing fashion, as done below
 Load the Gini dataset at the course's GitHub site.
 
 ```{r}
+library(gganimate)
+#library(gifski)  #you may need this in Windows and Mac
 gini= as_tibble(read.csv("~/github/statcomp/datasets/gini.csv"))
 gini
 ```

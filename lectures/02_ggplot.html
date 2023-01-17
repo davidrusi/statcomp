@@ -901,8 +901,8 @@ hs                      0.164      -0.127 -0.583  1.000</code></pre>
 <p><strong>gapminder data:</strong> country life expectancy over time popularized by Dr.&nbsp;Hans Rosling</p>
 <iframe src="https://www.youtube.com/embed/jbkSRLYSojo" width="750" height="400" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe>
 </section>
-<section id="gganimate" class="slide level2">
-<h2>gganimate</h2>
+<section id="package-gganimate" class="slide level2">
+<h2>Package <code>gganimate</code></h2>
 <p>To animate your ggplot you add transitions: how to organize successive frames</p>
 <ul>
 <li><p><code>transition_states()</code>: new plot according to a discrete variable</p></li>
@@ -919,6 +919,7 @@ hs                      0.164      -0.127 -0.583  1.000</code></pre>
 </section>
 <section id="saving-an-animation" class="slide level2">
 <h2>Saving an animation</h2>
+<p><strong>Important.</strong> in Win/Mac you may need the <code>gifski</code> package</p>
 <p><code>anim_save()</code> saves your last animated plot into a specified file and directory (“myfile.gif” and “mydirectory” below)</p>
 <div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-35_a3afa3ff7f192777e773bb243cd3de18">
 <div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(mydata, ...) <span class="co">#code to produce the animation</span></span>
@@ -1001,15 +1002,17 @@ hs                      0.164      -0.127 -0.583  1.000</code></pre>
 <img data-src="figs/airquality.gif" class="r-stretch"></section>
 <section id="transition_reveal" class="slide level2">
 <h2>transition_reveal</h2>
-<p>You can reveal new points in an increasing fashion. For example, one may create this plot.</p>
+<p>You can reveal new points in an increasing fashion, as done below</p>
 
 <img data-src="figs/airquality_byday.gif" class="r-stretch"></section>
 <section id="exercise-1" class="slide level2">
 <h2>Exercise</h2>
 <p>Load the Gini dataset at the course’s GitHub site.</p>
-<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-41_79688fb52d576ed79136d8e1df2384e4">
-<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>gini<span class="ot">=</span> <span class="fu">as_tibble</span>(<span class="fu">read.csv</span>(<span class="st">"~/github/statcomp/datasets/gini.csv"</span>))</span>
-<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>gini</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-41_33a94321fef15940d85f5e816eb7bd0c">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gganimate)</span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a><span class="co">#library(gifski)  #you may need this in Windows and Mac</span></span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>gini<span class="ot">=</span> <span class="fu">as_tibble</span>(<span class="fu">read.csv</span>(<span class="st">"~/github/statcomp/datasets/gini.csv"</span>))</span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>gini</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 624 × 4
    Entity    Code   Year  Gini
