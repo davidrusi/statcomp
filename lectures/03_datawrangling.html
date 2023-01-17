@@ -463,7 +463,7 @@
 <li><p>Create new variables: <code>mutate()</code></p></li>
 <li><p>Compute numerical summaries: <code>summarise()</code>. If used with <code>group_by()</code>, it operates by groups</p></li>
 </ul>
-<p>Other functions: <code>rename</code>, <code>mutate</code>, <code>transmute</code></p>
+<p>Other functions: <code>rename</code>, <code>transmute</code></p>
 </section>
 <section id="filter" class="slide level2" data-auto-animate="true">
 <h2 data-id="quarto-animate-title">Filter</h2>
@@ -1397,8 +1397,8 @@
 </div>
 </div>
 </section>
-<section id="grouping-by-multiple-variables" class="slide level2">
-<h2>Grouping by multiple variables</h2>
+<section id="ungrouping" class="slide level2">
+<h2>Ungrouping</h2>
 <div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-28_5ac30ca1db892774faa8f761e46af68b">
 <div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>daily<span class="ot">=</span> <span class="fu">group_by</span>(flights, year, month, day)</span>
 <span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summarise</span>(daily, <span class="at">flights =</span> <span class="fu">n</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1627,7 +1627,7 @@
 <p><strong>Exercise 2.</strong> Inequality of GDP/capita across countries over time</p>
 <ol type="1">
 <li><p>For each year, compute the inter-quartile range or the GDP/capita across countries</p></li>
-<li><p>Do a scatter-plot of IQR vs.&nbsp;year. Add lines to the plot</p></li>
+<li><p>Do a scatterplot of IQR vs.&nbsp;year. Add lines to the plot</p></li>
 </ol>
 </section></section>
 <section>

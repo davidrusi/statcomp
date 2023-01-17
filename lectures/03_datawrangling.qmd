@@ -67,7 +67,7 @@ The 5 main functions
 
 - Compute numerical summaries: `summarise()`. If used with `group_by()`, it operates by groups
 
-Other functions: `rename`, `mutate`, `transmute`
+Other functions: `rename`, `transmute`
 
 
 ## Filter {auto-animate="true"}
@@ -343,7 +343,7 @@ flights |>
   summarise(n_early = sum(dep_time < 500, na.rm=TRUE))
 ```
 
-## Grouping by multiple variables
+## Ungrouping
 
 ```{r}
 daily= group_by(flights, year, month, day)
@@ -515,7 +515,7 @@ Name your file firstname_lastname.html
 
 1. For each year, compute the inter-quartile range or the GDP/capita across countries
 
-2. Do a scatter-plot of IQR vs. year. Add lines to the plot
+2. Do a scatterplot of IQR vs. year. Add lines to the plot
 
 
 # Data import and export
