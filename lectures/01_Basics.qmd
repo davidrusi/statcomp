@@ -95,6 +95,8 @@ Alternatively, [posit cloud](https://posit.cloud) has a free plan
 
 -   Hadley Wickam's [R for Data Science](https://r4ds.had.co.nz). [Second edition (in progress)](https://r4ds.hadley.nz)
 
+-   Paul Roback & Julie Legler's [Applied GLMs and multilevel models](https://bookdown.org/roback/bookdown-BeyondMLR)
+
 -   RStudio [tutorials](https://education.rstudio.com/learn)
 
 -   RStudio [books](https://www.rstudio.com/resources/books)
