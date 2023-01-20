@@ -97,7 +97,7 @@ expit= function(z) 1/(1+exp(-z)) #inverse of logit function
 
 #Negative logistic regression log-likelihood, for multiple beta values
 flogregvec= function(beta, y, ytX, n, X=X, logscale=TRUE) {
-  if (missing(ytX)) ytX = t(X %*% y)
+  if (missing(ytX)) ytX = matrix(y,nrow=1) %*% X
   if (is.vector(beta)) beta= matrix(beta,ncol=1)
   apply(beta, 1, function(z) flogreg(z, ytX=ytX, n=n, X=X, logscale=logscale))
 }
@@ -121,7 +121,7 @@ flogreg= function(beta, y, X, ytX, logscale=TRUE) {
 # If beta==0, only ytX, colSumX, XtX are used
 # If beta!=0, only Xbeta and X are used
 fplogreg= function(beta, y, ytX, Xbeta, X, colsumX, XtX) {
-  if (missing(ytX)) ytX = t(X %*% y)
+  if (missing(ytX)) ytX = matrix(y,nrow=1) %*% X
   if (any(beta != 0)) {
     if (missing(Xbeta)) Xbeta= as.vector(X %*% beta)
     prob= 1.0/(1.0+exp(-Xbeta))

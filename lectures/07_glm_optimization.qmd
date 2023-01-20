@@ -218,13 +218,15 @@ Is there an interaction between number char and Re?
 
 ---
 
-Two popular strategies to minimize a convex $f(\theta)$ (equiv. maximize concave $-f(\theta)$)
+Three popular strategies to minimize a convex $f(\theta)$ (equiv. maximize concave $-f(\theta)$)
 
 1. Newton-Raphson algorithm
 
-2. Coordinate descent algorithm
+2. Gradient descent algorithm (and extensions)
 
-Note: if $f(\theta)$ differentiable, we equivalently seek $f'(\theta)=0$
+3. Coordinate descent algorithm
+
+Note: if $f(\theta)$ differentiable, we equivalently seek gradient $\nabla f(\theta)=0$
 
 
 ## Newton-Raphson
@@ -237,28 +239,159 @@ Note: if $f(\theta)$ differentiable, we equivalently seek $f'(\theta)=0$
 
 - Iterate until convergence
 
-See this [animation](https://commons.wikimedia.org/wiki/File:NewtonIteration_Ani.gif)
+Properties
+
+- Converges in few iterations (quadratic convergence once $\hat{\theta}^{(t)}$ close to the optimum)
+
+- If $p$ large, each iteration is costly (matrix inverse has cost $O(p^3)$). Alternative: *gradient descent and extensions*
+
+- If $n$ very large, evaluating gradient & hessian has cost $O(n)$. Alternative: *stochastic GD*
 
 
-## Newton-Raphson
 
-Let $z= \hat{\theta}^{(t)}$, $g()$ the gradient and $H()$ the hessian
+## Newton-Raphson example
+
+
+Bivariate logistic regression example (spam data)
+
+::: columns
+::: {.column width="50%"}
+
+![](figs/logreg_newton.png)
+
+:::
+
+::: {.column width="50%"}
+
+![](figs/logreg_newton_iter2.png)
+
+:::
+
+:::
+```{r, echo=FALSE, eval=FALSE}
+## Plot 1 iter of Newton-Raphson
+## Step 1. Define grid and evaluate logreg objective function
+bhat= coef(glm(spam ~ num_char, data= email, family=binomial()))
+bhat
+
+th0= seq(-2.5,-1,length=40); th1= seq(-0.15,0.05,length=40)
+thgrid= as.matrix(expand.grid(th0, th1))
+y= as.numeric(as.character(email$spam)); X= cbind(1, email$num_char)
+fgrid= double(nrow(thgrid))
+for (i in 1:nrow(thgrid)) fgrid[i]= flogreg(as.vector(thgrid[i,]), y=y, X=X)
+df= as_tibble(cbind(thgrid, fgrid))
+names(df)= c('theta0','theta1','f')
+
+## Step 2. Evaluate Taylor approximation
+b0= c(-1.5, -0.05)
+#b0= b1
+fderiv= fplogreg(b0, y=matrix(y,ncol=1), X=X)
+g= matrix(fderiv$g, ncol=1)
+H= fderiv$H
+b1= as.vector(b0 - solve(H) %*% g)
+fapprox= function(theta, b0, y, X, grad, hess) flogreg(theta, y=y, X=X) + t(grad) %*% matrix(theta - b0,ncol=1) + 0.5 * matrix(theta - b0,nrow=1) %*% hess %*% matrix(theta - b0,ncol=1)
+
+fagrid= double(nrow(thgrid))
+for (i in 1:nrow(thgrid)) fagrid[i]= fapprox(as.vector(thgrid[i,]), b0=b0, y=y, X=X, grad=g, hess=H)
+df= cbind(df, fa=fagrid)
+
+## Step 3. Contour plot with quadratic approx
+ggplot(df, aes(theta0, theta1)) + 
+  geom_contour(aes(z=f)) + 
+  geom_contour(aes(z=fa), col='black', lty=2) + 
+  geom_point(aes(x=bhat[1],y=bhat[2]), col='blue') +
+  geom_text(aes(x=bhat[1],y=bhat[2]), label='Optimum', nudge_y=-0.01, size=5, col='blue') +
+  geom_point(aes(x=b0[1],y=b0[2]), col='black') +
+  geom_text(aes(x=b0[1],y=b0[2]), label="theta^(t)", parse=TRUE, nudge_x= 0, nudge_y=0, size=6) +
+  geom_point(aes(x=b1[1],y=b1[2]), col='black') +
+  geom_text(aes(x=b1[1],y=b1[2]), label="theta^(t+1)", parse=TRUE, size=6)
+
+
+ggsave("logreg_newton_iter2.png", path="~/github/statcomp/lectures/figs")
+
+## Step 4. Gradient descent
+f_along_grad= function(alpha, b0, grad, y, X) flogreg(as.vector(b0 - alpha*grad), y=y, X=X)
+
+b0= c(-1.5, -0.05)
+thiter= matrix(NA, nrow=100, ncol=2)
+thiter[1,]= b0
+fiter= double(nrow(thiter))
+fiter[1]= flogreg(b0, y=y, X=X)
+i=2; ftol=1
+while ((i<=nrow(thiter)) & (ftol > 0.01)) {
+  g= fplogreg(b0, y=matrix(y,ncol=1), X=X)$g
+  g= g / sqrt(sum(g^2)) #normalize to unit length
+  opt= nlm(f_along_grad, p=0.1, b0=b0, grad=g, y=y, X=X)
+  alphaopt= opt$estimate #optimal step size
+  fiter[i]= opt$minimum
+  b0= as.vector(b0 - alphaopt * g)
+  thiter[i,]= b0
+  ftol= fiter[i-1] - fiter[i]
+  i= i+1  
+}
+
+gd_iter= as_tibble(cbind(thiter, fiter))
+names(gd_iter)= c('theta0','theta1','f')
+gd_iter= filter(gd_iter, rowSums(is.na(gd_iter))==0)
+
+## Step 5. Contour + gradient descent iterations
+
+ggplot(df, aes(theta0, theta1)) + 
+  geom_contour(aes(z=f)) + 
+  geom_point(aes(x=bhat[1],y=bhat[2]), col='blue') +
+  geom_text(aes(x=bhat[1],y=bhat[2]), label='Optimum', nudge_y=-0.01, size=5, col='blue') +
+  geom_point(aes(theta0,theta1), data=gd_iter) +
+  geom_path(aes(theta0,theta1,colour=f), data=gd_iter, arrow=arrow(length=unit(0.1,"inches"))) +
+  theme(legend.position='none')
+
+ggsave("logreg_gd.png", path="~/github/statcomp/lectures/figs")
+```
+
+
+
+## NR in more detail
+
+Let $z= \hat{\theta}^{(t)}$, $g(\theta)=\nabla f(\theta)$ the gradient and $H(\theta)= \nabla^2 f(\theta)$ the hessian
 
 $$
-f(\theta) \approx \hat{f}(\theta)= f(z) + g(z)^T (z - \theta) + \frac{1}{2} (z-\theta)^T H(z) (z - \theta)
+f(\theta) \approx \hat{f}(\theta)= f(z) + g(z)^T (\theta - z) + \frac{1}{2} (\theta - z)^T H(z) (\theta - z)
 $$
 
-Take gradient of $\hat{f}(\theta)$ wrt $\theta$ gives (using standard vector derivatives)
+**Recall.** Let $a \in \mathbb{R}^p$ and a $p \times p$ matrix $A$. Gradient of linear & quadratic forms
+
+- $\nabla_\theta (a^T \theta)= a$
+
+- $\nabla_\theta (\theta^T A \theta)= (A + A^T) \theta$ (if $A$ symmetric, then $2A \theta$)
+
+Taking the gradient of $\hat{f}(\theta)$ wrt $\theta$ gives
 $$
 g(z) + H(z) (z - \theta)=0 \Rightarrow \theta= z-H^{-1}(z) g(z)
 $$
 
 If $f$ strictly convex then $H$ is strictly positive-definite, hence invertible. Else an adjustment is applied, e.g. $(H + \lambda I)^{-1}$ for small $\lambda>0$
 
-- The good: converges in few iterations (quadratic convergence once $\hat{\theta}^{(t)}$ close to the optimum)
 
-- The bad: if $p$ is large, each iteration can be costly (matrix inverse has cost $O(p^3)$)
+## Gradient descent
 
+Update $\hat{\theta}^{(t)}$ in the direction of the negative gradient. That is
+
+$$
+\hat{\theta}^{(t+1)}= \hat{\theta}^{(t)} - \alpha_t g(\hat{\theta}^{(t)})
+$$
+for a suitably-chosen scalar $\alpha_t > 0$. 
+
+For example, line search: set $\alpha_t$ minimizing $f(\hat{\theta}^{(t+1)})$
+
+- The good: each iteration has cost of order $p$
+
+- The bad: converges slower (linear convergence)
+
+
+## Gradient descent example
+
+Here it converges in 9 iterations
+
+![](figs/logreg_gd.png)
 
 ## Coordinate descent
 
@@ -274,12 +407,12 @@ If $f$ strictly convex then $H$ is strictly positive-definite, hence invertible.
 
 Remarks
 
-- Requires more iterations than Newton-Raphson. But each iteration cheaper
+- May converge slower than NR and GD. But each iteration is cheap
 
-- No need to exactly solve each univariate optim. Enough to set $\hat{\theta}_j$ to improve $f$, e.g. gradient descent
+- No need to exactly solve each univariate optim. Enough to set $\hat{\theta}_j$ to improve $f$
 
 
-## Newton-Raphson in practice
+## Newton-Raphson using `nlm`
 
 Let's do the optimization. First, store outcome and covariates. We also create `ytX` so that evaluating the log-likelihood is faster
 
@@ -306,6 +439,7 @@ flogreg= function(beta, y, X, ytX, logscale=TRUE) {
   return(ans)
 }
 ```
+
 
 ---
 
@@ -344,6 +478,10 @@ round(cbind(thhat, se, summary(fit)$coef[,1:2]),3)
 - `optim`: general optim methods (quasi-Newton, conjugate gradient...) and box constraints
 
 - `optimx` package (function `opm`)
+
+Package `sgd` implements stochastic gradient descent for linear/generalized linear models (and beyond)
+
+
 
 
 

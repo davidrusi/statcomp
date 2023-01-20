@@ -1,0 +1,103 @@
+---
+title: "Modern Statistical Computing"
+subtitle: "8. Model comparison"
+author: "David Rossell"
+institute: "Pompeu Fabra University"
+execute:
+  echo: true
+format:
+  revealjs:
+    theme: [default, custom.scss]
+    scrollable: true
+toc: true
+toc-depth: 1
+number-sections: false
+mouse-wheel: true
+code-overflow: scroll
+code-line-numbers: false
+code-copy: true
+cache: true
+title-slide-style: pandoc
+bibliography: references.bib
+---
+
+## Reproducing these lecture notes
+
+Load required R packages
+
+```{r, warning=FALSE}
+library(tidyverse)
+library(coefplot)
+```
+
+We also source routines.R, which has auxiliary functions
+
+```{r}
+source('../code/routines.R')
+```
+
+
+##
+
+Typically we're unsure about what regression model is best. Consider these situations
+
+- We add parameters (e.g. variables) to a model. We wanna test if they're statistically significant *by comparing the 2 models*
+
+- We have $\geq 2$ models. We seek the best one for *forecasting*
+
+- We have $\geq 2$ models. We seek the best one for *explaining*
+
+We discuss methods for each of these situations
+
+
+# Comparing 2 nested models
+
+## Nested models
+
+Let outcome $y$, $p_1$ covariates in $X_1$ and $p_2$ covariates in $X_2$
+
+- Model 1 has a regression equation driven by $X \beta_1$
+
+- Model 2 features $X \beta_1 + X \beta_2$
+
+**Goal.** Test the null hypothesis $H_0: \beta_2=0$
+
+The standard test for such $H_0$ is the *likelihood ratio test*
+
+Note: models may also feature a dispersion parameter (e.g. $\sigma^2$)
+
+## Likelihood ratio test
+
+Let $\theta_1=\beta_1$ be the parameters under Model 1, $\theta_2=(\beta_1,\beta_2)$ those under Model 2
+
+Consider the maximized log-likelihoods
+$$
+\begin{aligned}
+L_1= \max_{\theta_1} \log p(y \mid \theta_1) \\
+L_2= \max_{\theta_2} \log p(y \mid \theta_2)
+\end{aligned}
+$$
+
+**Def.** The *likelihood ratio test statistic* is $\mbox{LR}_{21}= 2(L_2 - L_1)$
+
+Large $\mbox{LR}_{21}$ indicate that data $y$ are more likely under Model 2, i.e. evidence against $H_0:\beta_2=0$
+
+## Likelihood ratio test
+
+Consider 2 nested models and $\mbox{LR}_{21}$ as defined above, **where $H_0:\beta_2=0$ is true**
+
+**Result.** For Normal linear regression,
+$$
+\mbox{LR}_{21} \sim F_{p_2, n-p_2}
+$$
+where $F_{a,b}$ denotes an F-distribution with degrees of freedom $(a,b)$
+
+**Result.** For generalized linear models, under mild technical conditions as $n \rightarrow \infty$
+$$
+\mbox{LR}_{21} \stackrel{D}{\longrightarrow} \chi_{p_2}^2
+$$
+
+Note: as $n-p_2 \rightarrow \infty$, $F_{p_2,n-p_2} \stackrel{D}{\longrightarrow} \chi_{p_2}^2$
+
+
+

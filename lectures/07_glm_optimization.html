@@ -596,12 +596,13 @@ P(Y_i=y_i)= \pi_i^{y_i} (1-\pi_i)^{1-y_i} = \begin{cases} \pi_i \mbox{ if } y_i=
 </section>
 <section class="slide level2">
 
-<p>Two popular strategies to minimize a convex <span class="math inline">\(f(\theta)\)</span> (equiv. maximize concave <span class="math inline">\(-f(\theta)\)</span>)</p>
+<p>Three popular strategies to minimize a convex <span class="math inline">\(f(\theta)\)</span> (equiv. maximize concave <span class="math inline">\(-f(\theta)\)</span>)</p>
 <ol type="1">
 <li><p>Newton-Raphson algorithm</p></li>
+<li><p>Gradient descent algorithm (and extensions)</p></li>
 <li><p>Coordinate descent algorithm</p></li>
 </ol>
-<p>Note: if <span class="math inline">\(f(\theta)\)</span> differentiable, we equivalently seek <span class="math inline">\(f'(\theta)=0\)</span></p>
+<p>Note: if <span class="math inline">\(f(\theta)\)</span> differentiable, we equivalently seek gradient <span class="math inline">\(\nabla f(\theta)=0\)</span></p>
 </section>
 <section id="newton-raphson" class="slide level2">
 <h2>Newton-Raphson</h2>
@@ -611,23 +612,60 @@ P(Y_i=y_i)= \pi_i^{y_i} (1-\pi_i)^{1-y_i} = \begin{cases} \pi_i \mbox{ if } y_i=
 <li><p>Set <span class="math inline">\(\hat{\theta}^{(t+1)}\)</span> to value maximizing the quadratic approx</p></li>
 <li><p>Iterate until convergence</p></li>
 </ul>
-<p>See this <a href="https://commons.wikimedia.org/wiki/File:NewtonIteration_Ani.gif">animation</a></p>
+<p>Properties</p>
+<ul>
+<li><p>Converges in few iterations (quadratic convergence once <span class="math inline">\(\hat{\theta}^{(t)}\)</span> close to the optimum)</p></li>
+<li><p>If <span class="math inline">\(p\)</span> large, each iteration is costly (matrix inverse has cost <span class="math inline">\(O(p^3)\)</span>). Alternative: <em>gradient descent and extensions</em></p></li>
+<li><p>If <span class="math inline">\(n\)</span> very large, evaluating gradient &amp; hessian has cost <span class="math inline">\(O(n)\)</span>. Alternative: <em>stochastic GD</em></p></li>
+</ul>
 </section>
-<section id="newton-raphson-1" class="slide level2">
-<h2>Newton-Raphson</h2>
-<p>Let <span class="math inline">\(z= \hat{\theta}^{(t)}\)</span>, <span class="math inline">\(g()\)</span> the gradient and <span class="math inline">\(H()\)</span> the hessian</p>
+<section id="newton-raphson-example" class="slide level2">
+<h2>Newton-Raphson example</h2>
+<p>Bivariate logistic regression example (spam data)</p>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p><img data-src="figs/logreg_newton.png"></p>
+</div><div class="column" style="width:50%;">
+<p><img data-src="figs/logreg_newton_iter2.png"></p>
+</div>
+</div>
+<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-8_eb47c61680cfd86321a61007ae620a1f">
+
+</div>
+</section>
+<section id="nr-in-more-detail" class="slide level2">
+<h2>NR in more detail</h2>
+<p>Let <span class="math inline">\(z= \hat{\theta}^{(t)}\)</span>, <span class="math inline">\(g(\theta)=\nabla f(\theta)\)</span> the gradient and <span class="math inline">\(H(\theta)= \nabla^2 f(\theta)\)</span> the hessian</p>
 <p><span class="math display">\[
-f(\theta) \approx \hat{f}(\theta)= f(z) + g(z)^T (z - \theta) + \frac{1}{2} (z-\theta)^T H(z) (z - \theta)
+f(\theta) \approx \hat{f}(\theta)= f(z) + g(z)^T (\theta - z) + \frac{1}{2} (\theta - z)^T H(z) (\theta - z)
 \]</span></p>
-<p>Take gradient of <span class="math inline">\(\hat{f}(\theta)\)</span> wrt <span class="math inline">\(\theta\)</span> gives (using standard vector derivatives) <span class="math display">\[
+<p><strong>Recall.</strong> Let <span class="math inline">\(a \in \mathbb{R}^p\)</span> and a <span class="math inline">\(p \times p\)</span> matrix <span class="math inline">\(A\)</span>. Gradient of linear &amp; quadratic forms</p>
+<ul>
+<li><p><span class="math inline">\(\nabla_\theta (a^T \theta)= a\)</span></p></li>
+<li><p><span class="math inline">\(\nabla_\theta (\theta^T A \theta)= (A + A^T) \theta\)</span> (if <span class="math inline">\(A\)</span> symmetric, then <span class="math inline">\(2A \theta\)</span>)</p></li>
+</ul>
+<p>Taking the gradient of <span class="math inline">\(\hat{f}(\theta)\)</span> wrt <span class="math inline">\(\theta\)</span> gives <span class="math display">\[
 g(z) + H(z) (z - \theta)=0 \Rightarrow \theta= z-H^{-1}(z) g(z)
 \]</span></p>
 <p>If <span class="math inline">\(f\)</span> strictly convex then <span class="math inline">\(H\)</span> is strictly positive-definite, hence invertible. Else an adjustment is applied, e.g.&nbsp;<span class="math inline">\((H + \lambda I)^{-1}\)</span> for small <span class="math inline">\(\lambda&gt;0\)</span></p>
+</section>
+<section id="gradient-descent" class="slide level2">
+<h2>Gradient descent</h2>
+<p>Update <span class="math inline">\(\hat{\theta}^{(t)}\)</span> in the direction of the negative gradient. That is</p>
+<p><span class="math display">\[
+\hat{\theta}^{(t+1)}= \hat{\theta}^{(t)} - \alpha_t g(\hat{\theta}^{(t)})
+\]</span> for a suitably-chosen scalar <span class="math inline">\(\alpha_t &gt; 0\)</span>.</p>
+<p>For example, line search: set <span class="math inline">\(\alpha_t\)</span> minimizing <span class="math inline">\(f(\hat{\theta}^{(t+1)})\)</span></p>
 <ul>
-<li><p>The good: converges in few iterations (quadratic convergence once <span class="math inline">\(\hat{\theta}^{(t)}\)</span> close to the optimum)</p></li>
-<li><p>The bad: if <span class="math inline">\(p\)</span> is large, each iteration can be costly (matrix inverse has cost <span class="math inline">\(O(p^3)\)</span>)</p></li>
+<li><p>The good: each iteration has cost of order <span class="math inline">\(p\)</span></p></li>
+<li><p>The bad: converges slower (linear convergence)</p></li>
 </ul>
 </section>
+<section id="gradient-descent-example" class="slide level2">
+<h2>Gradient descent example</h2>
+<p>Here it converges in 9 iterations</p>
+
+<img data-src="figs/logreg_gd.png" class="r-stretch"></section>
 <section id="coordinate-descent" class="slide level2">
 <h2>Coordinate descent</h2>
 <ul>
@@ -639,21 +677,21 @@ g(z) + H(z) (z - \theta)=0 \Rightarrow \theta= z-H^{-1}(z) g(z)
 </ul>
 <p>Remarks</p>
 <ul>
-<li><p>Requires more iterations than Newton-Raphson. But each iteration cheaper</p></li>
-<li><p>No need to exactly solve each univariate optim. Enough to set <span class="math inline">\(\hat{\theta}_j\)</span> to improve <span class="math inline">\(f\)</span>, e.g.&nbsp;gradient descent</p></li>
+<li><p>May converge slower than NR and GD. But each iteration is cheap</p></li>
+<li><p>No need to exactly solve each univariate optim. Enough to set <span class="math inline">\(\hat{\theta}_j\)</span> to improve <span class="math inline">\(f\)</span></p></li>
 </ul>
 </section>
-<section id="newton-raphson-in-practice" class="slide level2">
-<h2>Newton-Raphson in practice</h2>
+<section id="newton-raphson-using-nlm" class="slide level2">
+<h2>Newton-Raphson using <code>nlm</code></h2>
 <p>Let’s do the optimization. First, store outcome and covariates. We also create <code>ytX</code> so that evaluating the log-likelihood is faster</p>
-<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-8_f968ece0cefbcb690b5c94e488ced2a2">
+<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-9_bd97b6106facff0c02e1376358aeeef3">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>y<span class="ot">=</span> <span class="fu">ifelse</span>(email<span class="sc">$</span>spam<span class="sc">==</span><span class="st">'1'</span>,<span class="dv">1</span>,<span class="dv">0</span>)</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>x2<span class="ot">=</span> <span class="fu">ifelse</span>(email<span class="sc">$</span>re_subj<span class="sc">==</span><span class="st">'1'</span>,<span class="dv">1</span>,<span class="dv">0</span>)</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>X<span class="ot">=</span> <span class="fu">cbind</span>(<span class="at">intercept=</span><span class="dv">1</span>, <span class="at">num_char=</span>email<span class="sc">$</span>num_char, <span class="at">re_subj=</span>x2)</span>
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>ytX<span class="ot">=</span> <span class="fu">matrix</span>(y,<span class="at">nrow=</span><span class="dv">1</span>) <span class="sc">%*%</span> X</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Next, we define the negative log-likelihood</p>
-<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-9_6acf796dcd20abe8cc945a712fddea9d">
+<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-10_3870c93b635cb0a021f2c97f86cc083c">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>flogreg<span class="ot">=</span> <span class="cf">function</span>(beta, y, X, ytX, <span class="at">logscale=</span><span class="cn">TRUE</span>) {</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">missing</span>(ytX)) ytX <span class="ot">=</span> <span class="fu">matrix</span>(y,<span class="at">nrow=</span><span class="dv">1</span>) <span class="sc">%*%</span> X</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">any</span>(beta <span class="sc">!=</span> <span class="dv">0</span>)) {</span>
@@ -671,7 +709,7 @@ g(z) + H(z) (z - \theta)=0 \Rightarrow \theta= z-H^{-1}(z) g(z)
 <section class="slide level2">
 
 <p>Finally we call <code>nlm</code>. If gradient/hessian not provided, they’re approximated numerically</p>
-<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-10_b0ccc638a1703848b3a22dcd408b498e">
+<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-11_57c4d4a8aa263b3bffaefdda9d9a7b06">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>opt1<span class="ot">=</span> <span class="fu">nlm</span>(flogreg, <span class="fu">rep</span>(<span class="dv">0</span>,<span class="dv">3</span>), <span class="at">y=</span>y, <span class="at">X=</span>X, <span class="at">ytX=</span>ytX, <span class="at">hessian=</span><span class="cn">TRUE</span>, <span class="at">print.level=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>iteration = 0
@@ -1000,20 +1038,20 @@ Current iterate is probably solution.</code></pre>
 <section id="comparison-to-glm" class="slide level2">
 <h2>Comparison to glm</h2>
 <p>Check that the gradient is 0</p>
-<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-11_76817e6aa99e6107f0351f282f73c64c">
+<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-12_b7b86d216bef4d74d8676f4fa60a7c49">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>opt1<span class="sc">$</span>gradient <span class="co">#should be 0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] -5.306229e-05 -9.573216e-04 -5.665419e-06</code></pre>
 </div>
 </div>
 <p>The inverse hessian gives the MLE covariance matrix</p>
-<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-12_8c6e5841b7030215d22c88ad3986d350">
+<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-13_5b1e5f9581c839fcecb5e2a90bbe382f">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>thhat<span class="ot">=</span> opt1<span class="sc">$</span>estimate</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>H<span class="ot">=</span> opt1<span class="sc">$</span>hessian</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>se<span class="ot">=</span> <span class="fu">sqrt</span>(<span class="fu">diag</span>(<span class="fu">solve</span>(H)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Compare to the results from <code>glm</code></p>
-<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-13_45717759eadc150484f767201b6a5e62">
+<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-14_6a64026e09762b9a0a93a453963d675a">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">cbind</span>(thhat, se, <span class="fu">summary</span>(fit)<span class="sc">$</span>coef[,<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>]),<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>             thhat    se Estimate Std. Error
@@ -1030,6 +1068,7 @@ re_subj1    -2.970 0.360   -2.970      0.360</code></pre>
 <li><p><code>optim</code>: general optim methods (quasi-Newton, conjugate gradient…) and box constraints</p></li>
 <li><p><code>optimx</code> package (function <code>opm</code>)</p></li>
 </ul>
+<p>Package <code>sgd</code> implements stochastic gradient descent for linear/generalized linear models (and beyond)</p>
 </section></section>
 <section>
 <section id="poisson-regression" class="title-slide slide level1 center">
@@ -1076,7 +1115,7 @@ re_subj1    -2.970 0.360   -2.970      0.360</code></pre>
 </section>
 <section class="slide level2">
 
-<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-14_01ed70391e6bb558257e21b230bdff55">
+<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-15_c455a48bc6b82e520e97748144efc477">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>fHH<span class="ot">=</span> <span class="fu">as_tibble</span>(<span class="fu">read.table</span>(<span class="st">"../datasets/fHH1.txt"</span>, <span class="at">header=</span><span class="cn">TRUE</span>))</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>fHH</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -1103,42 +1142,42 @@ re_subj1    -2.970 0.360   -2.970      0.360</code></pre>
 <ul id="tabset-2" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-2-1">Barplot</a></li><li><a href="#tabset-2-2">Scatterplot</a></li><li><a href="#tabset-2-3">Jittered scatterplot</a></li><li><a href="#tabset-2-4">By region</a></li><li><a href="#tabset-2-5">By roof</a></li></ul>
 <div class="tab-content">
 <div id="tabset-2-1">
-<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-15_5c7bb36248abda17b917da752067b24e">
+<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-16_5186430d2ec354883eef0a010e546c08">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fHH, <span class="fu">aes</span>(<span class="at">x=</span>total)) <span class="sc">+</span> <span class="fu">geom_bar</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<p><img data-src="07_glm_optimization_files/figure-revealjs/unnamed-chunk-15-1.png" width="960"></p>
-</div>
-</div>
-</div>
-<div id="tabset-2-2">
-<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-16_be402dfccf0632e59274e3d953e2df2c">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fHH, <span class="fu">aes</span>(<span class="at">x=</span>age, <span class="at">y=</span>total)) <span class="sc">+</span> <span class="fu">geom_point</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img data-src="07_glm_optimization_files/figure-revealjs/unnamed-chunk-16-1.png" width="960"></p>
 </div>
 </div>
 </div>
-<div id="tabset-2-3">
-<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-17_520c241ba8729e04f5e037599d56b02d">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fHH, <span class="fu">aes</span>(<span class="at">x=</span>age, <span class="at">y=</span>total)) <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">position=</span><span class="st">"jitter"</span>) <span class="sc">+</span> <span class="fu">geom_smooth</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="tabset-2-2">
+<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-17_ba88416998ed0245cd3486868f12a769">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fHH, <span class="fu">aes</span>(<span class="at">x=</span>age, <span class="at">y=</span>total)) <span class="sc">+</span> <span class="fu">geom_point</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img data-src="07_glm_optimization_files/figure-revealjs/unnamed-chunk-17-1.png" width="960"></p>
 </div>
 </div>
 </div>
-<div id="tabset-2-4">
-<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-18_71b9f12e78335f0c8a58fb1123734ddd">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fHH, <span class="fu">aes</span>(<span class="at">x=</span>age,<span class="at">y=</span>total, <span class="at">color=</span>location)) <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">position=</span><span class="st">"jitter"</span>) <span class="sc">+</span> <span class="fu">geom_smooth</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="tabset-2-3">
+<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-18_5103aaa32a764180f5710f4ab635a6cd">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fHH, <span class="fu">aes</span>(<span class="at">x=</span>age, <span class="at">y=</span>total)) <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">position=</span><span class="st">"jitter"</span>) <span class="sc">+</span> <span class="fu">geom_smooth</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img data-src="07_glm_optimization_files/figure-revealjs/unnamed-chunk-18-1.png" width="960"></p>
 </div>
 </div>
 </div>
-<div id="tabset-2-5">
-<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-19_d3020b7572bd0d6ddfcf4821cdcef2a5">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fHH, <span class="fu">aes</span>(<span class="at">x=</span>age,<span class="at">y=</span>total, <span class="at">color=</span>roof)) <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">position=</span><span class="st">"jitter"</span>) <span class="sc">+</span> <span class="fu">geom_smooth</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="tabset-2-4">
+<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-19_9eb7dd4e89185a86d683ac7afe1421fe">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fHH, <span class="fu">aes</span>(<span class="at">x=</span>age,<span class="at">y=</span>total, <span class="at">color=</span>location)) <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">position=</span><span class="st">"jitter"</span>) <span class="sc">+</span> <span class="fu">geom_smooth</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img data-src="07_glm_optimization_files/figure-revealjs/unnamed-chunk-19-1.png" width="960"></p>
+</div>
+</div>
+</div>
+<div id="tabset-2-5">
+<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-20_8e75c06460e6e30cfb84ef58d6839725">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fHH, <span class="fu">aes</span>(<span class="at">x=</span>age,<span class="at">y=</span>total, <span class="at">color=</span>roof)) <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">position=</span><span class="st">"jitter"</span>) <span class="sc">+</span> <span class="fu">geom_smooth</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img data-src="07_glm_optimization_files/figure-revealjs/unnamed-chunk-20-1.png" width="960"></p>
 </div>
 </div>
 </div>
@@ -1152,7 +1191,7 @@ re_subj1    -2.970 0.360   -2.970      0.360</code></pre>
 <li><p>Discretize it in 5 year groups</p></li>
 <li><p>Add a quadratic effect</p></li>
 </ul>
-<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-20_72a4f8d044d61abd34b1b4187084b754">
+<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-21_00e7aff86e38a1f5cde7e773e08a98cc">
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>fHH<span class="ot">=</span> <span class="fu">mutate</span>(fHH, <span class="at">aged=</span> <span class="fu">cut_width</span>(age, <span class="dv">5</span>), <span class="at">age2=</span> age<span class="sc">^</span><span class="dv">2</span>)</span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>fHH<span class="sc">$</span>roof<span class="ot">=</span> <span class="fu">recode</span>(fHH<span class="sc">$</span>roof, <span class="st">`</span><span class="at">Predominantly Strong Material</span><span class="st">`</span><span class="ot">=</span><span class="st">"Strong"</span>, <span class="st">`</span><span class="at">Predominantly Light/Salvaged Material</span><span class="st">`</span><span class="ot">=</span><span class="st">"Light"</span>)</span>
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>fHH</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1180,7 +1219,7 @@ re_subj1    -2.970 0.360   -2.970      0.360</code></pre>
 <ul id="tabset-3" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-3-1">Discretized age</a></li><li><a href="#tabset-3-2">Quadratic age effect</a></li></ul>
 <div class="tab-content">
 <div id="tabset-3-1">
-<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-21_9c041bf440b8addd82468e576ec871e9">
+<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-22_79e92eed9823c366b8cacd3018130f59">
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>fit<span class="ot">=</span> <span class="fu">glm</span>(total <span class="sc">~</span> location <span class="sc">+</span> roof <span class="sc">+</span> aged, <span class="at">data=</span>fHH, <span class="at">family=</span><span class="fu">poisson</span>())</span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit)<span class="sc">$</span>coef</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -1211,7 +1250,7 @@ aged(97.5,102]       -12.90652463 284.65930021 -0.04534025 0.963836103</code></p
 </div>
 </div>
 <div id="tabset-3-2">
-<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-22_05618683f143467b821c72c2506bc801">
+<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-23_47a3ebb8385dea5035138944c0adb5d2">
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>fit2<span class="ot">=</span> <span class="fu">glm</span>(total <span class="sc">~</span> location <span class="sc">+</span> roof <span class="sc">+</span> age <span class="sc">+</span> age2, <span class="at">data=</span>fHH, <span class="at">family=</span><span class="fu">poisson</span>())</span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit2)<span class="sc">$</span>coef</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -1236,7 +1275,7 @@ age2                 -0.0007034333 0.0000641942 -10.9578954 6.089915e-28</code><
 <ul id="tabset-4" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-4-1">aged, location</a></li><li><a href="#tabset-4-2">aged, roof</a></li><li><a href="#tabset-4-3">age2, location</a></li><li><a href="#tabset-4-4">age2, roof</a></li></ul>
 <div class="tab-content">
 <div id="tabset-4-1">
-<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-23_70657a3f4aaf3ebf11109070bc54392c">
+<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-24_f29cf81bbc1069631f27dec02beb7f5f">
 <details>
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>mygrid<span class="ot">=</span> <span class="fu">data_grid</span>(fHH, aged, location, <span class="at">.model=</span>fit)</span>
@@ -1248,12 +1287,12 @@ age2                 -0.0007034333 0.0000641942 -10.9578954 6.089915e-28</code><
 <span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">'Age of household head'</span>, <span class="at">y=</span><span class="st">'Expected number of people in household'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img data-src="07_glm_optimization_files/figure-revealjs/unnamed-chunk-23-1.png" width="960"></p>
+<p><img data-src="07_glm_optimization_files/figure-revealjs/unnamed-chunk-24-1.png" width="960"></p>
 </div>
 </div>
 </div>
 <div id="tabset-4-2">
-<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-24_83597ee7bd84ebbbe8c551a0be7c16bf">
+<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-25_bcb597725322c8a43f0b46eaf395dfcf">
 <details>
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>mygrid<span class="ot">=</span> <span class="fu">data_grid</span>(fHH, aged, roof, <span class="at">.model=</span>fit)</span>
@@ -1265,12 +1304,12 @@ age2                 -0.0007034333 0.0000641942 -10.9578954 6.089915e-28</code><
 <span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">'Age of household head'</span>, <span class="at">y=</span><span class="st">'Expected number of people in household'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img data-src="07_glm_optimization_files/figure-revealjs/unnamed-chunk-24-1.png" width="960"></p>
+<p><img data-src="07_glm_optimization_files/figure-revealjs/unnamed-chunk-25-1.png" width="960"></p>
 </div>
 </div>
 </div>
 <div id="tabset-4-3">
-<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-25_9baf0f5b470ac0ee62f2798c0a98b58b">
+<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-26_b6f4ef8a296c973b655213fe6c5fa15d">
 <details>
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>mygrid<span class="ot">=</span> <span class="fu">data_grid</span>(fHH, age, location, <span class="at">.model=</span>fit2)</span>
@@ -1285,12 +1324,12 @@ age2                 -0.0007034333 0.0000641942 -10.9578954 6.089915e-28</code><
 <span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="dv">0</span>,<span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img data-src="07_glm_optimization_files/figure-revealjs/unnamed-chunk-25-1.png" width="960"></p>
+<p><img data-src="07_glm_optimization_files/figure-revealjs/unnamed-chunk-26-1.png" width="960"></p>
 </div>
 </div>
 </div>
 <div id="tabset-4-4">
-<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-26_18773d56a003377ed305f930d9610a22">
+<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-27_39592954507e31e5ede01e21c0dc1b40">
 <details>
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>mygrid<span class="ot">=</span> <span class="fu">data_grid</span>(fHH, age, roof, <span class="at">.model=</span>fit2)</span>
@@ -1305,7 +1344,7 @@ age2                 -0.0007034333 0.0000641942 -10.9578954 6.089915e-28</code><
 <span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="dv">0</span>,<span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img data-src="07_glm_optimization_files/figure-revealjs/unnamed-chunk-26-1.png" width="960"></p>
+<p><img data-src="07_glm_optimization_files/figure-revealjs/unnamed-chunk-27-1.png" width="960"></p>
 </div>
 </div>
 </div>
@@ -1315,18 +1354,18 @@ age2                 -0.0007034333 0.0000641942 -10.9578954 6.089915e-28</code><
 <section id="exercise-1" class="slide level2">
 <h2>Exercise</h2>
 <p>Based on the plot below, an age vs.&nbsp;roof interaction may be needed. Add it to the model and inspect whether it seems necessary</p>
-<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-27_c8fbe62ce34658273d127e929b0b0073">
+<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-28_693464361b2c3a44e1e51767d9f8654b">
 <div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fHH, <span class="fu">aes</span>(<span class="at">x=</span>age,<span class="at">y=</span>total, <span class="at">color=</span>roof)) <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">position=</span><span class="st">"jitter"</span>) <span class="sc">+</span> <span class="fu">geom_smooth</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 </div>
-<img data-src="07_glm_optimization_files/figure-revealjs/unnamed-chunk-27-1.png" width="960" class="r-stretch"><div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-28_aa74d670f790b8119632c9c19a6f73e1">
+<img data-src="07_glm_optimization_files/figure-revealjs/unnamed-chunk-28-1.png" width="960" class="r-stretch"><div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-29_89cdd813dda5f6cc78c6218fb6f1b9cd">
 
 </div>
 </section>
 <section id="a-possible-solution" class="slide level2">
 <h2>A possible solution</h2>
 
-<img data-src="07_glm_optimization_files/figure-revealjs/unnamed-chunk-29-1.png" width="960" class="r-stretch"></section></section>
+<img data-src="07_glm_optimization_files/figure-revealjs/unnamed-chunk-30-1.png" width="960" class="r-stretch"></section></section>
 <section>
 <section id="residuals-and-over-dispersion" class="title-slide slide level1 center">
 <h1>Residuals and over-dispersion</h1>
@@ -1344,34 +1383,34 @@ age2                 -0.0007034333 0.0000641942 -10.9578954 6.089915e-28</code><
 <section id="example" class="slide level2">
 <h2>Example</h2>
 <p>Take the household occupancy data with a quadratic age effect</p>
-<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-30_b38579843c0852dc7d3dce008a4b4c67">
+<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-31_a11611e208e41b4dd12fbda251c9b3f2">
 <div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>fHHres<span class="ot">=</span> <span class="fu">mutate</span>(fHH, <span class="at">pred=</span> <span class="fu">predict</span>(fit2), <span class="at">resdev=</span> <span class="fu">residuals</span>(fit2, <span class="at">type=</span><span class="st">'deviance'</span>), <span class="at">respearson=</span> <span class="fu">residuals</span>(fit2, <span class="at">type=</span><span class="st">'pearson'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="panel-tabset">
 <ul id="tabset-5" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-5-1">Deviance res.</a></li><li><a href="#tabset-5-2">Pearson res.</a></li><li><a href="#tabset-5-3">Constant variance</a></li></ul>
 <div class="tab-content">
 <div id="tabset-5-1">
-<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-31_a3f8111c69ec22f54b01e4a83deaa4ce">
+<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-32_43ece2d7ee2f1b53fb9b114375cb68fe">
 <div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fHHres, <span class="fu">aes</span>(pred, resdev)) <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="sc">+</span> <span class="fu">geom_smooth</span>() <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">x=</span><span class="st">'Predicted (log)'</span>, <span class="at">y=</span><span class="st">'Deviance residual'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<p><img data-src="07_glm_optimization_files/figure-revealjs/unnamed-chunk-31-1.png" width="960"></p>
-</div>
-</div>
-</div>
-<div id="tabset-5-2">
-<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-32_6529ee637086bfb6727c72d60e99836c">
-<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fHHres, <span class="fu">aes</span>(pred, respearson)) <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="sc">+</span> <span class="fu">geom_smooth</span>() <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">x=</span><span class="st">'Predicted (log)'</span>, <span class="at">y=</span><span class="st">'Pearson residual'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img data-src="07_glm_optimization_files/figure-revealjs/unnamed-chunk-32-1.png" width="960"></p>
 </div>
 </div>
 </div>
+<div id="tabset-5-2">
+<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-33_8efc950525eb65bead61f16b4a0e88b0">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fHHres, <span class="fu">aes</span>(pred, respearson)) <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="sc">+</span> <span class="fu">geom_smooth</span>() <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">x=</span><span class="st">'Predicted (log)'</span>, <span class="at">y=</span><span class="st">'Pearson residual'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img data-src="07_glm_optimization_files/figure-revealjs/unnamed-chunk-33-1.png" width="960"></p>
+</div>
+</div>
+</div>
 <div id="tabset-5-3">
-<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-33_c0fb208e411f5374e36a8ce68fac472b">
+<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-34_9bebf44120489c40fdbac9d68c5fb8ea">
 <div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>fHHres<span class="ot">=</span> <span class="fu">mutate</span>(fHHres, <span class="at">predcut=</span> <span class="fu">cut_number</span>(pred, <span class="dv">10</span>))</span>
 <span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fHHres, <span class="fu">aes</span>(<span class="at">x=</span>predcut, <span class="at">y=</span>respearson)) <span class="sc">+</span> <span class="fu">geom_boxplot</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img data-src="07_glm_optimization_files/figure-revealjs/unnamed-chunk-33-1.png" width="960"></p>
+<p><img data-src="07_glm_optimization_files/figure-revealjs/unnamed-chunk-34-1.png" width="960"></p>
 </div>
 </div>
 </div>
@@ -1400,14 +1439,14 @@ age2                 -0.0007034333 0.0000641942 -10.9578954 6.089915e-28</code><
 </section>
 <section id="example-1" class="slide level2">
 <h2>Example</h2>
-<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-34_65ded9b9a464fda25bfcd40ef130b1e3">
+<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-35_7bc14ef60dc9aad9074c7b5271cded45">
 <div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>fit2q<span class="ot">=</span> <span class="fu">glm</span>(total <span class="sc">~</span> location <span class="sc">+</span> roof <span class="sc">+</span> age <span class="sc">+</span> age2, <span class="at">data=</span>fHH, <span class="at">family=</span>quasipoisson)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="panel-tabset">
 <ul id="tabset-6" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-6-1">No over-dispersion</a></li><li><a href="#tabset-6-2">Over-dispersion</a></li></ul>
 <div class="tab-content">
 <div id="tabset-6-1">
-<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-35_2a818e6edb753952c4f56762d70ab078">
+<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-36_2fb0875818cb9e2ceb888398d53bda53">
 <div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
@@ -1443,7 +1482,7 @@ Number of Fisher Scoring iterations: 5</code></pre>
 </div>
 </div>
 <div id="tabset-6-2">
-<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-36_6e8e8f5def80a707b13b54520bc81829">
+<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-37_0da652b367d965461f9377ce1e46c4c7">
 <div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit2q)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
@@ -1484,32 +1523,32 @@ Number of Fisher Scoring iterations: 5</code></pre>
 <section id="over-dispersion-3" class="slide level2">
 <h2>Over-dispersion</h2>
 <p>Easier to compare visually with <code>multiplot</code> from package <code>coefplot</code></p>
-<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-37_ca4d5f9cda92955f503d723e1a00ee7a">
+<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-38_2fc29233a2e60c72fb60cef2faa7db0e">
 <div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">multiplot</span>(fit2, fit2q)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 </div>
-<img data-src="07_glm_optimization_files/figure-revealjs/unnamed-chunk-37-1.png" width="960" class="r-stretch"></section>
+<img data-src="07_glm_optimization_files/figure-revealjs/unnamed-chunk-38-1.png" width="960" class="r-stretch"></section>
 <section id="bootstrap" class="slide level2">
 <h2>Bootstrap</h2>
 <p>Function <code>bootGLM</code> at <code>routines.R</code> implements the bootstrap for GLMs</p>
-<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-38_bfd571611d6628ff9ea8abb4c6987940">
+<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-39_d8d4d269beb34da15bcf6053d59029dd">
 <div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>f<span class="ot">=</span> <span class="fu">formula</span>(total <span class="sc">~</span> location <span class="sc">+</span> roof <span class="sc">+</span> age <span class="sc">+</span> age2)</span>
 <span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>fit2.bootci<span class="ot">=</span> <span class="fu">bootGLM</span>(fHH, <span class="at">formula=</span>f, <span class="at">family=</span><span class="fu">poisson</span>(), <span class="at">level=</span><span class="fl">0.95</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The bootstrap intervals are also wider than those from MLE theory</p>
-<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-39_ee7ac089d5e210f2f1836b06c863c923">
+<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-40_b181fd57ad1418eab3c7406e59fea510">
 <div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>allci<span class="ot">=</span> <span class="fu">round</span>(<span class="fu">cbind</span>(fit2.bootci[,<span class="sc">-</span><span class="dv">1</span>], <span class="fu">confint</span>(fit2), <span class="fu">confint</span>(fit2q)), <span class="dv">3</span>)</span>
 <span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(allci)<span class="ot">=</span> <span class="fu">paste</span>(<span class="fu">c</span>(<span class="st">'Boot'</span>,<span class="st">'Boot'</span>,<span class="st">'MLE'</span>,<span class="st">'MLE'</span>,<span class="st">'Q'</span>,<span class="st">'Q'</span>), <span class="fu">names</span>(allci), <span class="at">sep=</span><span class="st">''</span>)</span>
 <span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>allci</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                     Boot2.5% Boot97.5% MLE2.5 % MLE97.5 % Q2.5 % Q97.5 %
-(Intercept)            -0.840    -0.035   -0.797    -0.066 -0.868   0.002
-locationDavaoRegion    -0.132     0.099   -0.122     0.089 -0.142   0.109
-locationIlocosRegion   -0.055     0.174   -0.040     0.166 -0.060   0.186
-locationMetroManila    -0.050     0.151   -0.039     0.146 -0.057   0.164
-locationVisayas         0.027     0.207    0.035     0.200  0.020   0.215
-roofStrong             -0.051     0.145   -0.037     0.134 -0.053   0.150
-age                     0.055     0.087    0.057     0.084  0.054   0.087
+(Intercept)            -0.835    -0.011   -0.797    -0.066 -0.868   0.002
+locationDavaoRegion    -0.135     0.098   -0.122     0.089 -0.142   0.109
+locationIlocosRegion   -0.052     0.174   -0.040     0.166 -0.060   0.186
+locationMetroManila    -0.052     0.157   -0.039     0.146 -0.057   0.164
+locationVisayas         0.022     0.209    0.035     0.200  0.020   0.215
+roofStrong             -0.048     0.146   -0.037     0.134 -0.053   0.150
+age                     0.054     0.086    0.057     0.084  0.054   0.087
 age2                   -0.001    -0.001   -0.001    -0.001 -0.001  -0.001</code></pre>
 </div>
 </div>
@@ -1529,7 +1568,7 @@ age2                   -0.001    -0.001   -0.001    -0.001 -0.001  -0.001</code>
 <section class="slide level2">
 
 <p>You can load the data as follows</p>
-<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-40_28a1af038ce5249fbd082ba2c190cc52">
+<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-41_2aa26ab290bb252979480fea6930f9cc">
 <div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>crime<span class="ot">=</span> <span class="fu">as_tibble</span>(<span class="fu">read.table</span>(<span class="st">"../datasets/campuscrime.txt"</span>, <span class="at">header=</span><span class="cn">TRUE</span>, <span class="at">sep=</span><span class="st">"</span><span class="sc">\t</span><span class="st">"</span>))</span>
 <span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>crime</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
