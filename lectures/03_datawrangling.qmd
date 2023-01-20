@@ -28,8 +28,9 @@ Load the required R packages.
 ```{r, warning=FALSE}
 library(tidyverse)
 library(gapminder)
-library(nycflights13)
 library(Lahman)
+library(nycflights13)
+library(skimr)
 ```
 
 
@@ -263,7 +264,17 @@ select(flights, carrier, dep_delay, arr_delay, fine)
 
 # Summarizing data
 
-## Basics
+## Overall summaries
+
+Package `skimr` provides a nice function `skim()` to compute basic stats for all variables in a dataset. `skim_with()` has further customization options
+
+```{r}
+s= skim(flights)
+s
+```
+
+
+## Summarizing by groups
 
 Base R has `aggregate` to compute a single summary (e.g. the mean)
 
@@ -275,7 +286,7 @@ Base R has `aggregate` to compute a single summary (e.g. the mean)
 aggregate(dep_delay ~ year + month + day, data=flights, FUN=mean, na.rm=TRUE)
 ```
 
-## Basics
+## Summarizing by groups
 
 dplyr has two key functions: `summarise` and `group_by`
 
