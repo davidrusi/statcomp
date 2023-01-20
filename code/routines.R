@@ -8,12 +8,31 @@
 
 # LIST OF FUNCTIONS
 # - coefSummary: summarize the estimated coefficients of a lm/glm object
+
+# PERMUTATION TESTS
 # - lmResPerm.onevar: residual permutation test for a single variable in linear regression
 # - lmResPerm: residual permutation test for all variables in linear regression
+
+# AUXILIARY FUNCTIONS FOR LOGISTIC REGRESSION
 # - flogregvec, flogreg: (negative) logistic regression log-likelihood
 # - fplogreg: gradient and hessian of flogreg
+
+# AUXILIARY FUNCTIONS FOR POISSON REGRESSION
 # - fpoisregvec, fpoisreg: (negative) Poisson regression log-likelihood
 # - fppoisreg: gradient and hessian of Poisson
+
+# BOOTSTRAP FOR GLMs
+# - bootGLM: Bootstrap confidence intervals for a GLM
+# - mleGLM: obtain MLE under a GLM
+# - bootCI: Extract confidence intervals from object returned by "boot"
+
+# LOSS FUNCTIONS FOR CROSS-VALIDATION
+# - cost_loglik_logistic: logistic regression log-likelihood loss
+# - cost_misclass: proportion of miss-classified observations given predicted class probabilities
+
+
+
+
 
 
 
@@ -38,6 +57,10 @@ coefSummary= function(lmfit, level=0.95, digits=3) {
 }
 
 
+
+###########################################################################################
+# PERMUTATION TESTS
+###########################################################################################
 
 #Residual permutation test for a single variable in linear regression
 #Input
@@ -225,3 +248,31 @@ bootCI= function(fit, bootfit, level=0.95) {
   return(bhat.boot)
 }
 
+
+
+###########################################################################################
+## LOSS FUNCTIONS FOR CROSS-VALIDATION
+###########################################################################################
+
+# cost_loglik_logistic: logistic regression log-likelihood loss
+# Input
+# - yobs: observed class (must be binary)
+# - ypred: predicted probability for yobs=1
+# Output: logistic regression logistic regression log-likelihood
+cost_loglik_logistic= function(yobs, ypred) {
+  loglik= dbinom(yobs, size=1, prob=ypred, log=TRUE)
+  return(sum(-loglik))
+}
+
+# cost_misclass: proportion of miss-classified observations given predicted class probabilities
+# Input
+# - yobs: observed class (must be binary)
+# - ypred: predicted probability for yobs=1
+# - threshold: if ypred > threshold then yobs=1 is predicted, else yobs=0 is predicted
+# Output: proportion of miss-classified observations in yobs
+cost_misclass= function(yobs, ypred, threshold=0.5) {
+  err1= (ypred > threshold) & (yobs==0)
+  err2= (ypred < threshold) & (yobs==1)
+  ans= sum(err1 | err2) / length(yobs)
+  return(ans)
+}

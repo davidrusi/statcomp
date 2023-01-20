@@ -27,7 +27,10 @@ Load required R packages
 
 ```{r, warning=FALSE}
 library(tidyverse)
+library(boot)
 library(coefplot)
+library(openintro)
+library(pROC)
 ```
 
 We also source routines.R, which has auxiliary functions
@@ -50,15 +53,15 @@ Typically we're unsure about what regression model is best. Consider these situa
 We discuss methods for each of these situations
 
 
-# Comparing 2 nested models
+# Testing 2 nested models
 
 ## Nested models
 
-Let outcome $y$, $p_1$ covariates in $X_1$ and $p_2$ covariates in $X_2$
+Let outcome $y \in \mathbb{R}^n$, $X_1$ is $n \times p_1$, $X_2$ is $n \times p_2$
 
-- Model 1 has a regression equation driven by $X \beta_1$
+- Model 1 has a regression equation driven by $X_1 \beta_1$, $\beta_1 \in \mathbb{R}^{p_1}$
 
-- Model 2 features $X \beta_1 + X \beta_2$
+- Model 2 features $X_1 \beta_1 + X_2 \beta_2$, $\beta_1 \in \mathbb{R}^{p_1}$, $\beta_2 \in \mathbb{R}^{p_2}$
 
 **Goal.** Test the null hypothesis $H_0: \beta_2=0$
 
@@ -99,5 +102,592 @@ $$
 
 Note: as $n-p_2 \rightarrow \infty$, $F_{p_2,n-p_2} \stackrel{D}{\longrightarrow} \chi_{p_2}^2$
 
+## Likelihood ratio test
 
+These results assume that the model is correct, e.g. data truly follow a Normal linear regression where
+
+$$
+y = X_1 \beta_1 + \epsilon \mbox{, where } \epsilon \sim N(0, \sigma^2 I)
+$$
+
+Otherwise, one can estimate the distribution of $\mbox{LR}_{21}$ under $H_0$ using permutations
+
+## Example
+
+<small> (data from Lander's [R for everyone](https://www.jaredlander.com/r-for-everyone/data-in-r-for-everyone), from NYC Open Data </small>
+
+$n=2,626$ condos in different New York boroughs (2011-12)
+
+- Outcome: value per square foot (`ValuePerSqFt`)
+
+- 10 covariates: neighborhood, year built etc.
+
+
+
+```{r}
+housing= read_csv("../datasets/housing.csv")
+housing
+```
+
+## Outcome distribution
+
+:::panel-tabset
+
+### Outcome
+
+```{r}
+#| code-fold: true
+ggplot(housing, aes(x=ValuePerSqFt)) +
+  geom_density()
+```
+
+
+### Outcome vs borough
+
+```{r}
+#| code-fold: true
+ggplot(housing, aes(x=ValuePerSqFt)) +
+  geom_density(aes(color=Boro))
+```
+
+:::
+
+
+## Transformations
+
+
+:::panel-tabset
+
+### SqFt
+
+```{r}
+#| code-fold: true
+ggplot(housing, aes(x=SqFt, y=ValuePerSqFt)) + geom_point() + geom_smooth()
+```
+
+### Units
+
+```{r}
+#| code-fold: true
+ggplot(housing, aes(x=Units, y=ValuePerSqFt)) + geom_point() + geom_smooth()
+```
+
+### log(SqFt)
+
+```{r}
+#| code-fold: true
+ggplot(housing, aes(x=log10(SqFt), y=ValuePerSqFt)) + geom_point() + geom_smooth()
+```
+
+### log(Units)
+
+```{r}
+#| code-fold: true
+ggplot(housing, aes(x=log10(Units), y=ValuePerSqFt)) + geom_point() + geom_smooth()
+```
+
+:::
+
+
+##
+
+Fit 2 models: additive and with interactions
+
+```{r}
+housing= transform(housing, lSqFt= log10(SqFt), lUnits= log10(Units))
+fit1= lm(ValuePerSqFt ~ Boro + lSqFt + lUnits , data=housing)
+fit2= lm(ValuePerSqFt ~ Boro + lSqFt + lUnits + Boro:lSqFt + Boro:lUnits, data=housing)
+```
+
+:::panel-tabset
+
+### fit1
+
+```{r}
+coefSummary(fit1)
+```
+
+### coefPlot1
+
+```{r}
+coefplot(fit1)
+```
+
+### fit2
+
+```{r}
+coefSummary(fit2)
+```
+
+
+### coefPlot2
+
+```{r}
+coefplot(fit2)
+```
+
+:::
+
+##
+
+Single interaction coef. were not significant. Let's test if **the whole vector is 0**
+
+```{r}
+anova(fit1,fit2)  #LRT (=F-test in Gaussian regression)
+```
+
+Same when testing each interaction separately
+
+```{r}
+fit3= lm(ValuePerSqFt ~ Boro + lSqFt + lUnits + Boro:lSqFt, data=housing)
+
+fit4= lm(ValuePerSqFt ~ Boro + lSqFt + lUnits + Boro:lUnits, data=housing)
+
+anova(fit2, fit3)
+anova(fit2, fit4)
+```
+
+##
+
+Coef. for boroughs were not significant. But recall their interpretation! If we have
+
+$$
+E(y_i) = \beta_0 + \beta_1 \mbox{manhattan_i} + \beta_2 \mbox{lSqFt_i} + \beta_3 \mbox{manhattan}_i \times \mbox{lSqFt_i}
+$$
+then $\beta_1$ is the difference between Manhattan and the reference borough **when $\mbox{lSqFt}_i=0$**. But all condos have $\mbox{lSqFt}_i > 2.5$
+
+Re-parameterize the model to facilitate interpretation. Let lSqFt0 be a mean-centered version of lSqFt, so that $\mbox{lSqFt0}_i = 0 \Rightarrow \mbox{lSqFt}_i=\mbox{mean(lSqFt)}$
+
+$$
+E(y_i) = \beta_0 + \beta_1 \mbox{manhattan_i} + \beta_2 \mbox{lSqFt_i} + \beta_3 \mbox{manhattan}_i \times \mbox{lSqFt0_i}
+$$
+
+Now $\beta_1$ is the Manhattan effect for condos with average log-SqFt
+
+##
+
+In the mean-centered model boroughs now have a significant effect, as expected
+
+```{r}
+housing= transform(housing, lSqFt0= lSqFt - mean(lSqFt), lUnits0= lUnits - mean(lUnits))
+fit5= lm(ValuePerSqFt ~ Boro + lSqFt0 + lUnits0 + Boro:lSqFt0 + Boro:lUnits0, data=housing)
+coefplot(fit5)
+```
+
+
+
+
+# Best model for forecasting
+
+## Forecasting is not testing
+
+Hypothesis tests are conservative in nature, e.g. unless fairly sure that $\beta_1 \neq 0$, set $\beta_1=0$
+
+Estimating and forecasting tend to be more liberal, e.g. MLE $\hat{\beta}_1$ has good properties as $n$ grows. This said, adding unnecessary parameters to a model can hurt predictions
+
+Over-fitting is a key notion to assess forecasting accuracy of a model/algorithm
+
+
+## Example
+
+Simulate $n=10$ observations from
+$$
+y_i= \sin(2\pi x) + \epsilon_i \mbox{, where } \epsilon_i \sim N(0,0.2^2)
+$$
+
+```{r}
+#| code-fold: true
+x= seq(0,1, length=10)
+y= sin(2*pi*x) + rnorm(10,0,sd=0.2)
+xseq= seq(0,1,length=500)
+
+## Create design matrix for up to degree 9
+xpol= matrix(NA, nrow= length(x), ncol=10)
+xseqpol= matrix(NA, nrow= length(xseq), ncol=10)
+for (j in 1:10) {
+    xpol[,j]= x^(j-1)
+    xseqpol[,j]= xseq^(j-1)
+}
+
+par(mar=c(4,4,.1,.1), cex.lab=1.3, cex.axis=1.3)
+plot(x, y)
+lines(xseq, sin(2*pi*xseq))
+```
+
+
+---
+
+Fit polynomials of degree 0, 1, 3 and 9
+
+```{r}
+#| code-fold: true
+fit0= lm(y ~ 1); b0= coef(fit0)
+fit1= lm(y ~ -1 + xpol[,1:2]); b1= coef(fit1)
+fit3= lm(y ~ -1 + xpol[,1:4]); b3= coef(fit3)
+fit9= lm(y ~ -1 + xpol); b9= coef(fit9)
+
+pred1= b1[1] + xseq*b1[2]
+pred3= xseqpol[,1:4] %*% matrix(b3, ncol=1)
+pred9= xseqpol %*% matrix(b9, ncol=1)
+
+dataobs= tibble(x,y)  
+df= tibble(truemean=sin(2*pi*xseq), x=xseq, pred0=b0, pred1, pred3, pred9)
+
+ggplot(df, aes(x=x)) +
+  geom_line(aes(y=truemean)) +
+  geom_line(aes(y=pred0), col='gray') +
+  geom_line(aes(y=pred1), col='gray') +
+  geom_line(aes(y=pred3), col='blue') +
+  geom_line(aes(y=pred9), col='red') +
+  geom_point(aes(x=x, y=y), data=dataobs) +
+  labs(y='True mean')
+```
+
+
+---
+
+Degree 3 fit predicts better **future data** than degree 9
+
+```{r}
+#| code-fold: true
+xnew= seq(0,1, length=1000)
+ynew= sin(2*pi*xnew) + rnorm(length(xnew),0,sd=0.2)
+xpolnew= matrix(NA, nrow= length(xnew), ncol=10)
+for (j in 1:10) xpolnew[,j]= xnew^(j-1)
+
+err1new= ynew - b1[1] * xnew*b1[2]
+err3new= ynew - xpolnew[,1:4] %*% matrix(b3, ncol=1)
+err9new= ynew - xpolnew %*% matrix(b9, ncol=1)
+#sqrt(c(mean(err1new^2), mean(err3new^2), mean(err9new^2))) #root MSE
+
+errnew= c(err1new, err3new, err9new)
+degree= rep(c(1,3,9), each=length(ynew))
+df= tibble(errnew, degree)
+
+ggplot(df, aes(x=factor(degree), y=errnew)) +
+  geom_abline(slope=0, intercept=0, col='gray') +
+  geom_violin() + 
+  labs(x='Degree of polynomial', y='Prediction error in new data')
+```
+
+## Over-fitting
+
+Over-fitting: the prediction accuracy in our **training data** does not generalize to **new data**
+
+- Adding parameters to a model can only improve MSE in the **training data**
+
+- Instead, assess MSE **out-of-sample**, i.e. on data that were not used to fit the model
+
+
+Two popular strategies: train/test split and cross-validation
+
+
+## Train/test split
+
+Use a fraction of the data to fit the model (e.g. 90%), assess MSE on the rest
+
+
+**Example.** Prices for 100 new condos not in `housing`
+
+```{r}
+housingnew= read_csv("../datasets/housingNew.csv")
+housingnew= transform(housingnew, lSqFt= log10(SqFt), lUnits= log10(Units))
+dim(housingnew)
+```
+
+---
+
+1. Fit two models on training data (`housing`)
+
+2. Check accuracy on test data (`housingnew`)
+
+```{r}
+fit1= lm(ValuePerSqFt ~ Boro + lSqFt + lUnits , data=housing)
+fit2= lm(ValuePerSqFt ~ Boro + lSqFt + lUnits + Boro:lSqFt + Boro:lUnits, data=housing)
+pred1= predict(fit1, newdata=housingnew)
+pred2= predict(fit2, newdata=housingnew)
+ynew= housingnew$ValuePerSqFt
+```
+
+MSE for each model
+
+```{r}
+mse= c(sqrt(mean((ynew - pred1)^2)), sqrt(mean((ynew - pred2)^2)))
+names(mse)= c('model 1','model 2')
+round(mse, 3)
+```
+
+% explained variance by each model (out-of-sample $R^2$ coefficient)
+
+```{r}
+r2= c(cor(ynew, pred1)^2, cor(ynew, pred2)^2)
+names(r2)= c('model 1','model 2')
+round(r2, 3)
+```
+
+## Cross-validation
+
+Issue with training/test split: estimated accuracy depends on what observations were put in each set
+
+**Leave-one-out cross-validation.** For $i=1,\ldots,n$
+
+1. Exclude $y_i$, fit model to other data. 
+
+2. Record $\hat{\beta}^{(i)}$, and $\hat{y}_i= x_i^T \hat{\beta}^{(i)}$
+
+Estimate MSE with $\frac{1}{n} \sum_{i=1}^n (y_i - \hat{y}^{(i)})^2$
+
+**K-fold cross-validation.** Same but divide data into $K$ subsets, leave out one subset at a time
+
+
+## Example
+
+Function `cv.glm` in package `boot` implements cross-validation for GLMs
+
+Re-fit the linear model with `glm`, run `cv.glm` (by default K=n, i.e. leave-one-out)
+
+
+```{r}
+fit1= glm(ValuePerSqFt ~ Boro + lSqFt + lUnits , data=housing)
+fit2= glm(ValuePerSqFt ~ Boro + lSqFt + lUnits + Boro:lSqFt + Boro:lUnits, data=housing)
+fit1cv= cv.glm(housing, fit1, K=10)
+fit2cv= cv.glm(housing, fit2, K=10)
+```
+
+We get 2 numbers. The first is the K-fold cross-validated MSE, the second is a bias-adjusted version
+
+```{r}
+sqrt(fit1cv$delta)
+sqrt(fit2cv$delta)
+```
+
+
+## CV for non-continuous outcomes
+
+Cross-validation can be used with any measure of accuracy
+
+For binary outcomes, some popular choices
+
+- % of correct classifications
+
+- Area under the ROC curve
+
+- Log-likelihood loss
+
+Interestingly, the last one can be applied to any probability model
+
+
+## CV log-likelihood
+
+Idea: reward models that give higher probability/density to the out-of-sample data
+
+Let $Y_i^* \sim \mbox{Bern}(\pi_i)$ for $i=1,\ldots,n^*$ be out-of-sample data, and
+$$
+\hat{\pi}_i= \frac{1}{1 + e^{-x_i^T \hat{\beta}}}
+$$
+where $\hat{\beta}$ was estimated from the training data
+
+The Bernoulli likelihood is $P(Y_i^*= a)= \pi_i^{a} (1 - \pi_i)^{1-a}$
+
+- If we observe $Y_i^*=1$, record the reward 
+$\log \hat{P}(Y_i^*= 1)= \log \hat{\pi}_i$
+
+- If we observe $Y_i^*=0$, record $\log \hat{P}(Y_i^*=0)= \log (1 - \hat{\pi}_i)$
+
+## Example. Spam filter
+
+`cv.glm` lets us specify any loss function. Let us use the negative log-likelihood, implemented in `cost_loglik_logistic` at `routines.R`
+
+```{r}
+cost_loglik_logistic
+```
+
+
+
+```{r, warning=FALSE}
+fit1= glm(spam ~ to_multiple + from + cc, data=email, family=binomial())
+fit1cv= cv.glm(email, fit1, cost=cost_loglik_logistic, K=10)
+
+fit2= glm(spam ~ (to_multiple + from + cc)^2, data=email, family=binomial())
+fit2cv= cv.glm(email, fit2, cost=cost_loglik_logistic, K=10)
+
+fit3= glm(spam ~ to_multiple + from + cc + sent_email + image + attach + dollar + winner, data=email, family=binomial())
+fit3cv= cv.glm(email, fit3, cost=cost_loglik_logistic, K=10)
+
+fit4= glm(spam ~ (to_multiple + from + cc + sent_email + image + attach + dollar + winner)^2, data=email, family=binomial())
+fit4cv= cv.glm(email, fit4, cost=cost_loglik_logistic, K=10)
+
+loss= c(fit1cv$delta[1], fit2cv$delta[1], fit3cv$delta[1], fit4cv$delta[1])
+names(loss)= c('model 1', 'model 2', 'model 3', 'model 4')
+loss
+```
+
+## % of miss-classifications
+
+The % of miss-classified observations is another natural loss
+
+Suppose that one predicts $\hat{y}_i=1$ when $\hat{\pi}_i > 0.5$. Function `cost_misclass` at `routines.R` implements this loss
+
+
+```{r}
+cost_misclass
+```
+
+We first obtain said % in an in-sample fashion
+
+```{r}
+pi1= predict(fit1, type='response')
+pi3= predict(fit3, type='response')
+
+loss.insample= c(cost_misclass(email$spam, pi1), cost_misclass(email$spam, pi3))
+names(loss.insample)= c('model 1', 'model 3')
+loss.insample
+```
+
+
+## Exercise
+
+Compare the models `fit1` and `fit3` fitted to the email data
+
+1. Test the null hypothesis $H_0$ that all parameters added by `fit3` are truly 0. Do you reject $H_0$?
+
+2. Suppose you classify as spam whenever $\hat{\pi}_i > 0.5$. Use `cv.glm` to obtain a cross-validated estimate of the proportion of miss-classifications by `fit1` and `fit3`
+
+
+
+
+## ROC curve
+
+Suppose we take $\hat{y}_i$ when $\hat{\pi}_i > t$ for some $t$ 
+
+|              |  $y_i=0$ |  $y_i=1$ |
+|--------------|:--------:|:--------:|
+|$\hat{y}_i=0$ |    a     |     b    |
+|$\hat{y}_i=1$ |    c     |     d    |
+
+- Specificity: among those with $y_i=0$, what proportion gets $\hat{y}_i=0$?
+
+$$
+\mbox{Spec}= \frac{a}{a+c}
+$$
+
+- Sensitivity: among those with $y_i=1$, what proportion gets $\hat{y}_i=1$?
+
+$$
+\mbox{Sens}= \frac{d}{b+d}
+$$
+
+## ROC curve
+
+When comparing $\geq 2$ classifiers, it's advisable to consider several thresholds $t$
+
+- Large $t$ reduces sensitivity, but increases specificity
+
+- Small $t$ reduces specificity, but increases sensitivity
+
+
+Receiving Operator Characteristic (ROC) curve shows spec vs sens for all $t$
+
+
+```{r}
+sel= sample(1:nrow(email), size= round(0.9*nrow(email)), replace=FALSE)
+emailtrain= email[sel,]
+emailtest= email[-sel,]
+
+fit1train= glm(spam ~ to_multiple + from + cc, data=emailtrain, family=binomial())
+fit3train= glm(spam ~ to_multiple + from + cc + sent_email + image + attach + dollar + winner, data=emailtrain, family=binomial())
+
+pi1test= predict(fit1, type='response', newdata=emailtest)
+pi3test= predict(fit3, type='response', newdata=emailtest)
+
+roc1= roc(emailtest$spam, pi1test)
+roc3= roc(emailtest$spam, pi3test)
+```
+
+---
+
+```{r}
+plot(roc1, cex.axis=1.4, cex.lab=1.4); lines(roc3, col='red')
+legend('bottomright', c('Model 1','Model 3'), lty=1, col=c('black','red'), cex=1.4)
+```
+
+ROC curves often compared via Area Under the Curve. Guessing randomly gives AUC=0.5, perfect predictions give AUC=1.
+
+```{r}
+c(roc1$auc, roc3$auc)
+```
+
+
+---
+
+In the ROC, Model 3 seems much better than Model 1
+
+Recall that the % miss-classifications using $t=0.5$ were similar. Let's check how is that possible
+
+
+```{r}
+table(pi1test > 0.5, emailtest$spam)
+```
+
+
+```{r}
+table(pi3test > 0.5, emailtest$spam)
+```
+
+$t=0.5$ corresponds to sensitivity $\approx 0$ and specificity $\approx 1$
+
+
+
+# Best model for explaining
+
+## Model selection consistency
+
+When comparing many models via LRTs 
+
+- Hard to control the false discoveries (type I error)
+
+- Cannot compare non-nested models
+
+Alternatively, one can use methods that select the true model with probability 1 as $n \rightarrow \infty$. We call this property **model selection consistency**
+
+**Bayesian information criterion (BIC):** popular method that is model selection consistent for GLMs (under mild technical conditions)
+
+**Akaike information criterion (AIC):** not model selection consistent. Attempts to choose the same model as cross-validation
+
+Cross-validation is not model selection consistent either
+
+## Information criteria
+
+**Def.** Consider a model $M_k$ with log-likelihood $L_k(\theta_k)$ and parameters $\theta_k$
+$$
+\begin{aligned}
+&\mbox{BIC}_k= - 2 L_k(\hat{\theta}_k) + \log(n) p_k  \\
+&\mbox{AIC}_k= - 2 L_k(\hat{\theta}_k) + 2 p_k 
+\end{aligned}
+$$
+where $p_k=\mbox{dim}(\theta_k)$ is the number of parameters in $M_k$ and $n$ the sample size
+
+Model selection strategy: evaluate BIC for all candidate models $M_1,\ldots,M_K$, choose the one with lowest BIC (analogoustly for AIC)
+
+
+## Example. Email data
+
+Functions `BIC` and `AIC` extract the BIC/AIC from a GLM
+
+- Both choose Model 3, as before
+- Faster computations (no need to cross-validate)
+
+Warning: AIC fails to approximate cross-validation, unless $n$ is quite large and the model assumptions hold
+
+```{r}
+fit1= glm(spam ~ to_multiple + from + cc, data=email, family=binomial())
+fit2= glm(spam ~ (to_multiple + from + cc)^2, data=email, family=binomial())
+fit3= glm(spam ~ to_multiple + from + cc + sent_email + image + attach + dollar + winner, data=email, family=binomial())
+fit4= glm(spam ~ (to_multiple + from + cc + sent_email + image + attach + dollar + winner)^2, data=email, family=binomial())
+
+bic= c(BIC(fit1), BIC(fit2), BIC(fit3), BIC(fit4))
+aic= c(AIC(fit1), AIC(fit2), AIC(fit3), AIC(fit4))
+models= c('model 1','model 2','model 3','model 4')
+data.frame(models, bic, aic)
+```
 
