@@ -127,7 +127,7 @@ fun(1:2)
 
 ## The ... argument
 
-Allows passing arguments that are not explicitly defined
+Allows passing parameters that are not explicitly defined
 
 ```{r, error=TRUE}
 fun= function(x, y=0, ...) {
@@ -161,6 +161,7 @@ plot(xseq, fobj(xseq), type='l', xlab='x', ylab='Objective function')
 The function below contains a mistake
 
 ```{r}
+#Find x s.t. f(x)=0. Assuming f(low)<0, f(up)>0, single zero
 binary_search= function(f, low, up, iter=1, maxit=100) {
   if (iter == maxit) stop("Reached the maximum iteration limit")
   if (f(low) > 0) stop("f(low) should be <=0")
@@ -273,6 +274,8 @@ describe_dataset= function(data) {
   ans= vector("list", length=ncol(data))
   names(ans)= names(data)
   for (i in 1:ncol(data)) {
+    #if data is a list, data.frame or tibble,
+    ##data[[i]] selects its i^th element / variable
     if (is.factor(data[[i]])) {
       ans[[i]]= describe_discvar(data[[i]])
     } else if (is.numeric(data[[i]])) {
@@ -300,6 +303,7 @@ describe_dataset(fandango_norm)
 
 ```{r}
 describe_contvar_custom= function(x, funs) {
+  #funs should be a list of functions, funs[[i]] return a scalar
   ans= double(length(funs))
   for (i in 1:length(funs)) {
     ans[i]= funs[[i]](x)
@@ -329,10 +333,10 @@ Loops are slow in R (things like `[` are functions, and cost time to evaluate)
 **Example.** Sum of two vectors
 
 ```{r}
-n=100000; x= rnorm(n); y= runif(n)
+n=10^5; x= rnorm(n); y= runif(n)
 z= double(n)
 system.time(for (i in 1:n) z[i]= x[i] + y[i])
-system.time(z <- x + y)
+system.time(z <- x + y)  #can't use z=x+y within system.time!
 ```
 
 ## Example. Sum of each variable in a matrix
@@ -353,7 +357,7 @@ library(compiler)
 mycolSums_cmp= cmpfun(mycolSums)
 system.time(mysum <- mycolSums_cmp(x))
 
-system.time(mysum <- colSums(x))
+system.time(mysum <- colSums(x)) #R's built-in colSums is faster
 ```
 
 
@@ -382,6 +386,7 @@ map_dbl(fandango_norm[,-1], mean)
 ```{r}
 map(fandango_norm[,-1], describe_contvar)
 ```
+Use `map_df` to get output formatted as a tibble
 
 ```{r}
 fandango_sum= map_df(fandango_norm[,-1], describe_contvar)
@@ -389,4 +394,91 @@ fandango_sum$varname= names(fandango_norm)[-1]
 fandango_sum= relocate(fandango_sum, varname) #put varname as 1st column
 fandango_sum
 ```
+
+# Exercises
+
+## Exercise 1
+
+Create a function `all_numeric` that returns `TRUE` if all columns in a dataset `x` are numeric (i.e. return true to `is.numeric`, and `FALSE` otherwise)
+
+```{r, eval=FALSE}
+all_numeric= function(x) {
+  ...
+}
+```
+
+Test the function by running 
+
+```{r, eval=FALSE}
+all_numeric(fandango_norm) #should return FALSE
+
+all_numeric(fandango_norm[,-1])  #should return TRUE
+```
+
+
+## Exercise 2
+
+Create a function `vartype` that returns the variable types for all columns in `x`. Specifically, a list with 3 entries named `numeric`, `factor` and `character`. 
+
+- The 1st entry is a logical vector of length `ncol(x)` indicating what columns in `x` are numeric (`is.numeric`)
+
+- Analogously for the 2nd entry with `is.factor`, the 3rd with `is.character`
+
+Hint: fill in ... with your code in the function below
+
+```{r, eval=FALSE}
+vartypes= function(x) {
+  ans= vector("list", 3)  #create a list with 3 entries
+  names(ans)= c('numeric','factor','character')
+  #use ans[[1]] to access the 1st entry, ans[[2]] the 2nd etc
+  ...
+  return(ans)
+}
+```
+
+## Exercise 3 (advanced)
+
+Function `summarizeContVars` returns (mean, sd, Q1, Q3) for all columns in a dataset (i.e. puts the code in the previous slide in a function)
+
+```{r}
+summarizeContVars= function(x) {
+  if (!all_numeric(x)) stop("All columns in x must be numeric")
+  x_sum= map_df(x, describe_contvar)
+  x_sum$varname= names(x)
+  x_sum= relocate(x_sum, varname) #put varname as 1st column
+  return(x_sum)
+}
+```
+
+
+
+## Exercise 3 (advanced)
+
+Create a function `summarizeContVars_bygroups(x, groups)`
+
+- `x`: dataset with numeric columns
+
+- `groups`: character indicating the name of a column in `x`
+
+Output: a list, where each entry is the result of applying `summarizeContVars` to each group 
+
+Hints: 
+
+- Use `x[[groups]]` to select the variable
+
+- Use `groupids= unique(x[[groups]])` to find the unique entries in `x[,groups]`
+
+- Use a `foor` loop over groups. For each group, select the subset of rows in `x` and use `summarizeContVars`
+
+```{r, eval=FALSE}
+summarizeContVars_bygroups= function(x, groups) {
+  if (missing(groups)) stop("groups cannot be missing")
+  othervars= (names(x) != groups) #vars other than the one defining the groups
+  if (!all_numeric(x[,othervars])) stop("All columns other than 'groups' must be numeric")
+  groupids= unique(x[[groups]])
+  ...
+}
+```
+
+
 

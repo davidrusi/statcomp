@@ -401,6 +401,7 @@
 <li><a href="#/loops" id="/toc-loops">Loops</a></li>
 <li><a href="#/speeding-up-loops" id="/toc-speeding-up-loops">Speeding up loops</a></li>
 <li><a href="#/iteration" id="/toc-iteration">Iteration</a></li>
+<li><a href="#/exercises" id="/toc-exercises">Exercises</a></li>
 </ul>
 </nav>
 </section>
@@ -516,8 +517,8 @@
 <div class="cell" data-hash="04_programming_cache/revealjs/unnamed-chunk-5_6b768743a4eb53737f9cbd1849d000e8">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">describe_var</span>(fandango<span class="sc">$</span>rt_norm, <span class="at">vartype=</span><span class="st">'continuous'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>    mean       sd      p25      p75 
-3.042466 1.508440 1.562500 4.450000 </code></pre>
+<pre><code>mean   sd  p25  p75 
+ 3.0  1.5  1.6  4.4 </code></pre>
 </div>
 </div>
 <p>Number of stars in Fandango movie page</p>
@@ -560,7 +561,7 @@
 </section>
 <section id="the-argument" class="slide level2">
 <h2>The … argument</h2>
-<p>Allows passing arguments that are not explicitly defined</p>
+<p>Allows passing parameters that are not explicitly defined</p>
 <div class="cell" data-hash="04_programming_cache/revealjs/unnamed-chunk-8_9707f26b8e921885c28f630c7c42a69c">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>fun<span class="ot">=</span> <span class="cf">function</span>(x, <span class="at">y=</span><span class="dv">0</span>, ...) {</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">sum</span>(x, ...) <span class="sc">+</span> <span class="fu">sum</span>(y, ...))</span>
@@ -593,21 +594,22 @@
 <section id="binary-search-algorithm" class="slide level2">
 <h2>Binary search algorithm</h2>
 <p>The function below contains a mistake</p>
-<div class="cell" data-hash="04_programming_cache/revealjs/unnamed-chunk-11_2a5f269ee9f8affa865750cd6b9c29d1">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>binary_search<span class="ot">=</span> <span class="cf">function</span>(f, low, up, <span class="at">iter=</span><span class="dv">1</span>, <span class="at">maxit=</span><span class="dv">100</span>) {</span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (iter <span class="sc">==</span> maxit) <span class="fu">stop</span>(<span class="st">"Reached the maximum iteration limit"</span>)</span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">f</span>(low) <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="fu">stop</span>(<span class="st">"f(low) should be &lt;=0"</span>)</span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">f</span>(up) <span class="sc">&lt;</span> <span class="dv">0</span>) <span class="fu">stop</span>(<span class="st">"f(up) should be &gt;=0"</span>)</span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>  m<span class="ot">=</span> (low<span class="sc">+</span>up)<span class="sc">/</span><span class="dv">2</span></span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">abs</span>(<span class="fu">f</span>(m)) <span class="sc">&lt;</span> <span class="fl">0.001</span>) {</span>
-<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>    ans<span class="ot">=</span> m</span>
-<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> <span class="cf">if</span> (<span class="fu">f</span>(m)<span class="sc">&lt;</span> <span class="sc">-</span><span class="fl">0.001</span>) {</span>
-<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>    ans<span class="ot">=</span> <span class="fu">binary_search</span>(f, <span class="at">low=</span>m, <span class="at">up=</span>up, iter<span class="sc">+</span><span class="dv">1</span>)</span>
-<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
-<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>    ans<span class="ot">=</span> <span class="fu">binary_search</span>(f, <span class="at">low=</span>low, <span class="at">up=</span>up, iter<span class="sc">+</span><span class="dv">1</span>)</span>
-<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(ans)</span>
-<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="04_programming_cache/revealjs/unnamed-chunk-11_01a48d4204d25856ebd6da85fb86249c">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Find x s.t. f(x)=0. Assuming f(low)&lt;0, f(up)&gt;0, single zero</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>binary_search<span class="ot">=</span> <span class="cf">function</span>(f, low, up, <span class="at">iter=</span><span class="dv">1</span>, <span class="at">maxit=</span><span class="dv">100</span>) {</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (iter <span class="sc">==</span> maxit) <span class="fu">stop</span>(<span class="st">"Reached the maximum iteration limit"</span>)</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">f</span>(low) <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="fu">stop</span>(<span class="st">"f(low) should be &lt;=0"</span>)</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">f</span>(up) <span class="sc">&lt;</span> <span class="dv">0</span>) <span class="fu">stop</span>(<span class="st">"f(up) should be &gt;=0"</span>)</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>  m<span class="ot">=</span> (low<span class="sc">+</span>up)<span class="sc">/</span><span class="dv">2</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">abs</span>(<span class="fu">f</span>(m)) <span class="sc">&lt;</span> <span class="fl">0.001</span>) {</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>    ans<span class="ot">=</span> m</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> <span class="cf">if</span> (<span class="fu">f</span>(m)<span class="sc">&lt;</span> <span class="sc">-</span><span class="fl">0.001</span>) {</span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>    ans<span class="ot">=</span> <span class="fu">binary_search</span>(f, <span class="at">low=</span>m, <span class="at">up=</span>up, iter<span class="sc">+</span><span class="dv">1</span>)</span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>    ans<span class="ot">=</span> <span class="fu">binary_search</span>(f, <span class="at">low=</span>low, <span class="at">up=</span>up, iter<span class="sc">+</span><span class="dv">1</span>)</span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(ans)</span>
+<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>When running it, it doesn’t find the solution</p>
 <div class="cell" data-hash="04_programming_cache/revealjs/unnamed-chunk-12_8334d1ea822ef04503e6d0bb84203aa2">
@@ -700,19 +702,21 @@
 <li><p><code>describe_discvar</code> for factors</p></li>
 <li><p><code>describe_contvar</code> for numeric</p></li>
 </ul>
-<div class="cell" data-hash="04_programming_cache/revealjs/unnamed-chunk-17_16dc2273550d3da51206a2684e20bcb6">
+<div class="cell" data-hash="04_programming_cache/revealjs/unnamed-chunk-17_197c01ec17e672c54807d234df45feb2">
 <div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>describe_dataset<span class="ot">=</span> <span class="cf">function</span>(data) {</span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  ans<span class="ot">=</span> <span class="fu">vector</span>(<span class="st">"list"</span>, <span class="at">length=</span><span class="fu">ncol</span>(data))</span>
 <span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">names</span>(ans)<span class="ot">=</span> <span class="fu">names</span>(data)</span>
 <span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">ncol</span>(data)) {</span>
-<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">is.factor</span>(data[[i]])) {</span>
-<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>      ans[[i]]<span class="ot">=</span> <span class="fu">describe_discvar</span>(data[[i]])</span>
-<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> <span class="cf">if</span> (<span class="fu">is.numeric</span>(data[[i]])) {</span>
-<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>      ans[[i]]<span class="ot">=</span> <span class="fu">describe_contvar</span>(data[[i]])</span>
-<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(ans)</span>
-<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">#if data is a list, data.frame or tibble,</span></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>    <span class="do">##data[[i]] selects its i^th element / variable</span></span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">is.factor</span>(data[[i]])) {</span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>      ans[[i]]<span class="ot">=</span> <span class="fu">describe_discvar</span>(data[[i]])</span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> <span class="cf">if</span> (<span class="fu">is.numeric</span>(data[[i]])) {</span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>      ans[[i]]<span class="ot">=</span> <span class="fu">describe_contvar</span>(data[[i]])</span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(ans)</span>
+<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section class="slide level2">
@@ -752,14 +756,15 @@ mean   sd  p25  p75
 </section>
 <section id="functions-can-also-be-arguments" class="slide level2">
 <h2>Functions can also be arguments</h2>
-<div class="cell" data-hash="04_programming_cache/revealjs/unnamed-chunk-20_ec2d658d266f18413bbf131306c8ef4f">
+<div class="cell" data-hash="04_programming_cache/revealjs/unnamed-chunk-20_8854dc31ca1e26ee26e8cf5e5c4cafc4">
 <div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>describe_contvar_custom<span class="ot">=</span> <span class="cf">function</span>(x, funs) {</span>
-<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  ans<span class="ot">=</span> <span class="fu">double</span>(<span class="fu">length</span>(funs))</span>
-<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(funs)) {</span>
-<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>    ans[i]<span class="ot">=</span> funs[[i]](x)</span>
-<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>  }  </span>
-<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">round</span>(ans,<span class="dv">1</span>))</span>
-<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">#funs should be a list of functions, funs[[i]] return a scalar</span></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>  ans<span class="ot">=</span> <span class="fu">double</span>(<span class="fu">length</span>(funs))</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(funs)) {</span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>    ans[i]<span class="ot">=</span> funs[[i]](x)</span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>  }  </span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">round</span>(ans,<span class="dv">1</span>))</span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell" data-hash="04_programming_cache/revealjs/unnamed-chunk-21_5d55de7b54242bd42a96fa4f42ce3ad7">
 <div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">describe_contvar_custom</span>(fandango<span class="sc">$</span>rt_norm, <span class="at">funs=</span><span class="fu">list</span>(mean,sd))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -782,31 +787,31 @@ mean   sd  p25  p75
 <li><p>Compile functions with <code>cmpfun</code></p></li>
 </ol>
 <p><strong>Example.</strong> Sum of two vectors</p>
-<div class="cell" data-hash="04_programming_cache/revealjs/unnamed-chunk-22_743404bc86f883f5a75f7eda1229734f">
-<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>n<span class="ot">=</span><span class="dv">100000</span>; x<span class="ot">=</span> <span class="fu">rnorm</span>(n); y<span class="ot">=</span> <span class="fu">runif</span>(n)</span>
+<div class="cell" data-hash="04_programming_cache/revealjs/unnamed-chunk-22_5265771ea5e8d0dcf06b786c0071d886">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>n<span class="ot">=</span><span class="dv">10</span><span class="sc">^</span><span class="dv">5</span>; x<span class="ot">=</span> <span class="fu">rnorm</span>(n); y<span class="ot">=</span> <span class="fu">runif</span>(n)</span>
 <span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>z<span class="ot">=</span> <span class="fu">double</span>(n)</span>
 <span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>(<span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n) z[i]<span class="ot">=</span> x[i] <span class="sc">+</span> y[i])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   user  system elapsed 
-  0.016   0.000   0.016 </code></pre>
+  0.014   0.000   0.014 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>(z <span class="ot">&lt;-</span> x <span class="sc">+</span> y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>(z <span class="ot">&lt;-</span> x <span class="sc">+</span> y)  <span class="co">#can't use z=x+y within system.time!</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   user  system elapsed 
-  0.000   0.000   0.001 </code></pre>
+      0       0       0 </code></pre>
 </div>
 </div>
 </section>
 <section id="example.-sum-of-each-variable-in-a-matrix" class="slide level2">
 <h2>Example. Sum of each variable in a matrix</h2>
-<div class="cell" data-hash="04_programming_cache/revealjs/unnamed-chunk-23_c16051e5676eafacc21c9cea242ce2a8">
+<div class="cell" data-hash="04_programming_cache/revealjs/unnamed-chunk-23_f77078a45836f3d35142f791c62e90ec">
 <div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>n<span class="ot">=</span> <span class="dv">100</span>; p<span class="ot">=</span><span class="dv">5000</span></span>
 <span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>x<span class="ot">=</span> <span class="fu">matrix</span>(<span class="fu">rnorm</span>(n<span class="sc">*</span>p), <span class="at">nrow=</span>n, <span class="at">ncol=</span>p)</span>
 <span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>mysum<span class="ot">=</span> <span class="fu">double</span>(p)</span>
 <span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>(<span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>p) { mysum[i]<span class="ot">=</span> <span class="fu">sum</span>(x[,i]) })</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   user  system elapsed 
-  0.013   0.000   0.013 </code></pre>
+  0.011   0.000   0.011 </code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>mycolSums<span class="ot">=</span> <span class="cf">function</span>(x) {</span>
 <span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>  p<span class="ot">=</span> <span class="fu">ncol</span>(x); ans<span class="ot">=</span> <span class="fu">double</span>(p)</span>
@@ -819,9 +824,9 @@ mean   sd  p25  p75
 <span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>(mysum <span class="ot">&lt;-</span> <span class="fu">mycolSums_cmp</span>(x))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   user  system elapsed 
-  0.010   0.000   0.009 </code></pre>
+  0.008   0.000   0.008 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>(mysum <span class="ot">&lt;-</span> <span class="fu">colSums</span>(x))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>(mysum <span class="ot">&lt;-</span> <span class="fu">colSums</span>(x)) <span class="co">#R's built-in colSums is faster</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   user  system elapsed 
   0.001   0.000   0.001 </code></pre>
@@ -888,6 +893,7 @@ mean   sd  p25  p75
  3.4  0.5  3.1  3.7 </code></pre>
 </div>
 </div>
+<p>Use <code>map_df</code> to get output formatted as a tibble</p>
 <div class="cell" data-hash="04_programming_cache/revealjs/unnamed-chunk-27_f08337410f1b0a05ba5429c4354c01fc">
 <div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>fandango_sum<span class="ot">=</span> <span class="fu">map_df</span>(fandango_norm[,<span class="sc">-</span><span class="dv">1</span>], describe_contvar)</span>
 <span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>fandango_sum<span class="sc">$</span>varname<span class="ot">=</span> <span class="fu">names</span>(fandango_norm)[<span class="sc">-</span><span class="dv">1</span>]</span>
@@ -902,6 +908,81 @@ mean   sd  p25  p75
 3 metacritic_norm   2.9   1     2.2   3.8
 4 imdb_norm         3.4   0.5   3.1   3.7</code></pre>
 </div>
+</div>
+</section></section>
+<section>
+<section id="exercises" class="title-slide slide level1 center">
+<h1>Exercises</h1>
+
+</section>
+<section id="exercise-1" class="slide level2">
+<h2>Exercise 1</h2>
+<p>Create a function <code>all_numeric</code> that returns <code>TRUE</code> if all columns in a dataset <code>x</code> are numeric (i.e.&nbsp;return true to <code>is.numeric</code>, and <code>FALSE</code> otherwise)</p>
+<div class="cell" data-hash="04_programming_cache/revealjs/unnamed-chunk-28_baf78bc532b984a4b3ef79f655e8f203">
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>all_numeric<span class="ot">=</span> <span class="cf">function</span>(x) {</span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>  ...</span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Test the function by running</p>
+<div class="cell" data-hash="04_programming_cache/revealjs/unnamed-chunk-29_1681c5b94fe3414b82f65d135c504fef">
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="fu">all_numeric</span>(fandango_norm) <span class="co">#should return FALSE</span></span>
+<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a><span class="fu">all_numeric</span>(fandango_norm[,<span class="sc">-</span><span class="dv">1</span>])  <span class="co">#should return TRUE</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="exercise-2" class="slide level2">
+<h2>Exercise 2</h2>
+<p>Create a function <code>vartype</code> that returns the variable types for all columns in <code>x</code>. Specifically, a list with 3 entries named <code>numeric</code>, <code>factor</code> and <code>character</code>.</p>
+<ul>
+<li><p>The 1st entry is a logical vector of length <code>ncol(x)</code> indicating what columns in <code>x</code> are numeric (<code>is.numeric</code>)</p></li>
+<li><p>Analogously for the 2nd entry with <code>is.factor</code>, the 3rd with <code>is.character</code></p></li>
+</ul>
+<p>Hint: fill in … with your code in the function below</p>
+<div class="cell" data-hash="04_programming_cache/revealjs/unnamed-chunk-30_f4a2094999286ceb26d95f797cfaae9d">
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>vartypes<span class="ot">=</span> <span class="cf">function</span>(x) {</span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>  ans<span class="ot">=</span> <span class="fu">vector</span>(<span class="st">"list"</span>, <span class="dv">3</span>)  <span class="co">#create a list with 3 entries</span></span>
+<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">names</span>(ans)<span class="ot">=</span> <span class="fu">c</span>(<span class="st">'numeric'</span>,<span class="st">'factor'</span>,<span class="st">'character'</span>)</span>
+<span id="cb58-4"><a href="#cb58-4" aria-hidden="true" tabindex="-1"></a>  <span class="co">#use ans[[1]] to access the 1st entry, ans[[2]] the 2nd etc</span></span>
+<span id="cb58-5"><a href="#cb58-5" aria-hidden="true" tabindex="-1"></a>  ...</span>
+<span id="cb58-6"><a href="#cb58-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(ans)</span>
+<span id="cb58-7"><a href="#cb58-7" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="exercise-3-advanced" class="slide level2">
+<h2>Exercise 3 (advanced)</h2>
+<p>Function <code>summarizeContVars</code> returns (mean, sd, Q1, Q3) for all columns in a dataset (i.e.&nbsp;puts the code in the previous slide in a function)</p>
+<div class="cell" data-hash="04_programming_cache/revealjs/unnamed-chunk-31_71c6d18783ff77ee9dd03d8be0d0b85e">
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a>summarizeContVars<span class="ot">=</span> <span class="cf">function</span>(x) {</span>
+<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">all_numeric</span>(x)) <span class="fu">stop</span>(<span class="st">"All columns in x must be numeric"</span>)</span>
+<span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a>  x_sum<span class="ot">=</span> <span class="fu">map_df</span>(x, describe_contvar)</span>
+<span id="cb59-4"><a href="#cb59-4" aria-hidden="true" tabindex="-1"></a>  x_sum<span class="sc">$</span>varname<span class="ot">=</span> <span class="fu">names</span>(x)</span>
+<span id="cb59-5"><a href="#cb59-5" aria-hidden="true" tabindex="-1"></a>  x_sum<span class="ot">=</span> <span class="fu">relocate</span>(x_sum, varname) <span class="co">#put varname as 1st column</span></span>
+<span id="cb59-6"><a href="#cb59-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(x_sum)</span>
+<span id="cb59-7"><a href="#cb59-7" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="exercise-3-advanced-1" class="slide level2">
+<h2>Exercise 3 (advanced)</h2>
+<p>Create a function <code>summarizeContVars_bygroups(x, groups)</code></p>
+<ul>
+<li><p><code>x</code>: dataset with numeric columns</p></li>
+<li><p><code>groups</code>: character indicating the name of a column in <code>x</code></p></li>
+</ul>
+<p>Output: a list, where each entry is the result of applying <code>summarizeContVars</code> to each group</p>
+<p>Hints:</p>
+<ul>
+<li><p>Use <code>x[[groups]]</code> to select the variable</p></li>
+<li><p>Use <code>groupids= unique(x[[groups]])</code> to find the unique entries in <code>x[,groups]</code></p></li>
+<li><p>Use a <code>foor</code> loop over groups. For each group, select the subset of rows in <code>x</code> and use <code>summarizeContVars</code></p></li>
+</ul>
+<div class="cell" data-hash="04_programming_cache/revealjs/unnamed-chunk-32_18c8ebad2be7048c6113afb5e8683fc4">
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>summarizeContVars_bygroups<span class="ot">=</span> <span class="cf">function</span>(x, groups) {</span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">missing</span>(groups)) <span class="fu">stop</span>(<span class="st">"groups cannot be missing"</span>)</span>
+<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a>  othervars<span class="ot">=</span> (<span class="fu">names</span>(x) <span class="sc">!=</span> groups) <span class="co">#vars other than the one defining the groups</span></span>
+<span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">all_numeric</span>(x[,othervars])) <span class="fu">stop</span>(<span class="st">"All columns other than 'groups' must be numeric"</span>)</span>
+<span id="cb60-5"><a href="#cb60-5" aria-hidden="true" tabindex="-1"></a>  groupids<span class="ot">=</span> <span class="fu">unique</span>(x[[groups]])</span>
+<span id="cb60-6"><a href="#cb60-6" aria-hidden="true" tabindex="-1"></a>  ...</span>
+<span id="cb60-7"><a href="#cb60-7" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="footer footer-default">
 
