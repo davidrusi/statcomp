@@ -23,27 +23,24 @@ bibliography: references.bib
 
 ## Reproducing these lecture notes
 
-Required R packages
-
-```{r, eval=FALSE}
-install.packages("coefplot")
-install.packages("ggpubr")
-install.packages("gapminder")
-install.packages("modelr")
-install.packages("multcomp")
-install.packages("tidyverse")
-```
-
-Once they're installed, load them.
+Load the required R packages
 
 ```{r, warning=FALSE}
 library(coefplot)
 library(ggpubr)
 library(gapminder)
+library(hexbin)
 library(modelr)
 library(multcomp)
 library(tidyverse)
 ```
+
+We also load auxiliary routines stored at `routines.R` (directory `code`)
+
+```{r}
+source('../code/routines.R') #recall to set path to directory
+```
+
 
 ## Models
 
@@ -101,7 +98,7 @@ $\hat{\beta}_j \pm 1.96 \sqrt{\hat{V}(\hat{\beta_j})}$
 
 Sometimes we're interested in linear combinations of parameters
 
-**Result.** Let $Z \sim N(m, V)$ be a $p$-dimensional Normal distribution, and
+**Result.** Let $Z \sim N(\mu, V)$ be a $p$-dimensional Normal distribution, and
 $C$ a full-rank $q \times p$ matrix ($q \leq p$). Then
 $$
 W= C Z \sim N(C \mu, C V C^T)
@@ -118,13 +115,8 @@ Then $$C \begin{pmatrix} \hat{\beta}_1 \\ \hat{\beta}_2 \\ \ldots \\ \hat{\beta}
 
 ## Example. Diamonds data
 
-<small>
 What drives diamond prices?
-Exploration suggests that low-quality diamonds are more expensive
-
-Worst diamond color is J (yellow-ish), worst clarity is l1
-
-</small>
+Exploration suggests that low-quality diamonds are more expensive (worst diamond color is J (yellow-ish), worst clarity is l1)
 
 ::: panel-tabset
 
@@ -150,7 +142,7 @@ ggplot(diamonds, aes(clarity, price)) + geom_boxplot()
 
 ## Diagnosing the issue
 
-Price is strongly associated with carats
+Price is strongly associated with carats (diamond weight)
 
 ```{r}
 ggplot(diamonds, aes(carat, price)) + 
@@ -195,7 +187,7 @@ ggplot(diamonds2, aes(lcarat, lprice)) +
   geom_smooth(method='lm')
 ```
 
-Note: log2 facilitates interpretation a bit
+log2 facilitates interpretation (+1 in log2 scale $\Rightarrow \times 2$ in original scale)
 
 ---
 
@@ -291,20 +283,11 @@ confint(lmfit2, level=0.95)
 
 ---
 
-Easier to define a function that summarizes any fitted model
+Easier to define a function that summarizes any fitted model.
+I created function `coefSummary` (at `routines.R`) for that purpose
 
 ```{r}
-coefSummary= function(lmfit, level=0.95, digits=3) {
-  if (class(lmfit) != 'lm') stop('lmfit must be of class lm')
-  b= round(coef(lmfit), digits)
-  ci= round(confint(lmfit, level=level), digits)
-  ci= paste('(',ci[,1],',',ci[,2],')',sep='')
-  pval= round(summary(lmfit)$coef[,'Pr(>|t|)'],5)
-  pval[pval < 0.00001]= '<0.00001'
-  ans= tibble(names(b), b, ci, pval)
-  names(ans)= c('Parameter','Estimate','Conf. Int.','P-value')
-  return(ans)
-}
+coefSummary
 ```
 
 ```{r}
@@ -319,7 +302,7 @@ It's useful to store useful functions separately
 - Put `coefSummary` in file `routines.R`. Source it when starting R
 
 ```{r, eval=FALSE}
-source('routines.R') #recall to set path to directory
+source('../code/routines.R') #change path to directory where routines.R is stored
 ```
 
 
@@ -336,7 +319,7 @@ Note: R package `caret` does as well (see an [introduction](https://topepo.githu
 `coefplot` helps visualize 95% confidence intervals $\hat{\beta}_j \pm 2 \sqrt{\hat{V}(\hat{\beta}_j)}$
 
 ```{r}
-coefplot(lmfit2, predictors="cut")
+coefplot(lmfit2, predictors="cut") #show only parameters with name including "cut"
 ```
 
 
@@ -421,6 +404,14 @@ ggplot(diamonds2, aes(sample=scale(res))) +
   geom_abline(slope=1, intercept=0)
 ```
 
+### qq-plot (base R)
+
+```{r}
+qqnorm(scale(diamonds2$res))
+abline(0,1)
+```
+
+
 :::
 
 # Interpreting the coefficients
@@ -468,7 +459,7 @@ $$
 $$
 When `cut` is fair and good we get (respectively) 
 
-$$E(\log_2 \mbox{price}_i \mid \mbox{fair}_i)= \beta_0$$
+$$E(\log_2 \mbox{price}_i \mid \mbox{fair}_i=1)= \beta_0$$
 
 $$
 E(\log_2 \mbox{price}_i \mid \mbox{good}_i=1)= \beta_0 + \beta_1  
@@ -537,7 +528,7 @@ ggplot(lmpred2, aes(x=clarity, y=pred, color=color)) +
 
 ## Linear contrasts
 
-Suppose we wish to obtain a CI for cut= "Ideal" - "Premium"
+We wish to obtain a conf. int. for cut= "Ideal" - "Premium"
 
 - $\beta_5$: mean for "Premium" - "Fair" (reference)
 
@@ -556,11 +547,17 @@ Linear contrasts can be done in `glht` (general linear hypotheses, R package `mu
 
 ```{r}
 C= matrix(0,nrow=1, ncol=length(coef(lmfit2)))
-C[5]= -1; C[6]=1
+C[1,5]= -1; C[1,6]=1
+C[1,1:10] #show first 10 columns
+```
+
+
+```{r}
 PvsI= glht(lmfit2, C)
 summary(PvsI)
 confint(PvsI)
 ```
+
 
 ## Doing it on our own
 

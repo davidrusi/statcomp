@@ -627,7 +627,7 @@ tab2
 pivot_longer(tab2, cols=c('2022','2023'), names_to="year", values_to= "population")
 ```
 
-## Separating and uniting columns
+## Separating columns
 
 Sometimes a character needs to be separated into several ones
 
@@ -647,6 +647,23 @@ Or positions at which to split
 ```{r}
 separate(tab, col=date2, sep=c(2,4), into=c('day','month','year'))
 ```
+
+## Uniting columns
+
+Consider the dataset `stab`
+
+```{r}
+stab= separate(tab, col=date2, sep=c(2,4), into=c('day','month','year')) |>
+  select(-date)
+stab
+```
+
+We use `unite` to paste columns together. The 2nd argument is the new column name, then we specify the columns to be pasted. `sep` is an optional separation character
+
+```{r}
+unite(stab, date, day, month, year, sep="-")
+```
+
 
 
 # Relational data

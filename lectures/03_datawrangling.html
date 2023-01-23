@@ -2132,8 +2132,8 @@
 </div>
 </div>
 </section>
-<section id="separating-and-uniting-columns" class="slide level2">
-<h2>Separating and uniting columns</h2>
+<section id="separating-columns" class="slide level2">
+<h2>Separating columns</h2>
 <p>Sometimes a character needs to be separated into several ones</p>
 <div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-47_c3196f0c5c269e372b9e2abfa02fe10a">
 <div class="sourceCode cell-code" id="cb83"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb83-1"><a href="#cb83-1" aria-hidden="true" tabindex="-1"></a>tab<span class="ot">=</span> <span class="fu">tibble</span>(<span class="at">date=</span><span class="fu">c</span>(<span class="st">"25/12/22"</span>,<span class="st">"26/12/22"</span>), <span class="at">date2=</span><span class="fu">c</span>(<span class="st">"251222"</span>,<span class="st">"261222"</span>))</span>
@@ -2168,6 +2168,33 @@
 2 26/12/22 26    12    22   </code></pre>
 </div>
 </div>
+</section>
+<section id="uniting-columns" class="slide level2">
+<h2>Uniting columns</h2>
+<p>Consider the dataset <code>stab</code></p>
+<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-50_6c0f1223f5b38446190c44b07ce8939e">
+<div class="sourceCode cell-code" id="cb89"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb89-1"><a href="#cb89-1" aria-hidden="true" tabindex="-1"></a>stab<span class="ot">=</span> <span class="fu">separate</span>(tab, <span class="at">col=</span>date2, <span class="at">sep=</span><span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">4</span>), <span class="at">into=</span><span class="fu">c</span>(<span class="st">'day'</span>,<span class="st">'month'</span>,<span class="st">'year'</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb89-2"><a href="#cb89-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>date)</span>
+<span id="cb89-3"><a href="#cb89-3" aria-hidden="true" tabindex="-1"></a>stab</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 3
+  day   month year 
+  &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
+1 25    12    22   
+2 26    12    22   </code></pre>
+</div>
+</div>
+<p>We use <code>unite</code> to paste columns together. The 2nd argument is the new column name, then we specify the columns to be pasted. <code>sep</code> is an optional separation character</p>
+<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-51_16f3e5e2a4962b617ef1d95129656bd6">
+<div class="sourceCode cell-code" id="cb91"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb91-1"><a href="#cb91-1" aria-hidden="true" tabindex="-1"></a><span class="fu">unite</span>(stab, date, day, month, year, <span class="at">sep=</span><span class="st">"-"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 1
+  date    
+  &lt;chr&gt;   
+1 25-12-22
+2 26-12-22</code></pre>
+</div>
+</div>
 </section></section>
 <section>
 <section id="relational-data" class="title-slide slide level1 center">
@@ -2177,15 +2204,15 @@
 <section class="slide level2">
 
 <p>Databases may be stored in different tables (saves space and transfer time)</p>
-<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-50_b62be85df7b40d7e5f1ddffe6b33e06b">
-<div class="sourceCode cell-code" id="cb89"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb89-1"><a href="#cb89-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(nycflights13)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-52_ff0114d6addd432856359219709ad73b">
+<div class="sourceCode cell-code" id="cb93"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb93-1"><a href="#cb93-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(nycflights13)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="panel-tabset">
 <ul id="tabset-5" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-5-1">flights</a></li><li><a href="#tabset-5-2">airlines</a></li></ul>
 <div class="tab-content">
 <div id="tabset-5-1">
-<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-51_c2e41f3c7ad1cc93c6ef7a8d0408aa1c">
-<div class="sourceCode cell-code" id="cb90"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb90-1"><a href="#cb90-1" aria-hidden="true" tabindex="-1"></a>flights</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-53_dc91e2e1e3ffd6feeca19e652e68f146">
+<div class="sourceCode cell-code" id="cb94"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb94-1"><a href="#cb94-1" aria-hidden="true" tabindex="-1"></a>flights</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 336,776 × 20
     year month   day dep_time sched_de…¹ dep_d…² arr_t…³ sched…⁴ arr_d…⁵ carrier
@@ -2208,8 +2235,8 @@
 </div>
 </div>
 <div id="tabset-5-2">
-<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-52_d6385356cf29e7abde5cd84159f6715d">
-<div class="sourceCode cell-code" id="cb92"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb92-1"><a href="#cb92-1" aria-hidden="true" tabindex="-1"></a>airlines</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-54_2f3039a722120edac7f96773451b844e">
+<div class="sourceCode cell-code" id="cb96"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb96-1"><a href="#cb96-1" aria-hidden="true" tabindex="-1"></a>airlines</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 16 × 2
    carrier name                       
@@ -2272,9 +2299,9 @@
 </section>
 <section id="merge" class="slide level2">
 <h2>Merge</h2>
-<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-53_52f984b52a58b54f7356a3abc58bd60e">
-<div class="sourceCode cell-code" id="cb94"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb94-1"><a href="#cb94-1" aria-hidden="true" tabindex="-1"></a>flightsdep<span class="ot">=</span> <span class="fu">select</span>(flights, <span class="fu">c</span>(<span class="st">'year'</span>,<span class="st">'month'</span>,<span class="st">'day'</span>,<span class="st">'dep_time'</span>,<span class="st">'carrier'</span>))</span>
-<span id="cb94-2"><a href="#cb94-2" aria-hidden="true" tabindex="-1"></a><span class="fu">left_join</span>(flightsdep, airlines, <span class="at">by=</span><span class="st">'carrier'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-55_d791c9cb7d706a110fe945f34dfdea4a">
+<div class="sourceCode cell-code" id="cb98"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb98-1"><a href="#cb98-1" aria-hidden="true" tabindex="-1"></a>flightsdep<span class="ot">=</span> <span class="fu">select</span>(flights, <span class="fu">c</span>(<span class="st">'year'</span>,<span class="st">'month'</span>,<span class="st">'day'</span>,<span class="st">'dep_time'</span>,<span class="st">'carrier'</span>))</span>
+<span id="cb98-2"><a href="#cb98-2" aria-hidden="true" tabindex="-1"></a><span class="fu">left_join</span>(flightsdep, airlines, <span class="at">by=</span><span class="st">'carrier'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 336,776 × 6
     year month   day dep_time carrier name                    
