@@ -26,6 +26,7 @@ bibliography: references.bib
 Load the required R packages
 
 ```{r, warning=FALSE}
+library(corrplot)
 library(coefplot)
 library(ggpubr)
 library(gapminder)
@@ -38,8 +39,10 @@ library(tidyverse)
 We also load auxiliary routines stored at `routines.R` (directory `code`)
 
 ```{r}
-source('../code/routines.R') #recall to set path to directory
+source('../code/routines.R')
 ```
+
+You can also source files from RStudio (`Code -> Source File`)
 
 
 ## Models
@@ -99,7 +102,7 @@ $\hat{\beta}_j \pm 1.96 \sqrt{\hat{V}(\hat{\beta_j})}$
 Sometimes we're interested in linear combinations of parameters
 
 **Result.** Let $Z \sim N(\mu, V)$ be a $p$-dimensional Normal distribution, and
-$C$ a full-rank $q \times p$ matrix ($q \leq p$). Then
+$C$ a $q \times p$ matrix with full rank $q \leq p$. Then
 $$
 W= C Z \sim N(C \mu, C V C^T)
 $$
@@ -377,6 +380,8 @@ ggplot(diamonds2, aes(x=pred2, y=res2)) +
 
 ## Residual normality
 
+Note: qq-normal plots require that residuals have 0 mean, variance=1 (function `scale`)
+
 :::panel-tabset
 
 ### Histogram (qqplot)
@@ -413,6 +418,60 @@ abline(0,1)
 
 
 :::
+
+# Exercise
+
+---
+
+FiveThirtyEight's [post](https://fivethirtyeight.com/features/higher-rates-of-hate-crimes-are-tied-to-income-inequality) on hate crimes around the 2016 USA elections
+
+Dataset `hate_crimes` (package `fivethirtyeight`) has this info for each state:
+
+- `avg_hatecrimes_per_100k_fbi`: pre-election number of hate crimes per 100,000 population by the FBI
+
+- education (% adults $\geq$ 25 with high school degree)
+
+- % of people who voted Donald Trump
+
+- Income inequality (Gini index)
+
+Plus variables about racial diversity, economics etc (see `help(hate_crimes)`)
+
+---
+
+Load the data, create a smaller version with the needed variables, and remove Hawaii (outcome not reported)
+
+```{r, warning=FALSE}
+library(fivethirtyeight)
+sel= c('state_abbrev','avg_hatecrimes_per_100k_fbi','share_vote_trump','gini_index','share_pop_hs')
+hc= hate_crimes[,sel]
+names(hc)= c('state','hatecrimes_fbi','votes_trump','gini','hs')
+hc= filter(hc, !is.na(hatecrimes_fbi)) #outcome must be non-missing
+```
+
+1. Fit a linear regression for `hatecrimes_fbi` vs. `votes_trump`, `gini`, `hs`. Report the point estimate, 95% intervals and P-values for the 3 covariates. Which of them are significantly associated to hate crimes?
+
+2. Assess the model assumptions: linearity, constant error variance, error normality. To what extent are they violated?
+
+Turn in an html with your solution [here](https://drive.google.com/drive/folders/1jhh1CrXM3hqc7qTrOYeQzo2pV8Vly1NY?usp=sharing).
+Name your file firstname_lastname.html
+
+---
+
+Challenge: all variables are strongly correlated
+
+```{r}
+R= select(hc, -state) |>
+  cor(use='pairwise.complete.obs')
+corrplot.mixed(R)
+```
+
+
+
+
+
+
+
 
 # Interpreting the coefficients
 
@@ -459,10 +518,10 @@ $$
 $$
 When `cut` is fair and good we get (respectively) 
 
-$$E(\log_2 \mbox{price}_i \mid \mbox{fair}_i=1)= \beta_0$$
+$$E(\log_2 \mbox{price}_i \mid \mbox{fair}_i=1)= \beta_0 + \ldots $$
 
 $$
-E(\log_2 \mbox{price}_i \mid \mbox{good}_i=1)= \beta_0 + \beta_1  
+E(\log_2 \mbox{price}_i \mid \mbox{good}_i=1)= \beta_0 + \beta_1 + \ldots
 $$
 
 Hence
@@ -474,6 +533,8 @@ $$
 
 ##
 
+Estimates and CIs in the log2-scale
+
 ```{r}
 lmfit2= lm(lprice ~ lcarat + cut + color + clarity, data=diamonds2)
 b= cbind(summary(lmfit2)$coef[,c(1,4)], confint(lmfit2))
@@ -483,7 +544,7 @@ b
 
 ---
 
-Fair -> Good increases price by 1.08, Fair -> Very good by 1.12, etc.
+Let's express them in the original scale. Fair -> Good increases price by 1.08 (i.e. by 8%), Fair -> Very good by 1.12 (i.e. by 12%), etc.
 
 ```{r}
 b[,-2]= 2^b[,-2]
@@ -526,6 +587,8 @@ ggplot(lmpred2, aes(x=clarity, y=pred, color=color)) +
   labs(y='log2 (price)')
 ```
 
+# Linear contrasts
+
 ## Linear contrasts
 
 We wish to obtain a conf. int. for cut= "Ideal" - "Premium"
@@ -566,7 +629,7 @@ Recall that $\hat{\beta} \sim N(\beta, V)$
 ```{r}
 bhat= matrix(coef(lmfit2), ncol=1)
 V= vcov(lmfit2)
-sqrt(diag(V)) #SE's for beta's (compare to summary(lmfit2))
+round(sqrt(diag(V)), 5) #SE's for beta's (compare to summary(lmfit2))
 ```
 
 Recall that $C \hat{\beta} \sim N(C \beta, C V C^T)$. For us $C \hat{\beta}= \hat{\beta}_6 - \hat{\beta}_5$, $C\beta =\beta_6 - \beta_5$.
@@ -574,9 +637,9 @@ Recall that $C \hat{\beta} \sim N(C \beta, C V C^T)$. For us $C \hat{\beta}= \ha
 ```{r}
 dhat= C %*% bhat
 se= sqrt(C %*% V %*% t(C))
-se
-dhat.ci= c(dhat, dhat - 1.96 * se, dhat + 1.96 * se)
-round(dhat.ci, 4)
+round(se, 5) #matches previous slide
+dhat.ci= c(estimate=dhat, ci.low= dhat - 1.96 * se, ci.up= dhat + 1.96 * se)
+round(dhat.ci, 5) #matches previous slide
 ```
 
 
@@ -730,7 +793,7 @@ ggplot(gapminder, aes(year, lifeExp, group = country)) +
 
 ---
 
-To fit a model separately for each country we can: 
+Two ways to fit a model separately for each country: 
 
 - `lm` plus interaction with country. Check which is the reference country, recover intercept/slopes for the rest
 
@@ -741,7 +804,7 @@ Note: better alternatives to fit nested models (random effects/hierarchical mode
 First, group by country and define nested dataset: each row is a country, and column `$data` is a list of tibbles
 
 ```{r}
-gm_country= group_by(gapminder, country, continent) %>% nest() 
+gm_country= group_by(gapminder, country, continent) |> nest() 
 gm_country
 ```
 
@@ -758,7 +821,7 @@ fitmodel= function(df) {
 }
 ```
 
-Finally, use `dplyr`'s `map_df` to apply the function to each entry of the list
+Finally, use `map_df` to apply `fitmodel` to each entry of the list `gm_country$data`
 
 ```{r}
 coef_gm = map_df(gm_country$data, fitmodel)
@@ -782,8 +845,10 @@ ggplot(coef_gm, aes(x=R2)) + geom_histogram()
 ### Countries
 
 ```{r}
-filter(coef_gm, R2 < 0.5) %>% dplyr::select(country, continent, R2)
+#dplyr::select ensures using function select from package dplyr
+filter(coef_gm, R2 < 0.5) |> dplyr::select(country, continent, R2)
 ```
+
 ---
 
 :::
@@ -793,7 +858,7 @@ filter(coef_gm, R2 < 0.5) %>% dplyr::select(country, continent, R2)
 Unnest the dataset and add predictions
 
 ```{r}
-coef_gmu= unnest(coef_gm, cols=names(coef_gm)) 
+coef_gmu= unnest(coef_gm, cols=names(coef_gm))  #unnest & keep all columns
 coef_gmu$pred= coef_gmu$b0 + coef_gmu$b1 * coef_gmu$year
 coef_gmu
 ```
@@ -801,7 +866,7 @@ coef_gmu
 ---
 
 ```{r}
-poorfit= filter(coef_gmu, R2 < 0.25)
+poorfit= filter(coef_gmu, R2 < 0.25) #countries with low R2
 ggplot(poorfit) +
   geom_line(aes(year, lifeExp)) +
   geom_line(aes(year, pred), col='red') +
