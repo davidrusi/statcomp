@@ -877,3 +877,19 @@ Can you explain any of these patterns?
 
 
 
+# Summary of useful functions
+
+## Useful functions
+
+- Fitting the model: `lm`, `predict`, `residuals`
+
+- Extract inference from fitted model: `summary`, `confint`
+
+- Plot coefficients: `coefplot`, `multiplot`
+
+- Plot predictions: `data_grid`, `add_predictions`
+
+- Diagnostics: `geom_smooth`, `geom_boxplot`, `geom_qq`
+
+
+

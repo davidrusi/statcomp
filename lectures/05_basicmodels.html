@@ -405,6 +405,7 @@
 <li><a href="#/linear-contrasts" id="/toc-linear-contrasts">Linear contrasts</a></li>
 <li><a href="#/interactions" id="/toc-interactions">Interactions</a></li>
 <li><a href="#/nested-models" id="/toc-nested-models">Nested models</a></li>
+<li><a href="#/summary-of-useful-functions" id="/toc-summary-of-useful-functions">Summary of useful functions</a></li>
 </ul>
 </nav>
 </section>
@@ -1770,8 +1771,8 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </section>
 <section class="slide level2">
 
-<div class="cell" data-hash="05_basicmodels_cache/revealjs/unnamed-chunk-67_1b4adb8cda7dac999465b16ef4c427f5">
-<div class="sourceCode cell-code" id="cb107"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb107-1"><a href="#cb107-1" aria-hidden="true" tabindex="-1"></a>poorfit<span class="ot">=</span> <span class="fu">filter</span>(coef_gmu, R2 <span class="sc">&lt;</span> <span class="fl">0.25</span>)</span>
+<div class="cell" data-hash="05_basicmodels_cache/revealjs/unnamed-chunk-67_cb9a10ebefc13547e3ebbdc207fd958c">
+<div class="sourceCode cell-code" id="cb107"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb107-1"><a href="#cb107-1" aria-hidden="true" tabindex="-1"></a>poorfit<span class="ot">=</span> <span class="fu">filter</span>(coef_gmu, R2 <span class="sc">&lt;</span> <span class="fl">0.25</span>) <span class="co">#countries with low R2</span></span>
 <span id="cb107-2"><a href="#cb107-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(poorfit) <span class="sc">+</span></span>
 <span id="cb107-3"><a href="#cb107-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(year, lifeExp)) <span class="sc">+</span></span>
 <span id="cb107-4"><a href="#cb107-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(year, pred), <span class="at">col=</span><span class="st">'red'</span>) <span class="sc">+</span></span>
@@ -1779,6 +1780,21 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 
 </div>
 <img data-src="05_basicmodels_files/figure-revealjs/unnamed-chunk-67-1.png" width="960" class="r-stretch"><p>Can you explain any of these patterns?</p>
+</section></section>
+<section>
+<section id="summary-of-useful-functions" class="title-slide slide level1 center">
+<h1>Summary of useful functions</h1>
+
+</section>
+<section id="useful-functions" class="slide level2">
+<h2>Useful functions</h2>
+<ul>
+<li><p>Fitting the model: <code>lm</code>, <code>predict</code>, <code>residuals</code></p></li>
+<li><p>Extract inference from fitted model: <code>summary</code>, <code>confint</code></p></li>
+<li><p>Plot coefficients: <code>coefplot</code>, <code>multiplot</code></p></li>
+<li><p>Plot predictions: <code>data_grid</code>, <code>add_predictions</code></p></li>
+<li><p>Diagnostics: <code>geom_smooth</code>, <code>geom_boxplot</code>, <code>geom_qq</code></p></li>
+</ul>
 <div class="footer footer-default">
 
 </div>
