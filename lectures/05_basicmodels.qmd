@@ -442,7 +442,9 @@ Plus variables about racial diversity, economics etc (see `help(hate_crimes)`)
 Load the data, create a smaller version with the needed variables, and remove Hawaii (outcome not reported)
 
 ```{r, warning=FALSE}
+library(tidyverse)
 library(fivethirtyeight)
+source("../code/routines.R")
 sel= c('state_abbrev','avg_hatecrimes_per_100k_fbi','share_vote_trump','gini_index','share_pop_hs')
 hc= hate_crimes[,sel]
 names(hc)= c('state','hatecrimes_fbi','votes_trump','gini','hs')
@@ -892,4 +894,148 @@ Can you explain any of these patterns?
 - Diagnostics: `geom_smooth`, `geom_boxplot`, `geom_qq`
 
 
+# Exercise
+
+## Sum-to-zero constraints
+
+Select 3 countries, create factor `country` with 3 levels.
+Create `years_since_1952`
+
+```{r}
+library(tidyverse)
+library(gapminder)
+source("../code/routines.R")
+gm3= gapminder |> 
+  filter(country %in% c('France','Italy','Spain')) |>
+  transform(country= factor(country), years_since_1952= year - 1952)
+
+fit1= lm(lifeExp ~ years_since_1952 + country, data=gm3)
+coefSummary(fit1)
+```
+
+- For France: $E(y_i)= \beta_0 + \beta_1 (\mbox{year}_i - 1952)$
+
+- For Italy: $E(y_i)= \beta_0 + \beta_2 + \beta_1 (\mbox{year}_i - 1952)$
+
+How do we interpret $\beta_0$? And $\beta_0 + \beta_2$?
+
+---
+
+`country` has 3 levels. `contrasts` shows how they're coded
+
+
+```{r}
+levels(gm3$country)
+contrasts(gm3$country)
+```
+
+That is, internally R defines
+
+::: columns
+::: {.column width="50%"}
+
+$$ 
+x_{i2}= \begin{cases} 1 \mbox{, if country}_i=\mbox{Italy} \\ 0 \mbox{, else} \end{cases} 
+$$
+:::
+
+::: {.column width="50%"}
+
+$$ 
+x_{i3}= \begin{cases} 1 \mbox{, if country}_i=\mbox{Spain} \\ 0 \mbox{, else} \end{cases} 
+$$
+
+:::
+
+:::
+
+Alternative to 0/1 coding: **sum-to-zero constraint**. In our example
+
+::: columns
+::: {.column width="50%"}
+
+$$ 
+x_{i2}= \begin{cases} 1 \mbox{, if country}_i=\mbox{France} \\ -1 \mbox{, if country}_i=\mbox{Spain} \\ 0 \mbox{, else} \end{cases} 
+$$
+:::
+
+::: {.column width="50%"}
+
+$$ 
+x_{i3}= \begin{cases} 1 \mbox{, if country}_i=\mbox{Italy} \\ -1 \mbox{, if country}_i=\mbox{Spain}  \\ 0 \mbox{, else} \end{cases} 
+$$
+:::
+
+:::
+
+
+---
+
+sum-to-zero coding can be done with `contrasts` and `contr.sum`
+
+```{r}
+contr.sum(levels(gm3$country)) #check what the sum-to-zero codes look like
+```
+
+```{r}
+gm3$country0= gm3$country #create new variable
+contrasts(gm3$country0) = contr.sum(unique(gm3$country0)) #tell contr.sum the factor levels
+```
+
+Let's fit the model with the new coding
+
+```{r}
+fit2= lm(lifeExp ~ years_since_1952 + country0, data=gm3)
+coefSummary(fit2)
+```
+
+Results for $\beta_1$ (years) as before. Different for $(\hat{\beta}_0, \hat{\beta}_2, \hat{\beta}_3)$
+
+
+## Interpretation
+
+$$
+E(y_i)= \beta_0 + \beta_1 (x_{i1} - 1952) + \beta_2 x_{i2} + \beta_3 x_{i3}
+$$
+
+
+
+::: columns
+::: {.column width="50%"}
+
+$$ 
+x_{i2}= \begin{cases} 1 \mbox{, if country}_i=\mbox{France} \\ -1 \mbox{, if country}_i=\mbox{Spain} \\ 0 \mbox{, else} \end{cases} 
+$$
+:::
+
+::: {.column width="50%"}
+
+$$ 
+x_{i3}= \begin{cases} 1 \mbox{, if country}_i=\mbox{Italy} \\ -1 \mbox{, if country}_i=\mbox{Spain}  \\ 0 \mbox{, else} \end{cases} 
+$$
+:::
+
+:::
+
+
+- For France: $E(y_i)= \beta_0 + \beta_2 + \beta_1 (x_{i1} - 1952)$
+
+- For Italy: $E(y_i)= \beta_0 + \beta_3 + \beta_1 (x_{i1} - 1952)$
+
+- For Spain: $E(y_i)= \beta_0 - \beta_2 - \beta_3 + \beta_1 (x_{i1} - 1952)$
+
+- Average across countries: $E(y_i)= \beta_0 + \beta_1 (x_{i1} - 1952)$
+
+$\beta_0$ is the mean life exp. at 1952 across countries
+
+$\beta_2$ is France's deviation from that mean. $\beta_3$ is Italy's. $-\beta_2 - \beta_3$ is Spain's
+
+## Exercise
+
+Fit a model with interactions with the 0/1 coding and with the sum-to-zero coding. Interpret the estimated parameter values from each model
+
+```{r}
+fit3= lm(lifeExp ~ years_since_1952 + country + years_since_1952:country, data=gm3)
+fit4= lm(lifeExp ~ years_since_1952 + country0 + years_since_1952:country0, data=gm3)
+```
 

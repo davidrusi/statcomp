@@ -400,18 +400,20 @@
 <li><a href="#/testing-2-nested-models" id="/toc-testing-2-nested-models">Testing 2 nested models</a></li>
 <li><a href="#/best-model-for-forecasting" id="/toc-best-model-for-forecasting">Best model for forecasting</a></li>
 <li><a href="#/best-model-for-explaining" id="/toc-best-model-for-explaining">Best model for explaining</a></li>
+<li><a href="#/too-many-models" id="/toc-too-many-models">Too many models</a></li>
 </ul>
 </nav>
 </section>
 <section id="reproducing-these-lecture-notes" class="slide level2">
 <h2>Reproducing these lecture notes</h2>
 <p>Load required R packages</p>
-<div class="cell" data-hash="08_model_comparison_cache/revealjs/unnamed-chunk-1_6d877ca18efdc0dbe7a5c5bd38ed3c49">
+<div class="cell" data-hash="08_model_comparison_cache/revealjs/unnamed-chunk-1_a2b3d30530187bbddc0a49b869108523">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(boot)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(coefplot)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(openintro)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pROC)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mombf)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(openintro)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pROC)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We also source routines.R, which has auxiliary functions</p>
 <div class="cell" data-hash="08_model_comparison_cache/revealjs/unnamed-chunk-2_9ae933abf6c2832f694c80996c054b55">
@@ -1165,6 +1167,125 @@ y_i= \sin(2\pi x) + \epsilon_i \mbox{, where } \epsilon_i \sim N(0,0.2^2)
 4 model 4 2194.192 1999.695</code></pre>
 </div>
 </div>
+</section>
+<section id="searching-over-models" class="slide level2">
+<h2>Searching over models</h2>
+<p><code>bestBIC</code> in package <code>mombf</code> searches all possible models (if one can enumerate them)</p>
+<div class="cell" data-hash="08_model_comparison_cache/revealjs/unnamed-chunk-37_2d8748714edc527aa41970899c417505">
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>email<span class="ot">=</span> <span class="fu">transform</span>(email, <span class="at">spam=</span> <span class="fu">as.numeric</span>(<span class="fu">as.character</span>(spam))) <span class="co">#convert outcome to numeric 0/1 values</span></span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>allbics<span class="ot">=</span> <span class="fu">bestBIC</span>(spam <span class="sc">~</span> to_multiple<span class="sc">+</span>from<span class="sc">+</span>cc<span class="sc">+</span>sent_email<span class="sc">+</span>image<span class="sc">+</span>attach<span class="sc">+</span>dollar<span class="sc">+</span>winner, <span class="at">data=</span>email, <span class="at">family=</span><span class="st">"binomial"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Enumerating models...
+Computing posterior probabilities........... Done.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>allbics</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$topmodel
+[1] "to_multiple1" "from1"        "sent_email1"  "image"        "attach"      
+[6] "dollar"       "winneryes"   
+
+$models
+# A tibble: 512 × 2
+   modelid             bic
+   &lt;chr&gt;             &lt;dbl&gt;
+ 1 2,3,5,6,7,8,9     2032.
+ 2 1,2,3,5,6,7,8,9   2036.
+ 3 2,3,4,5,6,7,8,9   2040.
+ 4 1,2,5,6,7,8,9     2040.
+ 5 1,2,3,4,5,6,7,8,9 2044.
+ 6 1,2,4,5,6,7,8,9   2047.
+ 7 2,3,5,6,7,8       2051.
+ 8 2,3,5,6,7,9       2053.
+ 9 1,2,3,5,6,7,8     2055.
+10 1,2,3,5,6,7,9     2057.
+# … with 502 more rows
+
+$varnames
+[1] "(Intercept)"  "to_multiple1" "from1"        "cc"           "sent_email1" 
+[6] "image"        "attach"       "dollar"       "winneryes"   </code></pre>
+</div>
+</div>
+</section>
+<section class="slide level2">
+
+<p>We can fit the model with best BIC. We get a warning for fitted probabilities near 0 or 1.</p>
+<div class="cell" data-hash="08_model_comparison_cache/revealjs/unnamed-chunk-38_b7990aa38de2758c34f2809c07ad8111">
+<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a>f<span class="ot">=</span> <span class="fu">formula</span>(spam <span class="sc">~</span> to_multiple <span class="sc">+</span> from <span class="sc">+</span> sent_email <span class="sc">+</span> image <span class="sc">+</span> attach <span class="sc">+</span> dollar)</span>
+<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a>fit.bestbic<span class="ot">=</span> <span class="fu">glm</span>(f, <span class="at">data=</span>email, <span class="at">family=</span><span class="fu">binomial</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Some standard errors are very large, causing problems when getting confidence intervals</p>
+<div class="cell" data-hash="08_model_comparison_cache/revealjs/unnamed-chunk-39_e504c478a5902b5841513c7a33f55e20">
+<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="fu">coefSummary</span>(fit.bestbic)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 7 × 4
+  Parameter    Estimate `Conf. Int.`        `P-value`
+  &lt;chr&gt;           &lt;dbl&gt; &lt;chr&gt;               &lt;chr&gt;    
+1 (Intercept)    19.7   (-790.123,NA)       0.99747  
+2 to_multiple1   -2.30  (-2.649,-2.061)     &lt;0.00001 
+3 from1         -21.4   (NA,788.374)        0.99725  
+4 sent_email1   -27.9   (-151.159,-230.794) 0.92154  
+5 image          -3.01  (-3.683,-2.382)     &lt;0.00001 
+6 attach          1.11  (0.957,1.387)       &lt;0.00001 
+7 dollar         -0.086 (-0.133,-0.07)      8e-05    </code></pre>
+</div>
+</div>
+<p>The issue is that <code>from</code> is almost a constant.</p>
+<div class="cell" data-hash="08_model_comparison_cache/revealjs/unnamed-chunk-40_7d04f205c26e02a53750b3eb46939f06">
+<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(email<span class="sc">$</span>from)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+   0    1 
+   3 3918 </code></pre>
+</div>
+</div>
+<p>Let’s drop it. Numerical issues improve, but some remain for <code>sent_email</code>, due to some estimated probabilities being near 0 or 1</p>
+<div class="cell" data-hash="08_model_comparison_cache/revealjs/unnamed-chunk-41_4858ff77c84c503780a2bb90f9c5730e">
+<div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a>f<span class="ot">=</span> <span class="fu">formula</span>(spam <span class="sc">~</span> to_multiple <span class="sc">+</span> sent_email <span class="sc">+</span> image <span class="sc">+</span> attach <span class="sc">+</span> dollar)</span>
+<span id="cb67-2"><a href="#cb67-2" aria-hidden="true" tabindex="-1"></a>fit.bestbic<span class="ot">=</span> <span class="fu">glm</span>(f, <span class="at">data=</span>email, <span class="at">family=</span><span class="fu">binomial</span>())</span>
+<span id="cb67-3"><a href="#cb67-3" aria-hidden="true" tabindex="-1"></a><span class="fu">coefSummary</span>(fit.bestbic)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 4
+  Parameter    Estimate `Conf. Int.`       `P-value`
+  &lt;chr&gt;           &lt;dbl&gt; &lt;chr&gt;              &lt;chr&gt;    
+1 (Intercept)    -1.70  (-1.821,-1.574)    &lt;0.00001 
+2 to_multiple1   -2.30  (-2.976,-1.73)     &lt;0.00001 
+3 sent_email1   -27.8   (-150.927,-227.34) 0.92151  
+4 image          -3.01  (-4.575,-2.036)    &lt;0.00001 
+5 attach          1.11  (0.841,1.383)      &lt;0.00001 
+6 dollar         -0.085 (-0.132,-0.047)    7e-05    </code></pre>
+</div>
+</div>
+</section></section>
+<section>
+<section id="too-many-models" class="title-slide slide level1 center">
+<h1>Too many models</h1>
+
+</section>
+<section class="slide level2">
+
+<p>When <span class="math inline">\(p\)</span> is large we cannot enumerate all <span class="math inline">\(2^p\)</span> models. Classical strategies:</p>
+<ul>
+<li><p>Stepwise forward: start with no variables, add 1 at a time</p></li>
+<li><p>Stepwise backward: start with all variables, drop 1 at a time</p></li>
+</ul>
+<p>These heuristics often work reasonably, but they can get stuck in local modes</p>
+<p>We discuss <strong>Markov Chain Monte Carlo</strong> methods for model search</p>
+</section>
+<section id="markov-chain-monte-carlo" class="slide level2">
+<h2>Markov Chain Monte Carlo</h2>
+<p>MCMC is an ample family of algorithms to sample from (pretty much) any probability distribution</p>
+<ul>
+<li>Trick 1: define a probability distribution over models</li>
+</ul>
+<p><span class="math display">\[
+\pi(M_k) = \frac{e^{-BIC_k/2}}{\sum_{j} e^{-BIC_j/2}}
+\]</span></p>
+<p>Small BIC<span class="math inline">\(_k \Rightarrow\)</span> large <span class="math inline">\(\pi(M_k)\)</span>. Clearly <span class="math inline">\(\pi(M_k) \in [0,1]\)</span> and <span class="math inline">\(\sum_{k=1}^K \pi(M_k)=1\)</span></p>
+<p>Note: the /2 comes from a Bayesian interpretation of the BIC</p>
+<ul>
+<li>Trick 2: sample from <span class="math inline">\(\pi(M_k)\)</span>. The higher <span class="math inline">\(\pi(M_k)\)</span>, the higher the probability of visiting this model</li>
+</ul>
+<p>Finally, choose model with best <span class="math inline">\(\pi(M_k)\)</span> among the sampled ones</p>
 <div class="footer footer-default">
 
 </div>

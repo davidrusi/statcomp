@@ -29,6 +29,7 @@ Load required R packages
 library(tidyverse)
 library(boot)
 library(coefplot)
+library(mombf)
 library(openintro)
 library(pROC)
 ```
@@ -690,4 +691,84 @@ aic= c(AIC(fit1), AIC(fit2), AIC(fit3), AIC(fit4))
 models= c('model 1','model 2','model 3','model 4')
 data.frame(models, bic, aic)
 ```
+
+## Searching over models
+
+`bestBIC` in package `mombf` searches all possible models (if one can enumerate them)
+
+```{r}
+email= transform(email, spam= as.numeric(as.character(spam))) #convert outcome to numeric 0/1 values
+allbics= bestBIC(spam ~ to_multiple+from+cc+sent_email+image+attach+dollar+winner, data=email, family="binomial")
+allbics
+```
+
+---
+
+We can fit the model with best BIC. We get a warning for fitted probabilities near 0 or 1.
+
+```{r}
+f= formula(spam ~ to_multiple + from + sent_email + image + attach + dollar)
+fit.bestbic= glm(f, data=email, family=binomial())
+```
+
+Some standard errors are very large, causing problems when getting confidence intervals
+
+```{r}
+coefSummary(fit.bestbic)
+```
+
+The issue is that `from` is almost a constant. 
+
+```{r}
+table(email$from)
+```
+
+Let's drop it. Numerical issues improve, but some remain for `sent_email`, due to some estimated probabilities being near 0 or 1
+
+```{r}
+f= formula(spam ~ to_multiple + sent_email + image + attach + dollar)
+fit.bestbic= glm(f, data=email, family=binomial())
+coefSummary(fit.bestbic)
+```
+
+
+
+
+
+
+# Too many models
+
+---
+
+When $p$ is large we cannot enumerate all $2^p$ models. Classical strategies:
+
+- Stepwise forward: start with no variables, add 1 at a time
+
+- Stepwise backward: start with all variables, drop 1 at a time
+
+These heuristics often work reasonably, but they can get stuck in local modes
+
+We discuss **Markov Chain Monte Carlo** methods for model search
+
+
+## Markov Chain Monte Carlo
+
+MCMC is an ample family of algorithms to sample from (pretty much) any probability distribution
+
+- Trick 1: define a probability distribution over models
+
+$$
+\pi(M_k) = \frac{e^{-BIC_k/2}}{\sum_{j} e^{-BIC_j/2}}
+$$
+
+Small BIC$_k \Rightarrow$ large $\pi(M_k)$. Clearly $\pi(M_k) \in [0,1]$ and $\sum_{k=1}^K \pi(M_k)=1$
+
+Note: the /2 comes from a Bayesian interpretation of the BIC
+
+
+
+- Trick 2: sample from $\pi(M_k)$. The higher $\pi(M_k)$, the higher the probability of visiting this model
+
+Finally, choose model with best $\pi(M_k)$ among the sampled ones
+
 

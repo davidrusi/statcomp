@@ -406,6 +406,7 @@
 <li><a href="#/interactions" id="/toc-interactions">Interactions</a></li>
 <li><a href="#/nested-models" id="/toc-nested-models">Nested models</a></li>
 <li><a href="#/summary-of-useful-functions" id="/toc-summary-of-useful-functions">Summary of useful functions</a></li>
+<li><a href="#/exercise-1" id="/toc-exercise-1">Exercise</a></li>
 </ul>
 </nav>
 </section>
@@ -943,12 +944,14 @@ clarity^7    0.0443251857  0.052424836</code></pre>
 <section class="slide level2">
 
 <p>Load the data, create a smaller version with the needed variables, and remove Hawaii (outcome not reported)</p>
-<div class="cell" data-hash="05_basicmodels_cache/revealjs/unnamed-chunk-34_f0cfd7cdf07fff3756e8dc9cd3a2f27c">
-<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fivethirtyeight)</span>
-<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>sel<span class="ot">=</span> <span class="fu">c</span>(<span class="st">'state_abbrev'</span>,<span class="st">'avg_hatecrimes_per_100k_fbi'</span>,<span class="st">'share_vote_trump'</span>,<span class="st">'gini_index'</span>,<span class="st">'share_pop_hs'</span>)</span>
-<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>hc<span class="ot">=</span> hate_crimes[,sel]</span>
-<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(hc)<span class="ot">=</span> <span class="fu">c</span>(<span class="st">'state'</span>,<span class="st">'hatecrimes_fbi'</span>,<span class="st">'votes_trump'</span>,<span class="st">'gini'</span>,<span class="st">'hs'</span>)</span>
-<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>hc<span class="ot">=</span> <span class="fu">filter</span>(hc, <span class="sc">!</span><span class="fu">is.na</span>(hatecrimes_fbi)) <span class="co">#outcome must be non-missing</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="05_basicmodels_cache/revealjs/unnamed-chunk-34_92e5baf1b879f75b4e2daac3716704b9">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fivethirtyeight)</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"../code/routines.R"</span>)</span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>sel<span class="ot">=</span> <span class="fu">c</span>(<span class="st">'state_abbrev'</span>,<span class="st">'avg_hatecrimes_per_100k_fbi'</span>,<span class="st">'share_vote_trump'</span>,<span class="st">'gini_index'</span>,<span class="st">'share_pop_hs'</span>)</span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>hc<span class="ot">=</span> hate_crimes[,sel]</span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(hc)<span class="ot">=</span> <span class="fu">c</span>(<span class="st">'state'</span>,<span class="st">'hatecrimes_fbi'</span>,<span class="st">'votes_trump'</span>,<span class="st">'gini'</span>,<span class="st">'hs'</span>)</span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>hc<span class="ot">=</span> <span class="fu">filter</span>(hc, <span class="sc">!</span><span class="fu">is.na</span>(hatecrimes_fbi)) <span class="co">#outcome must be non-missing</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <ol type="1">
 <li><p>Fit a linear regression for <code>hatecrimes_fbi</code> vs.&nbsp;<code>votes_trump</code>, <code>gini</code>, <code>hs</code>. Report the point estimate, 95% intervals and P-values for the 3 covariates. Which of them are significantly associated to hate crimes?</p></li>
@@ -1795,6 +1798,146 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <li><p>Plot predictions: <code>data_grid</code>, <code>add_predictions</code></p></li>
 <li><p>Diagnostics: <code>geom_smooth</code>, <code>geom_boxplot</code>, <code>geom_qq</code></p></li>
 </ul>
+</section></section>
+<section>
+<section id="exercise-1" class="title-slide slide level1 center">
+<h1>Exercise</h1>
+
+</section>
+<section id="sum-to-zero-constraints" class="slide level2">
+<h2>Sum-to-zero constraints</h2>
+<p>Select 3 countries, create factor <code>country</code> with 3 levels. Create <code>years_since_1952</code></p>
+<div class="cell" data-hash="05_basicmodels_cache/revealjs/unnamed-chunk-68_2801a07f0f48b61cf7ded43952ceb622">
+<div class="sourceCode cell-code" id="cb108"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb108-1"><a href="#cb108-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb108-2"><a href="#cb108-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gapminder)</span>
+<span id="cb108-3"><a href="#cb108-3" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"../code/routines.R"</span>)</span>
+<span id="cb108-4"><a href="#cb108-4" aria-hidden="true" tabindex="-1"></a>gm3<span class="ot">=</span> gapminder <span class="sc">|&gt;</span> </span>
+<span id="cb108-5"><a href="#cb108-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(country <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">'France'</span>,<span class="st">'Italy'</span>,<span class="st">'Spain'</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb108-6"><a href="#cb108-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">transform</span>(<span class="at">country=</span> <span class="fu">factor</span>(country), <span class="at">years_since_1952=</span> year <span class="sc">-</span> <span class="dv">1952</span>)</span>
+<span id="cb108-7"><a href="#cb108-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb108-8"><a href="#cb108-8" aria-hidden="true" tabindex="-1"></a>fit1<span class="ot">=</span> <span class="fu">lm</span>(lifeExp <span class="sc">~</span> years_since_1952 <span class="sc">+</span> country, <span class="at">data=</span>gm3)</span>
+<span id="cb108-9"><a href="#cb108-9" aria-hidden="true" tabindex="-1"></a><span class="fu">coefSummary</span>(fit1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 × 4
+  Parameter        Estimate `Conf. Int.`    `P-value`
+  &lt;chr&gt;               &lt;dbl&gt; &lt;chr&gt;           &lt;chr&gt;    
+1 (Intercept)        67.1   (66.551,67.679) &lt;0.00001 
+2 years_since_1952    0.263 (0.249,0.277)   &lt;0.00001 
+3 countryItaly       -0.335 (-0.922,0.252)  0.25348  
+4 countrySpain       -0.145 (-0.732,0.441)  0.61706  </code></pre>
+</div>
+</div>
+<ul>
+<li><p>For France: <span class="math inline">\(E(y_i)= \beta_0 + \beta_1 (\mbox{year}_i - 1952)\)</span></p></li>
+<li><p>For Italy: <span class="math inline">\(E(y_i)= \beta_0 + \beta_2 + \beta_1 (\mbox{year}_i - 1952)\)</span></p></li>
+</ul>
+<p>How do we interpret <span class="math inline">\(\beta_0\)</span>? And <span class="math inline">\(\beta_0 + \beta_2\)</span>?</p>
+</section>
+<section class="slide level2">
+
+<p><code>country</code> has 3 levels. <code>contrasts</code> shows how they’re coded</p>
+<div class="cell" data-hash="05_basicmodels_cache/revealjs/unnamed-chunk-69_e1da7d1489a18593175dd3b02fe0580b">
+<div class="sourceCode cell-code" id="cb110"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb110-1"><a href="#cb110-1" aria-hidden="true" tabindex="-1"></a><span class="fu">levels</span>(gm3<span class="sc">$</span>country)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "France" "Italy"  "Spain" </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb112"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb112-1"><a href="#cb112-1" aria-hidden="true" tabindex="-1"></a><span class="fu">contrasts</span>(gm3<span class="sc">$</span>country)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       Italy Spain
+France     0     0
+Italy      1     0
+Spain      0     1</code></pre>
+</div>
+</div>
+<p>That is, internally R defines</p>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p><span class="math display">\[
+x_{i2}= \begin{cases} 1 \mbox{, if country}_i=\mbox{Italy} \\ 0 \mbox{, else} \end{cases}
+\]</span></p>
+</div><div class="column" style="width:50%;">
+<p><span class="math display">\[
+x_{i3}= \begin{cases} 1 \mbox{, if country}_i=\mbox{Spain} \\ 0 \mbox{, else} \end{cases}
+\]</span></p>
+</div>
+</div>
+<p>Alternative to 0/1 coding: <strong>sum-to-zero constraint</strong>. In our example</p>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p><span class="math display">\[
+x_{i2}= \begin{cases} 1 \mbox{, if country}_i=\mbox{France} \\ -1 \mbox{, if country}_i=\mbox{Spain} \\ 0 \mbox{, else} \end{cases}
+\]</span></p>
+</div><div class="column" style="width:50%;">
+<p><span class="math display">\[
+x_{i3}= \begin{cases} 1 \mbox{, if country}_i=\mbox{Italy} \\ -1 \mbox{, if country}_i=\mbox{Spain}  \\ 0 \mbox{, else} \end{cases}
+\]</span></p>
+</div>
+</div>
+</section>
+<section class="slide level2">
+
+<p>sum-to-zero coding can be done with <code>contrasts</code> and <code>contr.sum</code></p>
+<div class="cell" data-hash="05_basicmodels_cache/revealjs/unnamed-chunk-70_8817dbf80bd427ee1558c2ff80255ed9">
+<div class="sourceCode cell-code" id="cb114"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb114-1"><a href="#cb114-1" aria-hidden="true" tabindex="-1"></a><span class="fu">contr.sum</span>(<span class="fu">levels</span>(gm3<span class="sc">$</span>country)) <span class="co">#check what the sum-to-zero codes look like</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       [,1] [,2]
+France    1    0
+Italy     0    1
+Spain    -1   -1</code></pre>
+</div>
+</div>
+<div class="cell" data-hash="05_basicmodels_cache/revealjs/unnamed-chunk-71_811ae331d485262b9938b26c4ae58428">
+<div class="sourceCode cell-code" id="cb116"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb116-1"><a href="#cb116-1" aria-hidden="true" tabindex="-1"></a>gm3<span class="sc">$</span>country0<span class="ot">=</span> gm3<span class="sc">$</span>country <span class="co">#create new variable</span></span>
+<span id="cb116-2"><a href="#cb116-2" aria-hidden="true" tabindex="-1"></a><span class="fu">contrasts</span>(gm3<span class="sc">$</span>country0) <span class="ot">=</span> <span class="fu">contr.sum</span>(<span class="fu">unique</span>(gm3<span class="sc">$</span>country0)) <span class="co">#tell contr.sum the factor levels</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Let’s fit the model with the new coding</p>
+<div class="cell" data-hash="05_basicmodels_cache/revealjs/unnamed-chunk-72_dbeac1f1e38459fa7f6ed9bfecef08e8">
+<div class="sourceCode cell-code" id="cb117"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb117-1"><a href="#cb117-1" aria-hidden="true" tabindex="-1"></a>fit2<span class="ot">=</span> <span class="fu">lm</span>(lifeExp <span class="sc">~</span> years_since_1952 <span class="sc">+</span> country0, <span class="at">data=</span>gm3)</span>
+<span id="cb117-2"><a href="#cb117-2" aria-hidden="true" tabindex="-1"></a><span class="fu">coefSummary</span>(fit2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 × 4
+  Parameter        Estimate `Conf. Int.`    `P-value`
+  &lt;chr&gt;               &lt;dbl&gt; &lt;chr&gt;           &lt;chr&gt;    
+1 (Intercept)        67.0   (66.504,67.406) &lt;0.00001 
+2 years_since_1952    0.263 (0.249,0.277)   &lt;0.00001 
+3 country01           0.16  (-0.179,0.499)  0.34281  
+4 country02          -0.175 (-0.514,0.164)  0.30103  </code></pre>
+</div>
+</div>
+<p>Results for <span class="math inline">\(\beta_1\)</span> (years) as before. Different for <span class="math inline">\((\hat{\beta}_0, \hat{\beta}_2, \hat{\beta}_3)\)</span></p>
+</section>
+<section id="interpretation" class="slide level2">
+<h2>Interpretation</h2>
+<p><span class="math display">\[
+E(y_i)= \beta_0 + \beta_1 (x_{i1} - 1952) + \beta_2 x_{i2} + \beta_3 x_{i3}
+\]</span></p>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p><span class="math display">\[
+x_{i2}= \begin{cases} 1 \mbox{, if country}_i=\mbox{France} \\ -1 \mbox{, if country}_i=\mbox{Spain} \\ 0 \mbox{, else} \end{cases}
+\]</span></p>
+</div><div class="column" style="width:50%;">
+<p><span class="math display">\[
+x_{i3}= \begin{cases} 1 \mbox{, if country}_i=\mbox{Italy} \\ -1 \mbox{, if country}_i=\mbox{Spain}  \\ 0 \mbox{, else} \end{cases}
+\]</span></p>
+</div>
+</div>
+<ul>
+<li><p>For France: <span class="math inline">\(E(y_i)= \beta_0 + \beta_2 + \beta_1 (x_{i1} - 1952)\)</span></p></li>
+<li><p>For Italy: <span class="math inline">\(E(y_i)= \beta_0 + \beta_3 + \beta_1 (x_{i1} - 1952)\)</span></p></li>
+<li><p>For Spain: <span class="math inline">\(E(y_i)= \beta_0 - \beta_2 - \beta_3 + \beta_1 (x_{i1} - 1952)\)</span></p></li>
+<li><p>Average across countries: <span class="math inline">\(E(y_i)= \beta_0 + \beta_1 (x_{i1} - 1952)\)</span></p></li>
+</ul>
+<p><span class="math inline">\(\beta_0\)</span> is the mean life exp. at 1952 across countries</p>
+<p><span class="math inline">\(\beta_2\)</span> is France’s deviation from that mean. <span class="math inline">\(\beta_3\)</span> is Italy’s. <span class="math inline">\(-\beta_2 - \beta_3\)</span> is Spain’s</p>
+</section>
+<section id="exercise-2" class="slide level2">
+<h2>Exercise</h2>
+<p>Fit a model with interactions with the 0/1 coding and with the sum-to-zero coding. Interpret the estimated parameter values from each model</p>
+<div class="cell" data-hash="05_basicmodels_cache/revealjs/unnamed-chunk-73_037ece643b143f3adef5fae33c50e900">
+<div class="sourceCode cell-code" id="cb119"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb119-1"><a href="#cb119-1" aria-hidden="true" tabindex="-1"></a>fit3<span class="ot">=</span> <span class="fu">lm</span>(lifeExp <span class="sc">~</span> years_since_1952 <span class="sc">+</span> country <span class="sc">+</span> years_since_1952<span class="sc">:</span>country, <span class="at">data=</span>gm3)</span>
+<span id="cb119-2"><a href="#cb119-2" aria-hidden="true" tabindex="-1"></a>fit4<span class="ot">=</span> <span class="fu">lm</span>(lifeExp <span class="sc">~</span> years_since_1952 <span class="sc">+</span> country0 <span class="sc">+</span> years_since_1952<span class="sc">:</span>country0, <span class="at">data=</span>gm3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <div class="footer footer-default">
 
 </div>
