@@ -28,6 +28,7 @@ Load required R packages
 ```{r, warning=FALSE}
 library(tidyverse)
 library(boot)
+library(brglm)
 library(coefplot)
 library(mombf)
 library(openintro)
@@ -503,19 +504,33 @@ $\log \hat{P}(Y_i^*= 1)= \log \hat{\pi}_i$
 cost_loglik_logistic
 ```
 
+Consider 4 models
 
+1. Email characteristics: Additive effect of `to_multiple`, `cc`, `sent_email` 
+
+2. Add pairwise interactions to 1
+
+3. Email charac. + words used: add `image`, `attach`, `dollar`, `winner` to 1
+
+4. Add pairwise interactions to 3
+
+---
+
+Fit the 4 models. Pass our `cost_loglik_logistic` to `cv.glm`
+
+`(x + y)^2` adds main effects + interactions, i.e. same as (`x + y + x:y`)
 
 ```{r, warning=FALSE}
-fit1= glm(spam ~ to_multiple + from + cc, data=email, family=binomial())
+fit1= glm(spam ~ to_multiple + cc + sent_email, data=email, family=binomial())
 fit1cv= cv.glm(email, fit1, cost=cost_loglik_logistic, K=10)
 
-fit2= glm(spam ~ (to_multiple + from + cc)^2, data=email, family=binomial())
+fit2= glm(spam ~ (to_multiple + cc + sent_email)^2, data=email, family=binomial())
 fit2cv= cv.glm(email, fit2, cost=cost_loglik_logistic, K=10)
 
-fit3= glm(spam ~ to_multiple + from + cc + sent_email + image + attach + dollar + winner, data=email, family=binomial())
+fit3= glm(spam ~ to_multiple + cc + sent_email + image + attach + dollar + winner, data=email, family=binomial())
 fit3cv= cv.glm(email, fit3, cost=cost_loglik_logistic, K=10)
 
-fit4= glm(spam ~ (to_multiple + from + cc + sent_email + image + attach + dollar + winner)^2, data=email, family=binomial())
+fit4= glm(spam ~ (to_multiple + cc + sent_email + image + attach + dollar + winner)^2, data=email, family=binomial())
 fit4cv= cv.glm(email, fit4, cost=cost_loglik_logistic, K=10)
 
 loss= c(fit1cv$delta[1], fit2cv$delta[1], fit3cv$delta[1], fit4cv$delta[1])
@@ -548,7 +563,7 @@ loss.insample
 
 ## Exercise
 
-Compare the models `fit1` and `fit3` fitted to the email data
+To compare the models `fit1` and `fit3` fitted to the email data:
 
 1. Test the null hypothesis $H_0$ that all parameters added by `fit3` are truly 0. Do you reject $H_0$?
 
@@ -595,8 +610,8 @@ sel= sample(1:nrow(email), size= round(0.9*nrow(email)), replace=FALSE)
 emailtrain= email[sel,]
 emailtest= email[-sel,]
 
-fit1train= glm(spam ~ to_multiple + from + cc, data=emailtrain, family=binomial())
-fit3train= glm(spam ~ to_multiple + from + cc + sent_email + image + attach + dollar + winner, data=emailtrain, family=binomial())
+fit1train= glm(spam ~ to_multiple + cc + sent_email, data=emailtrain, family=binomial())
+fit3train= glm(spam ~ to_multiple + cc + sent_email + image + attach + dollar + winner, data=emailtrain, family=binomial())
 
 pi1test= predict(fit1, type='response', newdata=emailtest)
 pi3test= predict(fit3, type='response', newdata=emailtest)
@@ -651,11 +666,11 @@ When comparing many models via LRTs
 
 Alternatively, one can use methods that select the true model with probability 1 as $n \rightarrow \infty$. We call this property **model selection consistency**
 
-**Bayesian information criterion (BIC):** popular method that is model selection consistent for GLMs (under mild technical conditions)
+- **Bayesian information criterion (BIC):** popular method that is model selection consistent for GLMs (under mild technical conditions)
 
-**Akaike information criterion (AIC):** not model selection consistent. Attempts to choose the same model as cross-validation
+- **Akaike information criterion (AIC):** not model selection consistent. Attempts to choose the same model as cross-validation
 
-Cross-validation is not model selection consistent either
+- Cross-validation is not model selection consistent either
 
 ## Information criteria
 
@@ -668,7 +683,7 @@ $$
 $$
 where $p_k=\mbox{dim}(\theta_k)$ is the number of parameters in $M_k$ and $n$ the sample size
 
-Model selection strategy: evaluate BIC for all candidate models $M_1,\ldots,M_K$, choose the one with lowest BIC (analogoustly for AIC)
+Model selection strategy: evaluate BIC for all candidate models $M_1,\ldots,M_K$, choose the one with lowest BIC (analogously for AIC)
 
 
 ## Example. Email data
@@ -681,10 +696,10 @@ Functions `BIC` and `AIC` extract the BIC/AIC from a GLM
 Warning: AIC fails to approximate cross-validation, unless $n$ is quite large and the model assumptions hold
 
 ```{r}
-fit1= glm(spam ~ to_multiple + from + cc, data=email, family=binomial())
-fit2= glm(spam ~ (to_multiple + from + cc)^2, data=email, family=binomial())
-fit3= glm(spam ~ to_multiple + from + cc + sent_email + image + attach + dollar + winner, data=email, family=binomial())
-fit4= glm(spam ~ (to_multiple + from + cc + sent_email + image + attach + dollar + winner)^2, data=email, family=binomial())
+fit1= glm(spam ~ to_multiple + cc + sent_email, data=email, family=binomial())
+fit2= glm(spam ~ (to_multiple + cc + sent_email)^2, data=email, family=binomial())
+fit3= glm(spam ~ to_multiple + cc + sent_email + image + attach + dollar + winner, data=email, family=binomial())
+fit4= glm(spam ~ (to_multiple + cc + sent_email + image + attach + dollar + winner)^2, data=email, family=binomial())
 
 bic= c(BIC(fit1), BIC(fit2), BIC(fit3), BIC(fit4))
 aic= c(AIC(fit1), AIC(fit2), AIC(fit3), AIC(fit4))
@@ -698,42 +713,88 @@ data.frame(models, bic, aic)
 
 ```{r}
 email= transform(email, spam= as.numeric(as.character(spam))) #convert outcome to numeric 0/1 values
-allbics= bestBIC(spam ~ to_multiple+from+cc+sent_email+image+attach+dollar+winner, data=email, family="binomial")
-allbics
+fitall= bestBIC(spam ~ to_multiple+cc+sent_email+image+attach+dollar+winner, data=email, family="binomial")
+fitall
 ```
 
 ---
 
-We can fit the model with best BIC. We get a warning for fitted probabilities near 0 or 1.
+Get inference for the top model using `summary`, `coef`, `confint` and `predict` (as usual)
+
+:::panel-tabset
+
+### summary
 
 ```{r}
-f= formula(spam ~ to_multiple + from + sent_email + image + attach + dollar)
-fit.bestbic= glm(f, data=email, family=binomial())
+summary(fitall)
 ```
 
-Some standard errors are very large, causing problems when getting confidence intervals
+### coef, confint
 
 ```{r}
-coefSummary(fit.bestbic)
+cbind(coef(fitall), confint(fitall))
 ```
 
-The issue is that `from` is almost a constant. 
+### predict
 
 ```{r}
-table(email$from)
-```
-
-Let's drop it. Numerical issues improve, but some remain for `sent_email`, due to some estimated probabilities being near 0 or 1
-
-```{r}
-f= formula(spam ~ to_multiple + sent_email + image + attach + dollar)
-fit.bestbic= glm(f, data=email, family=binomial())
-coefSummary(fit.bestbic)
+predict(fitall)[1:5] #predictions for first 5 individuals
 ```
 
 
+:::
+
+---
+
+The standard errors for `sent_email` looked weird. Why?
+
+```{r}
+table(email$sent_email, email$spam)
+```
+
+The estimated spam probability when `sent_email==1` is 0.
+
+The MLE doesn't exist (it occurs at $\hat{\beta}_3=-\infty$), breaking the technical conditions required by asymptotic theory
+
+Bootstrap won't help either. Why?
 
 
+## A possible fix
+
+A way to resolve MLE pathological behavior is to use a penalized likelihood method
+
+Essentially, it maximizes the log-likelihood plus a penalty for having estimates far from 0
+
+- Prevents infinite estimates 
+
+- Improves finite $n$ bias & mean squared error
+
+This is implemented in package `brglm2`
+
+```{r}
+f= formula(spam ~ to_multiple + sent_email + image + attach + dollar + winner)
+fitpen= brglm(f, data=email, family=binomial())
+```
+
+---
+
+The standard error for `sent_email` doesn't explode anymore
+
+:::panel-tabset
+
+### summary
+
+```{r}
+summary(fitpen)
+```
+
+### conf intervals
+
+```{r}
+cbind(coef(fitpen), confint(fitpen))
+```
+
+:::
 
 
 # Too many models
@@ -748,12 +809,12 @@ When $p$ is large we cannot enumerate all $2^p$ models. Classical strategies:
 
 These heuristics often work reasonably, but they can get stuck in local modes
 
-We discuss **Markov Chain Monte Carlo** methods for model search
+We discuss **Markov Chain Monte Carlo (MCMC)** methods for model search
 
 
-## Markov Chain Monte Carlo
+## MCMC model search
 
-MCMC is an ample family of algorithms to sample from (pretty much) any probability distribution
+MCMC: ample family of algorithms to sample from any probability distribution
 
 - Trick 1: define a probability distribution over models
 
@@ -763,12 +824,99 @@ $$
 
 Small BIC$_k \Rightarrow$ large $\pi(M_k)$. Clearly $\pi(M_k) \in [0,1]$ and $\sum_{k=1}^K \pi(M_k)=1$
 
-Note: the /2 comes from a Bayesian interpretation of the BIC
+The /2 comes from a Bayesian interpretation of the BIC, but one could use other values
 
 
 
-- Trick 2: sample from $\pi(M_k)$. The higher $\pi(M_k)$, the higher the probability of visiting this model
+- Trick 2: sample from $\pi(M_k)$. The higher $\pi(M_k)$, the higher the probability of sampling this model
 
 Finally, choose model with best $\pi(M_k)$ among the sampled ones
+
+## MCMC
+
+**Goal:** obtain $B$ samples from a distribution $\pi(z_1,\ldots,z_p)$
+
+- MCMC algorithms give **dependent samples** from $\pi$
+
+- Define a Markov Chain with stationary distribution $\pi$
+
+A simple type of MCMC algorithm is Gibbs sampling
+
+**Gibbs sampler.** Initialize $(z_1^{(0)},\ldots,z_p^{(0)})$. 
+
+For $b=1,\ldots,B$, update $z_j^{(b)}$ from its conditional distrib. given the current values of $(z_1,\ldots,z_{j-1},z_{j+1},\ldots,z_p)$. That is
+
+
+$$
+z_j^{(b)} \sim \pi(z_j \mid z_1^{(b)},\ldots,z_{j-1}^{(b)},z_{j+1}^{(b-1)},\ldots,z_p^{(b-1)})
+$$
+
+## Gibbs model search
+
+Denote a model by $\gamma=(\gamma_1,\ldots,\gamma_p)$, where $\gamma_j \in \{0,1\}$ indicates whether parameter $j$ is in the model
+
+**Example.** With $p=2$ continuous covariates we have
+
+|   Model        | $\gamma_1$  | $\gamma_2$ |
+|----------------|:-----------:|:----------:|
+| No covariates  | 0           | 0          |
+| Only $x_1$     | 1           | 0          |
+| Only $x_2$     | 0           | 1          |
+| $x_1$ and $x_2$| 1           | 1          |
+
+Initialize $\gamma_1^{(0)}=0, \gamma_2^{(0)}=0$ (for example)
+
+1. Sample $\gamma_1^{(b)} \sim \pi(\gamma_1 \mid \gamma_2^{(b-1)})$
+
+2. Sample $\gamma_2^{(b)} \sim \pi(\gamma_2 \mid \gamma_2^{(b)})$
+
+## Gibbs model search
+
+Since we defined
+$$
+\pi(\gamma)= \frac{e^{-BIC_\gamma/2}}{\sum_{\gamma'} e^{-BIC_{\gamma'}/2}}
+$$
+simple algebra shows that
+$$
+\pi(\gamma_j=1 \mid \ldots,\gamma_{j-1},\gamma_{j+1},\ldots)=
+\frac{\pi(\ldots, \gamma_{j-1}, 1, \gamma_{j+1},\ldots)}{\pi(\ldots, \gamma_{j-1}, 0, \gamma_{j+1},\ldots) + \pi(\ldots, \gamma_{j-1}, 1, \gamma_{j+1},\ldots)}
+$$
+
+That is, we can sample $\gamma_j$ given the rest by comparing only 2 models
+
+
+## Example
+
+Simulate $n=1000$ observations with $p=50$ covariates
+
+- $x_i \sim N(0, \Sigma)$ with $\sigma_{jj}=1$, $\sigma_{jk}=0.5$
+
+- $\beta=(0,\ldots,0,0.5,0.5,1,1)$, $\sigma^2=1$
+
+```{r}
+n= 1000; p= 50
+sigma= diag(p) #identity pxp matrix
+sigma[upper.tri(sigma)]= sigma[lower.tri(sigma)]= 0.5
+x= rmvnorm(n*p, sigma=sigma)
+beta= matrix(c(rep(0,p-4), c(0.5,0.5,1,1)), ncol=1)
+y= x %*% beta + rnorm(n)
+```
+
+---
+
+`bestBIC` uses MCMC to explore the models when $p$ is large
+
+```{r}
+fit= bestBIC(y, x)
+fit
+```
+
+The selected model is the correct one, the estimates are very precise
+
+```{r}
+coef(fit)
+```
+
+
 
 
