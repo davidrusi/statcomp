@@ -399,32 +399,25 @@
 <ul>
 <li><a href="#/bootstrap" id="/toc-bootstrap">Bootstrap</a></li>
 <li><a href="#/permutation-tests" id="/toc-permutation-tests">Permutation tests</a></li>
+<li><a href="#/exercise" id="/toc-exercise">Exercise</a></li>
 </ul>
 </nav>
 </section>
 <section id="reproducing-these-lecture-notes" class="slide level2">
 <h2>Reproducing these lecture notes</h2>
-<p>Required R packages</p>
-<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-1_aa67bb381749c04438a801f847543802">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"boot"</span>)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"coin"</span>)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"ggpubr"</span>)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"lmPerm"</span>)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"plyr"</span>)</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"tidyverse"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>Once they’re installed, load them.</p>
-<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-2_bf1c79b855eb0565d03ab6b0a7ccfdcb">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(boot)</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(coin)</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lmPerm)</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggpubr)</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(plyr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>We load the required R packages</p>
+<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-1_fd3164a3c1aaa04c8ae616b496936217">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(boot)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(coin)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fivethirtyeight)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lmPerm)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggpubr)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(plyr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We also source routines.R, which has auxiliary functions</p>
-<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-3_b2a1d8d369be483b3df0fb14c75d78c9">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">'../code/routines.R'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-2_d1d0f2e9a7e59e0375fa0079c4931a2a">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">'../code/routines.R'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="section" class="slide level2">
@@ -476,9 +469,9 @@ E(\hat{\beta})= (X^T X)^{-1} X^T X \beta= \beta; \mbox{Cov}(\hat{\beta})= \sigma
 <li><p>ab: number of at bats</p></li>
 <li><p>h: number of hits</p></li>
 </ul>
-<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-4_41d39ade1dcd2677ccaecddd607fc396">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>baseball<span class="ot">=</span> baseball[baseball<span class="sc">$</span>year <span class="sc">&gt;=</span> <span class="dv">1990</span>, ]</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(baseball)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-3_a2ea6eccee6f83dc3405cf39c05945f5">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>baseball<span class="ot">=</span> baseball[baseball<span class="sc">$</span>year <span class="sc">&gt;=</span> <span class="dv">1990</span>, ]</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(baseball)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>             id year stint team lg   g  ab  r   h X2b X3b hr rbi sb cs bb so
 67407 aguilri01 1990     1  MIN AL  56   0  0   0   0   0  0   0  0  0  0  0
@@ -502,45 +495,64 @@ E(\hat{\beta})= (X^T X)^{-1} X^T X \beta= \beta; \mbox{Cov}(\hat{\beta})= \sigma
 <p>Batting average is <span class="math inline">\(\theta= E(h) / E(\mbox{ab})\)</span>. Consider the estimator <span class="math display">\[
 \hat{\theta}= \frac{\sum_{i=1}^n h_i}{\sum_{i=1}^n \mbox{ab}_i}  
 \]</span></p>
-<p>Central Limit Theorem: numerator and denominator in <span class="math inline">\(\hat{\theta}\)</span> approx. Normal as <span class="math inline">\(n \rightarrow\)</span>. But <span class="math inline">\(\hat{\theta}\)</span> may not be Normal, and anyway what is it’s variance?</p>
+<p>Central Limit Theorem: numerator and denominator in <span class="math inline">\(\hat{\theta}\)</span> approx. Normal as <span class="math inline">\(n \rightarrow \infty\)</span>. But <span class="math inline">\(\hat{\theta}\)</span> may not be Normal, and anyway what is it’s variance?</p>
 </section>
 <section id="example.-baseball-1" class="slide level2">
 <h2>Example. Baseball</h2>
 <p>Define a function to compute the batting average</p>
-<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-5_d300c7fa737b870716509954f81f840d">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>bat.avg<span class="ot">=</span> <span class="cf">function</span>(data, <span class="at">indices=</span><span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(data)) {</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a> <span class="fu">sum</span>(data[indices, <span class="st">"h"</span>], <span class="at">na.rm=</span><span class="cn">TRUE</span>) <span class="sc">/</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a> <span class="fu">sum</span>(data[indices, <span class="st">"ab"</span>], <span class="at">na.rm=</span><span class="cn">TRUE</span>)</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="fu">bat.avg</span>(baseball)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-4_05571dfd6859b00cc957c67e88896798">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>bat.avg<span class="ot">=</span> <span class="cf">function</span>(data, <span class="at">indices=</span><span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(data)) {</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a> <span class="fu">sum</span>(data[indices, <span class="st">"h"</span>], <span class="at">na.rm=</span><span class="cn">TRUE</span>) <span class="sc">/</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a> <span class="fu">sum</span>(data[indices, <span class="st">"ab"</span>], <span class="at">na.rm=</span><span class="cn">TRUE</span>)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="fu">bat.avg</span>(baseball)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.2729972</code></pre>
 </div>
 </div>
 <p>For each boostrapped dataset, compute the batting average</p>
-<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-6_5ce4b773684620baa5684e8f3f50386f">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">12345</span>)</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>B<span class="ot">=</span> <span class="dv">2000</span>; n<span class="ot">=</span> <span class="fu">nrow</span>(baseball)</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>th<span class="ot">=</span> <span class="fu">double</span>(B)</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (b <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>B) {</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  idx<span class="ot">=</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span>n, <span class="at">size=</span>n, <span class="at">replace=</span><span class="cn">TRUE</span>)</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  th[b]<span class="ot">=</span> <span class="fu">bat.avg</span>(baseball, <span class="at">indices=</span>idx)</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-5_abab9def75df8ff43ef4e63a12d3df94">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">12345</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>B<span class="ot">=</span> <span class="dv">2000</span>; n<span class="ot">=</span> <span class="fu">nrow</span>(baseball)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>th<span class="ot">=</span> <span class="fu">double</span>(B)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (b <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>B) {</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  idx<span class="ot">=</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span>n, <span class="at">size=</span>n, <span class="at">replace=</span><span class="cn">TRUE</span>)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  th[b]<span class="ot">=</span> <span class="fu">bat.avg</span>(baseball, <span class="at">indices=</span>idx)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="example.-baseball-2" class="slide level2">
 <h2>Example. Baseball</h2>
-<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-7_602ea3673fae7be7c65405c7973f1f73">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">quantile</span>(th, <span class="at">probs=</span><span class="fu">c</span>(.<span class="dv">025</span>,<span class="fl">0.975</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-6_532dfcf3de14b0d1ca198152e91d3d92">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">quantile</span>(th, <span class="at">probs=</span><span class="fu">c</span>(.<span class="dv">025</span>,<span class="fl">0.975</span>)) <span class="co">#Boostrap-based 95% CI</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>     2.5%     97.5% 
 0.2716847 0.2743102 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>th<span class="ot">=</span> <span class="fu">tibble</span>(th)</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(th, <span class="fu">aes</span>(<span class="at">x=</span>th)) <span class="sc">+</span> <span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">y=</span> ..density..)) <span class="sc">+</span> <span class="fu">stat_overlay_normal_density</span>(<span class="at">linetype=</span><span class="st">'dashed'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-
 </div>
-<img data-src="06_computational_inference_files/figure-revealjs/unnamed-chunk-7-1.png" width="960" class="r-stretch"></section>
+<div class="panel-tabset">
+<ul id="tabset-1" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-1-1">Histogram</a></li><li><a href="#tabset-1-2">qq-plot</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1">
+<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-7_a963348828ca98e7cd69cce4492cd232">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>th<span class="ot">=</span> <span class="fu">tibble</span>(th)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(th, <span class="fu">aes</span>(<span class="at">x=</span>th)) <span class="sc">+</span> <span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">y=</span> ..density..)) <span class="sc">+</span> <span class="fu">stat_overlay_normal_density</span>(<span class="at">linetype=</span><span class="st">'dashed'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img data-src="06_computational_inference_files/figure-revealjs/unnamed-chunk-7-1.png" width="960"></p>
+</div>
+</div>
+</div>
+<div id="tabset-1-2">
+<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-8_d498f53885da615387f48929353f906c">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(th, <span class="fu">aes</span>(<span class="at">sample=</span>th)) <span class="sc">+</span> <span class="fu">geom_qq</span>() <span class="sc">+</span> <span class="fu">geom_qq_line</span>(<span class="at">col=</span><span class="st">'red'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img data-src="06_computational_inference_files/figure-revealjs/unnamed-chunk-8-1.png" width="960"></p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
 <section id="r-functions" class="slide level2">
 <h2>R functions</h2>
 <p>The beauty is that the bootstrap works in more complicated settings</p>
@@ -550,7 +562,8 @@ E(\hat{\beta})= (X^T X)^{-1} X^T X \beta= \beta; \mbox{Cov}(\hat{\beta})= \sigma
 <li><p>First argument is the dataset</p></li>
 <li><p>Second argument the function to obtain <span class="math inline">\(\hat{\theta}\)</span>. Its 1st argument is the data, its 2nd argument the row indices</p></li>
 </ul>
-<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-8_8304c29ee42d0d26843c00ec727b0429">
+<p>In our case, data <code>baseball</code> and function <code>bat.avg</code> defined earlier</p>
+<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-9_4c33ddceec66f73ace277a2003239bb9">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>avgBoot<span class="ot">=</span> <span class="fu">boot</span>(<span class="at">data=</span>baseball, <span class="at">statistic=</span>bat.avg, <span class="at">R=</span><span class="dv">2000</span>)</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(avgBoot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -566,14 +579,14 @@ E(\hat{\beta})= (X^T X)^{-1} X^T X \beta= \beta; \mbox{Cov}(\hat{\beta})= \sigma
 </section>
 <section id="regression-example" class="slide level2">
 <h2>Regression example</h2>
-<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-9_e7f71290350bec344b22cee37e42ee5b">
+<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-10_07322a6a644630603541b3a7cc3cf170">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(mtcars)</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(mtcars)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 32 11</code></pre>
 </div>
 </div>
-<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-10_4981ad5d8b22741c50b56f4dbb5f3336">
+<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-11_6da3879398ff60798db59b6414458054">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>f<span class="ot">=</span> <span class="fu">formula</span>(mpg <span class="sc">~</span> cyl <span class="sc">+</span> disp <span class="sc">+</span> hp <span class="sc">+</span> drat <span class="sc">+</span> wt <span class="sc">+</span> qsec <span class="sc">+</span> vs <span class="sc">+</span> am)</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>fit<span class="ot">=</span> <span class="fu">lm</span>(f, <span class="at">data=</span>mtcars)</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="fu">coefSummary</span>(fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -596,30 +609,31 @@ E(\hat{\beta})= (X^T X)^{-1} X^T X \beta= \beta; \mbox{Cov}(\hat{\beta})= \sigma
 </section>
 <section id="check-model-assumptions" class="slide level2">
 <h2>Check model assumptions</h2>
-<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-11_4881f87c93b2183d9a3fe42a8e56e8ba">
+<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-12_0a7802b9f3299428d84e5f2fc439bb45">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>mtcars.pred<span class="ot">=</span> <span class="fu">tibble</span>(<span class="at">mpg=</span>mtcars<span class="sc">$</span>mpg, <span class="at">mpg_pred=</span> <span class="fu">predict</span>(fit))</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>mtcars.pred<span class="sc">$</span>res<span class="ot">=</span> mtcars.pred<span class="sc">$</span>mpg <span class="sc">-</span> mtcars.pred<span class="sc">$</span>mpg_pred</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="panel-tabset">
-<ul id="tabset-1" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-1-1">Linearity</a></li><li><a href="#tabset-1-2">Error normality</a></li></ul>
+<ul id="tabset-2" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-2-1">Linearity</a></li><li><a href="#tabset-2-2">Error normality</a></li></ul>
 <div class="tab-content">
-<div id="tabset-1-1">
-<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-12_a57a5ed9b37ef2e9504416a6c6f498da">
+<div id="tabset-2-1">
+<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-13_d73acad4e710b80ebc72edb1deb69795">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(mtcars.pred, <span class="fu">aes</span>(<span class="at">x=</span>mpg_pred, <span class="at">y=</span>res)) <span class="sc">+</span></span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img data-src="06_computational_inference_files/figure-revealjs/unnamed-chunk-12-1.png" width="960"></p>
-</div>
-</div>
-</div>
-<div id="tabset-1-2">
-<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-13_033b409d16680ec0212f0b82a2627203">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(mtcars.pred, <span class="fu">aes</span>(<span class="at">x=</span>res)) <span class="sc">+</span></span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">y=</span> ..density..)) <span class="sc">+</span></span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_overlay_normal_density</span>(<span class="at">linetype=</span><span class="st">'dashed'</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
 <p><img data-src="06_computational_inference_files/figure-revealjs/unnamed-chunk-13-1.png" width="960"></p>
+</div>
+</div>
+</div>
+<div id="tabset-2-2">
+<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-14_8382979b091e2725f9740577af3274eb">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(mtcars.pred, <span class="fu">aes</span>(<span class="at">sample=</span>res)) <span class="sc">+</span> </span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_qq</span>() <span class="sc">+</span> </span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_qq_line</span>() <span class="sc">+</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">'Sample quantile'</span>,<span class="at">y=</span><span class="st">'Normal quantile'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img data-src="06_computational_inference_files/figure-revealjs/unnamed-chunk-14-1.png" width="960"></p>
 </div>
 </div>
 </div>
@@ -629,7 +643,7 @@ E(\hat{\beta})= (X^T X)^{-1} X^T X \beta= \beta; \mbox{Cov}(\hat{\beta})= \sigma
 <section id="bootstrapped-intervals" class="slide level2">
 <h2>Bootstrapped intervals</h2>
 <p>First, define a function to obtain <span class="math inline">\(\hat{\theta}\)</span></p>
-<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-14_6eb80b64b9c0f2779456721cfc852367">
+<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-15_134de705fc1ce165c28d83505be97e43">
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>bhat<span class="ot">=</span> <span class="cf">function</span>(data, <span class="at">indices=</span><span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(data), formula) {</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  fit<span class="ot">=</span> <span class="fu">lm</span>(formula, <span class="at">data=</span>data[indices,])</span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">coef</span>(fit))</span>
@@ -643,7 +657,7 @@ E(\hat{\beta})= (X^T X)^{-1} X^T X \beta= \beta; \mbox{Cov}(\hat{\beta})= \sigma
 </div>
 </div>
 <p>Second, run <code>boot</code></p>
-<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-15_5f0b74fadf01af85aaaeedabe584cf24">
+<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-16_7d572d775256e3a7944dc5958c016c7d">
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>bhat.boot<span class="ot">=</span> <span class="fu">boot</span>(mtcars, <span class="at">statistic=</span>bhat, <span class="at">R=</span><span class="dv">2000</span>, <span class="at">formula=</span>f)</span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>bhat.boot</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -672,7 +686,7 @@ t9*  2.79374984 -0.1012346893  2.31871100</code></pre>
 <section id="sampling-distribution-of-hattheta" class="slide level2">
 <h2>Sampling distribution of <span class="math inline">\(\hat{\theta}\)</span></h2>
 <p>Format the data into a long tibble, so we can use faceting</p>
-<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-16_36a5830b12c2d9179a0dfb138b88ce72">
+<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-17_63f07b392fcb5715d74d369efd764bbe">
 <div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(bhat.boot<span class="sc">$</span>t)<span class="ot">=</span> <span class="fu">names</span>(<span class="fu">coef</span>(fit))</span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>bhat.bootlong<span class="ot">=</span> <span class="fu">as_tibble</span>(bhat.boot<span class="sc">$</span>t)</span>
 <span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>bhat.bootlong</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -693,7 +707,7 @@ t9*  2.79374984 -0.1012346893  2.31871100</code></pre>
 # … with 1,990 more rows</code></pre>
 </div>
 </div>
-<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-17_341663cc1ea70c0f84e9f2ef8374d21f">
+<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-18_a182b57e79aade36850d764b954e59c8">
 <div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>bhat.bootlong<span class="ot">=</span> <span class="fu">pivot_longer</span>(bhat.bootlong, <span class="at">cols=</span> <span class="fu">names</span>(bhat.bootlong), <span class="at">names_to=</span><span class="st">"variable"</span>, <span class="at">values_to=</span><span class="st">"bootstrap_value"</span>)</span>
 <span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>bhat.bootlong</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -717,18 +731,18 @@ t9*  2.79374984 -0.1012346893  2.31871100</code></pre>
 <section id="sampling-distribution-of-hattheta-1" class="slide level2">
 <h2>Sampling distribution of <span class="math inline">\(\hat{\theta}\)</span></h2>
 <p>There are deviations from normality. Set <code>scales="free"</code> so that each panel uses different axis limits</p>
-<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-18_40acd09385ab1a94005b477db8c01cea">
+<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-19_6f7999a95b4c416c2b22e5c3fd726eed">
 <div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(bhat.bootlong, <span class="fu">aes</span>(<span class="at">x=</span>bootstrap_value)) <span class="sc">+</span></span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">y=</span> ..density..)) <span class="sc">+</span></span>
 <span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_overlay_normal_density</span>(<span class="at">linetype=</span><span class="st">'dashed'</span>) <span class="sc">+</span></span>
 <span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> variable, <span class="at">scales=</span><span class="st">"free"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 </div>
-<img data-src="06_computational_inference_files/figure-revealjs/unnamed-chunk-18-1.png" width="960" class="r-stretch"></section>
+<img data-src="06_computational_inference_files/figure-revealjs/unnamed-chunk-19-1.png" width="960" class="r-stretch"></section>
 <section id="bootstrapped-intervals-1" class="slide level2">
 <h2>Bootstrapped intervals</h2>
 <p>The bootstrapped 95% confidence intervals</p>
-<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-19_f5f5fa8513156ffeb64ce06ccc65a52f">
+<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-20_7830e704499814970309904f8ce0ad54">
 <div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>bhat.ci<span class="ot">=</span> <span class="fu">round</span>(<span class="fu">apply</span>(bhat.boot<span class="sc">$</span>t, <span class="dv">2</span>, quantile, <span class="at">probs=</span><span class="fu">c</span>(<span class="fl">0.025</span>,<span class="fl">0.975</span>), <span class="at">na.rm=</span><span class="cn">TRUE</span>), <span class="dv">3</span>)</span>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>bhat.ci</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -738,7 +752,7 @@ t9*  2.79374984 -0.1012346893  2.31871100</code></pre>
 </div>
 </div>
 <p>Those from least-squares theory. Some are quite different!</p>
-<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-20_5f4975f7774d17bcbf774b7423d7a808">
+<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-21_f9e1f26ab463638ef49715ea2e4f4ae8">
 <div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">coefSummary</span>(fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 9 × 4
@@ -759,7 +773,7 @@ t9*  2.79374984 -0.1012346893  2.31871100</code></pre>
 <section class="slide level2">
 
 <p>Let’s plot the intervals for easier comparison</p>
-<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-21_2073a5d18b93488fe11c58d3cb75536e">
+<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-22_8b0be9eeac8dfcc8238278a51f3651d2">
 <div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>vname<span class="ot">=</span> <span class="fu">names</span>(<span class="fu">coef</span>(fit))</span>
 <span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>yvals<span class="ot">=</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(<span class="fu">coef</span>(fit))</span>
 <span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>ci<span class="ot">=</span> <span class="fu">as_tibble</span>(<span class="fu">data.frame</span>(vname, <span class="fu">t</span>(bhat.ci), <span class="fu">confint</span>(fit), <span class="at">y.ols=</span>yvals, <span class="at">y.boot=</span>yvals<span class="fl">+.1</span>))</span>
@@ -772,7 +786,7 @@ t9*  2.79374984 -0.1012346893  2.31871100</code></pre>
 <span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.y=</span><span class="fu">element_blank</span>(),  <span class="at">axis.ticks.y=</span><span class="fu">element_blank</span>()) <span class="co">#remove y axis labels </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 </div>
-<img data-src="06_computational_inference_files/figure-revealjs/unnamed-chunk-21-1.png" width="960" class="r-stretch"></section></section>
+<img data-src="06_computational_inference_files/figure-revealjs/unnamed-chunk-22-1.png" width="960" class="r-stretch"></section></section>
 <section>
 <section id="permutation-tests" class="title-slide slide level1 center">
 <h1>Permutation tests</h1>
@@ -809,10 +823,10 @@ T= \sum_{k=1}^K (\bar{y}_k - \bar{y})^2
 <section id="mouse-data" class="slide level2">
 <h2>Mouse data</h2>
 <div class="panel-tabset">
-<ul id="tabset-2" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-2-1">Data</a></li><li><a href="#tabset-2-2">Scatter plot</a></li></ul>
+<ul id="tabset-3" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-3-1">Data</a></li><li><a href="#tabset-3-2">Scatter plot</a></li></ul>
 <div class="tab-content">
-<div id="tabset-2-1">
-<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-23_b13f9d1ba787008a647ac07911fe4edf">
+<div id="tabset-3-1">
+<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-24_d7ebb95096b833fb38545140db84c28b">
 <div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>rotarod</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   time     group
@@ -843,11 +857,11 @@ T= \sum_{k=1}^K (\bar{y}_k - \bar{y})^2
 </div>
 </div>
 </div>
-<div id="tabset-2-2">
-<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-24_c068787a87181ea5f10fa3b444969332">
+<div id="tabset-3-2">
+<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-25_3ccbe6a1cf8f7e60ae102ac21de27e0a">
 <div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(rotarod, <span class="fu">aes</span>(group, time)) <span class="sc">+</span> <span class="fu">geom_point</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img data-src="06_computational_inference_files/figure-revealjs/unnamed-chunk-24-1.png" width="960"></p>
+<p><img data-src="06_computational_inference_files/figure-revealjs/unnamed-chunk-25-1.png" width="960"></p>
 </div>
 </div>
 </div>
@@ -857,7 +871,7 @@ T= \sum_{k=1}^K (\bar{y}_k - \bar{y})^2
 <section id="permutation-test" class="slide level2">
 <h2>Permutation test</h2>
 <p>First, define function to compute test statistic</p>
-<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-25_d30ad9d995150929a113ac475c38fe54">
+<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-26_41d381a3b149c6239d744ffec4fec9cc">
 <div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>tstat<span class="ot">=</span> <span class="cf">function</span>(data) {</span>
 <span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>  xbar<span class="ot">=</span> <span class="fu">aggregate</span>(time <span class="sc">~</span> group, <span class="at">data=</span>data, <span class="at">FUN=</span>mean)</span>
 <span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>  ans<span class="ot">=</span> <span class="fu">sum</span>((xbar<span class="sc">$</span>time <span class="sc">-</span> <span class="fu">mean</span>(xbar<span class="sc">$</span>time))<span class="sc">^</span><span class="dv">2</span>)</span>
@@ -865,7 +879,7 @@ T= \sum_{k=1}^K (\bar{y}_k - \bar{y})^2
 <span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Second, obtain test statistic for the observed data</p>
-<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-26_609e3977c425c1513cf05d45db798672">
+<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-27_b5548ed68e83db8f05a02c6800887ae7">
 <div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>tobs<span class="ot">=</span> <span class="fu">tstat</span>(rotarod)</span>
 <span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>tobs</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -873,7 +887,7 @@ T= \sum_{k=1}^K (\bar{y}_k - \bar{y})^2
 </div>
 </div>
 <p>Finally, obtain test stat under permuted data</p>
-<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-27_93deedebaf703aab17cf7103f751df42">
+<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-28_74dbcd6f32760af7bff8c4e6d646f6e1">
 <div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>B<span class="ot">=</span> <span class="dv">2000</span>; n<span class="ot">=</span> <span class="fu">nrow</span>(rotarod)</span>
 <span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>t0<span class="ot">=</span> <span class="fu">double</span>(B)</span>
 <span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (b <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>B) {</span>
@@ -885,7 +899,7 @@ T= \sum_{k=1}^K (\bar{y}_k - \bar{y})^2
 </section>
 <section id="distribution-under-h_0" class="slide level2">
 <h2>Distribution under <span class="math inline">\(H_0\)</span></h2>
-<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-28_eb029f67469f45ba2566c2fa6b85155d">
+<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-29_ab59b72d89918ae2ae67de59a433e0b9">
 <div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>pvalue<span class="ot">=</span> <span class="fu">mean</span>(t0 <span class="sc">&gt;=</span> tobs)</span>
 <span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>pvalue</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -894,11 +908,11 @@ T= \sum_{k=1}^K (\bar{y}_k - \bar{y})^2
 <div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(t0,<span class="at">main=</span><span class="st">''</span>,<span class="at">xlab=</span><span class="st">'Test statistic'</span>); <span class="fu">abline</span>(<span class="at">v=</span> tobs, <span class="at">col=</span><span class="st">'blue'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 </div>
-<img data-src="06_computational_inference_files/figure-revealjs/unnamed-chunk-28-1.png" width="960" class="r-stretch"></section>
+<img data-src="06_computational_inference_files/figure-revealjs/unnamed-chunk-29-1.png" width="960" class="r-stretch"></section>
 <section id="r-package-coin" class="slide level2">
 <h2>R package coin</h2>
 <p><code>coin</code> implements permutation tests (with additional options)</p>
-<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-29_dd545e814906666d0f22141256842bc4">
+<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-30_73ed0d43a484fe740727db7e67c81430">
 <div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">independence_test</span>(time <span class="sc">~</span> group, <span class="at">data=</span>rotarod, <span class="at">teststat=</span><span class="st">"quadratic"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
@@ -913,23 +927,23 @@ chi-squared = 4.5771, df = 1, p-value = 0.0324</code></pre>
 <h2>Independence between continuous variables</h2>
 <p>Permutation tests also apply if <span class="math inline">\(x_i\)</span> is continuous</p>
 <p><strong>Example.</strong> State illiteracy vs.&nbsp;murder rate</p>
-<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-30_77bf5e743005b0ea9ed752d6731db1ad">
+<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-31_4fdb9bf0a2052943e4a00b037a2c1c13">
 <div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>states<span class="ot">=</span> <span class="fu">as.data.frame</span>(state.x77)</span>
 <span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data=</span>states, <span class="fu">aes</span>(Illiteracy, Murder)) <span class="sc">+</span> <span class="fu">geom_point</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 </div>
-<img data-src="06_computational_inference_files/figure-revealjs/unnamed-chunk-30-1.png" width="960" class="r-stretch"></section>
+<img data-src="06_computational_inference_files/figure-revealjs/unnamed-chunk-31-1.png" width="960" class="r-stretch"></section>
 <section class="slide level2">
 
 <p>Compute Spearman’s correlation (a robust alternative to Pearson’s correlation)</p>
-<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-31_90f1c22f641d0692a1c784cff8c6d2ad">
+<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-32_ff1df54e83140df8095ae5fbde5836d4">
 <div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(states<span class="sc">$</span>Illiteracy, states<span class="sc">$</span>Murder, <span class="at">method=</span><span class="st">'spearman'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.6723592</code></pre>
 </div>
 </div>
 <p>Test its statistical significance</p>
-<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-32_e8fa82777290af1442fdf5e0847fae54">
+<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-33_d70d2f7349d7201daf526bfbc571b576">
 <div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1234</span>)</span>
 <span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a><span class="fu">spearman_test</span>(Illiteracy<span class="sc">~</span>Murder, <span class="at">data=</span>states)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -942,7 +956,7 @@ alternative hypothesis: true rho is not equal to 0</code></pre>
 </div>
 </div>
 <p>Bootstrap interval</p>
-<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-33_67ce45fab9c5fd97c51b3088bee66a61">
+<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-34_9769f372927a6ad7a1f2bd72404f3843">
 <div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>r<span class="ot">=</span> <span class="cf">function</span>(data, <span class="at">indices=</span><span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(data)) <span class="fu">cor</span>(data[indices,<span class="st">'Illiteracy'</span>],data[indices,<span class="st">'Murder'</span>],<span class="at">method=</span><span class="st">'spearman'</span>)</span>
 <span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>rboot<span class="ot">=</span> <span class="fu">boot</span>(states, r, <span class="at">R=</span><span class="dv">2000</span>)</span>
@@ -956,7 +970,7 @@ alternative hypothesis: true rho is not equal to 0</code></pre>
 <section id="multiple-regression" class="slide level2">
 <h2>Multiple regression</h2>
 <p>Goal: does murder rate (per 100,000 population) depend on population, after accounting for literacy, income, and number of days below freezing temperature?</p>
-<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-34_26fcb0923df37d81175e7f6bb884c5aa">
+<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-35_eed85d70471135f5ac6080aa178baff0">
 <div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>sel<span class="ot">=</span> <span class="fu">c</span>(<span class="st">'Population'</span>,<span class="st">'Illiteracy'</span>,<span class="st">'Income'</span>,<span class="st">'Frost'</span>)</span>
 <span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>states[,sel]<span class="ot">=</span> <span class="fu">scale</span>(states[,sel])  <span class="co">#standardize to zero mean, unit variance</span></span>
 <span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>fit1<span class="ot">=</span> <span class="fu">lm</span>(Murder<span class="sc">~</span>Population <span class="sc">+</span> Illiteracy<span class="sc">+</span>Income<span class="sc">+</span>Frost, <span class="at">data=</span>states)</span>
@@ -976,7 +990,7 @@ alternative hypothesis: true rho is not equal to 0</code></pre>
 <section class="slide level2">
 
 <p>Package <code>lmPerm</code> offers a permutation test for regression</p>
-<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-35_fee37f3623a454947a2c2d8b5cfbc83f">
+<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-36_3adba28ae7cb80035463891454333fb8">
 <div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>fit2<span class="ot">=</span> <span class="fu">lmp</span>(Murder<span class="sc">~</span>Population <span class="sc">+</span> Illiteracy<span class="sc">+</span>Income<span class="sc">+</span>Frost, <span class="at">data=</span>states)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "Settings:  unique SS : numeric variables centered"</code></pre>
@@ -1031,7 +1045,7 @@ F-statistic: 14.73 on 4 and 45 DF,  p-value: 9.133e-08 </code></pre>
 <section class="slide level2">
 
 <p>Define an R function (saved in routines.R)</p>
-<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-36_e32fbe10fa228cfdba9e55610c350184">
+<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-37_cb5fb0e73c0daccdeab428a88a9a5aff">
 <div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Residual permutation test for a single variable in linear regression</span></span>
 <span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a><span class="co">#Input</span></span>
 <span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a><span class="co"># - y: outcome</span></span>
@@ -1058,11 +1072,11 @@ F-statistic: 14.73 on 4 and 45 DF,  p-value: 9.133e-08 </code></pre>
 <section class="slide level2">
 
 <p>Obtain a residual permutation P-value for Population</p>
-<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-37_83381593813b34985e4b29ffdf0e800e">
+<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-38_f2a0880259b70f5e8bbc80ef61a67769">
 <div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a>y<span class="ot">=</span> states<span class="sc">$</span>Murder; x1<span class="ot">=</span> states<span class="sc">$</span>Population; x2<span class="ot">=</span> states[,<span class="fu">c</span>(<span class="st">'Illiteracy'</span>,<span class="st">'Income'</span>,<span class="st">'Frost'</span>)]</span>
 <span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a>bperm<span class="ot">=</span> <span class="fu">lmResPerm.onevar</span>(y, x1, x2, <span class="at">B=</span><span class="dv">5000</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-38_2be941f63e57d5fc56f1317dfdf75b8f">
+<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-39_a9d75b14307bda070d0657323f9c2afd">
 <div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a>bobs<span class="ot">=</span> <span class="fu">coef</span>(fit1)[<span class="st">'Population'</span>]</span>
 <span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a>pvalue<span class="ot">=</span> <span class="fu">mean</span>(<span class="fu">abs</span>(bperm) <span class="sc">&gt;</span> <span class="fu">abs</span>(bobs))</span>
 <span id="cb64-3"><a href="#cb64-3" aria-hidden="true" tabindex="-1"></a>pvalue</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1071,7 +1085,7 @@ F-statistic: 14.73 on 4 and 45 DF,  p-value: 9.133e-08 </code></pre>
 </div>
 </div>
 <p>Now for all covariates (<code>lmResPerm</code> is in routines.R)</p>
-<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-39_ca5455f69fe55e19336925e3582f00c2">
+<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-40_bddcfeca0bd20980ea02f2e4c7c90e44">
 <div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a>x<span class="ot">=</span> <span class="fu">cbind</span>(x1, x2)</span>
 <span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a>fit1.resperm<span class="ot">=</span> <span class="fu">lmResPerm</span>(y, x, <span class="at">B=</span><span class="dv">5000</span>)</span>
 <span id="cb66-3"><a href="#cb66-3" aria-hidden="true" tabindex="-1"></a>fit1.resperm<span class="sc">$</span>pvalue</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1081,7 +1095,7 @@ F-statistic: 14.73 on 4 and 45 DF,  p-value: 9.133e-08 </code></pre>
 </div>
 </div>
 <p>Recall the results from package <code>lmPerm</code></p>
-<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-40_456f49f8f7546794dae6abbb5312e158">
+<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-41_82bc235d03f353aaddf399f2d42f145e">
 <div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit2)<span class="sc">$</span>coef</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>              Estimate Iter   Pr(Prob)
@@ -1103,6 +1117,38 @@ Frost       0.03021675   51 0.96078431</code></pre>
 </ul>
 <p>Let <span class="math inline">\((1-\alpha)\)</span>% be the largest CI that doesn’t include 0. Then P-value<span class="math inline">\(=\alpha\)</span></p>
 <p>Dependent data: bootstrap needs to be adjusted (model-based bootstrap, block-based bootstrap…). See package <code>boot</code></p>
+</section></section>
+<section>
+<section id="exercise" class="title-slide slide level1 center">
+<h1>Exercise</h1>
+<p>Data <code>hate_crimes</code>. Outcome: pre-election number of hate crimes per 100,000 population by the FBI</p>
+<ul>
+<li><p>education (% adults <span class="math inline">\(\geq\)</span> 25 with high school degree)</p></li>
+<li><p>% of people who voted Donald Trump</p></li>
+<li><p>Income inequality (Gini index)</p></li>
+</ul>
+<p>In these data the linearity assumption is violated.</p>
+<ol type="1">
+<li><p>Compare the intervals reported by <code>lm</code> to those from bootstrap</p></li>
+<li><p>Compare the permutation test P-values to those from <code>lm</code></p></li>
+</ol>
+</section>
+<section class="slide level2">
+
+<p>Load packages and format data.</p>
+<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-42_99e2d5a834e36b861e27c41472c6be4f">
+<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fivethirtyeight)</span>
+<span id="cb70-3"><a href="#cb70-3" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"~/github/statcomp/code/routines.R"</span>)</span>
+<span id="cb70-4"><a href="#cb70-4" aria-hidden="true" tabindex="-1"></a>sel<span class="ot">=</span> <span class="fu">c</span>(<span class="st">'state_abbrev'</span>,<span class="st">'avg_hatecrimes_per_100k_fbi'</span>,<span class="st">'share_vote_trump'</span>,<span class="st">'gini_index'</span>,<span class="st">'share_pop_hs'</span>)</span>
+<span id="cb70-5"><a href="#cb70-5" aria-hidden="true" tabindex="-1"></a>hc<span class="ot">=</span> hate_crimes[,sel]</span>
+<span id="cb70-6"><a href="#cb70-6" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(hc)<span class="ot">=</span> <span class="fu">c</span>(<span class="st">'state'</span>,<span class="st">'hatecrimes_fbi'</span>,<span class="st">'votes_trump'</span>,<span class="st">'gini'</span>,<span class="st">'hs'</span>)</span>
+<span id="cb70-7"><a href="#cb70-7" aria-hidden="true" tabindex="-1"></a>hc<span class="ot">=</span> <span class="fu">filter</span>(hc, <span class="sc">!</span><span class="fu">is.na</span>(hatecrimes_fbi)) <span class="co">#outcome must be non-missing</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The model is fit by least-squares as follows.</p>
+<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-43_71055e5188e7ff8478542217317178b0">
+<div class="sourceCode cell-code" id="cb71"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a>fit<span class="ot">=</span> <span class="fu">lm</span>(hatecrimes_fbi <span class="sc">~</span> votes_trump <span class="sc">+</span> gini <span class="sc">+</span> hs, <span class="at">data=</span>hc)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <div class="footer footer-default">
 
 </div>

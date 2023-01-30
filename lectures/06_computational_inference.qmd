@@ -23,23 +23,13 @@ bibliography: references.bib
 
 ## Reproducing these lecture notes
 
-Required R packages
-
-```{r, eval=FALSE}
-install.packages("boot")
-install.packages("coin")
-install.packages("ggpubr")
-install.packages("lmPerm")
-install.packages("plyr")
-install.packages("tidyverse")
-```
-
-Once they're installed, load them.
+We load the required R packages
 
 ```{r, warning=FALSE}
 library(tidyverse)
 library(boot)
 library(coin)
+library(fivethirtyeight)
 library(lmPerm)
 library(ggpubr)
 library(plyr)
@@ -124,7 +114,7 @@ $$
 \hat{\theta}= \frac{\sum_{i=1}^n h_i}{\sum_{i=1}^n \mbox{ab}_i}  
 $$
 
-Central Limit Theorem: numerator and denominator in $\hat{\theta}$ approx. Normal as $n \rightarrow$. But $\hat{\theta}$ may not be Normal, and anyway what is it's variance? 
+Central Limit Theorem: numerator and denominator in $\hat{\theta}$ approx. Normal as $n \rightarrow \infty$. But $\hat{\theta}$ may not be Normal, and anyway what is it's variance? 
 
 
 ## Example. Baseball
@@ -155,10 +145,25 @@ for (b in 1:B) {
 ## Example. Baseball
 
 ```{r}
-quantile(th, probs=c(.025,0.975))
+quantile(th, probs=c(.025,0.975)) #Boostrap-based 95% CI
+```
+
+:::panel-tabset
+
+### Histogram
+
+```{r}
 th= tibble(th)
 ggplot(th, aes(x=th)) + geom_histogram(aes(y= ..density..)) + stat_overlay_normal_density(linetype='dashed')
 ```
+
+### qq-plot
+
+```{r}
+ggplot(th, aes(sample=th)) + geom_qq() + geom_qq_line(col='red')
+```
+
+:::
 
 ## R functions
 
@@ -171,6 +176,8 @@ Package `boot` offers a generic implementation
 - First argument is the dataset
 
 - Second argument the function to obtain $\hat{\theta}$. Its 1st argument is the data, its 2nd argument the row indices
+
+In our case, data `baseball` and function `bat.avg` defined earlier
 
 ```{r}
 avgBoot= boot(data=baseball, statistic=bat.avg, R=2000)
@@ -216,9 +223,10 @@ ggplot(mtcars.pred, aes(x=mpg_pred, y=res)) +
 ### Error normality
 
 ```{r}
-ggplot(mtcars.pred, aes(x=res)) +
-  geom_histogram(aes(y= ..density..)) +
-  stat_overlay_normal_density(linetype='dashed') 
+ggplot(mtcars.pred, aes(sample=res)) + 
+  geom_qq() + 
+  geom_qq_line() +
+  labs(x='Sample quantile',y='Normal quantile')
 ```
 
 :::
@@ -576,5 +584,41 @@ Let $(1-\alpha)$% be the largest CI that doesn't include 0. Then P-value$=\alpha
 
 Dependent data: bootstrap needs to be adjusted (model-based bootstrap, block-based bootstrap...). See package `boot`
 
+
+# Exercise 
+
+Data `hate_crimes`. Outcome: pre-election number of hate crimes per 100,000 population by the FBI
+
+- education (% adults $\geq$ 25 with high school degree)
+
+- % of people who voted Donald Trump
+
+- Income inequality (Gini index)
+
+In these data the linearity assumption is violated. 
+
+1. Compare the intervals reported by `lm` to those from bootstrap
+
+2. Compare the permutation test P-values to those from `lm`
+
+---
+
+Load packages and format data.
+
+```{r}
+library(tidyverse)
+library(fivethirtyeight)
+source("~/github/statcomp/code/routines.R")
+sel= c('state_abbrev','avg_hatecrimes_per_100k_fbi','share_vote_trump','gini_index','share_pop_hs')
+hc= hate_crimes[,sel]
+names(hc)= c('state','hatecrimes_fbi','votes_trump','gini','hs')
+hc= filter(hc, !is.na(hatecrimes_fbi)) #outcome must be non-missing
+```
+
+The model is fit by least-squares as follows.
+
+```{r}
+fit= lm(hatecrimes_fbi ~ votes_trump + gini + hs, data=hc)
+```
 
 
