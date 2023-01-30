@@ -520,10 +520,10 @@ $$
 $$
 When `cut` is fair and good we get (respectively) 
 
-$$E(\log_2 \mbox{price}_i \mid \mbox{fair}_i=1)= \beta_0 + \ldots $$
+$$E(\log_2 \mbox{price}_i \mid \mbox{fair}_i=1, \ldots)= \beta_0 + \ldots $$
 
 $$
-E(\log_2 \mbox{price}_i \mid \mbox{good}_i=1)= \beta_0 + \beta_1 + \ldots
+E(\log_2 \mbox{price}_i \mid \mbox{good}_i=1, \ldots)= \beta_0 + \beta_1 + \ldots
 $$
 
 Hence
@@ -578,6 +578,7 @@ lmpred2= add_predictions(mygrid, model=lmfit2)
 lmpred2
 ```
 
+`add_predictions` requires that `model` is of type `lm` / object that has a `predict` method
 
 ---
 
@@ -595,11 +596,11 @@ ggplot(lmpred2, aes(x=clarity, y=pred, color=color)) +
 
 We wish to obtain a conf. int. for cut= "Ideal" - "Premium"
 
-- $\beta_5$: mean for "Premium" - "Fair" (reference)
+- $\beta_5$: mean for "Premium" - mean for "Fair" (reference)
 
-- $\beta_6$: mean for "Ideal" - "Fair" (reference)
+- $\beta_6$: mean for "Ideal" - mean for "Fair" (reference)
 
-- $\beta_6 - \beta_5$: mean for "Ideal" - "Premium"
+- $\beta_6 - \beta_5$: mean for "Ideal" - mean for "Premium"
 
 
 ```{r}
@@ -608,7 +609,9 @@ coefSummary(lmfit2)
 
 ---
 
-Linear contrasts can be done in `glht` (general linear hypotheses, R package `multcomp`)
+**Goal.** Test $H_0: \beta_6 - \beta_5=0$. Get 95% confidence interval
+
+Linear contrasts done by `glht` (general linear hypotheses, R package `multcomp`)
 
 ```{r}
 C= matrix(0,nrow=1, ncol=length(coef(lmfit2)))
@@ -626,7 +629,7 @@ confint(PvsI)
 
 ## Doing it on our own
 
-Recall that $\hat{\beta} \sim N(\beta, V)$
+Recall that $\hat{\beta} \sim N(\beta, V)$, where $V= \sigma^2 (X^T X)^{-1}$
 
 ```{r}
 bhat= matrix(coef(lmfit2), ncol=1)
@@ -729,8 +732,8 @@ However, predictions are nearly identical
 
 
 ```{r}
-summary(lmfit2)$r.squared
-summary(lmfull)$r.squared
+summary(lmfit2)$r.squared #additive model
+summary(lmfull)$r.squared #additive + all pairwise interactions
 ```
 
 ```{r}
@@ -740,7 +743,11 @@ cor(diamonds2$pred2, diamonds2$predfull)
 
 ---
 
-This happens because, after adding all covariates, estimated interaction coef. became smaller.
+- Earlier we plotted price vs. carat & cut. `carat:cut` impacted predictions
+
+- Regressing price vs. carat, cut, color & clarity. <interactions don't change predictions much
+
+Why? After adding all covariates, estimated interaction coef. became smaller
 
 ::: panel-tabset
 
@@ -770,6 +777,26 @@ knitr::kable(s[sel,])
 ```{r}
 multiplot(lmfull, lmfit3, intercept=FALSE)
 ```
+
+
+## Specifying interactions in R
+
+We simulate some data for illustration
+
+```{r}
+x1= rnorm(100); x2= rnorm(100); x3= rnorm(100)
+y= rnorm(100, x1 + x2/2, sd=1)  #y = x1 + x2/2 + e, e ~ N(0,1)
+```
+
+Three ways to specify the same regression equation
+
+```{r}
+fit1= lm(y ~ x1 + x2 + x3 + x1:x2 + x1:x3 + x2:x3)
+fit2= lm(y ~ x1*x2 + x1*x3 + x2*x3) #with * you can drop the additive terms
+fit3= lm(y ~ (x1 + x2 + x3)^2) #^2 adds main effects + interactions in one go
+fit3
+```
+
 
 
 # Nested models
@@ -803,7 +830,7 @@ Two ways to fit a model separately for each country:
 
 Note: better alternatives to fit nested models (random effects/hierarchical models)
 
-First, group by country and define nested dataset: each row is a country, and column `$data` is a list of tibbles
+First, group by country and `nest` dataset: each row is a country, and column `$data` is a list of tibbles
 
 ```{r}
 gm_country= group_by(gapminder, country, continent) |> nest() 
@@ -816,6 +843,7 @@ Second, define a function to be applied to each dataset
 
 ```{r}
 fitmodel= function(df) {
+  #Return OLS and R2 for lifeExp ~ year
   fit= lm(lifeExp ~ year, data=df)
   ans= c(coef(fit), summary(fit)$r.squared)
   names(ans)= c('b0','b1','R2')
@@ -847,8 +875,8 @@ ggplot(coef_gm, aes(x=R2)) + geom_histogram()
 ### Countries
 
 ```{r}
-#dplyr::select ensures using function select from package dplyr
-filter(coef_gm, R2 < 0.5) |> dplyr::select(country, continent, R2)
+#dplyr:filter and dplyr::select ensures using functions (filter,select) from package dplyr
+dplyr::filter(coef_gm, R2 < 0.5) |> dplyr::select(country, continent, R2)
 ```
 
 ---
@@ -896,8 +924,6 @@ Can you explain any of these patterns?
 
 # Exercise
 
-## Sum-to-zero constraints
-
 Select 3 countries, create factor `country` with 3 levels.
 Create `years_since_1952`
 
@@ -929,7 +955,7 @@ levels(gm3$country)
 contrasts(gm3$country)
 ```
 
-That is, internally R defines
+Recall that $x_{i1}$ is the year. Internally R defines
 
 ::: columns
 ::: {.column width="50%"}
@@ -979,7 +1005,9 @@ contr.sum(levels(gm3$country)) #check what the sum-to-zero codes look like
 
 ```{r}
 gm3$country0= gm3$country #create new variable
-contrasts(gm3$country0) = contr.sum(unique(gm3$country0)) #tell contr.sum the factor levels
+c0= contr.sum(levels(gm3$country0)) #tell contr.sum the factor levels
+colnames(c0)= c('France','Italy')   #set column names to facilitate interpreting coef.
+contrasts(gm3$country0) = c0
 ```
 
 Let's fit the model with the new coding

@@ -1047,9 +1047,9 @@ Levels: Fair Good Very Good Premium Ideal</code></pre>
 <p><span class="math display">\[
 \mbox{lprice}_i= \beta_0 + \beta_1 \mbox{good}_i + \beta_2 \mbox{very good}_i + \beta_3 \mbox{premium}_i + \beta_4 \mbox{ideal}_i + \ldots + \epsilon_i
 \]</span> When <code>cut</code> is fair and good we get (respectively)</p>
-<p><span class="math display">\[E(\log_2 \mbox{price}_i \mid \mbox{fair}_i=1)= \beta_0 + \ldots \]</span></p>
+<p><span class="math display">\[E(\log_2 \mbox{price}_i \mid \mbox{fair}_i=1, \ldots)= \beta_0 + \ldots \]</span></p>
 <p><span class="math display">\[
-E(\log_2 \mbox{price}_i \mid \mbox{good}_i=1)= \beta_0 + \beta_1 + \ldots
+E(\log_2 \mbox{price}_i \mid \mbox{good}_i=1, \ldots)= \beta_0 + \beta_1 + \ldots
 \]</span></p>
 <p>Hence</p>
 <p><span class="math display">\[
@@ -1169,6 +1169,7 @@ clarityIF       3.046  0.000000e+00 3.010  3.082</code></pre>
 # … with 270 more rows</code></pre>
 </div>
 </div>
+<p><code>add_predictions</code> requires that <code>model</code> is of type <code>lm</code> / object that has a <code>predict</code> method</p>
 </section>
 <section class="slide level2">
 
@@ -1189,9 +1190,9 @@ clarityIF       3.046  0.000000e+00 3.010  3.082</code></pre>
 <h2>Linear contrasts</h2>
 <p>We wish to obtain a conf. int. for cut= “Ideal” - “Premium”</p>
 <ul>
-<li><p><span class="math inline">\(\beta_5\)</span>: mean for “Premium” - “Fair” (reference)</p></li>
-<li><p><span class="math inline">\(\beta_6\)</span>: mean for “Ideal” - “Fair” (reference)</p></li>
-<li><p><span class="math inline">\(\beta_6 - \beta_5\)</span>: mean for “Ideal” - “Premium”</p></li>
+<li><p><span class="math inline">\(\beta_5\)</span>: mean for “Premium” - mean for “Fair” (reference)</p></li>
+<li><p><span class="math inline">\(\beta_6\)</span>: mean for “Ideal” - mean for “Fair” (reference)</p></li>
+<li><p><span class="math inline">\(\beta_6 - \beta_5\)</span>: mean for “Ideal” - mean for “Premium”</p></li>
 </ul>
 <div class="cell" data-hash="05_basicmodels_cache/revealjs/unnamed-chunk-45_4122faa28d4ff30ca1a484a668f233e9">
 <div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="fu">coefSummary</span>(lmfit2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1223,7 +1224,8 @@ clarityIF       3.046  0.000000e+00 3.010  3.082</code></pre>
 </section>
 <section class="slide level2">
 
-<p>Linear contrasts can be done in <code>glht</code> (general linear hypotheses, R package <code>multcomp</code>)</p>
+<p><strong>Goal.</strong> Test <span class="math inline">\(H_0: \beta_6 - \beta_5=0\)</span>. Get 95% confidence interval</p>
+<p>Linear contrasts done by <code>glht</code> (general linear hypotheses, R package <code>multcomp</code>)</p>
 <div class="cell" data-hash="05_basicmodels_cache/revealjs/unnamed-chunk-46_a5e2dd3d134f11c04e31a51bb9044094">
 <div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a>C<span class="ot">=</span> <span class="fu">matrix</span>(<span class="dv">0</span>,<span class="at">nrow=</span><span class="dv">1</span>, <span class="at">ncol=</span><span class="fu">length</span>(<span class="fu">coef</span>(lmfit2)))</span>
 <span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a>C[<span class="dv">1</span>,<span class="dv">5</span>]<span class="ot">=</span> <span class="sc">-</span><span class="dv">1</span>; C[<span class="dv">1</span>,<span class="dv">6</span>]<span class="ot">=</span><span class="dv">1</span></span>
@@ -1267,7 +1269,7 @@ Linear Hypotheses:
 </section>
 <section id="doing-it-on-our-own" class="slide level2">
 <h2>Doing it on our own</h2>
-<p>Recall that <span class="math inline">\(\hat{\beta} \sim N(\beta, V)\)</span></p>
+<p>Recall that <span class="math inline">\(\hat{\beta} \sim N(\beta, V)\)</span>, where <span class="math inline">\(V= \sigma^2 (X^T X)^{-1}\)</span></p>
 <div class="cell" data-hash="05_basicmodels_cache/revealjs/unnamed-chunk-48_d022114bc233567e0444f6b7b83fb6be">
 <div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a>bhat<span class="ot">=</span> <span class="fu">matrix</span>(<span class="fu">coef</span>(lmfit2), <span class="at">ncol=</span><span class="dv">1</span>)</span>
 <span id="cb74-2"><a href="#cb74-2" aria-hidden="true" tabindex="-1"></a>V<span class="ot">=</span> <span class="fu">vcov</span>(lmfit2)</span>
@@ -1402,12 +1404,12 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
 </div>
 <p>However, predictions are nearly identical</p>
-<div class="cell" data-hash="05_basicmodels_cache/revealjs/unnamed-chunk-54_f69ad43ae564140202a36ff3de03b97d">
-<div class="sourceCode cell-code" id="cb87"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb87-1"><a href="#cb87-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lmfit2)<span class="sc">$</span>r.squared</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="05_basicmodels_cache/revealjs/unnamed-chunk-54_a245d8a5be56966a3cae2a64e62c8e08">
+<div class="sourceCode cell-code" id="cb87"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb87-1"><a href="#cb87-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lmfit2)<span class="sc">$</span>r.squared <span class="co">#additive model</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.9826161</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb89"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb89-1"><a href="#cb89-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lmfull)<span class="sc">$</span>r.squared</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb89"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb89-1"><a href="#cb89-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lmfull)<span class="sc">$</span>r.squared <span class="co">#additive + all pairwise interactions</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.9832858</code></pre>
 </div>
@@ -1422,7 +1424,11 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </section>
 <section class="slide level2">
 
-<p>This happens because, after adding all covariates, estimated interaction coef. became smaller.</p>
+<ul>
+<li><p>Earlier we plotted price vs.&nbsp;carat &amp; cut. <code>carat:cut</code> impacted predictions</p></li>
+<li><p>Regressing price vs.&nbsp;carat, cut, color &amp; clarity. &lt;interactions don’t change predictions much</p></li>
+</ul>
+<p>Why? After adding all covariates, estimated interaction coef. became smaller</p>
 <div class="panel-tabset">
 <ul id="tabset-6" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-6-1">Carat &amp; Cut</a></li><li><a href="#tabset-6-2">All covariates</a></li></ul>
 <div class="tab-content">
@@ -1598,7 +1604,33 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <div class="sourceCode cell-code" id="cb93"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb93-1"><a href="#cb93-1" aria-hidden="true" tabindex="-1"></a><span class="fu">multiplot</span>(lmfull, lmfit3, <span class="at">intercept=</span><span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 </div>
-<img data-src="05_basicmodels_files/figure-revealjs/unnamed-chunk-58-1.png" width="960" class="r-stretch"></section></section>
+<img data-src="05_basicmodels_files/figure-revealjs/unnamed-chunk-58-1.png" width="960" class="r-stretch"></section>
+<section id="specifying-interactions-in-r" class="slide level2">
+<h2>Specifying interactions in R</h2>
+<p>We simulate some data for illustration</p>
+<div class="cell" data-hash="05_basicmodels_cache/revealjs/unnamed-chunk-59_23a43e18977abfa50145a40d7731f9c7">
+<div class="sourceCode cell-code" id="cb94"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb94-1"><a href="#cb94-1" aria-hidden="true" tabindex="-1"></a>x1<span class="ot">=</span> <span class="fu">rnorm</span>(<span class="dv">100</span>); x2<span class="ot">=</span> <span class="fu">rnorm</span>(<span class="dv">100</span>); x3<span class="ot">=</span> <span class="fu">rnorm</span>(<span class="dv">100</span>)</span>
+<span id="cb94-2"><a href="#cb94-2" aria-hidden="true" tabindex="-1"></a>y<span class="ot">=</span> <span class="fu">rnorm</span>(<span class="dv">100</span>, x1 <span class="sc">+</span> x2<span class="sc">/</span><span class="dv">2</span>, <span class="at">sd=</span><span class="dv">1</span>)  <span class="co">#y = x1 + x2/2 + e, e ~ N(0,1)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Three ways to specify the same regression equation</p>
+<div class="cell" data-hash="05_basicmodels_cache/revealjs/unnamed-chunk-60_966fc3633561fb922d8dd614e8e3b3e1">
+<div class="sourceCode cell-code" id="cb95"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb95-1"><a href="#cb95-1" aria-hidden="true" tabindex="-1"></a>fit1<span class="ot">=</span> <span class="fu">lm</span>(y <span class="sc">~</span> x1 <span class="sc">+</span> x2 <span class="sc">+</span> x3 <span class="sc">+</span> x1<span class="sc">:</span>x2 <span class="sc">+</span> x1<span class="sc">:</span>x3 <span class="sc">+</span> x2<span class="sc">:</span>x3)</span>
+<span id="cb95-2"><a href="#cb95-2" aria-hidden="true" tabindex="-1"></a>fit2<span class="ot">=</span> <span class="fu">lm</span>(y <span class="sc">~</span> x1<span class="sc">*</span>x2 <span class="sc">+</span> x1<span class="sc">*</span>x3 <span class="sc">+</span> x2<span class="sc">*</span>x3) <span class="co">#with * you can drop the additive terms</span></span>
+<span id="cb95-3"><a href="#cb95-3" aria-hidden="true" tabindex="-1"></a>fit3<span class="ot">=</span> <span class="fu">lm</span>(y <span class="sc">~</span> (x1 <span class="sc">+</span> x2 <span class="sc">+</span> x3)<span class="sc">^</span><span class="dv">2</span>) <span class="co">#^2 adds main effects + interactions in one go</span></span>
+<span id="cb95-4"><a href="#cb95-4" aria-hidden="true" tabindex="-1"></a>fit3</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = y ~ (x1 + x2 + x3)^2)
+
+Coefficients:
+(Intercept)           x1           x2           x3        x1:x2        x1:x3  
+   -0.10993      0.85210      0.47776     -0.02196     -0.01718      0.01148  
+      x2:x3  
+   -0.10373  </code></pre>
+</div>
+</div>
+</section></section>
 <section>
 <section id="nested-models" class="title-slide slide level1 center">
 <h1>Nested models</h1>
@@ -1608,9 +1640,9 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 
 <p>A particular type of interaction is when data are nested within units (e.g.&nbsp;countries), and we wanna fit a model for each unit</p>
 <p><strong>Example</strong> gapminder data (country life expectancy over time)</p>
-<div class="cell" data-hash="05_basicmodels_cache/revealjs/unnamed-chunk-59_710bd9a52d0bc53a9846499302273f73">
-<div class="sourceCode cell-code" id="cb94"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb94-1"><a href="#cb94-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gapminder)</span>
-<span id="cb94-2"><a href="#cb94-2" aria-hidden="true" tabindex="-1"></a>gapminder</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="05_basicmodels_cache/revealjs/unnamed-chunk-61_e3183e1103065d3f6bfd8788a33316b8">
+<div class="sourceCode cell-code" id="cb97"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb97-1"><a href="#cb97-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gapminder)</span>
+<span id="cb97-2"><a href="#cb97-2" aria-hidden="true" tabindex="-1"></a>gapminder</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 1,704 × 6
    country     continent  year lifeExp      pop gdpPercap
@@ -1631,12 +1663,12 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </section>
 <section class="slide level2">
 
-<div class="cell" data-hash="05_basicmodels_cache/revealjs/unnamed-chunk-60_9e822082e70ff245709ffdac1397099c">
-<div class="sourceCode cell-code" id="cb96"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb96-1"><a href="#cb96-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(gapminder, <span class="fu">aes</span>(year, lifeExp, <span class="at">group =</span> country)) <span class="sc">+</span></span>
-<span id="cb96-2"><a href="#cb96-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span> <span class="fu">facet_wrap</span>(<span class="sc">~</span> continent)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="05_basicmodels_cache/revealjs/unnamed-chunk-62_e7fa5eeeee0507017bb70c85de6133c7">
+<div class="sourceCode cell-code" id="cb99"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb99-1"><a href="#cb99-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(gapminder, <span class="fu">aes</span>(year, lifeExp, <span class="at">group =</span> country)) <span class="sc">+</span></span>
+<span id="cb99-2"><a href="#cb99-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span> <span class="fu">facet_wrap</span>(<span class="sc">~</span> continent)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 </div>
-<img data-src="05_basicmodels_files/figure-revealjs/unnamed-chunk-60-1.png" width="960" class="r-stretch"></section>
+<img data-src="05_basicmodels_files/figure-revealjs/unnamed-chunk-62-1.png" width="960" class="r-stretch"></section>
 <section class="slide level2">
 
 <p>Two ways to fit a model separately for each country:</p>
@@ -1645,10 +1677,10 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <li><p>Use <code>group_by</code> and <code>map_df</code></p></li>
 </ul>
 <p>Note: better alternatives to fit nested models (random effects/hierarchical models)</p>
-<p>First, group by country and define nested dataset: each row is a country, and column <code>$data</code> is a list of tibbles</p>
-<div class="cell" data-hash="05_basicmodels_cache/revealjs/unnamed-chunk-61_95bedcaa7e8f0cf9c544a9f5c1c1c936">
-<div class="sourceCode cell-code" id="cb97"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb97-1"><a href="#cb97-1" aria-hidden="true" tabindex="-1"></a>gm_country<span class="ot">=</span> <span class="fu">group_by</span>(gapminder, country, continent) <span class="sc">|&gt;</span> <span class="fu">nest</span>() </span>
-<span id="cb97-2"><a href="#cb97-2" aria-hidden="true" tabindex="-1"></a>gm_country</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>First, group by country and <code>nest</code> dataset: each row is a country, and column <code>$data</code> is a list of tibbles</p>
+<div class="cell" data-hash="05_basicmodels_cache/revealjs/unnamed-chunk-63_9885e15e8adf3e57255e300e99dbd59b">
+<div class="sourceCode cell-code" id="cb100"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb100-1"><a href="#cb100-1" aria-hidden="true" tabindex="-1"></a>gm_country<span class="ot">=</span> <span class="fu">group_by</span>(gapminder, country, continent) <span class="sc">|&gt;</span> <span class="fu">nest</span>() </span>
+<span id="cb100-2"><a href="#cb100-2" aria-hidden="true" tabindex="-1"></a>gm_country</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 142 × 3
 # Groups:   country, continent [142]
@@ -1671,19 +1703,20 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <section class="slide level2">
 
 <p>Second, define a function to be applied to each dataset</p>
-<div class="cell" data-hash="05_basicmodels_cache/revealjs/unnamed-chunk-62_b2e5ff0d156b77e84db8f8b8179b4292">
-<div class="sourceCode cell-code" id="cb99"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb99-1"><a href="#cb99-1" aria-hidden="true" tabindex="-1"></a>fitmodel<span class="ot">=</span> <span class="cf">function</span>(df) {</span>
-<span id="cb99-2"><a href="#cb99-2" aria-hidden="true" tabindex="-1"></a>  fit<span class="ot">=</span> <span class="fu">lm</span>(lifeExp <span class="sc">~</span> year, <span class="at">data=</span>df)</span>
-<span id="cb99-3"><a href="#cb99-3" aria-hidden="true" tabindex="-1"></a>  ans<span class="ot">=</span> <span class="fu">c</span>(<span class="fu">coef</span>(fit), <span class="fu">summary</span>(fit)<span class="sc">$</span>r.squared)</span>
-<span id="cb99-4"><a href="#cb99-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">names</span>(ans)<span class="ot">=</span> <span class="fu">c</span>(<span class="st">'b0'</span>,<span class="st">'b1'</span>,<span class="st">'R2'</span>)</span>
-<span id="cb99-5"><a href="#cb99-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(ans)</span>
-<span id="cb99-6"><a href="#cb99-6" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="05_basicmodels_cache/revealjs/unnamed-chunk-64_b216fb0b5a71a02f7079f2e8e3382dcd">
+<div class="sourceCode cell-code" id="cb102"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb102-1"><a href="#cb102-1" aria-hidden="true" tabindex="-1"></a>fitmodel<span class="ot">=</span> <span class="cf">function</span>(df) {</span>
+<span id="cb102-2"><a href="#cb102-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Return OLS and R2 for lifeExp ~ year</span></span>
+<span id="cb102-3"><a href="#cb102-3" aria-hidden="true" tabindex="-1"></a>  fit<span class="ot">=</span> <span class="fu">lm</span>(lifeExp <span class="sc">~</span> year, <span class="at">data=</span>df)</span>
+<span id="cb102-4"><a href="#cb102-4" aria-hidden="true" tabindex="-1"></a>  ans<span class="ot">=</span> <span class="fu">c</span>(<span class="fu">coef</span>(fit), <span class="fu">summary</span>(fit)<span class="sc">$</span>r.squared)</span>
+<span id="cb102-5"><a href="#cb102-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">names</span>(ans)<span class="ot">=</span> <span class="fu">c</span>(<span class="st">'b0'</span>,<span class="st">'b1'</span>,<span class="st">'R2'</span>)</span>
+<span id="cb102-6"><a href="#cb102-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(ans)</span>
+<span id="cb102-7"><a href="#cb102-7" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Finally, use <code>map_df</code> to apply <code>fitmodel</code> to each entry of the list <code>gm_country$data</code></p>
-<div class="cell" data-hash="05_basicmodels_cache/revealjs/unnamed-chunk-63_9948457bad67ebc9bc8073f08dd41717">
-<div class="sourceCode cell-code" id="cb100"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb100-1"><a href="#cb100-1" aria-hidden="true" tabindex="-1"></a>coef_gm <span class="ot">=</span> <span class="fu">map_df</span>(gm_country<span class="sc">$</span>data, fitmodel)</span>
-<span id="cb100-2"><a href="#cb100-2" aria-hidden="true" tabindex="-1"></a>coef_gm <span class="ot">=</span> <span class="fu">cbind</span>(gm_country, coef_gm)</span>
-<span id="cb100-3"><a href="#cb100-3" aria-hidden="true" tabindex="-1"></a>coef_gm</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="05_basicmodels_cache/revealjs/unnamed-chunk-65_232ecd44a8a485acf54288ee42c2f4f3">
+<div class="sourceCode cell-code" id="cb103"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb103-1"><a href="#cb103-1" aria-hidden="true" tabindex="-1"></a>coef_gm <span class="ot">=</span> <span class="fu">map_df</span>(gm_country<span class="sc">$</span>data, fitmodel)</span>
+<span id="cb103-2"><a href="#cb103-2" aria-hidden="true" tabindex="-1"></a>coef_gm <span class="ot">=</span> <span class="fu">cbind</span>(gm_country, coef_gm)</span>
+<span id="cb103-3"><a href="#cb103-3" aria-hidden="true" tabindex="-1"></a>coef_gm</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 142 × 6
 # Groups:   country, continent [142]
@@ -1710,17 +1743,17 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <ul id="tabset-7" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-7-1"><span class="math inline">\(R^2\)</span> histogram</a></li><li><a href="#tabset-7-2">Countries</a></li></ul>
 <div class="tab-content">
 <div id="tabset-7-1">
-<div class="cell" data-hash="05_basicmodels_cache/revealjs/unnamed-chunk-64_47f75a7158ee0d578cdf9ea143b86b35">
-<div class="sourceCode cell-code" id="cb102"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb102-1"><a href="#cb102-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(coef_gm, <span class="fu">aes</span>(<span class="at">x=</span>R2)) <span class="sc">+</span> <span class="fu">geom_histogram</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="05_basicmodels_cache/revealjs/unnamed-chunk-66_8925be090dfc1cf6b719454c518391bf">
+<div class="sourceCode cell-code" id="cb105"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb105-1"><a href="#cb105-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(coef_gm, <span class="fu">aes</span>(<span class="at">x=</span>R2)) <span class="sc">+</span> <span class="fu">geom_histogram</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img data-src="05_basicmodels_files/figure-revealjs/unnamed-chunk-64-1.png" width="960"></p>
+<p><img data-src="05_basicmodels_files/figure-revealjs/unnamed-chunk-66-1.png" width="960"></p>
 </div>
 </div>
 </div>
 <div id="tabset-7-2">
-<div class="cell" data-hash="05_basicmodels_cache/revealjs/unnamed-chunk-65_9c56747eb45676d8c42fee474b4bf738">
-<div class="sourceCode cell-code" id="cb103"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb103-1"><a href="#cb103-1" aria-hidden="true" tabindex="-1"></a><span class="co">#dplyr::select ensures using function select from package dplyr</span></span>
-<span id="cb103-2"><a href="#cb103-2" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(coef_gm, R2 <span class="sc">&lt;</span> <span class="fl">0.5</span>) <span class="sc">|&gt;</span> dplyr<span class="sc">::</span><span class="fu">select</span>(country, continent, R2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="05_basicmodels_cache/revealjs/unnamed-chunk-67_7bc55df2d3706dff2183fc097f79fec4">
+<div class="sourceCode cell-code" id="cb106"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb106-1"><a href="#cb106-1" aria-hidden="true" tabindex="-1"></a><span class="co">#dplyr:filter and dplyr::select ensures using functions (filter,select) from package dplyr</span></span>
+<span id="cb106-2"><a href="#cb106-2" aria-hidden="true" tabindex="-1"></a>dplyr<span class="sc">::</span><span class="fu">filter</span>(coef_gm, R2 <span class="sc">&lt;</span> <span class="fl">0.5</span>) <span class="sc">|&gt;</span> dplyr<span class="sc">::</span><span class="fu">select</span>(country, continent, R2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 13 × 3
 # Groups:   country, continent [13]
@@ -1749,10 +1782,10 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <section class="slide level2">
 
 <p>Unnest the dataset and add predictions</p>
-<div class="cell" data-hash="05_basicmodels_cache/revealjs/unnamed-chunk-66_9778860ff596ac566c758a552734dc9b">
-<div class="sourceCode cell-code" id="cb105"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb105-1"><a href="#cb105-1" aria-hidden="true" tabindex="-1"></a>coef_gmu<span class="ot">=</span> <span class="fu">unnest</span>(coef_gm, <span class="at">cols=</span><span class="fu">names</span>(coef_gm))  <span class="co">#unnest &amp; keep all columns</span></span>
-<span id="cb105-2"><a href="#cb105-2" aria-hidden="true" tabindex="-1"></a>coef_gmu<span class="sc">$</span>pred<span class="ot">=</span> coef_gmu<span class="sc">$</span>b0 <span class="sc">+</span> coef_gmu<span class="sc">$</span>b1 <span class="sc">*</span> coef_gmu<span class="sc">$</span>year</span>
-<span id="cb105-3"><a href="#cb105-3" aria-hidden="true" tabindex="-1"></a>coef_gmu</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="05_basicmodels_cache/revealjs/unnamed-chunk-68_02bffd1b67cf74a1a73beada0432bf34">
+<div class="sourceCode cell-code" id="cb108"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb108-1"><a href="#cb108-1" aria-hidden="true" tabindex="-1"></a>coef_gmu<span class="ot">=</span> <span class="fu">unnest</span>(coef_gm, <span class="at">cols=</span><span class="fu">names</span>(coef_gm))  <span class="co">#unnest &amp; keep all columns</span></span>
+<span id="cb108-2"><a href="#cb108-2" aria-hidden="true" tabindex="-1"></a>coef_gmu<span class="sc">$</span>pred<span class="ot">=</span> coef_gmu<span class="sc">$</span>b0 <span class="sc">+</span> coef_gmu<span class="sc">$</span>b1 <span class="sc">*</span> coef_gmu<span class="sc">$</span>year</span>
+<span id="cb108-3"><a href="#cb108-3" aria-hidden="true" tabindex="-1"></a>coef_gmu</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 1,704 × 10
 # Groups:   country, continent [142]
@@ -1774,15 +1807,15 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </section>
 <section class="slide level2">
 
-<div class="cell" data-hash="05_basicmodels_cache/revealjs/unnamed-chunk-67_cb9a10ebefc13547e3ebbdc207fd958c">
-<div class="sourceCode cell-code" id="cb107"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb107-1"><a href="#cb107-1" aria-hidden="true" tabindex="-1"></a>poorfit<span class="ot">=</span> <span class="fu">filter</span>(coef_gmu, R2 <span class="sc">&lt;</span> <span class="fl">0.25</span>) <span class="co">#countries with low R2</span></span>
-<span id="cb107-2"><a href="#cb107-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(poorfit) <span class="sc">+</span></span>
-<span id="cb107-3"><a href="#cb107-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(year, lifeExp)) <span class="sc">+</span></span>
-<span id="cb107-4"><a href="#cb107-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(year, pred), <span class="at">col=</span><span class="st">'red'</span>) <span class="sc">+</span></span>
-<span id="cb107-5"><a href="#cb107-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> country)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="05_basicmodels_cache/revealjs/unnamed-chunk-69_22194ad2251ed718c765e7ffd7af8c6c">
+<div class="sourceCode cell-code" id="cb110"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb110-1"><a href="#cb110-1" aria-hidden="true" tabindex="-1"></a>poorfit<span class="ot">=</span> <span class="fu">filter</span>(coef_gmu, R2 <span class="sc">&lt;</span> <span class="fl">0.25</span>) <span class="co">#countries with low R2</span></span>
+<span id="cb110-2"><a href="#cb110-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(poorfit) <span class="sc">+</span></span>
+<span id="cb110-3"><a href="#cb110-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(year, lifeExp)) <span class="sc">+</span></span>
+<span id="cb110-4"><a href="#cb110-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(year, pred), <span class="at">col=</span><span class="st">'red'</span>) <span class="sc">+</span></span>
+<span id="cb110-5"><a href="#cb110-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> country)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 </div>
-<img data-src="05_basicmodels_files/figure-revealjs/unnamed-chunk-67-1.png" width="960" class="r-stretch"><p>Can you explain any of these patterns?</p>
+<img data-src="05_basicmodels_files/figure-revealjs/unnamed-chunk-69-1.png" width="960" class="r-stretch"><p>Can you explain any of these patterns?</p>
 </section></section>
 <section>
 <section id="summary-of-useful-functions" class="title-slide slide level1 center">
@@ -1802,21 +1835,17 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <section>
 <section id="exercise-1" class="title-slide slide level1 center">
 <h1>Exercise</h1>
-
-</section>
-<section id="sum-to-zero-constraints" class="slide level2">
-<h2>Sum-to-zero constraints</h2>
 <p>Select 3 countries, create factor <code>country</code> with 3 levels. Create <code>years_since_1952</code></p>
-<div class="cell" data-hash="05_basicmodels_cache/revealjs/unnamed-chunk-68_2801a07f0f48b61cf7ded43952ceb622">
-<div class="sourceCode cell-code" id="cb108"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb108-1"><a href="#cb108-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb108-2"><a href="#cb108-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gapminder)</span>
-<span id="cb108-3"><a href="#cb108-3" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"../code/routines.R"</span>)</span>
-<span id="cb108-4"><a href="#cb108-4" aria-hidden="true" tabindex="-1"></a>gm3<span class="ot">=</span> gapminder <span class="sc">|&gt;</span> </span>
-<span id="cb108-5"><a href="#cb108-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(country <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">'France'</span>,<span class="st">'Italy'</span>,<span class="st">'Spain'</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb108-6"><a href="#cb108-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">transform</span>(<span class="at">country=</span> <span class="fu">factor</span>(country), <span class="at">years_since_1952=</span> year <span class="sc">-</span> <span class="dv">1952</span>)</span>
-<span id="cb108-7"><a href="#cb108-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb108-8"><a href="#cb108-8" aria-hidden="true" tabindex="-1"></a>fit1<span class="ot">=</span> <span class="fu">lm</span>(lifeExp <span class="sc">~</span> years_since_1952 <span class="sc">+</span> country, <span class="at">data=</span>gm3)</span>
-<span id="cb108-9"><a href="#cb108-9" aria-hidden="true" tabindex="-1"></a><span class="fu">coefSummary</span>(fit1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="05_basicmodels_cache/revealjs/unnamed-chunk-70_9c0b15079aef5349c977d8b5cd317a53">
+<div class="sourceCode cell-code" id="cb111"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb111-1"><a href="#cb111-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb111-2"><a href="#cb111-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gapminder)</span>
+<span id="cb111-3"><a href="#cb111-3" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"../code/routines.R"</span>)</span>
+<span id="cb111-4"><a href="#cb111-4" aria-hidden="true" tabindex="-1"></a>gm3<span class="ot">=</span> gapminder <span class="sc">|&gt;</span> </span>
+<span id="cb111-5"><a href="#cb111-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(country <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">'France'</span>,<span class="st">'Italy'</span>,<span class="st">'Spain'</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb111-6"><a href="#cb111-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">transform</span>(<span class="at">country=</span> <span class="fu">factor</span>(country), <span class="at">years_since_1952=</span> year <span class="sc">-</span> <span class="dv">1952</span>)</span>
+<span id="cb111-7"><a href="#cb111-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb111-8"><a href="#cb111-8" aria-hidden="true" tabindex="-1"></a>fit1<span class="ot">=</span> <span class="fu">lm</span>(lifeExp <span class="sc">~</span> years_since_1952 <span class="sc">+</span> country, <span class="at">data=</span>gm3)</span>
+<span id="cb111-9"><a href="#cb111-9" aria-hidden="true" tabindex="-1"></a><span class="fu">coefSummary</span>(fit1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 4 × 4
   Parameter        Estimate `Conf. Int.`    `P-value`
@@ -1836,12 +1865,12 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <section class="slide level2">
 
 <p><code>country</code> has 3 levels. <code>contrasts</code> shows how they’re coded</p>
-<div class="cell" data-hash="05_basicmodels_cache/revealjs/unnamed-chunk-69_e1da7d1489a18593175dd3b02fe0580b">
-<div class="sourceCode cell-code" id="cb110"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb110-1"><a href="#cb110-1" aria-hidden="true" tabindex="-1"></a><span class="fu">levels</span>(gm3<span class="sc">$</span>country)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="05_basicmodels_cache/revealjs/unnamed-chunk-71_8e61f62792aef2e9c21a58f106524605">
+<div class="sourceCode cell-code" id="cb113"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb113-1"><a href="#cb113-1" aria-hidden="true" tabindex="-1"></a><span class="fu">levels</span>(gm3<span class="sc">$</span>country)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "France" "Italy"  "Spain" </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb112"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb112-1"><a href="#cb112-1" aria-hidden="true" tabindex="-1"></a><span class="fu">contrasts</span>(gm3<span class="sc">$</span>country)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb115"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb115-1"><a href="#cb115-1" aria-hidden="true" tabindex="-1"></a><span class="fu">contrasts</span>(gm3<span class="sc">$</span>country)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>       Italy Spain
 France     0     0
@@ -1849,7 +1878,7 @@ Italy      1     0
 Spain      0     1</code></pre>
 </div>
 </div>
-<p>That is, internally R defines</p>
+<p>Recall that <span class="math inline">\(x_{i1}\)</span> is the year. Internally R defines</p>
 <div class="columns">
 <div class="column" style="width:50%;">
 <p><span class="math display">\[
@@ -1877,8 +1906,8 @@ x_{i3}= \begin{cases} 1 \mbox{, if country}_i=\mbox{Italy} \\ -1 \mbox{, if coun
 <section class="slide level2">
 
 <p>sum-to-zero coding can be done with <code>contrasts</code> and <code>contr.sum</code></p>
-<div class="cell" data-hash="05_basicmodels_cache/revealjs/unnamed-chunk-70_8817dbf80bd427ee1558c2ff80255ed9">
-<div class="sourceCode cell-code" id="cb114"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb114-1"><a href="#cb114-1" aria-hidden="true" tabindex="-1"></a><span class="fu">contr.sum</span>(<span class="fu">levels</span>(gm3<span class="sc">$</span>country)) <span class="co">#check what the sum-to-zero codes look like</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="05_basicmodels_cache/revealjs/unnamed-chunk-72_babe6ecb5ac611f510d4a50fdf4b7d89">
+<div class="sourceCode cell-code" id="cb117"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb117-1"><a href="#cb117-1" aria-hidden="true" tabindex="-1"></a><span class="fu">contr.sum</span>(<span class="fu">levels</span>(gm3<span class="sc">$</span>country)) <span class="co">#check what the sum-to-zero codes look like</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>       [,1] [,2]
 France    1    0
@@ -1886,22 +1915,24 @@ Italy     0    1
 Spain    -1   -1</code></pre>
 </div>
 </div>
-<div class="cell" data-hash="05_basicmodels_cache/revealjs/unnamed-chunk-71_811ae331d485262b9938b26c4ae58428">
-<div class="sourceCode cell-code" id="cb116"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb116-1"><a href="#cb116-1" aria-hidden="true" tabindex="-1"></a>gm3<span class="sc">$</span>country0<span class="ot">=</span> gm3<span class="sc">$</span>country <span class="co">#create new variable</span></span>
-<span id="cb116-2"><a href="#cb116-2" aria-hidden="true" tabindex="-1"></a><span class="fu">contrasts</span>(gm3<span class="sc">$</span>country0) <span class="ot">=</span> <span class="fu">contr.sum</span>(<span class="fu">unique</span>(gm3<span class="sc">$</span>country0)) <span class="co">#tell contr.sum the factor levels</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="05_basicmodels_cache/revealjs/unnamed-chunk-73_4c0bcfd4dd1ab979808c61821f1ada1f">
+<div class="sourceCode cell-code" id="cb119"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb119-1"><a href="#cb119-1" aria-hidden="true" tabindex="-1"></a>gm3<span class="sc">$</span>country0<span class="ot">=</span> gm3<span class="sc">$</span>country <span class="co">#create new variable</span></span>
+<span id="cb119-2"><a href="#cb119-2" aria-hidden="true" tabindex="-1"></a>c0<span class="ot">=</span> <span class="fu">contr.sum</span>(<span class="fu">levels</span>(gm3<span class="sc">$</span>country0)) <span class="co">#tell contr.sum the factor levels</span></span>
+<span id="cb119-3"><a href="#cb119-3" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(c0)<span class="ot">=</span> <span class="fu">c</span>(<span class="st">'France'</span>,<span class="st">'Italy'</span>)   <span class="co">#set column names to facilitate interpreting coef.</span></span>
+<span id="cb119-4"><a href="#cb119-4" aria-hidden="true" tabindex="-1"></a><span class="fu">contrasts</span>(gm3<span class="sc">$</span>country0) <span class="ot">=</span> c0</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Let’s fit the model with the new coding</p>
-<div class="cell" data-hash="05_basicmodels_cache/revealjs/unnamed-chunk-72_dbeac1f1e38459fa7f6ed9bfecef08e8">
-<div class="sourceCode cell-code" id="cb117"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb117-1"><a href="#cb117-1" aria-hidden="true" tabindex="-1"></a>fit2<span class="ot">=</span> <span class="fu">lm</span>(lifeExp <span class="sc">~</span> years_since_1952 <span class="sc">+</span> country0, <span class="at">data=</span>gm3)</span>
-<span id="cb117-2"><a href="#cb117-2" aria-hidden="true" tabindex="-1"></a><span class="fu">coefSummary</span>(fit2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="05_basicmodels_cache/revealjs/unnamed-chunk-74_ddf0ea02d10bdb9bdde8dd53d2199b89">
+<div class="sourceCode cell-code" id="cb120"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb120-1"><a href="#cb120-1" aria-hidden="true" tabindex="-1"></a>fit2<span class="ot">=</span> <span class="fu">lm</span>(lifeExp <span class="sc">~</span> years_since_1952 <span class="sc">+</span> country0, <span class="at">data=</span>gm3)</span>
+<span id="cb120-2"><a href="#cb120-2" aria-hidden="true" tabindex="-1"></a><span class="fu">coefSummary</span>(fit2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 4 × 4
   Parameter        Estimate `Conf. Int.`    `P-value`
   &lt;chr&gt;               &lt;dbl&gt; &lt;chr&gt;           &lt;chr&gt;    
 1 (Intercept)        67.0   (66.504,67.406) &lt;0.00001 
 2 years_since_1952    0.263 (0.249,0.277)   &lt;0.00001 
-3 country01           0.16  (-0.179,0.499)  0.34281  
-4 country02          -0.175 (-0.514,0.164)  0.30103  </code></pre>
+3 country0France      0.16  (-0.179,0.499)  0.34281  
+4 country0Italy      -0.175 (-0.514,0.164)  0.30103  </code></pre>
 </div>
 </div>
 <p>Results for <span class="math inline">\(\beta_1\)</span> (years) as before. Different for <span class="math inline">\((\hat{\beta}_0, \hat{\beta}_2, \hat{\beta}_3)\)</span></p>
@@ -1934,9 +1965,9 @@ x_{i3}= \begin{cases} 1 \mbox{, if country}_i=\mbox{Italy} \\ -1 \mbox{, if coun
 <section id="exercise-2" class="slide level2">
 <h2>Exercise</h2>
 <p>Fit a model with interactions with the 0/1 coding and with the sum-to-zero coding. Interpret the estimated parameter values from each model</p>
-<div class="cell" data-hash="05_basicmodels_cache/revealjs/unnamed-chunk-73_037ece643b143f3adef5fae33c50e900">
-<div class="sourceCode cell-code" id="cb119"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb119-1"><a href="#cb119-1" aria-hidden="true" tabindex="-1"></a>fit3<span class="ot">=</span> <span class="fu">lm</span>(lifeExp <span class="sc">~</span> years_since_1952 <span class="sc">+</span> country <span class="sc">+</span> years_since_1952<span class="sc">:</span>country, <span class="at">data=</span>gm3)</span>
-<span id="cb119-2"><a href="#cb119-2" aria-hidden="true" tabindex="-1"></a>fit4<span class="ot">=</span> <span class="fu">lm</span>(lifeExp <span class="sc">~</span> years_since_1952 <span class="sc">+</span> country0 <span class="sc">+</span> years_since_1952<span class="sc">:</span>country0, <span class="at">data=</span>gm3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="05_basicmodels_cache/revealjs/unnamed-chunk-75_3e4b4809edd053ac77e67b2350882bcd">
+<div class="sourceCode cell-code" id="cb122"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb122-1"><a href="#cb122-1" aria-hidden="true" tabindex="-1"></a>fit3<span class="ot">=</span> <span class="fu">lm</span>(lifeExp <span class="sc">~</span> years_since_1952 <span class="sc">+</span> country <span class="sc">+</span> years_since_1952<span class="sc">:</span>country, <span class="at">data=</span>gm3)</span>
+<span id="cb122-2"><a href="#cb122-2" aria-hidden="true" tabindex="-1"></a>fit4<span class="ot">=</span> <span class="fu">lm</span>(lifeExp <span class="sc">~</span> years_since_1952 <span class="sc">+</span> country0 <span class="sc">+</span> years_since_1952<span class="sc">:</span>country0, <span class="at">data=</span>gm3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="footer footer-default">
 
