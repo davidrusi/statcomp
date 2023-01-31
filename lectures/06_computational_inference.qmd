@@ -93,6 +93,7 @@ For large $b$, the distribution of $\tilde{\theta}^{(b)}$ approximates that of $
 
 Note: $n$ cannot be too small, and certain technical conditions on $\hat{\theta}$ are needed
 
+See some [animations](https://www.stat.auckland.ac.nz/~wild/BootAnim/index.html)
 
 ## Example. Baseball
 
@@ -169,15 +170,17 @@ ggplot(th, aes(sample=th)) + geom_qq() + geom_qq_line(col='red')
 
 The beauty is that the bootstrap works in more complicated settings
 
-See some [animations](https://www.stat.auckland.ac.nz/~wild/BootAnim/index.html)
+Function `boot` (package `boot`) has a generic implementation. It requires:
 
-Package `boot` offers a generic implementation
+- `data`: the dataset
 
-- First argument is the dataset
+- `statistic`: function to obtain $\hat{\theta}$. Its 1st argument is the data, its 2nd argument the row indices, such as function `bat.avg` defined earlier
 
-- Second argument the function to obtain $\hat{\theta}$. Its 1st argument is the data, its 2nd argument the row indices
+- `R`: number of bootstrap samples
 
-In our case, data `baseball` and function `bat.avg` defined earlier
+Further options, including parallel computing
+
+
 
 ```{r}
 avgBoot= boot(data=baseball, statistic=bat.avg, R=2000)
@@ -240,14 +243,15 @@ bhat= function(data, indices=1:nrow(data), formula) {
   fit= lm(formula, data=data[indices,])
   return(coef(fit))
 }
-bhat(mtcars, formula=f)
+round(bhat(mtcars, formula=f), 3)
 ```
 
-Second, run `boot`
+Second, run `boot`. The bootstrap samples are in element `$t`
 
 ```{r}
 bhat.boot= boot(mtcars, statistic=bhat, R=2000, formula=f)
-bhat.boot
+dim(bhat.boot$t)
+round(bhat.boot$t,3)[1:5,] #show first five bootstrap samples
 ```
 
 ## Sampling distribution of $\hat{\theta}$
@@ -256,12 +260,12 @@ Format the data into a long tibble, so we can use faceting
 
 ```{r}
 colnames(bhat.boot$t)= names(coef(fit))
-bhat.bootlong= as_tibble(bhat.boot$t)
-bhat.bootlong
+bhat.boot= as_tibble(bhat.boot$t)
+bhat.boot
 ```
 
 ```{r}
-bhat.bootlong= pivot_longer(bhat.bootlong, cols= names(bhat.bootlong), names_to="variable", values_to="bootstrap_value")
+bhat.bootlong= pivot_longer(bhat.boot, cols= names(bhat.boot), names_to="variable", values_to="bootstrap_value")
 bhat.bootlong
 ```
 
@@ -281,11 +285,12 @@ ggplot(bhat.bootlong, aes(x=bootstrap_value)) +
 ## Bootstrapped intervals
 
 
-The bootstrapped 95% confidence intervals
+Bootstrap 95% confidence intervals
 
 ```{r}
-bhat.ci= round(apply(bhat.boot$t, 2, quantile, probs=c(0.025,0.975), na.rm=TRUE), 3)
-bhat.ci
+#map_df gets quantiles for all columns, returns a data frame (tibble)
+bhat.ci= map_df(bhat.boot, quantile, probs=c(0.025,0.975), na.rm=TRUE)
+bhat.ci= cbind(varname= names(bhat.boot), bhat.ci) 
 ```
 
 Those from least-squares theory. Some are quite different!
@@ -299,14 +304,14 @@ coefSummary(fit)
 Let's plot the intervals for easier comparison
 
 ```{r}
-vname= names(coef(fit))
+#| code-fold: true
 yvals= 1:length(coef(fit))
-ci= as_tibble(data.frame(vname, t(bhat.ci), confint(fit), y.ols=yvals, y.boot=yvals+.1))
-names(ci)= c('vname','low.boot','high.boot','low.ols','high.ols','y.ols','y.boot')
+ci= cbind(bhat.ci, confint(fit), y.ols=yvals, y.boot=yvals+.1)
+names(ci)= c('varname','low.boot','high.boot','low.ols','high.ols','y.ols','y.boot')
 ggplot(ci) + 
   geom_segment(aes(x=low.ols,xend=high.ols,y=y.ols,yend=y.ols)) +
   geom_segment(aes(x=low.boot,xend=high.boot,y=y.boot,yend=y.boot), color='red') +
-  geom_text(aes(x=low.ols, y=y.ols, label=vname), nudge_y = 0.3) +
+  geom_text(aes(x=low.ols, y=y.ols, label=varname), nudge_y = 0.3) +
   labs(x='Confidence interval', y='') +
   theme(axis.text.y=element_blank(),  axis.ticks.y=element_blank()) #remove y axis labels 
 ```
@@ -336,7 +341,13 @@ General recipe to obtain a P-value
 
 1. Define a test statistic $T$ to measure evidence against $H_0$
 
-2. Compare to the distribution of $T$ if $H_0$ were true
+2. Compute its value in the observed data, denote by $t$
+
+3. Compare $t$ to the distribution of $T$ if $H_0$ were true
+
+$$
+\mbox{P-value}= P(T \geq t \mid H_0)
+$$
 
 Idea: if $y_i$ independent of $x_i$ (so $H_0$ true) we can permute $x_i$
 
