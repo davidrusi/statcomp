@@ -249,18 +249,26 @@ round(bhat(mtcars, formula=f), 3)
 Second, run `boot`. The bootstrap samples are in element `$t`
 
 ```{r}
-bhat.boot= boot(mtcars, statistic=bhat, R=2000, formula=f)
-dim(bhat.boot$t)
-round(bhat.boot$t,3)[1:5,] #show first five bootstrap samples
+bhat.fit= boot(mtcars, statistic=bhat, R=2000, formula=f)
+dim(bhat.fit$t)
+round(bhat.fit$t,3)[1:5,] #show first five bootstrap samples
 ```
+
+The estimate for the original data is in element `$t0`
+
+```{r}
+round(bhat.fit$t0, 3)
+```
+
+
 
 ## Sampling distribution of $\hat{\theta}$
 
 Format the data into a long tibble, so we can use faceting
 
 ```{r}
-colnames(bhat.boot$t)= names(coef(fit))
-bhat.boot= as_tibble(bhat.boot$t)
+colnames(bhat.fit$t)= names(bhat.fit$t0)
+bhat.boot= as_tibble(bhat.fit$t)
 bhat.boot
 ```
 
@@ -354,7 +362,7 @@ Idea: if $y_i$ independent of $x_i$ (so $H_0$ true) we can permute $x_i$
 
 ----
 
-Formally, $H_0: P(y_i, x_i)= P(y_i) P(x_i)$. Define $T$ that targets our original $H_0$ (mean comparison)
+Formally, $H_0: P(y_i, x_i)= P(y_i) P(x_i)$. Define test statistic $T$ that targets our original $H_0$ (mean comparison), for example
 
 $$
 T= \sum_{k=1}^K (\bar{y}_k - \bar{y})^2
@@ -421,7 +429,7 @@ for (b in 1:B) {
 
 
 ```{r}
-pvalue= mean(t0 >= tobs)
+pvalue= mean(t0 >= tobs) #proportion of t0's >= tobs 
 pvalue
 hist(t0,main='',xlab='Test statistic'); abline(v= tobs, col='blue')
 ```
@@ -431,52 +439,24 @@ hist(t0,main='',xlab='Test statistic'); abline(v= tobs, col='blue')
 `coin` implements permutation tests (with additional options)
 
 ```{r}
-independence_test(time ~ group, data=rotarod, teststat="quadratic")
+#based on asymptotic theory
+independence_test(time ~ group, data=rotarod, teststat="quadratic", distribution="asymptotic")
+#permutation-based
+independence_test(time ~ group, data=rotarod, teststat="quadratic", distribution="approximate")
 ```
 
 
 
-## Independence between continuous variables
+## Permutation tests in regression
 
-Permutation tests also apply if $x_i$ is continuous
+Permutation tests also apply if $x_i \in \mathbb{R}$ is a continuous covariate
 
-**Example.** State illiteracy vs. murder rate
+With $p>1$ covariates however, some care is needed
+
+**Example.** Does murder rate (per 100,000 population) depend on population, after accounting for literacy, income, and number of days below freezing temperature?
 
 ```{r}
 states= as.data.frame(state.x77)
-ggplot(data=states, aes(Illiteracy, Murder)) + geom_point()
-```
-
----
-
-Compute Spearman's correlation (a robust alternative to Pearson's correlation)
-
-```{r}
-cor(states$Illiteracy, states$Murder, method='spearman')
-```
-
-Test its statistical significance
-
-```{r}
-set.seed(1234)
-spearman_test(Illiteracy~Murder, data=states)
-```
-
-Bootstrap interval
-
-```{r}
-r= function(data, indices=1:nrow(data)) cor(data[indices,'Illiteracy'],data[indices,'Murder'],method='spearman')
-
-rboot= boot(states, r, R=2000)
-quantile(rboot$t, probs=c(.025,.975))
-```
-
-
-## Multiple regression
-
-Goal: does murder rate (per 100,000 population) depend on population, after accounting for literacy, income, and number of days below freezing temperature?
-
-```{r}
 sel= c('Population','Illiteracy','Income','Frost')
 states[,sel]= scale(states[,sel])  #standardize to zero mean, unit variance
 fit1= lm(Murder~Population + Illiteracy+Income+Frost, data=states)
@@ -512,7 +492,7 @@ Idea: replace $x_{i1}$ by a permuted version that is correlated with $x_{i2}$
 
 2. For $b=1,\ldots,B$, do
 
-- Permute $e_i$ into $\tilde{e}_i^{(b)}$
+- Permute $(e_1,\ldots,e_n)$ into $(\tilde{e}_1^{(b)}, \ldots \tilde{e}_n^{(b)})$
 
 - Let $\tilde{x}_{i1}^{(b)}= \hat{x}_{i1} + \tilde{e}_i^{(b)}$
 
@@ -568,7 +548,7 @@ pvalue
 Now for all covariates (`lmResPerm` is in routines.R)
 
 ```{r}
-x= cbind(x1, x2)
+x= cbind(Population=x1, x2)
 fit1.resperm= lmResPerm(y, x, B=5000)
 fit1.resperm$pvalue
 ```
@@ -598,6 +578,8 @@ Dependent data: bootstrap needs to be adjusted (model-based bootstrap, block-bas
 
 # Exercise 
 
+---
+
 Data `hate_crimes`. Outcome: pre-election number of hate crimes per 100,000 population by the FBI
 
 - education (% adults $\geq$ 25 with high school degree)
@@ -612,13 +594,18 @@ In these data the linearity assumption is violated.
 
 2. Compare the permutation test P-values to those from `lm`
 
+Turn in an html with your solution [here](https://drive.google.com/drive/folders/1jhh1CrXM3hqc7qTrOYeQzo2pV8Vly1NY?usp=sharing).
+Name your file firstname_lastname.html
+
 ---
 
 Load packages and format data.
 
 ```{r}
 library(tidyverse)
+library(boot)
 library(fivethirtyeight)
+library(lmPerm)
 source("~/github/statcomp/code/routines.R")
 sel= c('state_abbrev','avg_hatecrimes_per_100k_fbi','share_vote_trump','gini_index','share_pop_hs')
 hc= hate_crimes[,sel]
