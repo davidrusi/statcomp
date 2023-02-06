@@ -1,0 +1,231 @@
+---
+title: "Modern Statistical Computing"
+subtitle: "9. Reports"
+author: "David Rossell"
+institute: "Pompeu Fabra University"
+execute:
+  echo: true
+format:
+  revealjs:
+    theme: [default, custom.scss]
+    scrollable: true
+toc: true
+toc-depth: 1
+number-sections: false
+mouse-wheel: true
+code-overflow: scroll
+code-line-numbers: false
+code-copy: true
+cache: true
+title-slide-style: pandoc
+bibliography: references.bib
+---
+
+## Reproducing these lecture notes
+
+Load required R packages
+
+```{r, warning=FALSE}
+library(tidyverse)
+library(gt)
+```
+
+## Reporting results
+
+R provides useful formats
+
+
+- Dashboard: short website displaying your main figures/tables/data 
+
+- htmlwidgets: interactive html documents
+
+- Shiny apps: applications allowing for more user input
+
+
+We cover a gentle intro. Further resources
+
+- [Quarto documentation](https://quarto.org) and [manual](https://quarto.org/docs/guide)
+
+- Hadley Wickam's chapter on [Quarto formats](https://r4ds.hadley.nz/quarto-formats.html)
+
+- [htmlwidgets website](https://www.htmlwidgets.org/index.html)
+
+
+# Dashboard
+
+File -> New file -> Quarto document. Select html format
+
+Your document should start like this
+
+```{r, eval=FALSE}
+---
+title: "Diamonds dashboard"
+format: html
+execute:
+  echo: false
+---
+```
+
+
+The `echo: false` option disables the printing of code (only output is displayed)
+
+To display individual code chunks use `#| echo: true`
+
+````{verbatim}
+```{r}
+#| echo: true
+2 * 2
+```
+````
+
+---
+
+You can create multiple tabs as follows
+
+- Write `:::panel-tabset` at start and `:::` at the end
+
+- Start a new tab with `## Title`. Then put R code
+
+
+````{verbatim}
+:::panel-tabset
+
+## Scatterplot
+
+```{r}
+ggplot(diamonds, aes(carat, price)) +
+  geom_point()
+```
+
+## Histogram
+
+```{r}
+ggplot(diamonds, aes(price)) +
+  geom_histogram()
+```
+
+:::
+````
+
+The next slide shows the result
+
+---
+
+:::panel-tabset
+
+## Scatterplot
+
+```{r}
+ggplot(diamonds, aes(carat, price)) +
+  geom_point()
+```
+
+## Histogram
+
+```{r}
+ggplot(diamonds, aes(price)) +
+  geom_histogram()
+```
+
+:::
+
+## Plot layout
+
+Code chunks have layouts attributes to arrange the output
+
+- `#|layout-nrow`: number of rows
+
+- `#|layout-nrow`: number of columns
+
+- `#| layout: [] `: rows / columns of different sizes
+
+It may also be useful to define captions
+
+- `#| fig-cap`: text for figure caption
+
+- `#| cap-location`: where to place to caption (top, bottom or margin)
+
+- `#| fig-subcap`: figure sub-captions
+
+## Example
+
+2 plots in a single row, with figure captions
+
+````{verbatim}
+
+```{r}
+#| layout-nrow: 1
+#| fig-cap: 
+#|   - "Histogram of prices"
+#|   - "Prices vs carats"
+ggplot(diamonds, aes(price)) +
+  geom_histogram()
+ggplot(diamonds, aes(carat, price)) +
+  geom_point()
+```
+
+````
+
+The result is shown in the next slide
+
+
+---
+
+```{r, echo=FALSE}
+#| layout-nrow: 1
+#| fig-cap: 
+#|   - "Histogram of prices"
+#|   - "Prices vs carats"
+ggplot(diamonds, aes(price)) +
+  geom_histogram()
+ggplot(diamonds, aes(carat, price)) +
+  geom_point()
+```
+
+
+---
+
+Custom layouts: specify for each row the size of each figure
+
+Example: 2 figures in 1st row of size 0.5 each, 1 figure  in 2nd row
+
+````{verbatim}
+
+```{r}
+#| layout: [[0.5,0.5], [1]]
+ggplot(diamonds, aes(carat)) +
+  geom_histogram()
+ggplot(diamonds, aes(price)) +
+  geom_histogram()
+ggplot(diamonds, aes(carat, price)) +
+  geom_point()
+```
+
+````
+
+---
+
+```{r, echo=FALSE}
+#| layout: [[0.5,0.5], [1]]
+ggplot(diamonds, aes(carat)) +
+  geom_histogram()
+ggplot(diamonds, aes(price)) +
+  geom_histogram()
+ggplot(diamonds, aes(carat, price)) +
+  geom_point()
+```
+
+
+## Displaying tables & data
+
+- `gt` in package `gt`: styling transformations to display a table (column names, alignment etc.)
+
+- `datatable` in package `DT`: display data as html. Provides filtering, pagination, search & sorting
+
+An example by Hadley Wickam: file `../examples/diamonds_dashboard.qmd`
+
+
+# htmlwidgets
+
+
+
