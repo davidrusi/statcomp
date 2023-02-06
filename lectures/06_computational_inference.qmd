@@ -486,7 +486,7 @@ Residual permutation (used by `lmPerm`) is a way to address this
 
 ## Residual permutation
 
-Idea: replace $x_{i1}$ by a permuted version that is correlated with $x_{i2}$
+Idea: replace $x_1$ by a permuted version $\tilde{x}_1$ that is correlated with $x_2$
 
 1. Regress $x_1$ on $x_2$ by OLS. Let $\hat{x}_{i1}$ be the predictions, $e_i$ the residuals
 
@@ -521,7 +521,7 @@ lmResPerm.onevar= function(y, x1, x2, B=5000) {
   e= residuals(fit)
   bperm= double(B)
   for (b in 1:B) {
-    eperm= e[sample(1:length(e), size=length(e), replace=FALSE)]
+    eperm= sample(e, size=length(e), replace=FALSE)
     x1tilde= x1hat + eperm
     fitperm= lm(y ~ x1tilde + x2)
     bperm[b]= coef(fitperm)['x1tilde']    

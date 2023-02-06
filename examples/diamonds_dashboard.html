@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.269">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Hadley Wickam">
+
+<title>Diamonds dashboard</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="diamonds_dashboard_files/libs/clipboard/clipboard.min.js"></script>
+<script src="diamonds_dashboard_files/libs/quarto-html/quarto.js"></script>
+<script src="diamonds_dashboard_files/libs/quarto-html/popper.min.js"></script>
+<script src="diamonds_dashboard_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="diamonds_dashboard_files/libs/quarto-html/anchor.min.js"></script>
+<link href="diamonds_dashboard_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="diamonds_dashboard_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="diamonds_dashboard_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="diamonds_dashboard_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="diamonds_dashboard_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+<script src="diamonds_dashboard_files/libs/htmlwidgets-1.5.4/htmlwidgets.js"></script>
+<link href="diamonds_dashboard_files/libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet">
+<script src="diamonds_dashboard_files/libs/datatables-binding-0.26/datatables.js"></script>
+<script src="diamonds_dashboard_files/libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<link href="diamonds_dashboard_files/libs/dt-core-1.12.1/css/jquery.dataTables.min.css" rel="stylesheet">
+<link href="diamonds_dashboard_files/libs/dt-core-1.12.1/css/jquery.dataTables.extra.css" rel="stylesheet">
+<script src="diamonds_dashboard_files/libs/dt-core-1.12.1/js/jquery.dataTables.min.js"></script>
+<link href="diamonds_dashboard_files/libs/crosstalk-1.2.0/css/crosstalk.min.css" rel="stylesheet">
+<script src="diamonds_dashboard_files/libs/crosstalk-1.2.0/js/crosstalk.min.js"></script>
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Diamonds dashboard</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Hadley Wickam </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">Plots</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">Summaries</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false" href="">Data</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<div class="cell quarto-layout-panel">
+<div class="quarto-layout-row quarto-layout-valign-top">
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 30.0%;justify-content: center;">
+<p><img src="diamonds_dashboard_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="quarto-figure-spacer quarto-layout-cell" style="flex-basis: 5.0%;justify-content: center;">
+<p>&nbsp;</p>
+</div>
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 30.0%;justify-content: center;">
+<p><img src="diamonds_dashboard_files/figure-html/unnamed-chunk-2-2.png" class="img-fluid" width="672"></p>
+</div>
+<div class="quarto-figure-spacer quarto-layout-cell" style="flex-basis: 5.0%;justify-content: center;">
+<p>&nbsp;</p>
+</div>
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 30.0%;justify-content: center;">
+<p><img src="diamonds_dashboard_files/figure-html/unnamed-chunk-2-3.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="quarto-layout-row quarto-layout-valign-top">
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 100.0%;justify-content: center;">
+<p><img src="diamonds_dashboard_files/figure-html/unnamed-chunk-2-4.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<div class="cell">
+<div class="cell-output-display">
+
+<div id="oqfpqfopyq" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+:where(#oqfpqfopyq) .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+:where(#oqfpqfopyq) .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+:where(#oqfpqfopyq) .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+:where(#oqfpqfopyq) .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+:where(#oqfpqfopyq) .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+:where(#oqfpqfopyq) .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+:where(#oqfpqfopyq) .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+:where(#oqfpqfopyq) .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+:where(#oqfpqfopyq) .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+:where(#oqfpqfopyq) .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+:where(#oqfpqfopyq) .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+:where(#oqfpqfopyq) .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+:where(#oqfpqfopyq) .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+:where(#oqfpqfopyq) .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+:where(#oqfpqfopyq) .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+:where(#oqfpqfopyq) .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+:where(#oqfpqfopyq) .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+:where(#oqfpqfopyq) .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+:where(#oqfpqfopyq) .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+:where(#oqfpqfopyq) .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+:where(#oqfpqfopyq) .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+:where(#oqfpqfopyq) .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+:where(#oqfpqfopyq) .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+:where(#oqfpqfopyq) .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+:where(#oqfpqfopyq) .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+:where(#oqfpqfopyq) .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+:where(#oqfpqfopyq) .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+:where(#oqfpqfopyq) .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+:where(#oqfpqfopyq) .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+:where(#oqfpqfopyq) .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-left: 4px;
+  padding-right: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+:where(#oqfpqfopyq) .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+:where(#oqfpqfopyq) .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+:where(#oqfpqfopyq) .gt_left {
+  text-align: left;
+}
+
+:where(#oqfpqfopyq) .gt_center {
+  text-align: center;
+}
+
+:where(#oqfpqfopyq) .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+:where(#oqfpqfopyq) .gt_font_normal {
+  font-weight: normal;
+}
+
+:where(#oqfpqfopyq) .gt_font_bold {
+  font-weight: bold;
+}
+
+:where(#oqfpqfopyq) .gt_font_italic {
+  font-style: italic;
+}
+
+:where(#oqfpqfopyq) .gt_super {
+  font-size: 65%;
+}
+
+:where(#oqfpqfopyq) .gt_footnote_marks {
+  font-style: italic;
+  font-weight: normal;
+  font-size: 75%;
+  vertical-align: 0.4em;
+}
+
+:where(#oqfpqfopyq) .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+:where(#oqfpqfopyq) .gt_indent_1 {
+  text-indent: 5px;
+}
+
+:where(#oqfpqfopyq) .gt_indent_2 {
+  text-indent: 10px;
+}
+
+:where(#oqfpqfopyq) .gt_indent_3 {
+  text-indent: 15px;
+}
+
+:where(#oqfpqfopyq) .gt_indent_4 {
+  text-indent: 20px;
+}
+
+:where(#oqfpqfopyq) .gt_indent_5 {
+  text-indent: 25px;
+}
+</style>
+<table class="gt_table">
+  
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id=""></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="Fair">Fair</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="Good">Good</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="Very Good">Very Good</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="Premium">Premium</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="Ideal">Ideal</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr class="gt_group_heading_row">
+      <th colspan="6" class="gt_group_heading" scope="colgroup" id="Price">Price</th>
+    </tr>
+    <tr class="gt_row_group_first"><td headers="Price  stat" class="gt_row gt_left">Mean</td>
+<td headers="Price  Fair" class="gt_row gt_center">$4,359</td>
+<td headers="Price  Good" class="gt_row gt_center">$3,929</td>
+<td headers="Price  Very Good" class="gt_row gt_center">$3,982</td>
+<td headers="Price  Premium" class="gt_row gt_center">$4,584</td>
+<td headers="Price  Ideal" class="gt_row gt_center">$3,458</td></tr>
+    <tr><td headers="Price  stat" class="gt_row gt_left">Median</td>
+<td headers="Price  Fair" class="gt_row gt_center">$3,282</td>
+<td headers="Price  Good" class="gt_row gt_center">$3,050</td>
+<td headers="Price  Very Good" class="gt_row gt_center">$2,648</td>
+<td headers="Price  Premium" class="gt_row gt_center">$3,185</td>
+<td headers="Price  Ideal" class="gt_row gt_center">$1,810</td></tr>
+    <tr><td headers="Price  stat" class="gt_row gt_left">Sd</td>
+<td headers="Price  Fair" class="gt_row gt_center">$3,560</td>
+<td headers="Price  Good" class="gt_row gt_center">$3,682</td>
+<td headers="Price  Very Good" class="gt_row gt_center">$3,936</td>
+<td headers="Price  Premium" class="gt_row gt_center">$4,349</td>
+<td headers="Price  Ideal" class="gt_row gt_center">$3,808</td></tr>
+    <tr><td headers="Price  stat" class="gt_row gt_left">IQR</td>
+<td headers="Price  Fair" class="gt_row gt_center">$3,155</td>
+<td headers="Price  Good" class="gt_row gt_center">$3,883</td>
+<td headers="Price  Very Good" class="gt_row gt_center">$4,461</td>
+<td headers="Price  Premium" class="gt_row gt_center">$5,250</td>
+<td headers="Price  Ideal" class="gt_row gt_center">$3,800</td></tr>
+    <tr class="gt_group_heading_row">
+      <th colspan="6" class="gt_group_heading" scope="colgroup" id="Carat">Carat</th>
+    </tr>
+    <tr class="gt_row_group_first"><td headers="Carat  stat" class="gt_row gt_left">Mean</td>
+<td headers="Carat  Fair" class="gt_row gt_center">1.05</td>
+<td headers="Carat  Good" class="gt_row gt_center">0.85</td>
+<td headers="Carat  Very Good" class="gt_row gt_center">0.81</td>
+<td headers="Carat  Premium" class="gt_row gt_center">0.89</td>
+<td headers="Carat  Ideal" class="gt_row gt_center">0.70</td></tr>
+    <tr><td headers="Carat  stat" class="gt_row gt_left">Median</td>
+<td headers="Carat  Fair" class="gt_row gt_center">1.00</td>
+<td headers="Carat  Good" class="gt_row gt_center">0.82</td>
+<td headers="Carat  Very Good" class="gt_row gt_center">0.71</td>
+<td headers="Carat  Premium" class="gt_row gt_center">0.86</td>
+<td headers="Carat  Ideal" class="gt_row gt_center">0.54</td></tr>
+    <tr><td headers="Carat  stat" class="gt_row gt_left">Sd</td>
+<td headers="Carat  Fair" class="gt_row gt_center">0.52</td>
+<td headers="Carat  Good" class="gt_row gt_center">0.45</td>
+<td headers="Carat  Very Good" class="gt_row gt_center">0.46</td>
+<td headers="Carat  Premium" class="gt_row gt_center">0.52</td>
+<td headers="Carat  Ideal" class="gt_row gt_center">0.43</td></tr>
+    <tr><td headers="Carat  stat" class="gt_row gt_left">IQR</td>
+<td headers="Carat  Fair" class="gt_row gt_center">0.50</td>
+<td headers="Carat  Good" class="gt_row gt_center">0.51</td>
+<td headers="Carat  Very Good" class="gt_row gt_center">0.61</td>
+<td headers="Carat  Premium" class="gt_row gt_center">0.79</td>
+<td headers="Carat  Ideal" class="gt_row gt_center">0.66</td></tr>
+  </tbody>
+  
+  
+</table>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-1-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
+<div class="cell">
+<div class="cell-output-display">
+
+<div id="htmlwidget-b07ec3dbe06e7f459f83" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-b07ec3dbe06e7f459f83">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36","37","38","39","40","41","42","43","44","45","46","47","48","49","50","51","52","53","54","55","56","57","58","59","60","61","62","63","64","65","66","67","68","69","70","71","72","73","74","75","76","77","78","79","80","81","82","83","84","85","86","87","88","89","90","91","92","93","94","95","96","97","98","99","100"],[18018,18531,17329,15223,15223,15984,16193,11668,18701,12587,15964,12300,12545,9823,10453,15354,18559,10577,8040,9925,10761,14220,16037,16538,18242,18242,18242,18242,18242,18593,18710,18710,6512,8044,10863,11548,13203,14918,16970,16970,15030,18788,10424,13156,15415,8807,17164,17184,6870,11594,17801,17146,14341,8419,9665,18686,16239,16239,18495,16314,17407,10437,10628,16914,13784,17209,18756,17027,17209,18369,16465,12500,14749,16195,17116,17924,18485,15231,17186,17753,14351,14775,18766,12095,12687,14421,14717,15394,16353,16353,17339,17996,14659,15148,15993,16709,16934,17103,17591,18254],[5.01,4.5,4.13,4.01,4.01,4,3.67,3.65,3.51,3.5,3.4,3.24,3.22,3.11,3.05,3.04,3.04,3.02,3.01,3.01,3.01,3.01,3.01,3.01,3.01,3.01,3.01,3.01,3.01,3.01,3.01,3.01,3,3,3,3,3,3,3,3,2.8,2.8,2.77,2.75,2.75,2.74,2.74,2.74,2.72,2.72,2.72,2.71,2.7,2.68,2.68,2.67,2.66,2.66,2.66,2.65,2.64,2.63,2.63,2.63,2.61,2.61,2.61,2.6,2.6,2.6,2.59,2.58,2.58,2.58,2.57,2.57,2.57,2.56,2.56,2.56,2.55,2.55,2.55,2.54,2.54,2.54,2.54,2.54,2.54,2.54,2.54,2.54,2.53,2.53,2.53,2.53,2.53,2.53,2.53,2.53],["Fair","Fair","Fair","Premium","Premium","Very Good","Premium","Fair","Premium","Ideal","Fair","Premium","Ideal","Fair","Premium","Very Good","Premium","Fair","Premium","Premium","Fair","Premium","Ideal","Ideal","Premium","Fair","Fair","Good","Good","Good","Premium","Premium","Very Good","Fair","Good","Good","Premium","Good","Premium","Fair","Premium","Good","Premium","Ideal","Premium","Fair","Very Good","Very Good","Fair","Ideal","Ideal","Premium","Very Good","Premium","Very Good","Good","Good","Good","Good","Premium","Ideal","Very Good","Premium","Ideal","Good","Ideal","Ideal","Fair","Premium","Ideal","Ideal","Fair","Very Good","Premium","Premium","Premium","Premium","Good","Premium","Ideal","Premium","Good","Premium","Very Good","Ideal","Ideal","Premium","Very Good","Very Good","Very Good","Ideal","Very Good","Premium","Premium","Ideal","Ideal","Premium","Fair","Premium","Premium"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>price<\/th>\n      <th>carat<\/th>\n      <th>cut<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[1,2]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

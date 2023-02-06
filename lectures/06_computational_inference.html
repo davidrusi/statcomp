@@ -1003,7 +1003,7 @@ F-statistic: 14.73 on 4 and 45 DF,  p-value: 9.133e-08 </code></pre>
 </section>
 <section id="residual-permutation" class="slide level2">
 <h2>Residual permutation</h2>
-<p>Idea: replace <span class="math inline">\(x_{i1}\)</span> by a permuted version that is correlated with <span class="math inline">\(x_{i2}\)</span></p>
+<p>Idea: replace <span class="math inline">\(x_1\)</span> by a permuted version <span class="math inline">\(\tilde{x}_1\)</span> that is correlated with <span class="math inline">\(x_2\)</span></p>
 <ol type="1">
 <li><p>Regress <span class="math inline">\(x_1\)</span> on <span class="math inline">\(x_2\)</span> by OLS. Let <span class="math inline">\(\hat{x}_{i1}\)</span> be the predictions, <span class="math inline">\(e_i\)</span> the residuals</p></li>
 <li><p>For <span class="math inline">\(b=1,\ldots,B\)</span>, do</p></li>
@@ -1018,7 +1018,7 @@ F-statistic: 14.73 on 4 and 45 DF,  p-value: 9.133e-08 </code></pre>
 <section class="slide level2">
 
 <p>Define an R function (saved in routines.R)</p>
-<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-34_951f3257f41f71eeea499d43ccc3e48b">
+<div class="cell" data-hash="06_computational_inference_cache/revealjs/unnamed-chunk-34_3da71e82baa56f11f406368665f54019">
 <div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Residual permutation test for a single variable in linear regression</span></span>
 <span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a><span class="co">#Input</span></span>
 <span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a><span class="co"># - y: outcome</span></span>
@@ -1033,7 +1033,7 @@ F-statistic: 14.73 on 4 and 45 DF,  p-value: 9.133e-08 </code></pre>
 <span id="cb60-12"><a href="#cb60-12" aria-hidden="true" tabindex="-1"></a>  e<span class="ot">=</span> <span class="fu">residuals</span>(fit)</span>
 <span id="cb60-13"><a href="#cb60-13" aria-hidden="true" tabindex="-1"></a>  bperm<span class="ot">=</span> <span class="fu">double</span>(B)</span>
 <span id="cb60-14"><a href="#cb60-14" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (b <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>B) {</span>
-<span id="cb60-15"><a href="#cb60-15" aria-hidden="true" tabindex="-1"></a>    eperm<span class="ot">=</span> e[<span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(e), <span class="at">size=</span><span class="fu">length</span>(e), <span class="at">replace=</span><span class="cn">FALSE</span>)]</span>
+<span id="cb60-15"><a href="#cb60-15" aria-hidden="true" tabindex="-1"></a>    eperm<span class="ot">=</span> <span class="fu">sample</span>(e, <span class="at">size=</span><span class="fu">length</span>(e), <span class="at">replace=</span><span class="cn">FALSE</span>)</span>
 <span id="cb60-16"><a href="#cb60-16" aria-hidden="true" tabindex="-1"></a>    x1tilde<span class="ot">=</span> x1hat <span class="sc">+</span> eperm</span>
 <span id="cb60-17"><a href="#cb60-17" aria-hidden="true" tabindex="-1"></a>    fitperm<span class="ot">=</span> <span class="fu">lm</span>(y <span class="sc">~</span> x1tilde <span class="sc">+</span> x2)</span>
 <span id="cb60-18"><a href="#cb60-18" aria-hidden="true" tabindex="-1"></a>    bperm[b]<span class="ot">=</span> <span class="fu">coef</span>(fitperm)[<span class="st">'x1tilde'</span>]    </span>

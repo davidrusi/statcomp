@@ -76,7 +76,7 @@ lmResPerm.onevar= function(y, x1, x2, B=5000) {
   e= residuals(fit)
   bperm= double(B)
   for (b in 1:B) {
-    eperm= e[sample(1:length(e), size=length(e), replace=FALSE)]
+    eperm= sample(e, size=length(e), replace=FALSE)
     x1tilde= x1hat + eperm
     fitperm= lm(y ~ x1tilde + x2)
     bperm[b]= coef(fitperm)['x1tilde']    
