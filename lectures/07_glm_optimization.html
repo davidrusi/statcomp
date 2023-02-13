@@ -430,9 +430,10 @@
 </section>
 <section id="maximum-likelihood-estimation" class="slide level2">
 <h2>Maximum likelihood estimation</h2>
-<p>Given a model for the observed data <span class="math inline">\(y=(y_1,\ldots,y_n)\)</span>, set parameter value <span class="math inline">\(\theta\)</span> making <span class="math inline">\(\theta\)</span> “probable” as possible</p>
-<p><strong>Def.</strong> Likelihood function is the joint density/mass function <span class="math inline">\(p(y \mid \theta)\)</span>, seen as a function of <span class="math inline">\(\theta\)</span></p>
+<p>Given a model for the observed data <span class="math inline">\(y=(y_1,\ldots,y_n)\)</span>, set parameter value <span class="math inline">\(\theta\)</span> making <span class="math inline">\(y\)</span> as “probable” as possible</p>
+<p><strong>Def.</strong> The <em>likelihood function</em> is the joint density/mass function <span class="math inline">\(p(y \mid \theta)\)</span>, seen as a function of <span class="math inline">\(\theta\)</span></p>
 <p><strong>Def.</strong> The MLE is <span class="math inline">\(\hat{\theta}= \arg\max_\theta p(y \mid \theta)\)</span></p>
+<p>Technical note: we assume that the maximum exists</p>
 </section>
 <section id="least-squares-as-mle" class="slide level2">
 <h2>Least-squares as MLE</h2>
@@ -452,7 +453,7 @@ p(y \mid \beta,\sigma^2)= \prod_{i=1}^n p(y_i \mid \beta,\sigma^2)=
 <p>As <span class="math inline">\(n \rightarrow \infty\)</span>, <span class="math display">\[
 \hat{\theta} \stackrel{D}{\longrightarrow} N(\theta^*, H(\theta^*)^{-1})
 \]</span> <span class="math inline">\(H(\theta^*)\)</span> is the hessian of <span class="math inline">\(\log p(y \mid \theta)\)</span> (Fisher information matrix) evaluated at <span class="math inline">\(\theta^*\)</span></p>
-<p>Hence <span class="math inline">\(\hat{\theta}\)</span> attains smallest variance among all unbiased estimators (Cramer-Rao lower bound)</p>
+<p>Hence <span class="math inline">\(\hat{\theta}\)</span> attains smallest variance among all asymptotically unbiased estimators (Cramer-Rao lower bound)</p>
 </section>
 <section>
 <section id="logistic-regression" class="title-slide slide level1 center">
@@ -481,13 +482,13 @@ P(Y_i=y_i)= \pi_i^{y_i} (1-\pi_i)^{1-y_i} = \begin{cases} \pi_i \mbox{ if } y_i=
 <p>No closed-form solution. However,</p>
 <ul>
 <li><p><span class="math inline">\(\log p(y \mid \beta)\)</span> has a negative-semidefinite hessian <span class="math inline">\(H(\beta)\)</span> (it’s concave)</p></li>
-<li><p>Strictly concave, if <span class="math inline">\(X\)</span> has full column rank</p></li>
+<li><p>Strictly concave, if <span class="math inline">\(X\)</span> has full column rank (<span class="math inline">\(X^TX\)</span> invertible)</p></li>
 <li><p>Many efficient numerical optimization algorithms</p></li>
 </ul>
 </section>
 <section id="example.-spam-filter" class="slide level2">
 <h2>Example. Spam filter</h2>
-<p>The dataset <code>email</code> (package <code>openintro</code>) have <span class="math inline">\(n=3921\)</span> emails</p>
+<p>The dataset <code>email</code> (package <code>openintro</code>) has <span class="math inline">\(n=3921\)</span> emails</p>
 <ul>
 <li><p><span class="math inline">\(y_i\)</span>: email is spam yes/no</p></li>
 <li><p><span class="math inline">\(x_i\)</span>: <span class="math inline">\(p=20\)</span> covariates (number of characters, whether email had “Re:” in the subject etc.)</p></li>
@@ -577,17 +578,24 @@ P(Y_i=y_i)= \pi_i^{y_i} (1-\pi_i)^{1-y_i} = \begin{cases} \pi_i \mbox{ if } y_i=
 <section id="plotting-the-predictions" class="slide level2">
 <h2>Plotting the predictions</h2>
 <p>We use goodies from package <code>modelr</code></p>
-<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-7_12460e1b2d43e6c28c33795408fb188e">
+<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-7_d983f68f183eee2176e41e0a8851f11e">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>mygrid<span class="ot">=</span> <span class="fu">data_grid</span>(email, num_char, re_subj, <span class="at">.model=</span>fit)</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>fitpred<span class="ot">=</span> <span class="fu">add_predictions</span>(mygrid, <span class="at">model=</span>fit)</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>fitpred<span class="sc">$</span>predprob<span class="ot">=</span> <span class="dv">1</span><span class="sc">/</span>(<span class="dv">1</span><span class="sc">+</span> <span class="fu">exp</span>(<span class="sc">-</span>fitpred<span class="sc">$</span>pred))</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fitpred, <span class="fu">aes</span>(<span class="at">x=</span>num_char,<span class="at">y=</span>predprob,<span class="at">color=</span>re_subj)) <span class="sc">+</span> <span class="fu">geom_line</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>fitpred<span class="ot">=</span> <span class="fu">add_predictions</span>(mygrid, <span class="at">model=</span>fit) <span class="co">#obtain logit email probabilities</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>fitpred<span class="sc">$</span>predprob<span class="ot">=</span> <span class="dv">1</span><span class="sc">/</span>(<span class="dv">1</span><span class="sc">+</span> <span class="fu">exp</span>(<span class="sc">-</span>fitpred<span class="sc">$</span>pred)) <span class="co">#compute email probabilities</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fitpred, <span class="fu">aes</span>(<span class="at">x=</span>num_char,<span class="at">y=</span>predprob,<span class="at">color=</span>re_subj)) <span class="sc">+</span> <span class="fu">geom_line</span>() <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">y=</span><span class="st">'Spam probability'</span>, <span class="at">x=</span><span class="st">'Number of characters'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 </div>
 <img data-src="07_glm_optimization_files/figure-revealjs/unnamed-chunk-7-1.png" width="960" class="r-stretch"></section>
 <section id="exercise" class="slide level2">
 <h2>Exercise</h2>
-<p>Is there an interaction between number char and Re?</p>
+<p>Fit a model with an interaction <code>numchar:re_subj</code>. For what value of <code>re_subj</code> is the estimated effect of <code>numchar</code> stronger?</p>
+<p>What’s the estimated odds ratio for +10 characters</p>
+<ul>
+<li><p>For the group where <code>re_subj</code> is 0?</p></li>
+<li><p>For the group where <code>re_subj</code> is 1?</p></li>
+</ul>
+<p>Is the interaction statistically significant (at the usual 0.05 level)?</p>
+<p>Plot the estimated spam probability vs.&nbsp;<code>numchar</code> and <code>re_subj</code>. Does it look similar to the predictions given by the model without the interaction? (previous slide)</p>
 </section></section>
 <section>
 <section id="convex-optimization" class="title-slide slide level1 center">
@@ -1542,13 +1550,13 @@ Number of Fisher Scoring iterations: 5</code></pre>
 <span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>allci</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                     Boot2.5% Boot97.5% MLE2.5 % MLE97.5 % Q2.5 % Q97.5 %
-(Intercept)            -0.835    -0.011   -0.797    -0.066 -0.868   0.002
-locationDavaoRegion    -0.135     0.098   -0.122     0.089 -0.142   0.109
-locationIlocosRegion   -0.052     0.174   -0.040     0.166 -0.060   0.186
-locationMetroManila    -0.052     0.157   -0.039     0.146 -0.057   0.164
-locationVisayas         0.022     0.209    0.035     0.200  0.020   0.215
-roofStrong             -0.048     0.146   -0.037     0.134 -0.053   0.150
-age                     0.054     0.086    0.057     0.084  0.054   0.087
+(Intercept)            -0.803    -0.050   -0.797    -0.066 -0.868   0.002
+locationDavaoRegion    -0.131     0.104   -0.122     0.089 -0.142   0.109
+locationIlocosRegion   -0.048     0.172   -0.040     0.166 -0.060   0.186
+locationMetroManila    -0.051     0.153   -0.039     0.146 -0.057   0.164
+locationVisayas         0.032     0.210    0.035     0.200  0.020   0.215
+roofStrong             -0.048     0.152   -0.037     0.134 -0.053   0.150
+age                     0.055     0.086    0.057     0.084  0.054   0.087
 age2                   -0.001    -0.001   -0.001    -0.001 -0.001  -0.001</code></pre>
 </div>
 </div>

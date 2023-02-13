@@ -53,12 +53,13 @@ $$
 
 ## Maximum likelihood estimation
 
-Given a model for the observed data $y=(y_1,\ldots,y_n)$, set parameter value $\theta$ making $\theta$ "probable" as possible
+Given a model for the observed data $y=(y_1,\ldots,y_n)$, set parameter value $\theta$ making $y$ as "probable" as possible
 
-**Def.** Likelihood function is the joint density/mass function $p(y \mid \theta)$, seen as a function of $\theta$
+**Def.** The *likelihood function* is the joint density/mass function $p(y \mid \theta)$, seen as a function of $\theta$
 
 **Def.** The MLE is $\hat{\theta}= \arg\max_\theta p(y \mid \theta)$
 
+Technical note: we assume that the maximum exists
 
 ## Least-squares as MLE
 
@@ -87,7 +88,7 @@ $$
 $$
 $H(\theta^*)$ is the hessian of $\log p(y \mid \theta)$ (Fisher information matrix) evaluated at $\theta^*$
 
-Hence $\hat{\theta}$ attains smallest variance among all unbiased estimators (Cramer-Rao lower bound)
+Hence $\hat{\theta}$ attains smallest variance among all asymptotically unbiased estimators (Cramer-Rao lower bound)
 
 
 # Logistic regression
@@ -120,14 +121,14 @@ No closed-form solution. However,
 
 - $\log p(y \mid \beta)$ has a negative-semidefinite hessian $H(\beta)$ (it's concave)
 
-- Strictly concave, if $X$ has full column rank
+- Strictly concave, if $X$ has full column rank ($X^TX$ invertible)
 
 - Many efficient numerical optimization algorithms
 
 
 ## Example. Spam filter
 
-The dataset `email` (package `openintro`) have $n=3921$ emails
+The dataset `email` (package `openintro`) has $n=3921$ emails
 
 - $y_i$: email is spam yes/no
 
@@ -200,25 +201,32 @@ We use goodies from package `modelr`
 
 ```{r}
 mygrid= data_grid(email, num_char, re_subj, .model=fit)
-fitpred= add_predictions(mygrid, model=fit)
-fitpred$predprob= 1/(1+ exp(-fitpred$pred))
-ggplot(fitpred, aes(x=num_char,y=predprob,color=re_subj)) + geom_line()
+fitpred= add_predictions(mygrid, model=fit) #obtain logit email probabilities
+fitpred$predprob= 1/(1+ exp(-fitpred$pred)) #compute email probabilities
+ggplot(fitpred, aes(x=num_char,y=predprob,color=re_subj)) + geom_line() + labs(y='Spam probability', x='Number of characters')
 ```
 
 
 ## Exercise
 
-Is there an interaction between number char and Re?
+Fit a model with an interaction `numchar:re_subj`.
+For what value of `re_subj` is the estimated effect of `numchar` stronger?
 
+What's the estimated odds ratio for +10 characters
 
+- For the group where `re_subj` is 0?
 
+- For the group where `re_subj` is 1?
 
+Is the interaction statistically significant (at the usual 0.05 level)?
+
+Plot the estimated spam probability vs. `numchar` and `re_subj`. Does it look similar to the predictions given by the model without the interaction? (previous slide)
 
 # Convex optimization
 
 ---
 
-Three popular strategies to minimize a convex $f(\theta)$ (equiv. maximize concave $-f(\theta)$)
+Three popular strategies to minimize a convex $f(\theta)$ (equivalently, maximize concave $-f(\theta)$)
 
 1. Newton-Raphson algorithm
 

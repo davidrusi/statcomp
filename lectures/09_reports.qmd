@@ -27,7 +27,15 @@ Load required R packages
 
 ```{r, warning=FALSE}
 library(tidyverse)
+library(dygraphs)
+library(DT)
+library(fivethirtyeight)
+library(gapminder)
 library(gt)
+library(maps)
+library(plotly)
+library(threejs)
+library(tidyquant)
 ```
 
 ## Reporting results
@@ -72,10 +80,12 @@ The `echo: false` option disables the printing of code (only output is displayed
 To display individual code chunks use `#| echo: true`
 
 ````{verbatim}
+
 ```{r}
 #| echo: true
 2 * 2
 ```
+
 ````
 
 ---
@@ -88,6 +98,7 @@ You can create multiple tabs as follows
 
 
 ````{verbatim}
+
 :::panel-tabset
 
 ## Scatterplot
@@ -105,6 +116,7 @@ ggplot(diamonds, aes(price)) +
 ```
 
 :::
+
 ````
 
 The next slide shows the result
@@ -169,7 +181,7 @@ ggplot(diamonds, aes(carat, price)) +
 The result is shown in the next slide
 
 
----
+##
 
 ```{r, echo=FALSE}
 #| layout-nrow: 1
@@ -227,5 +239,184 @@ An example by Hadley Wickam: file `../examples/diamonds_dashboard.qmd`
 
 # htmlwidgets
 
+---
+
+Some packages to create interactive plots without using any Javascript (if you know Javascript, then more advanced options are possible)
+
+- Time series plots: [dygraphs](https://rstudio.github.io/dygraphs)
+
+- Make a ggplot interactive: [plotly](https://plotly.com/r)
+
+- 3D scatter-plots and globes: [threejs](https://github.com/bwlewis/rthreejs)
+
+- Data tables: [DT](https://rstudio.github.io/DT)
+
+## dygraphs
+
+`dygraph` visualizes times series interactively
+
+- 1st argument is the data. Either a time series (`xts` object) or a data.frame where the 1st column is the x-axis
+
+- Other arguments to set labels etc.
+
+
+**Example.** Female and male deaths from lunch cancer
+
+```{r}
+
+lungDeaths= cbind(mdeaths, fdeaths)
+lungDeaths[1:5,]
+
+```
+
+---
+
+Zoom into x-axis regions. Double-click to zoom out
+
+```{r}
+dygraph(lungDeaths)
+```
+
+## Some plot options
+
+```{r}
+dygraph(lungDeaths, main = "Deaths from Lung Disease (UK)") |>
+  dyOptions(drawPoints = TRUE, pointSize = 3) |>              #show points
+  dyHighlight(highlightSeriesOpts = list(strokeWidth = 3)) |> #thicker lines
+  dyRangeSelector()                                           #add zooming panel
+```
+
+
+## Plotly
+
+Plotly dynamically displays info about elements of a gg-plot. See [here](https://plotly.com/r) for a gallery of what's possible
+
+**Example.** Scatter-plot for gapminder data
+
+Save the ggplot into an object, then use `ggplotly`. Argument `tooltip`: what aesthetics from your ggplot (**not** from your original dataset) to show
+
+```{r}
+#| output-location: slide
+
+library(plotly)
+
+gm2007= filter(gapminder, year==2007)
+
+p= ggplot(gm2007, aes(gdpPercap, lifeExp, text=country)) +
+  geom_point(aes(colour=continent, size=pop), alpha = 0.7, show.legend = TRUE) +
+  scale_size(range = c(2, 12)) +
+  scale_x_log10() +
+  labs(x='GDP per capita', y='Life expectancy')
+
+ggplotly(p, tooltip=c("country","gdpPercap","lifeExp"))
+```
+
+---
+
+Alternatively, you can use `plot_ly` and `layout` to create plots directly, as illustrated below.
+
+
+```{r}
+fig= plot_ly(gm2007, x = ~continent, y = ~lifeExp, split = ~continent, type = 'violin', box = list(visible = T)) 
+
+layout(fig, xaxis = list(title = "Continent"), yaxis = list(title = "Life Expectancy (years)",zeroline = F))
+```
+
+
+## plotly for time series
+
+```{r}
+getSymbols("GOOG", from="2020-01-01", to="2021-12-31") #creates dataset GOOG
+```
+
+```{r}
+GOOG[1:5,]
+```
+
+Compute stock market value relative to start date
+
+```{r}
+
+stock= data.frame(GOOG$GOOG.Adjusted)
+stock$GOOG.Adjusted= stock$GOOG.Adjusted/stock$GOOG.Adjusted[1]
+stock= data.frame(stock,rownames(stock))
+colnames(stock)= c('GOOG','date')
+```
+
+```{r}
+#| output-location: slide
+
+fig= plot_ly(stock, type = 'scatter', mode = 'lines') |>
+  add_trace(x = ~date, y = ~GOOG, name = 'GOOG') |>
+  layout(showlegend = F)
+options(warn = -1)
+
+layout(fig, xaxis = list(zerolinecolor = '#ffff', zerolinewidth = 2, gridcolor = 'ffff'), yaxis = list(zerolinecolor = '#ffff', zerolinewidth = 2, gridcolor = 'ffff'), plot_bgcolor='#e5ecf6', width = 900)
+
+```
+
+## 3D scatterplots
+
+```{r}
+
+sel= c('state_abbrev','avg_hatecrimes_per_100k_fbi','share_vote_trump','gini_index')
+hc= hate_crimes[,sel]
+names(hc)= c('state','hatecrimes_fbi','votes_trump','gini')
+hc= filter(hc, !is.na(hatecrimes_fbi)) 
+
+labs= c("Votes for Trump","Gini","Hate crimes FBI")
+scatterplot3js(hc$votes_trump, hc$gini, hc$hatecrimes_fbi, axisLabels=labs)  |>
+points3d(hc$votes_trump, hc$gini, hc$hatecrimes_fbi, color="red", pch=hc$state)
+
+```
+
+## globejs
+
+You can plot data on the globe, e.g. arcs
+
+```{r}
+#| code-fold: true
+#| colum: screen-inset
+
+f= flights()
+f= mutate(f, dest=paste(round(f[,3],2),":",round(f[,4],2),sep="")) # approx location as factor
+
+# select destinations with frequency >300
+freq= group_by(f, dest) |> 
+  summarise(nflights_dest=n())
+fsel= left_join(f, freq) |>
+  filter(nflights_dest > 300)
+
+globejs(arcs=fsel[,1:4], arcsLwd= fsel$nflights_dest)
+
+```
+
+## globejs
+
+Or bars, e.g. city populations below
+
+```{r}
+#| code-fold: true
+#| column: screen-inset
+
+data(world.cities, package="maps")
+cities <- world.cities[order(world.cities$pop, decreasing=TRUE)[1:1000],]
+value  <- 100 * cities$pop / max(cities$pop)
+col <- colorRampPalette(c("cyan", "lightgreen"))(10)[floor(10 * value/100) + 1]
+globejs(lat=cities$lat, long=cities$long, value=value, color=col, atmosphere=TRUE)
+
+```
+
+
+## Data tables
+
+`datatable` from package `DT` displays a dynamic table that can be searched, filtered, sorted... For a full description see [here](https://rstudio.github.io/DT)
+
+
+```{r}
+
+datatable(gapminder, rownames=FALSE, caption="Life expectancy", options = list(pageLength=5))
+
+```
 
 
