@@ -401,7 +401,7 @@
 <li><a href="#/convex-optimization" id="/toc-convex-optimization">Convex optimization</a></li>
 <li><a href="#/poisson-regression" id="/toc-poisson-regression">Poisson regression</a></li>
 <li><a href="#/residuals-and-over-dispersion" id="/toc-residuals-and-over-dispersion">Residuals and over-dispersion</a></li>
-<li><a href="#/exercise.-campus-crime-data" id="/toc-exercise.-campus-crime-data">Exercise. Campus crime data</a></li>
+<li><a href="#/exercise-2" id="/toc-exercise-2">Exercise</a></li>
 </ul>
 </nav>
 </section>
@@ -604,7 +604,9 @@ P(Y_i=y_i)= \pi_i^{y_i} (1-\pi_i)^{1-y_i} = \begin{cases} \pi_i \mbox{ if } y_i=
 </section>
 <section class="slide level2">
 
-<p>Three popular strategies to minimize a convex <span class="math inline">\(f(\theta)\)</span> (equiv. maximize concave <span class="math inline">\(-f(\theta)\)</span>)</p>
+<p>Minimizing functions had a huge impact on society, business &amp; society</p>
+<p><strong>Example:</strong> Gradient descent for neural networks: <a href="https://www.youtube.com/watch?v=IHZwWFHWa-w&amp;list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi&amp;index=3&amp;ab_channel=3Blue1Brown">video</a> (first 3 minutes)</p>
+<p>Three popular strategies to minimize a convex <span class="math inline">\(f(\theta)\)</span> (equivalently, maximize concave <span class="math inline">\(-f(\theta)\)</span>)</p>
 <ol type="1">
 <li><p>Newton-Raphson algorithm</p></li>
 <li><p>Gradient descent algorithm (and extensions)</p></li>
@@ -1088,12 +1090,12 @@ re_subj1    -2.970 0.360   -2.970      0.360</code></pre>
 <p>Generalized linear models are an ample model family based on two components</p>
 <ol type="1">
 <li><p><span class="math inline">\(p(y_i \mid x_i)\)</span> belongs to the so-called exponential family (includes Normal, Binomial, Poisson…)</p></li>
-<li><p>Only the expectation of <span class="math inline">\(p(y_i \mid x_i)\)</span> depends on <span class="math inline">\(x_i\)</span>, and does so via <span class="math inline">\(x_i^T \beta\)</span></p></li>
+<li><p>Only the expectation of <span class="math inline">\(p(y_i \mid x_i)\)</span> depends on <span class="math inline">\(x_i\)</span>, and does so via <span class="math inline">\(x_i^T \beta\)</span> (in a 1-to-1 fashion)</p></li>
 </ol>
-<p><em>Example.</em> Logistic regression. <span class="math inline">\(y_i \sim \mbox{Bern}(\pi_i)\)</span> <span class="math display">\[
+<p><strong>Example.</strong> Logistic regression. <span class="math inline">\(y_i \sim \mbox{Bern}(\pi_i)\)</span> <span class="math display">\[
 \pi_i = E(y_i \mid x_i)= \frac{1}{1+e^{-x_i^T \beta}}
 \]</span></p>
-<p><em>Example.</em> Poisson regression. <span class="math inline">\(y_i \sim \mbox{Poi}(\mu_i)\)</span> <span class="math display">\[
+<p><strong>Example.</strong> Poisson regression. <span class="math inline">\(y_i \sim \mbox{Poi}(\mu_i)\)</span> <span class="math display">\[
 \mu_i =E(y_i \mid x_i)= e^{x_i^T \beta}
 \]</span></p>
 </section>
@@ -1117,7 +1119,7 @@ re_subj1    -2.970 0.360   -2.970      0.360</code></pre>
 <li><p><code>total</code>: number of people living in household other than the head (poverty indicator)</p></li>
 <li><p><code>location</code>: region where household is located</p></li>
 <li><p><code>age</code>: age of household head</p></li>
-<li><p><code>numLT5</code>: number in the household $&lt;$5 years of age</p></li>
+<li><p><code>numLT5</code>: number in the household &lt;5 years old</p></li>
 <li><p><code>roof</code>: type of roof (Light/Salvaged Material, Strong Material)</p></li>
 </ul>
 </section>
@@ -1381,7 +1383,7 @@ age2                 -0.0007034333 0.0000641942 -10.9578954 6.089915e-28</code><
 </section>
 <section id="residuals-in-glms" class="slide level2">
 <h2>Residuals in GLMs</h2>
-<p>Two popular types of residuals</p>
+<p>Two popular types of residuals. Let <span class="math inline">\(\hat{y}_i=\hat{E}(y_i \mid x_i)\)</span></p>
 <ul>
 <li><p>Pearson residual: <span class="math inline">\((y_i - \hat{y}_i) / \sqrt{\hat{V}(y_i)}\)</span>. In logistic reg. <span class="math inline">\(\hat{V}(y_i)= \hat{y}_i (1-\hat{y_i})\)</span>, in Poisson reg. <span class="math inline">\(V(y_i)= \hat{y}_i\)</span></p></li>
 <li><p>Deviance residual: compares the log-likelihood of <span class="math inline">\(y_i\)</span> relative to a model with perfect prediction <span class="math inline">\(\hat{y}_i=y_i\)</span></p></li>
@@ -1432,7 +1434,7 @@ age2                 -0.0007034333 0.0000641942 -10.9578954 6.089915e-28</code><
 <li><p>Logistic: <span class="math inline">\(V(y_i)= E(y_i) [1 - E(y_i)]\)</span></p></li>
 <li><p>Poisson: <span class="math inline">\(V(y_i)= E(y_i)\)</span></p></li>
 </ul>
-<p>If the assumed <span class="math inline">\(V(y_i)\)</span> is correct, the variance of Pearson residuals <span class="math inline">\(e_i= (y_i - \hat{E}(y_i))/\sqrt{\hat{V(y_i)}}\)</span></p>
+<p>If the assumed <span class="math inline">\(V(y_i)\)</span> is correct, the variance of Pearson residuals <span class="math inline">\(e_i= (y_i - \hat{E}(y_i))/\sqrt{\hat{V}(y_i)}\)</span></p>
 <ul>
 <li><p>Should be <span class="math inline">\(\approx 1\)</span></p></li>
 <li><p>Should be constant as <span class="math inline">\(\hat{y}_i\)</span> varies</p></li>
@@ -1443,6 +1445,7 @@ age2                 -0.0007034333 0.0000641942 -10.9578954 6.089915e-28</code><
 <p>A popular way to estimate over-dispersion <span class="math inline">\(\phi\)</span>. <span class="math display">\[
 \hat{\phi}= \frac{\sum_{i=1}^n e_i^2}{n-p}
 \]</span> where <span class="math inline">\(e_i\)</span> are Pearson residuals. If <span class="math inline">\(\hat{\phi}\)</span> much larger than 1, there is over-dispersion</p>
+<p>It’s possible to prove that then <span class="math inline">\(\hat{\beta}\)</span> has variance <span class="math inline">\(\phi V(\hat{\beta})\)</span>, where <span class="math inline">\(V(\hat{\beta})\)</span> is the covariance given by standard theory</p>
 <p>One may then adjust the MLE variance <span class="math inline">\(V(\hat{\beta})\)</span> into <span class="math display">\[V_Q(\hat{\beta})= \hat{\phi} V(\hat{\beta})\]</span> where <span class="math inline">\(V_Q\)</span> stands for “quasi-likelihood”</p>
 </section>
 <section id="example-1" class="slide level2">
@@ -1539,15 +1542,44 @@ Number of Fisher Scoring iterations: 5</code></pre>
 <section id="bootstrap" class="slide level2">
 <h2>Bootstrap</h2>
 <p>Function <code>bootGLM</code> at <code>routines.R</code> implements the bootstrap for GLMs</p>
-<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-39_d8d4d269beb34da15bcf6053d59029dd">
-<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>f<span class="ot">=</span> <span class="fu">formula</span>(total <span class="sc">~</span> location <span class="sc">+</span> roof <span class="sc">+</span> age <span class="sc">+</span> age2)</span>
-<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>fit2.bootci<span class="ot">=</span> <span class="fu">bootGLM</span>(fHH, <span class="at">formula=</span>f, <span class="at">family=</span><span class="fu">poisson</span>(), <span class="at">level=</span><span class="fl">0.95</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-39_f4596385a1c9f439d2ea856888eb5d20">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>bootGLM</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>function (data, formula, family, level = 0.95, R = 2000) 
+{
+    require(tidyverse)
+    require(boot)
+    fit = glm(formula, data = data, family = family)
+    bootfit = boot(data, mleGLM, R = R, formula = formula, family = family)
+    ans = bootCI(fit, bootfit, level = level)
+    return(ans)
+}</code></pre>
+</div>
+</div>
+<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-40_d20f0121f1079bf1b69339e3667d5e62">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>mleGLM</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>function (data, indices = 1:nrow(data), formula, family) 
+{
+    if (missing(family)) 
+        stop("family must be specified")
+    fit = glm(formula, data = data[indices, ], family = family)
+    return(coef(fit))
+}</code></pre>
+</div>
+</div>
+</section>
+<section class="slide level2">
+
+<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-41_eac21f57ade26aeb210239c21509c274">
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>f<span class="ot">=</span> <span class="fu">formula</span>(total <span class="sc">~</span> location <span class="sc">+</span> roof <span class="sc">+</span> age <span class="sc">+</span> age2)</span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>fit2.bootci<span class="ot">=</span> <span class="fu">bootGLM</span>(fHH, <span class="at">formula=</span>f, <span class="at">family=</span><span class="fu">poisson</span>(), <span class="at">level=</span><span class="fl">0.95</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The bootstrap intervals are also wider than those from MLE theory</p>
-<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-40_b181fd57ad1418eab3c7406e59fea510">
-<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>allci<span class="ot">=</span> <span class="fu">round</span>(<span class="fu">cbind</span>(fit2.bootci[,<span class="sc">-</span><span class="dv">1</span>], <span class="fu">confint</span>(fit2), <span class="fu">confint</span>(fit2q)), <span class="dv">3</span>)</span>
-<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(allci)<span class="ot">=</span> <span class="fu">paste</span>(<span class="fu">c</span>(<span class="st">'Boot'</span>,<span class="st">'Boot'</span>,<span class="st">'MLE'</span>,<span class="st">'MLE'</span>,<span class="st">'Q'</span>,<span class="st">'Q'</span>), <span class="fu">names</span>(allci), <span class="at">sep=</span><span class="st">''</span>)</span>
-<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>allci</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-42_4986570863a80076470af1182060ce4c">
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>allci<span class="ot">=</span> <span class="fu">round</span>(<span class="fu">cbind</span>(fit2.bootci[,<span class="sc">-</span><span class="dv">1</span>], <span class="fu">confint</span>(fit2), <span class="fu">confint</span>(fit2q)), <span class="dv">3</span>)</span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(allci)<span class="ot">=</span> <span class="fu">paste</span>(<span class="fu">c</span>(<span class="st">'Boot'</span>,<span class="st">'Boot'</span>,<span class="st">'MLE'</span>,<span class="st">'MLE'</span>,<span class="st">'Q'</span>,<span class="st">'Q'</span>), <span class="fu">names</span>(allci), <span class="at">sep=</span><span class="st">''</span>)</span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>allci</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                     Boot2.5% Boot97.5% MLE2.5 % MLE97.5 % Q2.5 % Q97.5 %
 (Intercept)            -0.803    -0.050   -0.797    -0.066 -0.868   0.002
@@ -1562,8 +1594,12 @@ age2                   -0.001    -0.001   -0.001    -0.001 -0.001  -0.001</code>
 </div>
 </section></section>
 <section>
-<section id="exercise.-campus-crime-data" class="title-slide slide level1 center">
-<h1>Exercise. Campus crime data</h1>
+<section id="exercise-2" class="title-slide slide level1 center">
+<h1>Exercise</h1>
+
+</section>
+<section id="campus-crime-data" class="slide level2">
+<h2>Campus crime data</h2>
 <p>Dataset <code>campuscrime.txt</code> from the <a href="https://bookdown.org/roback/bookdown-BeyondMLR">Beyond MLR book</a> has number of crimes for <span class="math inline">\(n=81\)</span> institutions</p>
 <ul>
 <li><p><code>type</code>: college (C) or university (U)</p></li>
@@ -1571,14 +1607,14 @@ age2                   -0.001    -0.001   -0.001    -0.001 -0.001  -0.001</code>
 <li><p><code>enroll1000</code>: number of students enrolled at the school (thousands)</p></li>
 <li><p><code>region</code>: region of the USA (C = Central, MW = Midwest, NE = Northeast, SE = Southeast, SW = Southwest, and W = West)</p></li>
 </ul>
-<p><strong>Goal.</strong> Are there differences between college and university, after accounting for enrollment and region? If so, provide a point estimate and a 95% interval for the ratio of expected crimes in university / college</p>
+<p><strong>Goal.</strong> Are there differences between college and university, after accounting for enrollment and region? If so, provide a point estimate and a 95% interval for the ratio of expected crimes in university / college. Is there evidence for over-dispersion (if so, use an over-dispersion adjustment)</p>
 </section>
 <section class="slide level2">
 
 <p>You can load the data as follows</p>
-<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-41_2aa26ab290bb252979480fea6930f9cc">
-<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>crime<span class="ot">=</span> <span class="fu">as_tibble</span>(<span class="fu">read.table</span>(<span class="st">"../datasets/campuscrime.txt"</span>, <span class="at">header=</span><span class="cn">TRUE</span>, <span class="at">sep=</span><span class="st">"</span><span class="sc">\t</span><span class="st">"</span>))</span>
-<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>crime</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="07_glm_optimization_cache/revealjs/unnamed-chunk-43_43bdb54922dbc3830ac92c7bf5502e8d">
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>crime<span class="ot">=</span> <span class="fu">as_tibble</span>(<span class="fu">read.table</span>(<span class="st">"../datasets/campuscrime.txt"</span>, <span class="at">header=</span><span class="cn">TRUE</span>, <span class="at">sep=</span><span class="st">"</span><span class="sc">\t</span><span class="st">"</span>))</span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>crime</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 81 × 4
    type     nv enroll1000 region
