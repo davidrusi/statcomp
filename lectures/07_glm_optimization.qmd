@@ -206,6 +206,61 @@ fitpred$predprob= 1/(1+ exp(-fitpred$pred)) #compute email probabilities
 ggplot(fitpred, aes(x=num_char,y=predprob,color=re_subj)) + geom_line() + labs(y='Spam probability', x='Number of characters')
 ```
 
+## Marginal plots
+
+Display effect of 1 covariate, keeping others constant
+
+```{r}
+expit= function(x) 1/(1+exp(-x)) #inverse of logit function
+fitpred= data_grid(email, num_char, .model=fit) |>
+  add_predictions(fit)
+fitpred$predprob= expit(fitpred$pred)
+fitpred
+```
+
+`data_grid` sets factors to their reference category (`re_subj`=0 in this example)
+
+
+## Marginal plots
+
+```{r}
+ggplot(fitpred, aes(num_char, predprob)) + geom_line()
+```
+
+## Marginal plots
+
+Better practice to set all other covariates to their mean value.
+
+We can't do this with `data_grid` for factors. Instead, we can do it manually by creating the design matrix
+
+```{r}
+x= model.matrix( ~ num_char + re_subj, data=email)
+emailnum= data.frame(spam=email$spam, x[,-1]) #x contains intercept, remove
+head(emailnum) #now re_subj1 is a numeric vector
+```
+
+Then fit the model as usual
+
+```{r}
+fitnum= glm(spam ~ num_char + re_subj1, data=emailnum, family=binomial()) 
+
+m= mean(emailnum$re_subj1)
+fitpred= data_grid(emailnum, num_char, re_subj1=m, .model=fitnum) |>
+  add_predictions(fitnum)
+fitpred$predprob= expit(fitpred$pred)
+fitpred
+```
+
+---
+
+```{r}
+ggplot(fitpred, aes(num_char, predprob)) + 
+  geom_line() + 
+  labs(x="Number of characters", y="Estimated spam probability")
+```
+
+
+
 
 ## Exercise
 
@@ -220,7 +275,23 @@ What's the estimated odds ratio for +10 characters
 
 Is the interaction statistically significant (at the usual 0.05 level)?
 
-Plot the estimated spam probability vs. `numchar` and `re_subj`. Does it look similar to the predictions given by the model without the interaction? (previous slide)
+Plot the estimated spam probability vs. `numchar` and `re_subj`. Does it look similar to the predictions from the model with no interaction? (previous slides)
+
+Turn in an html with your solution [here](https://drive.google.com/drive/folders/1jhh1CrXM3hqc7qTrOYeQzo2pV8Vly1NY?usp=sharing).
+Name your file firstname_lastname.html
+
+
+---
+
+Getting started
+
+```{r}
+library(tidyverse)
+library(openintro)
+source("../code/routines.R")
+email
+```
+
 
 # Convex optimization
 
@@ -230,7 +301,7 @@ Minimizing functions had a huge impact on society, business & society
 
 **Example:** Gradient descent for neural networks: [video](https://www.youtube.com/watch?v=IHZwWFHWa-w&list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi&index=3&ab_channel=3Blue1Brown) (first 3 minutes)
 
-Three popular strategies to minimize a convex $f(\theta)$ (equivalently, maximize concave $-f(\theta)$)
+Popular strategies to minimize a convex $f(\theta)$ (equivalently, maximize concave $-f(\theta)$)
 
 1. Newton-Raphson algorithm
 
@@ -381,6 +452,24 @@ g(z) + H(z) (z - \theta)=0 \Rightarrow \theta= z-H^{-1}(z) g(z)
 $$
 
 If $f$ strictly convex then $H$ is strictly positive-definite, hence invertible. Else an adjustment is applied, e.g. $(H + \lambda I)^{-1}$ for small $\lambda>0$
+
+
+## NR in logistic regression
+
+In logistic regression one can show that
+$$
+\begin{aligned}
+g(\beta)&= X^T (y - \hat{y}) \\
+H(\beta)&= -X^T D X
+\end{aligned}
+$$
+where $D$ is diagonal with $d_{ii}= \hat{y}_i(1-\hat{y}_i)$
+
+Plugging this into the NR iteration (previous slide), 
+$$
+\hat{\beta}^{(t+1)}= \hat{\beta}^{(t)} + (X^T D X)^{-1} X^T (y - \hat{y})
+$$
+Newton-Raphson is an iteratively re-weighted least-squares estimator
 
 
 ## Gradient descent

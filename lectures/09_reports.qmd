@@ -379,8 +379,9 @@ You can plot data on the globe, e.g. arcs
 #| code-fold: true
 #| colum: screen-inset
 
-f= flights()
-f= mutate(f, dest=paste(round(f[,3],2),":",round(f[,4],2),sep="")) # approx location as factor
+data(flights)
+f= flights
+f= mutate(flights, dest=paste(round(f[,3],2),":",round(f[,4],2),sep="")) # approx location as factor
 
 # select destinations with frequency >300
 freq= group_by(f, dest) |> 
@@ -388,7 +389,7 @@ freq= group_by(f, dest) |>
 fsel= left_join(f, freq) |>
   filter(nflights_dest > 300)
 
-globejs(arcs=fsel[,1:4], arcsLwd= fsel$nflights_dest)
+globejs(arcs=fsel[,1:4])
 
 ```
 
@@ -548,6 +549,20 @@ ui <- fluidPage(
 - Other arguments: specific on each input box
 
 
+## Deploying Shiny to a server
+
+Easiest option: Shinyapps.io. Free plan allows 5 apps, 25 active hours
+
+After creating an account and setting up the system, you can submit/update the app as follows
+
+```{r, eval=FALSE}
+library(rsconnect)
+rsconnect::deployApp("../examples/shinyapp") #specify local directory where you saved the app
+```
+
+Other options available, such as hosting your own server, see [here](https://shiny.rstudio.com/deploy))
+
+
 ## Exercise
 
 Check out `../examples/shinyapp/app.R`. Using this as a template, create a Shiny app where
@@ -557,4 +572,7 @@ Check out `../examples/shinyapp/app.R`. Using this as a template, create a Shiny
 - A scatterplot of life expectancy vs. year is produced using only the data from that country, adding a linear regression line
 
 - The estimated regression coefficients are reported as separate text output
+
+
+
 
