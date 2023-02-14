@@ -36,6 +36,7 @@ library(maps)
 library(plotly)
 library(threejs)
 library(tidyquant)
+library(shiny)
 ```
 
 ## Reporting results
@@ -419,4 +420,141 @@ datatable(gapminder, rownames=FALSE, caption="Life expectancy", options = list(p
 
 ```
 
+
+# Shiny apps
+
+
+##
+
+Widgets allow *user-based* interactivity: all operations occur in your browser
+
+Shiny apps also allow *server-based* interactions: operations are run by R in a server
+
+To start a Shiny app
+
+1. Create a directory for the app in your computer
+
+2. Add a file `app.R` specifying how the app should look
+
+For a primer on Shiny, see Hadley Wickam's [Mastering Shiny](https://mastering-shiny.org/index.html). See also 
+
+- [Shiny cheatsheet](https://posit.co/wp-content/uploads/2022/10/shiny-1.pdf)
+
+- [Shiny extensions](https://github.com/nanxstats/awesome-shiny-extensions)
+
+
+## app.R
+
+A minimal example
+
+```{r, eval=FALSE}
+library(shiny)
+
+ui= fluidPage(  #specify user interface
+
+    selectInput("color", label="Color", choices= c("Blue","Red","Green")), #dropdown menu
+    
+    checkboxInput("married", "Are you married?", value=FALSE), #check-box
+
+)
+
+server= function(input, output, session) {  #server calculations
+}
+
+shinyApp(ui, server) #run the App
+```
+
+Click the "Run App" button in RStudio (or outside RStudio, 
+call `shiny::runApp()` with the directory containing `app.R`)
+
+
+---
+
+In `server` you store all results in `output`, which is a list. The returned element must be the result of a render function:
+
+- `renderPlot`: return a plot (`plotOutput` in `ui`)
+
+- `renderPrint`: print results as in R console (paired with or `verbatimOutput` in `ui`)
+
+- `renderText`: return single string (paired with `textOuput` in `ui`)
+
+- `renderTable`: print a static table (`tableOutput` in `ui`). For short tables
+
+- `renderDataTable`: print a dynamic table (`dataTableOutput` in `ui`). For large tables/data
+
+```{r, eval=FALSE}
+ui= fluidPage(  #specify user interface
+
+    selectInput("color", label="Color", choices= c("Blue","Red","Green")), #dropdown menu
+    
+    verbatimTextOutput("tablehomeworld"), #print output$tablehomeworld
+
+)
+
+
+server= function(input, output, session) {  #server calculations
+
+  output$tablehomeworld= renderPrint({
+    data= filter(starwars, skin_color == input$color) #input$color from selectInput
+    table(data$homeworld)
+  })
+  
+}
+```
+
+## Some useful functions
+
+- Print text. `p("aaa")`, `strong("bold face text")`, `helpText("italics text")`
+
+- Headers. `titlePanel`, `h1("aaa")`, `h2("aaa")`, `h3("aaa")`
+
+- Line break. `br()`
+
+- Update results button. `submitButton("Get results")`
+
+- Panel arrangement: `sidebarLayout`, `mainPanel`, `sidebarPanel`
+
+
+## Capturing inputs
+
+
+```{r, eval=FALSE}
+animals= c("dog", "cat", "other") #define vector used multiple times below
+
+ui <- fluidPage(
+  selectInput("animal", "Favourite animal?", animals, multiple=FALSE), #single choice
+  radioButtons("animal", "Favourite animal?", animals), #single choice
+  checkboxGroupInput("animal", "Animals you like?", animals) , #multiple choice
+
+  textInput("name", "What's your name?"), #short text box
+  textAreaInput("story", "Tell me about yourself", rows = 3)         #larger text box
+  
+  numericInput("num", "Number one", value = 0, min = 0, max = 100),  #numeric box
+  sliderInput("num2", "Number two", value = 50, min = 0, max = 100), #slider
+  
+  dateInput("dob", "When were you born?"),                 #single date
+  dateRangeInput("holiday", "Departure and return date?")  #date range
+  
+  fileInput("upload", NULL) #input file
+)
+```
+
+- 1st argument: identifier of the variable where input is stored
+
+- 2nd argument: text to display
+
+- `value`: default value (optional)
+
+- Other arguments: specific on each input box
+
+
+## Exercise
+
+Check out `../examples/shinyapp/app.R`. Using this as a template, create a Shiny app where
+
+- The user selects a country in the `gapminder` data (package `gapminder`) 
+
+- A scatterplot of life expectancy vs. year is produced using only the data from that country, adding a linear regression line
+
+- The estimated regression coefficients are reported as separate text output
 
