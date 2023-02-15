@@ -30,6 +30,7 @@ library(tidyverse)
 library(boot)
 library(coefplot)
 library(modelr)
+library(multcomp)
 library(openintro)
 ```
 
@@ -193,6 +194,25 @@ $$
 
 - Re: vs without Re: $e^{-2.97}= 0.051$
 
+## Another example
+
+We seek the odds-ratio associated to +10 characters and adding Re: 
+$$
+e^{10 \hat{\beta}_1 + \hat{\beta}_2}= e^{-0.064 \times 10 - 2.97}= 0.027
+$$
+
+To obtain a 95% CI
+
+- Obtain a CI for $10 \hat{\beta}_1 + \hat{\beta}_2$ with `glht` (seen in linear regression)
+
+- Exponentiate to obtain a CI for $e^{10 \hat{\beta}_1 + \hat{\beta}_2}$
+
+```{r}
+C= matrix(c(0,10,1), nrow=1)
+ci= as.numeric(confint(glht(fit, C))$confint)
+names(ci)= c('estimate','ci.low','ci.up')
+round(exp(ci),3)
+```
 
 
 ## Plotting the predictions
