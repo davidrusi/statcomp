@@ -1,0 +1,489 @@
+---
+title: "Modern Statistical Computing"
+subtitle: "9. Multilevel models"
+author: "David Rossell"
+institute: "Pompeu Fabra University"
+execute:
+  echo: true
+format:
+  revealjs:
+    theme: [default, custom.scss]
+    scrollable: true
+toc: true
+toc-depth: 1
+number-sections: false
+mouse-wheel: true
+code-overflow: scroll
+code-line-numbers: false
+code-copy: true
+cache: true
+title-slide-style: pandoc
+bibliography: references.bib
+---
+
+## Reproducing these lecture notes
+
+Load required R packages
+
+```{r, warning=FALSE, message=FALSE}
+library(tidyverse)
+library(coefplot)
+library(DT)
+library(GGally)
+library(lme4)
+source("../code/routines.R")
+```
+
+Disclaimer: these notes borrow heavily from Roback & Legler's [Beyond multiple linear regression](https://bookdown.org/roback/bookdown-BeyondMLR) (free online)
+
+
+# Motivation
+
+## Multilevel models
+
+We often encounter data that was collected at multiple levels
+
+**Example.** Musician's performance stress (negative affect score, PANAS questionnaire)
+
+Performance covariates (Level 1)
+
+- Type of performance: solo, small ensemble, large ensembl
+
+- Audience: who attended (instructor, public, students, jury)
+
+Musician covariates (Level 2)
+
+- Negative emotionality scale from MPQ questionnaire
+
+- Gender, instrument...
+
+Goal: how does stress depend on emotionality, accounting for other covariates?
+
+Issue: data clearly non-independent
+
+
+---
+
+`musicdata.txt` has several diary entries for each musician (`id`). In total, 497 performances by 37 musicians
+
+```{r}
+#convert id to factor, center mpqnem, create Large ensembl indicator
+music= as_tibble(read.table("../datasets/musicdata.txt", header=TRUE)) |>
+  mutate(id= factor(id), mpqnem= mpqnem-mean(mpqnem), audience= ifelse(perform_type=='Large Ensemble', "large", "small")) |>
+  relocate(id, diary, na, mpqnem, audience)
+music
+```
+
+
+## Other examples
+
+Two-level models used in many examples
+
+- Housing prices vs. house & neighborhood covariates
+
+- Ambiguity of political tweets made in various districts vs. politician & district covariates
+
+One can also consider >2 levels, for example
+
+- Student marks vs. student, class & school covariates
+
+- Football player's salary vs. player, team & league covariates
+
+We focus on 2 levels for simplicty
+
+
+## Music data
+
+We focus on 
+
+- Negative affect score (outcome): `na`
+
+- Audience size (large vs. small/solo) (Level 1 covariate): `Large`
+
+- Negative emotionality (Level 2 covariate): `mpqnem`
+
+
+---
+
+:::panel-tabset
+
+### Scatter-plot
+
+We can explore data as usual
+
+```{r}
+ggplot(music, aes(mpqnem, na, color=audience)) +
+  geom_point() +
+  geom_smooth() +
+  labs(x='Negative emotionality', y="Stress (negative affect score)")
+```
+
+### Musician id
+
+But recall that data are dependent within a musician
+
+```{r}
+ggplot(music, aes(mpqnem, na, color=id)) +
+  geom_point() +
+  geom_smooth() +
+  labs(x='Negative emotionality', y="Stress (negative affect score)")
+```
+
+:::
+
+
+## Option 1. Standard linear regression
+
+The analysis below is wrong. It assumes that all observations are independent, giving too narrow CIs and too small P-values (inflated false positives)
+
+```{r}
+fit1= lm(na ~ mpqnem + audience, data=music)
+coefSummary(fit1)
+```
+
+## Option 2. Two-stage analysis
+
+Consider fitting a model for each musician at level 1: stress vs. performance type. 
+Note: we can only use musicians with the 3 performance types
+
+
+```{r}
+#| code-fold: true
+
+fitmodel= function(df) {   #Return OLS
+  naudience= length(unique(df$audience))
+  if (naudience == 2) {
+    ans= round(coef(lm(na ~ audience, data=df)),3)
+  } else {
+    ans= rep(NA, 2)
+  }
+  names(ans)= c('Intercept','small')
+  return(ans)
+}
+
+music_nest= group_by(music, id) |> nest() 
+b1= tibble(id=music_nest$id, map_df(music_nest$data, fitmodel))
+DT::datatable(b1)
+
+```
+
+
+
+---
+
+Step 1 coefficients are interpreted as usual
+
+- Intercept: average musician stress (for reference category)
+
+- Small ensembl/Solo: increased stress for small/solo peformance
+
+Step 2: regress estimates from Step 1 on level 2 covariate (negative emotionality)
+
+```{r}
+b1= unique(select(music, id, mpqnem)) |>
+  left_join(b1, by='id')
+b1
+```
+
+
+---
+
+
+:::panel-tabset
+
+### Intercept
+
+```{r}
+coefSummary(lm(Intercept ~ mpqnem, data=b1))
+```
+
+```{r}
+ggplot(b1, aes(mpqnem, Intercept)) + geom_point() + geom_smooth()
+```
+
+### Audience
+
+```{r, warning=FALSE}
+coefSummary(lm(small ~ mpqnem, data=b1))
+```
+
+```{r, warning=FALSE}
+ggplot(b1, aes(mpqnem, small)) + geom_point() + geom_smooth()
+```
+
+:::
+
+## Issues
+
+```{r}
+nmissing= sum(is.na(b1$Intercept))
+```
+
+The two-step approach suffers from several issues
+
+- Estimates unavailable for some musicians (`r nmissing` in our example)
+
+- All musicians receive the same weight, regardless of how much data (performances) we have (estimates precision)
+
+- Suboptimal way to share info across musicians
+
+---
+
+Further subtle but relevant issue $(\hat{\beta}_{1i},\hat{\beta}_{2i},\hat{\beta}_{3i})$ for musician $i$ are correlated: using three separate regressions not ideal
+
+```{r, warning=FALSE}
+#| code-fold: true
+ggpairs(b1[,c('Intercept','small')])
+```
+
+# A proper multi-level model
+
+---
+
+Let $y_{ij}$ be stress for subject $i$ in performance $j$
+
+**Level 1:** $$y_{ij}=  \beta_{0i} + \beta_{1i} \mbox{small}_{ij} + \epsilon_i$$
+
+**Level 2:**
+$$
+\begin{aligned}
+\beta_{0i}&= \alpha_0 + \alpha_1 \mbox{mpqnem}_i + u_i
+\\
+\beta_{1i}&= \gamma_0 + v_i
+\end{aligned}
+$$
+where $\epsilon_i \sim N(0,\sigma^2)$ and $(u_i,v_i) \sim N(0, \Sigma)$
+$$
+\Sigma= \begin{pmatrix} \sigma_u^2 & \rho \sigma_u \sigma_v \\ \rho \sigma_u \sigma_v & \sigma_v^2 \end{pmatrix}
+$$
+As discussed, the intercept $\beta_{0i}$ and slope $\beta_{1i}$ may be correlated. Note: one could add mpqnem to the $\beta_{1i}$ regression 
+
+
+## Composite model
+
+Re-write the model, plugging in the expressions for $\beta_{0i}$ and $\beta_{1i}$ into Level 1
+
+$$
+\begin{aligned}
+&y_{ij}=  \beta_{0i} + \beta_{1i} \mbox{small}_{ij} + \epsilon_i=
+\\
+&\alpha_0 + \alpha_1 \mbox{mpqnem}_i + u_i +
+(\gamma_0 + v_i) \mbox{small}_{ij} + \epsilon_i=
+\\
+&\alpha_0 + \alpha_1 \mbox{mpqnem}_i + \gamma_0 \mbox{small}_{ij}
++ u_i + v_i \mbox{small}_{ij} + \epsilon_i
+\end{aligned}
+$$
+
+- Main effects for mpqnem and small
+
+- Random intercept for individual $i$ is $\alpha_0 + u_i$, random slope is $\gamma_0 + v_i$
+
+Key points
+
+1. If $\alpha_1=0$, mpqnem has no effect (our primary goal)
+
+2. $(u_i,v_i)$ imply dependent observations within musician $i$
+
+
+---
+
+The model can be fit with `lmer` (package `lme4`). The formula specifies the composite model (small audience nested within musician)
+
+```{r}
+fit2= lmer(na ~ mpqnem + audience + (audience | id), REML=TRUE, data=music)
+summary(fit2)
+```
+
+
+---
+
+Estimates similar to least-squares, but CIs usually wider
+
+```{r}
+multiplot(fit1, fit2, intercept=FALSE, names=c("Ordinary least-squares","Multilevel model"))
+```
+
+
+---
+
+We can extract inference as usual
+
+:::panel-tabset
+
+### Fixed effects
+
+```{r}
+summary(fit2)$coef
+```
+
+### Conf. int
+
+```{r}
+confint(fit2)
+```
+
+## Random effects
+
+```{r}
+coef(fit2)
+```
+
+:::
+
+
+
+
+
+
+
+
+# Statistical inference
+
+## Parameter estimation
+
+$$
+y_{ij}= \alpha_0 + \alpha_1 \mbox{mpqnem}_i + \gamma_0 \mbox{small}_{ij}
++ u_i + v_i \mbox{small}_{ij} + \epsilon_i \mbox{, } (\epsilon_i, u_i, v_i) \sim N(0,\Sigma)
+$$
+
+- Fixed effects: $\alpha_0, \alpha_1, \gamma_0$, variance components: $\Sigma$
+
+- Random effects: $u=(u_1,\ldots,u_n)$, $v=(v_1,\ldots,v_n)$
+
+
+Two popular criteria to fit multilevel models
+
+- MLE: $\max p(y \mid \alpha_0, \alpha_1, \gamma_0, \Sigma, u, v)$
+
+- Restricted MLE: first $\max_{\alpha, \gamma, \Sigma} p(y \mid \alpha_0, \alpha_1, \gamma_0, \Sigma)$, then
+$$
+\max_{u,v} p(y \mid \hat{\alpha}_0, \hat{\alpha}_1, \hat{\gamma}_0, \hat{\Sigma}, u, v)
+$$
+
+## MLE vs RMLE
+
+MLE a bit worse than RMLE (default in `lmer`)
+
+- Larger estimation error for fixed effects
+
+- Biased for variance components (under-estimation)
+
+- But, MLE allows testing the removal of fixed effects via likelihood-ratio test
+
+Testing the removal of random effects is a bit more complex
+
+
+
+## Testing fixed effects
+
+As with GLMs, `anova` tests whether fixed effects can be removed (it uses MLE internally).
+We also get AIC and BIC.
+
+```{r, eval=FALSE}
+fit2= lmer(na ~ mpqnem + audience + (audience | id), REML=TRUE, data=music)
+```
+
+```{r}
+fit3= lmer(na ~ audience + (audience | id), REML=TRUE, data=music)
+anova(fit2, fit3)
+```
+
+
+
+
+## Testing variance components
+
+Since random slopes for audience have small variance, consider a model where only the intercept is random
+(same effect for small audience across individuals)
+
+:::panel-tabset
+
+### Random intercept & slope
+
+```{r, eval=FALSE}
+fit2= lmer(na ~ mpqnem + audience + (audience | id), REML=TRUE, data=music)
+```
+
+```{r}
+summary(fit2)
+```
+
+### Random intercept
+
+```{r}
+fit4= lmer(na ~ mpqnem + audience + (1 | id), REML=TRUE, data=music)
+summary(fit4)
+```
+
+:::
+
+
+## Testing variance components
+
+Random slopes $v_i \sim N(0, \sigma_v^2)$, test the null hypothesis $H_0: \sigma_v^2$
+
+Likelihood-ratio test has a complex asymptotic distribution (not $\chi^2$)
+
+Better to use a "parametric Boostrap test"
+
+1. Fit the null model (e.g. no random slopes). Use it to simulate many datasets
+
+2. For each dataset, fit the larger model & compute the likelihood-ratio test statistic
+
+3. P-value: proportion of simulated LRTs > observed data LRT
+
+---
+
+Easy to do in R: function `bootstrapAnova`. Below only `B=100` samples are used so that it runs fast, in practice you want at least 1000
+
+```{r}
+
+bootstrapAnova(modelA= fit2, model0= fit4, B=100)
+
+```
+
+
+
+What model do the AIC/BIC favor? According to BIC, can we drop the random intercept?
+
+
+```{r}
+fit5= lm(na ~ mpqnem + audience, data=music)
+
+BIC(fit5)
+```
+
+
+# Exercise
+
+---
+
+Consider 4 covariates
+
+- Level 1. `audience` (small/large), `bymemory` (played by memory)
+
+- Level 2. `mpqnem` (negative emotionality score)
+
+Fit a model with fixed effects for all 3 covariates, and random slopes for `audience` and `bymemory`
+
+- Interpret the estimated fixed effect of `bymemory`. What association with stress does it suggest?
+
+- Is `bymemory` significantly associated with stress?
+
+Getting started
+
+```{r, eval=FALSE}
+library(tidyverse)
+library(lme4)
+source("../code/routines.R")
+
+music= as_tibble(read.table("~/github/statcomp/datasets/musicdata.txt", header=TRUE)) |>
+  mutate(id= factor(id), mpqnem= mpqnem-mean(mpqnem), audience= ifelse(perform_type=='Large Ensemble', "large", "small"), bymemory= ifelse(memory=='Memory',1,0) ) |>
+  relocate(id, diary, na, mpqnem, audience)
+```
+
+
+
+
+

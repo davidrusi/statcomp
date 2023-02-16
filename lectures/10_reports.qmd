@@ -1,6 +1,6 @@
 ---
 title: "Modern Statistical Computing"
-subtitle: "9. Reports"
+subtitle: "10. Reports"
 author: "David Rossell"
 institute: "Pompeu Fabra University"
 execute:
@@ -379,9 +379,8 @@ You can plot data on the globe, e.g. arcs
 #| code-fold: true
 #| colum: screen-inset
 
-data(flights)
-f= flights
-f= mutate(flights, dest=paste(round(f[,3],2),":",round(f[,4],2),sep="")) # approx location as factor
+f= read.table("../datasets/flights.txt", header=TRUE) #data flights from package threejs
+f= mutate(f, dest=paste(round(f[,3],2),":",round(f[,4],2),sep="")) # approx location as factor
 
 # select destinations with frequency >300
 freq= group_by(f, dest) |> 
