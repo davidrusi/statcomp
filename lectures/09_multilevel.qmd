@@ -333,6 +333,13 @@ coef(fit2)
 
 
 
+## Generalized linear mixed models
+
+Multilevel models extend directly to GLMs, e.g. logistic or Poisson regression
+
+- Function `glmer`
+
+- Argument `family`
 
 
 

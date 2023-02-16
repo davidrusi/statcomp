@@ -1,0 +1,173 @@
+---
+title: "Modern Statistical Computing"
+subtitle: "10. Non-linear models"
+author: "David Rossell"
+institute: "Pompeu Fabra University"
+execute:
+  echo: true
+format:
+  revealjs:
+    theme: [default, custom.scss]
+    scrollable: true
+toc: true
+toc-depth: 1
+number-sections: false
+mouse-wheel: true
+code-overflow: scroll
+code-line-numbers: false
+code-copy: true
+cache: true
+title-slide-style: pandoc
+bibliography: references.bib
+---
+
+## Reproducing these lecture notes
+
+Load required R packages
+
+```{r, warning=FALSE, message=FALSE}
+library(tidyverse)
+library(mgcv)
+source("../code/routines.R")
+```
+
+
+## Non-linear models
+
+In some applications it can be critical to capture non-linear effects. We already saw two basic strategies
+
+- Add quadratic / polynomial terms $x_{ij}^2, x_{ij}^3, \ldots$
+
+- Discretize $x_{ij}$ into several groups
+
+More refined strategies
+
+- Additive regression
+
+- Regression trees / random forests
+
+- Deep learning
+
+- ...
+
+
+## Additive models
+
+Additive linear regression. $y_i \sim N(\mu_i, \sigma^2)$,
+
+$$ y_i = \sum_{j=1}^p f_j(x_{ij}) + \epsilon_i $$
+
+
+Additive logistic regression. $y_i \sim \mbox{Bern}(\pi_i)$
+
+
+$$ \log \left( \frac{\pi_i}{1 - \pi_i} \right) = \sum_{j=1}^p f_j(x_{ij}) $$
+
+Additive Poisson regression. $y_i \sim \mbox{Poisson}(\mu_i)$
+
+$$ \log \mu_i = \sum_{j=1}^p f_j(x_{ij}) $$
+
+## Example
+
+GAMs can be fitted with function `gam` (package `mgcv`)
+
+```{r}
+n= 50; x= seq(0,2*pi,length=n); y= sin(x) + rnorm(n, sd=.2)
+fit= gam(y ~ s(x))
+```
+
+:::panel-tabset
+
+### Model summary
+
+```{r}
+summary(fit)
+```
+
+### Plot
+
+```{r}
+plot(x, y); lines(x, sin(x), col='blue'); lines(x, predict(fit))
+legend('topright',c("Truth","Estimated"),lty=1,col=c("blue","black"))
+```
+
+:::
+
+
+
+
+## Additive models via basis functions
+
+Idea: transform $x_{ij} \in \mathbb{R}^p$ into vector ${\bf w}_j(x_{ij}) \in \mathbb{R}^L$. Let
+ 
+$$
+\sum_{j=1}^p f_j(x_{ij})= \sum_{j=1}^p w_j(x_{ij})^T \beta_j
+$$
+
+**Examples.**
+
+- Quadratic terms. $w_j(x_{ij})^T= (x_{ij}, x_{ij}^2)$
+
+- Discretize into $K$ groups. $w_j(x_{ij})^T= (0,\ldots,0,1,0,\ldots,0)$ (1 indicates $x_{ij}$'s group)
+
+More advanced examples: splines, Fourier basis etc.
+
+
+## Splines
+
+
+**Def.** Let $x \in \mathbb{R}$. $f(x)$ is a spline of degree $d$ and knots $\nu_1 < \ldots < \nu_K$ iff
+
+- $f(x)$ is a degree $d$ polynomial in each interval $(\nu_k,\nu_{k+1})$
+
+- $f(x)$ has $d-1$ continuous derivatives at $\nu_1,\ldots,\nu_K$
+
+It's easy to obtain splines. Consider
+$$f(x)= \sum_{l=1}^L w_l(x) \beta_l$$ 
+where $w_l$'s are degree $d$ polynomials and $\beta_l$'s satisfy certain restrictions, ensuring that $f(x)$ has $d-1$ continuous derivatives
+
+
+## Example. Degree 1 B-splines
+
+$$f(x)= w_1(x) + 1.1 w_2(x) +1.5 w_3(x) + 1.6 w_4(x)$$
+
+B-splines: minimal support & guarantee $d-1$ continuous derivatives
+
+::: {layout-ncol=2}
+
+![](figs/splinelinear_basis.jpeg)
+
+![](figs/splinelinear_fx.jpeg)
+
+:::
+
+
+## Model fitting
+
+Since $\sum_{j=1}^p f_j(x_{ij})= \sum_{j=1}^p w_j(x_{ij})^T \beta_j$, we can write
+$$
+y= W \beta + \epsilon
+$$
+where $y, \epsilon \in \mathbb{R}$, $W$ contains all the $w_j(x_{ij})$'s and $\beta^T= (\beta_1^T,\ldots,\beta_p^T) \in \mathbb{R}^{pL}$ 
+
+A standard linear regression model!
+
+- In principle, we could use least-squares
+
+- Since $LP$ is large, use generalized cross-validation to avoid over-fitting
+
+GCV is a computationally faster alternative to cross-validation
+
+
+## Example. Diamonds data
+
+```{r}
+#| code-fold: true
+
+diamonds2= mutate(diamonds, lprice=log2(price), lcarat=log2(carat))
+ggplot(diamonds2, aes(lcarat, lprice)) + 
+  geom_hex(bins = 50) +
+  geom_smooth(method='lm') +
+  geom_smooth(color='black') +
+  labs(x='log2 carats', y='log2 diamond price')
+```
