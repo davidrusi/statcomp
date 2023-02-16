@@ -25,6 +25,7 @@
 # - bootGLM: Bootstrap confidence intervals for a GLM
 # - mleGLM: obtain MLE under a GLM
 # - bootCI: Extract confidence intervals from object returned by "boot"
+# - bootstrapAnova: BOOTSTRAP PARAMETRIC TEST FOR NESTED RANDOM EFFECTS MODELS
 
 # LOSS FUNCTIONS FOR CROSS-VALIDATION
 # - cost_loglik_logistic: logistic regression log-likelihood loss
@@ -248,6 +249,32 @@ bootCI= function(fit, bootfit, level=0.95) {
   return(bhat.boot)
 }
 
+
+# BOOTSTRAP PARAMETRIC TEST FOR NESTED RANDOM EFFECTS MODELS
+# Input
+# - modelA: larger model, fitted by lmer
+# - model0: null model, i.e. maller model nested within modelA, fitted by lmer
+# - B: number of boostrap samples
+# Output: likelihood ratio test, with Bootstrap-based P-value
+# NOTE: Adapted from https://github.com/proback/BeyondMLR
+bootstrapAnova = function(modelA, model0, B=1000){
+  require(lme4)
+  oneBootstrap = function(model0, modelA){ #LRT test statistic for 1 simulated dataset
+    d = drop(simulate(model0))             #simulate data under model0
+    m2 = lme4::refit(modelA, newresp=d)    #fit modelA to sim data
+    m1 = lme4::refit(model0, newresp=d)    #fit model0 to sim data
+    return(anova(m2,m1)$Chisq[2])          #LRT test statistic
+  }  
+  suppressMessages( nulldist <- replicate(B, oneBootstrap(model0, modelA)) )
+  ret = anova(modelA, model0)
+  ret$"Pr(>Chisq)"[2] = mean(nulldist > ret$Chisq[2])
+  names(ret)[8] = "Pr_boot(>Chisq)"
+  attr(ret, "heading") = c(attr(ret, "heading")[1], 
+                            paste("Parametric bootstrap with", B,"samples."),
+                            attr(ret, "heading")[-1])
+  attr(ret, "nulldist") = nulldist
+  return(ret)
+}
 
 
 ###########################################################################################
