@@ -27,7 +27,11 @@ Load required R packages
 
 ```{r, warning=FALSE, message=FALSE}
 library(tidyverse)
+library(mlbench)
 library(mgcv)
+library(tensorflow)
+library(keras)
+#install_tensorflow()  #run this the first time you use tensorflow
 source("../code/routines.R")
 ```
 
@@ -171,3 +175,100 @@ ggplot(diamonds2, aes(lcarat, lprice)) +
   geom_smooth(color='black') +
   labs(x='log2 carats', y='log2 diamond price')
 ```
+
+
+
+
+# Deep learning
+
+##
+
+Resources:
+
+- (Getting started with deep learning in R guide)[https://posit.co/blog/getting-started-with-deep-learning-in-r]
+
+- (Deep learning book)[https://srdas.github.io/DLBook] (Chapter 10)
+
+
+
+## Breast cancer data
+
+As illustration we use a binary outcome example, see [here](https://tensorflow.rstudio.com/tutorials/keras/regression) for a continuous outcome example
+
+
+## Pre-processing
+
+Convert to numeric, standardize covariates to mean 0 & variance 1 (important!), train/test split
+
+```{r}
+data("BreastCancer")  #package mlbench
+BreastCancer = BreastCancer[which(complete.cases(BreastCancer)==TRUE),]
+BreastCancer = mutate(BreastCancer, Class= ifelse(Class=='malignant',1,0)) |>
+  mutate_if(is.factor, as.numeric) |> #convert factors to numeric
+  select(-Id)  #drop Id column
+
+covars= names(select(BreastCancer, -Class))
+BreastCancer= mutate_at(BreastCancer, covars, scale) #standardize to mean 0, variance 1
+
+n= nrow(BreastCancer)
+sel= sample(1:n, size=round(0.8*n), replace=FALSE)
+train= BreastCancer[sel,]
+test= BreastCancer[-sel,]
+
+Xtrain= data.matrix(select(train, -Class))
+ytrain= data.matrix(select(train, Class))
+
+Xtest= data.matrix(select(test, -Class))
+ytest= data.matrix(select(test, Class))
+
+```
+
+
+## Setting up Tensorflow
+
+Define the model: 2 hidden layers with 100 units each
+
+```{r}
+nunits= 100
+
+#normalizer= layer_normalization(axis= -1)
+#normalizer |> adapt(train_features)
+
+model= keras_model_sequential() |>
+#  normalizer() |>
+  layer_dense(units= nunits, activation='relu') |>
+  layer_dense(units= nunits, activation='relu') |>
+  layer_dense(units=1, activation='sigmoid')
+```
+
+Compile the model
+
+```{r}
+model |> compile(
+  loss = 'binary_crossentropy',
+  optimizer = optimizer_rmsprop(),
+  metrics = c('accuracy')
+)
+```
+
+Fit the model
+
+```{r}
+model |> fit(Xtrain, ytrain, epochs = 100, verbose = 0, validation_split = 0.1)
+```
+
+## Result accuracy
+
+```{r}
+ytestpred= predict(model, Xtest)
+
+boxplot(ytestpred ~ ytest, xlab='Malignant tumor', ylab='Deep learning prediction')
+```
+
+```{r}
+table(ytestpred > 0.5, ytest)
+```
+
+
+
+

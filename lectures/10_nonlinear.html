@@ -393,14 +393,25 @@
   <p class="subtitle">10. Non-linear models</p>
   <p class="author">David Rossell</p>
   <p class="institute">Pompeu Fabra University</p>
+</section><section id="TOC">
+<nav role="doc-toc"> 
+<h2 id="toc-title">Table of contents</h2>
+<ul>
+<li><a href="#/deep-learning" id="/toc-deep-learning">Deep learning</a></li>
+</ul>
+</nav>
 </section>
 <section id="reproducing-these-lecture-notes" class="slide level2">
 <h2>Reproducing these lecture notes</h2>
 <p>Load required R packages</p>
-<div class="cell" data-hash="10_nonlinear_cache/revealjs/unnamed-chunk-1_d24231f58ae20b473e3de27301d53989">
+<div class="cell" data-hash="10_nonlinear_cache/revealjs/unnamed-chunk-1_750ac4d2e28be494bb8e26ee7936857f">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mgcv)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"../code/routines.R"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mlbench)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mgcv)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tensorflow)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(keras)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co">#install_tensorflow()  #run this the first time you use tensorflow</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"../code/routines.R"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="non-linear-models" class="slide level2">
@@ -546,10 +557,98 @@ y= W \beta + \epsilon
 </details>
 
 </div>
-<img data-src="10_nonlinear_files/figure-revealjs/unnamed-chunk-5-1.png" width="960" class="r-stretch"><div class="footer footer-default">
+<img data-src="10_nonlinear_files/figure-revealjs/unnamed-chunk-5-1.png" width="960" class="r-stretch"></section>
+<section>
+<section id="deep-learning" class="title-slide slide level1 center">
+<h1>Deep learning</h1>
 
+</section>
+<section id="section" class="slide level2">
+<h2></h2>
+<p>Resources:</p>
+<ul>
+<li><p>(Getting started with deep learning in R guide)[https://posit.co/blog/getting-started-with-deep-learning-in-r]</p></li>
+<li><p>(Deep learning book)[https://srdas.github.io/DLBook] (Chapter 10)</p></li>
+</ul>
+</section>
+<section id="breast-cancer-data" class="slide level2">
+<h2>Breast cancer data</h2>
+<p>As illustration we use a binary outcome example, see <a href="https://tensorflow.rstudio.com/tutorials/keras/regression">here</a> for a continuous outcome example</p>
+</section>
+<section id="pre-processing" class="slide level2">
+<h2>Pre-processing</h2>
+<p>Convert to numeric, standardize covariates to mean 0 &amp; variance 1 (important!), train/test split</p>
+<div class="cell" data-hash="10_nonlinear_cache/revealjs/unnamed-chunk-6_c95b4ca1f7259db735a492a188274b21">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"BreastCancer"</span>)  <span class="co">#package mlbench</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>BreastCancer <span class="ot">=</span> BreastCancer[<span class="fu">which</span>(<span class="fu">complete.cases</span>(BreastCancer)<span class="sc">==</span><span class="cn">TRUE</span>),]</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>BreastCancer <span class="ot">=</span> <span class="fu">mutate</span>(BreastCancer, <span class="at">Class=</span> <span class="fu">ifelse</span>(Class<span class="sc">==</span><span class="st">'malignant'</span>,<span class="dv">1</span>,<span class="dv">0</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate_if</span>(is.factor, as.numeric) <span class="sc">|&gt;</span> <span class="co">#convert factors to numeric</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>Id)  <span class="co">#drop Id column</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>covars<span class="ot">=</span> <span class="fu">names</span>(<span class="fu">select</span>(BreastCancer, <span class="sc">-</span>Class))</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>BreastCancer<span class="ot">=</span> <span class="fu">mutate_at</span>(BreastCancer, covars, scale) <span class="co">#standardize to mean 0, variance 1</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>n<span class="ot">=</span> <span class="fu">nrow</span>(BreastCancer)</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>sel<span class="ot">=</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span>n, <span class="at">size=</span><span class="fu">round</span>(<span class="fl">0.8</span><span class="sc">*</span>n), <span class="at">replace=</span><span class="cn">FALSE</span>)</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>train<span class="ot">=</span> BreastCancer[sel,]</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>test<span class="ot">=</span> BreastCancer[<span class="sc">-</span>sel,]</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>Xtrain<span class="ot">=</span> <span class="fu">data.matrix</span>(<span class="fu">select</span>(train, <span class="sc">-</span>Class))</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>ytrain<span class="ot">=</span> <span class="fu">data.matrix</span>(<span class="fu">select</span>(train, Class))</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>Xtest<span class="ot">=</span> <span class="fu">data.matrix</span>(<span class="fu">select</span>(test, <span class="sc">-</span>Class))</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>ytest<span class="ot">=</span> <span class="fu">data.matrix</span>(<span class="fu">select</span>(test, Class))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
+<section id="setting-up-tensorflow" class="slide level2">
+<h2>Setting up Tensorflow</h2>
+<p>Define the model: 2 hidden layers with 100 units each</p>
+<div class="cell" data-hash="10_nonlinear_cache/revealjs/unnamed-chunk-7_9b840742158cea0b336e5cbf047425ea">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>nunits<span class="ot">=</span> <span class="dv">100</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co">#normalizer= layer_normalization(axis= -1)</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co">#normalizer |&gt; adapt(train_features)</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>model<span class="ot">=</span> <span class="fu">keras_model_sequential</span>() <span class="sc">|&gt;</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="co">#  normalizer() |&gt;</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">layer_dense</span>(<span class="at">units=</span> nunits, <span class="at">activation=</span><span class="st">'relu'</span>) <span class="sc">|&gt;</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">layer_dense</span>(<span class="at">units=</span> nunits, <span class="at">activation=</span><span class="st">'relu'</span>) <span class="sc">|&gt;</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">layer_dense</span>(<span class="at">units=</span><span class="dv">1</span>, <span class="at">activation=</span><span class="st">'sigmoid'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Compile the model</p>
+<div class="cell" data-hash="10_nonlinear_cache/revealjs/unnamed-chunk-8_28b0d34918c469f873ae24a6d5c38a46">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>model <span class="sc">|&gt;</span> <span class="fu">compile</span>(</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">loss =</span> <span class="st">'binary_crossentropy'</span>,</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">optimizer =</span> <span class="fu">optimizer_rmsprop</span>(),</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">metrics =</span> <span class="fu">c</span>(<span class="st">'accuracy'</span>)</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Fit the model</p>
+<div class="cell" data-hash="10_nonlinear_cache/revealjs/unnamed-chunk-9_8066fef9b414ba922a476adb68135a4c">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>model <span class="sc">|&gt;</span> <span class="fu">fit</span>(Xtrain, ytrain, <span class="at">epochs =</span> <span class="dv">100</span>, <span class="at">verbose =</span> <span class="dv">0</span>, <span class="at">validation_split =</span> <span class="fl">0.1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="result-accuracy" class="slide level2">
+<h2>Result accuracy</h2>
+<div class="cell" data-hash="10_nonlinear_cache/revealjs/unnamed-chunk-10_5c833d5d224789cedf0ff6cd75a2d5b3">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>ytestpred<span class="ot">=</span> <span class="fu">predict</span>(model, Xtest)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(ytestpred <span class="sc">~</span> ytest, <span class="at">xlab=</span><span class="st">'Malignant tumor'</span>, <span class="at">ylab=</span><span class="st">'Deep learning prediction'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+
+</div>
+<img data-src="10_nonlinear_files/figure-revealjs/unnamed-chunk-10-1.png" width="960" class="r-stretch"><div class="cell" data-hash="10_nonlinear_cache/revealjs/unnamed-chunk-11_7e4308d9796fd2214330790ce5a3d701">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(ytestpred <span class="sc">&gt;</span> <span class="fl">0.5</span>, ytest)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       ytest
+         0  1
+  FALSE 81  1
+  TRUE   3 52</code></pre>
+</div>
+</div>
+<div class="footer footer-default">
+
+</div>
+</section></section>
     </div>
   </div>
 
