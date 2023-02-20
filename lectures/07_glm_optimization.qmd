@@ -535,46 +535,32 @@ Remarks
 
 ## Newton-Raphson using `nlm`
 
-Let's do the optimization. First, store outcome and covariates. We also create `ytX` so that evaluating the log-likelihood is faster
+Let's try out NR in an example. First, store outcome and covariates
 
 ```{r}
 y= ifelse(email$spam=='1',1,0)
-x2= ifelse(email$re_subj=='1',1,0)
-X= cbind(intercept=1, num_char=email$num_char, re_subj=x2)
-ytX= matrix(y,nrow=1) %*% X
+X= cbind(intercept=1, num_char=email$num_char, re_subj=ifelse(email$re_subj=='1',1,0))
 ```
 
-Next, we define the negative log-likelihood
+The objective function is the negative log-likelihood (defined at `routines.R`)
 
 ```{r}
-flogreg= function(beta, y, X, ytX, logscale=TRUE) {
-  if (missing(ytX)) ytX = matrix(y,nrow=1) %*% X
-  if (any(beta != 0)) {
-    Xbeta= as.vector(X %*% matrix(beta,ncol=1))
-    ans= -sum(ytX * beta) + sum(log(1+exp(Xbeta)))
-  } else {
-    n= length(y)
-    ans= n * log(2)
-  }
-  if (!logscale) ans= exp(ans)
-  return(ans)
-}
+flogreg
 ```
-
 
 ---
 
 Finally we call `nlm`. If gradient/hessian not provided, they're approximated numerically
 
 ```{r}
-opt1= nlm(flogreg, rep(0,3), y=y, X=X, ytX=ytX, hessian=TRUE, print.level=2)
+opt1= nlm(flogreg, rep(0,3), y=y, X=X, hessian=TRUE, print.level=2)
 ```
 
 ## Comparison to glm
 
 Check that the gradient is 0
 ```{r}
-opt1$gradient #should be 0
+opt1$gradient #should be 0 (within numerical tolerance)
 ```
 
 The inverse hessian gives the MLE covariance matrix
@@ -609,30 +595,30 @@ Package `sgd` implements stochastic gradient descent for linear/generalized line
 # Poisson regression
 
 
-## Poisson regression
+## Generalized linear models (GLMs)
 
 Generalized linear models are an ample model family based on two components
 
 1. $p(y_i \mid x_i)$ belongs to the so-called exponential family (includes Normal, Binomial, Poisson...)
 
-2. Only the expectation of $p(y_i \mid x_i)$ depends on $x_i$, and does so via $x_i^T \beta$ (in a 1-to-1 fashion)
+2. Only its expectation $\mu_i$ depends on $x_i$, and does so via $x_i^T \beta$ (in a 1-to-1 fashion)
 
 
-**Example.** Logistic regression. $y_i \sim \mbox{Bern}(\pi_i)$
+**Example.** Logistic regression. $y_i \sim \mbox{Bern}(\mu_i)$
 $$
-\pi_i = E(y_i \mid x_i)= \frac{1}{1+e^{-x_i^T \beta}}
+\mu_i = E(y_i \mid x_i)= \frac{1}{1+e^{-x_i^T \beta}}
 $$
 
-**Example.** Poisson regression. $y_i \sim \mbox{Poi}(\mu_i)$
+**Example.** Poisson regression. $y_i \sim \mbox{Poi}(\mu_i)$, with
 $$
-\mu_i =E(y_i \mid x_i)= e^{x_i^T \beta}
+\mu_i = E(y_i \mid x_i)= e^{x_i^T \beta}
 $$
 
 ## Poisson likelihood
 
 Recall: if $Y \sim \mbox{Poi}(\lambda)$ then $P(Y=y)= \lambda^y  e^{-\lambda} / y!$
 
-If $y_i \sim \mbox{Poi}(e^{x_i^T \beta})$ indep $i=1,\ldots,n$,
+If $y_i \sim \mbox{Poi}(\lambda_i)$ where $\lambda_i=e^{x_i^T \beta}$ indep $i=1,\ldots,n$,
 
 $$
 \begin{aligned}
@@ -641,7 +627,19 @@ $$
 &=\sum_{i=1}^n x_i^T \beta y_i - e^{x_i^T \beta} - \log(y_i!)
 \end{aligned}
 $$
-Log-likelihood is concave (strictly concave if $X$ has full column rank)
+Log-likelihood is concave in $\beta$ (strictly concave if $X$ has full column rank)
+
+
+## Parameter interpretation
+
+If two individuals $(i,i')$ are equal in all covariates, except for $x_{i1} \neq x_{i' 1}$, then
+
+$$ \log \mu_i - \log \mu_j= x_{i1} \beta_1 + \sum_{j>1} x_{ij} \beta_j - x_{i'1} \beta_1 - \sum_{j>1} x_{ij} \beta_j= (x_{i1} - x_{i'1}) \beta_1$$
+Hence the ratio of their predicted values is
+$$
+\frac{\mu_i}{\mu_j}= e^{(x_{i1} - x_{i'1}) \beta_1}
+$$
+If $x_{i1}=1$ and $x_{i'1=0}$, then simply $e^{\beta_1}$
 
 
 ## Philippinnes household survey
@@ -711,13 +709,12 @@ ggplot(fHH, aes(x=age,y=total, color=roof)) + geom_point(position="jitter") + ge
 
 Age has a non-linear effect. Two simple options
 
-- Discretize it in 5 year groups
+- Discretize it in (say) 5 year groups
 
 - Add a quadratic effect
 
 ```{r}
 fHH= mutate(fHH, aged= cut_width(age, 5), age2= age^2)
-fHH$roof= recode(fHH$roof, `Predominantly Strong Material`="Strong", `Predominantly Light/Salvaged Material`="Light")
 fHH
 ```
 
@@ -811,7 +808,7 @@ ggplot(fitpred, aes(x=age,y=predmean,group=roof,color=roof)) +
 
 ## Exercise
 
-Based on the plot below, an age vs. roof interaction may be needed. Add it to the model and inspect whether it seems necessary
+Based on the plot below, an interaction roof vs. age and age$^2$ may be needed. Add them to the model and display the model predictions as a function of age & roof
 
 ```{r}
 ggplot(fHH, aes(x=age,y=total, color=roof)) + geom_point(position="jitter") + geom_smooth()
@@ -830,7 +827,8 @@ anova(fit2, fit3, test="Chisq")
 ## A possible solution
 
 ```{r, echo=FALSE}
-fHHint= mutate(fHH, strong= (roof=='Strong'), agestrong= age*(roof=='Strong'), age2strong= age2*(roof=='Strong'))
+fHHint= mutate(fHH, strong= (roof=='Strong Material')) |>
+  mutate(agestrong= age*strong, age2strong= age2*strong)
 fit4= glm(total ~ strong + age + age2 + agestrong + age2strong, data=fHHint, family=poisson())
 
 mygrid= data_grid(fHHint, strong, age)
@@ -839,7 +837,7 @@ mygrid= add_predictions(mygrid, model=fit4) %>% mutate(predmean= exp(pred))
 
 ggplot(mygrid, aes(x=age,y=predmean,group=strong,color=strong)) + 
   geom_line() +
-  labs(x='Age of household head', y='Expected number of people in household') +
+  labs(x='Age of household head', y='Expected number of people in household', color="Strong roof") +
   ylim(0,5)
 ```
 
@@ -887,6 +885,22 @@ ggplot(fHHres, aes(x=predcut, y=respearson)) + geom_boxplot()
 ```
 
 :::
+
+
+## Residual dispersion
+
+Recall that Pearson's residuals are
+$$
+e_i= \frac{y_i - \hat{y}_i}{\sqrt{\hat{V}(y_i)}}
+$$
+
+What should the mean & variance of $e_i$ be? Do we observe that in the Philippines data below?
+
+```{r}
+mean(fHHres$respearson)
+sd(fHHres$respearson)
+```
+
 
 
 ## Over-dispersion
@@ -962,6 +976,8 @@ bootGLM
 mleGLM
 ```
 
+
+
 ---
 
 ```{r}
@@ -991,13 +1007,26 @@ Dataset `campuscrime.txt` from the [Beyond MLR book](https://bookdown.org/roback
 
 - `region`: region of the USA (C = Central, MW = Midwest, NE = Northeast, SE = Southeast, SW = Southwest, and W = West)
 
-**Goal.** Are there differences between college and university, after accounting for enrollment and region? If so, provide a point estimate and a 95% interval for the ratio of expected crimes in university / college. Is there evidence for over-dispersion (if so, use an over-dispersion adjustment)
+---
+
+**Goal.** Study how crimes differ between college and university, after accounting for enrollment and region
+
+- Fit a Poisson regression for crimes vs. `type`, `enroll1000` and `region`. Does `type` have a statistically significant effect at the 0.05 level?
+
+- Provide a point estimate and a 95% interval for the ratio of expected crimes in university / college, that is
+$$
+\frac{E(y_i \mid x_{i1}=U, x_{i2},\ldots,x_{ip})}{E(y_i \mid x_{i1}=C, x_{i2},\ldots,x_{ip})}
+$$
+
+- Is there evidence for over-dispersion? If so, use an over-dispersion adjustment to obtain valid 95% intervals
 
 ---
 
-You can load the data as follows
+Getting started
 
 ```{r}
+library(tidyverse)
+source("../code/routines.R")
 crime= as_tibble(read.table("../datasets/campuscrime.txt", header=TRUE, sep="\t"))
 crime
 ```

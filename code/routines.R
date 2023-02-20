@@ -127,34 +127,23 @@ flogregvec= function(beta, y, ytX, n, X=X, logscale=TRUE) {
 }
 
 #Negative logistic regression log-likelihood
-flogreg= function(beta, y, X, ytX, logscale=TRUE) {
-  if (missing(ytX)) ytX = matrix(y,nrow=1) %*% X
-  if (any(beta != 0)) {
-    Xbeta= as.vector(X %*% matrix(beta,ncol=1))
-    ans= -sum(ytX * beta) + sum(log(1+exp(Xbeta)))
-  } else {
-    n= length(y)
-    ans= n * log(2)
-  }
+flogreg= function(beta, y, X, logscale=TRUE) {
+  ytX = matrix(y,nrow=1) %*% X
+  Xbeta= as.vector(X %*% matrix(beta,ncol=1))
+  ans= -sum(ytX * beta) + sum(log(1+exp(Xbeta)))
   if (!logscale) ans= exp(ans)
   return(ans)
 }
 
 
+
 #Gradient and Hessian of negative logistic regression log-likelihood
-# If beta==0, only ytX, colSumX, XtX are used
-# If beta!=0, only Xbeta and X are used
-fplogreg= function(beta, y, ytX, Xbeta, X, colsumX, XtX) {
-  if (missing(ytX)) ytX = matrix(y,nrow=1) %*% X
-  if (any(beta != 0)) {
-    if (missing(Xbeta)) Xbeta= as.vector(X %*% beta)
-    prob= 1.0/(1.0+exp(-Xbeta))
-    g= -ytX + colSums(X * prob)
-    H= t(X) %*% (prob*(1-prob) * X)
-  } else {
-    g= -ytX + 0.5 * colsumX
-    H= 0.25 * XtX
-  }
+fplogreg= function(beta, y, X) {
+  ytX = matrix(y,nrow=1) %*% X
+  Xbeta= as.vector(X %*% beta)
+  prob= expit(-Xbeta)
+  g= -ytX + colSums(X * prob)
+  H= t(X) %*% (prob*(1-prob) * X)
   return(list(g=g,H=H))
 }
 

@@ -49,24 +49,26 @@ More refined strategies
 
 - Additive regression
 
-- Regression trees / random forests
-
 - Deep learning
+
+- Regression trees / random forests
 
 - ...
 
 
-## Additive models
+# Generalized additive models
+
+---
 
 Additive linear regression. $y_i \sim N(\mu_i, \sigma^2)$,
 
-$$ y_i = \sum_{j=1}^p f_j(x_{ij}) + \epsilon_i $$
+$$ y_i = \sum_{j=1}^p f_j(x_{ij}) + \epsilon_i= \mu_i + \epsilon_i $$
 
 
-Additive logistic regression. $y_i \sim \mbox{Bern}(\pi_i)$
+Additive logistic regression. $y_i \sim \mbox{Bern}(\mu_i)$
 
 
-$$ \log \left( \frac{\pi_i}{1 - \pi_i} \right) = \sum_{j=1}^p f_j(x_{ij}) $$
+$$ \log \left( \frac{\mu_i}{1 - \mu_i} \right) = \sum_{j=1}^p f_j(x_{ij}) $$
 
 Additive Poisson regression. $y_i \sim \mbox{Poisson}(\mu_i)$
 
@@ -198,23 +200,28 @@ summary(fit1)
 summary(fit2)
 ```
 
-### Residuals 1
-
-```{r}
-pred1= data.frame(ypred=predict(fit1), res=residuals(fit1))
-ggplot(pred1, aes(ypred, res)) + geom_point() + geom_smooth()
-```
-
-### Residuals 2
-
-```{r}
-pred2= data.frame(ypred=predict(fit2), res=residuals(fit2))
-ggplot(pred2, aes(ypred, res)) + geom_point() + geom_smooth()
-```
-
-
-
 :::
+
+
+## Exercise
+
+Produce a residuals $\hat{y} - y$ vs. predictions $\hat{y}$ plot for the linear and GAM models
+
+
+1. Does the GAM improve the linearity assumption relative to the linear model?
+In particular, discuss any systematic biases in over- or under-predicting some of the diamonds
+
+2. Does the GAM improve the error normality assumption?
+
+Getting started
+
+```{r, eval=FALSE}
+library(tidyverse)
+library(mgcv)
+diamonds2= mutate(diamonds, lprice=log2(price), lcarat=log2(carat))
+```
+
+
 
 
 # Deep learning
