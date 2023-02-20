@@ -27,10 +27,11 @@ Load required R packages
 
 ```{r, warning=FALSE, message=FALSE}
 library(tidyverse)
+library(keras)
 library(mlbench)
 library(mgcv)
 library(tensorflow)
-library(keras)
+library(reshape2)
 #install_tensorflow()  #run this the first time you use tensorflow
 source("../code/routines.R")
 ```
@@ -176,24 +177,117 @@ ggplot(diamonds2, aes(lcarat, lprice)) +
   labs(x='log2 carats', y='log2 diamond price')
 ```
 
+---
 
+```{r}
+fit1= gam(lprice ~ lcarat + cut + color + clarity, data= diamonds2)     #linear regression
+fit2= gam(lprice ~ s(lcarat) + cut + color + clarity, data= diamonds2)  #GAM
+```
+
+:::panel-tabset
+
+### fit1
+
+```{r}
+summary(fit1)
+```
+
+### fit2
+
+```{r}
+summary(fit2)
+```
+
+### Residuals 1
+
+```{r}
+pred1= data.frame(ypred=predict(fit1), res=residuals(fit1))
+ggplot(pred1, aes(ypred, res)) + geom_point() + geom_smooth()
+```
+
+### Residuals 2
+
+```{r}
+pred2= data.frame(ypred=predict(fit2), res=residuals(fit2))
+ggplot(pred2, aes(ypred, res)) + geom_point() + geom_smooth()
+```
+
+
+
+:::
 
 
 # Deep learning
 
 ##
 
-Resources:
+Neural networks can capture very general non-linear patterns
 
-- (Getting started with deep learning in R guide)[https://posit.co/blog/getting-started-with-deep-learning-in-r]
+```{r, echo=FALSE}
+library(igraph)
 
-- (Deep learning book)[https://srdas.github.io/DLBook] (Chapter 10)
+#Define node locations
+layout= cbind(c(0,0,rep(1,10),rep(2,10),3), c(-2,2,-4:5,-4:5,0))
+
+#Define edges between multiple layers
+edge1= cbind(rep(1:2,each=10),rep(3:12,2))
+edge2= as.matrix(expand.grid(3:12,13:22))
+edge2= edge2[edge2[,1] < edge2[,2],]
+edge3= cbind(rep(13:22), 23)
+edge= rbind(edge1, edge2, edge3)
+
+#Plot network
+g= graph.data.frame(edge, directed=TRUE)
+par(mar=rep(0,4), oma=rep(0,4))
+plot(g, layout=layout, vertex.label=NA, xlim=c(-1,1), ylim=c(-1.1,1.1), asp=0)
+text(-1,1.2,"Covariates", cex=1.25)
+text(-0.33,1.2,"Layer 1", cex=1.25)
+text(0.33,1.2,"Layer 2", cex=1.25)
+text(1,1.2,"Output", cex=1.25)
+```
+
+
+## In a nutshell
+
+Value of node $k$ in layer $j$: linear combination of incoming nodes from layer $j-1$, apply an *activation function*
+
+Let $x^{(0)}$ be the input covariates. For layer $k$, nodes $j=1,\ldots,N_k$ are
+$$ x_j^{(k)}= g\left( w_{kj0} + w_{kj}^T x^{(k-1)} \right)$$
+
+Popular activation functions $g()$: ReLu, softmax, sigmoid
+
+Last layer $K+1$ has 1 node: the outcome
+$\hat{y}= w_{K+1, 0} + w^T_{K+1} x^{(K)}$
+
+Finally, specify loss function: least-squares, logistic regression log-likelihood
+
+
+## Practical issues
+
+- Many parameters ($K$ layers with $N$ nodes has order $p N + K N^2$)
+
+- Many tuning parameters: number of nodes, layers. Train/test data split
+
+- Loss function has many local modes. We'll trust stochastic gradient descent (run the model several times for safety)
+
+
+Further resources
+
+- [Getting started with deep learning in R](https://posit.co/blog/getting-started-with-deep-learning-in-r) guide
+
+- [Deep learning book](https://srdas.github.io/DLBook) (Chapter 10)
 
 
 
 ## Breast cancer data
 
 As illustration we use a binary outcome example, see [here](https://tensorflow.rstudio.com/tutorials/keras/regression) for a continuous outcome example
+
+- Outcome: malignant breast cancer
+
+- 9 covariates measuring cell characteristics
+
+- Sample size $n=699$
 
 
 ## Pre-processing
@@ -231,11 +325,7 @@ Define the model: 2 hidden layers with 100 units each
 ```{r}
 nunits= 100
 
-#normalizer= layer_normalization(axis= -1)
-#normalizer |> adapt(train_features)
-
 model= keras_model_sequential() |>
-#  normalizer() |>
   layer_dense(units= nunits, activation='relu') |>
   layer_dense(units= nunits, activation='relu') |>
   layer_dense(units=1, activation='sigmoid')
@@ -245,7 +335,7 @@ Compile the model
 
 ```{r}
 model |> compile(
-  loss = 'binary_crossentropy',
+  loss = 'binary_crossentropy',    #logistic regression loss
   optimizer = optimizer_rmsprop(),
   metrics = c('accuracy')
 )
@@ -269,6 +359,97 @@ boxplot(ytestpred ~ ytest, xlab='Malignant tumor', ylab='Deep learning predictio
 table(ytestpred > 0.5, ytest)
 ```
 
+
+---
+
+```{r}
+pred= data.frame(predict(model, Xtrain)[,1], Xtrain) |> as_tibble()
+names(pred)= c("ypred",colnames(Xtrain))
+```
+
+
+```{r}
+ggplot(pred, aes(Cl.thickness, ypred)) + geom_point() + geom_smooth()
+```
+
+## All covariates
+
+Trick: re-format data and facet by covariate
+
+```{r}
+pred
+```
+
+
+```{r}
+predlong= melt(pred, id.vars="ypred")  #from package reshape2
+predlong
+```
+
+---
+
+```{r, warning=FALSE}
+ggplot(predlong, aes(value, ypred)) + geom_point() + geom_smooth() + facet_wrap(~ variable)
+```
+
+
+## Compare with a GAM
+
+Let's fit a logistic GAM. Variable `Mitosis` has most data in 1 category, set a linear effect to avoid `gam` returning an error
+
+
+```{r}
+traindata= data.frame(y=ytrain, Xtrain)
+testdata= data.frame(y=ytest, Xtest)
+
+gamfit= gam(Class ~ s(Cl.thickness) + s(Cell.size) + s(Cell.shape) + s(Marg.adhesion) + s(Epith.c.size) + s(Bare.nuclei) + s(Bl.cromatin) + s(Normal.nucleoli) + Mitoses, data=traindata, family=binomial())
+
+gampred= expit(predict(gamfit, newdata=testdata))
+```
+
+---
+
+:::panel-tabset
+
+
+### Test set
+
+```{r}
+boxplot(gampred ~ testdata$Class, xlab='True class', ylab='GAM prediction', cex.lab=1.3)
+```
+
+### GAM vs DL (train)
+
+```{r}
+col= ifelse(ytrain[,1]==1, 'red','black')
+plot(expit(predict(gamfit)), pred$ypred, xlab='GAM', ylab='Deep learning', col=col, main='Training set')
+legend('topleft', c('Malign','Benign'), pch=1, col=c('red','black'))
+```
+
+
+### GAM vs DL (test)
+
+```{r}
+col= ifelse(ytest[,1]==1, 'red','black')
+plot(gampred, ytestpred, xlab='GAM', ylab='Deep learning', col=col, main='Test set')
+legend('topleft', c('Malign','Benign'), pch=1, col=c('red','black'))
+```
+
+:::
+
+
+---
+
+Both models predict very similarly in the test sample. Which one would you use?
+
+```{r}
+table(ytestpred > 0.5, ytest[,1])
+```
+
+
+```{r}
+table(gampred > 0.5, ytest[,1])
+```
 
 
 
