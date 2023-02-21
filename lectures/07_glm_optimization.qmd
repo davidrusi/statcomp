@@ -535,14 +535,13 @@ Remarks
 
 ## Newton-Raphson using `nlm`
 
-Let's try out NR in an example. First, store outcome and covariates
+In R, `nlm` implements Newton-Raphson. Let's try it out in a logistic regression example. The objective function (negative log-likelihood) is 
 
-```{r}
-y= ifelse(email$spam=='1',1,0)
-X= cbind(intercept=1, num_char=email$num_char, re_subj=ifelse(email$re_subj=='1',1,0))
-```
+$$
+\log p(y \mid \beta)= y^T X \beta - \sum_{i=1}^n \log(1 + e^{x_i^T \beta})
+$$
 
-The objective function is the negative log-likelihood (defined at `routines.R`)
+It is function `flogreg`, defined at `routines.R`
 
 ```{r}
 flogreg
@@ -550,25 +549,28 @@ flogreg
 
 ---
 
-Finally we call `nlm`. If gradient/hessian not provided, they're approximated numerically
+To optimize the function, we store outcome and covariates into `y` and `X` and call `nlm`.
+If gradient/hessian not provided, they're approximated numerically
 
 ```{r}
+y= ifelse(email$spam=='1',1,0)
+X= cbind(intercept=1, num_char=email$num_char, re_subj=ifelse(email$re_subj=='1',1,0))
 opt1= nlm(flogreg, rep(0,3), y=y, X=X, hessian=TRUE, print.level=2)
 ```
 
 ## Comparison to glm
 
-Check that the gradient is 0
-```{r}
-opt1$gradient #should be 0 (within numerical tolerance)
-```
+Recall: as $n \rightarrow \infty$ the distribution of $\hat{\beta}$ can be approximated by
+$$
+\hat{\beta} \sim N(\beta^*, H^{-1}(\hat{\beta}))
+$$
 
-The inverse hessian gives the MLE covariance matrix
+The inverse hessian at $\hat{\beta}$ gives the MLE covariance matrix. Hence the standard errors $\sqrt{V(\hat{\beta}_j)}$ are easy to obtain
 
 ```{r}
 thhat= opt1$estimate
-H= opt1$hessian
-se= sqrt(diag(solve(H)))
+V= solve(opt1$hessian) #variance-covariance
+se= sqrt(diag(V))      #standard errors
 ```
 
 Compare to the results from `glm`
@@ -614,11 +616,14 @@ $$
 \mu_i = E(y_i \mid x_i)= e^{x_i^T \beta}
 $$
 
-## Poisson likelihood
+## Poisson model
 
-Recall: if $Y \sim \mbox{Poi}(\lambda)$ then $P(Y=y)= \lambda^y  e^{-\lambda} / y!$
+**Def.** $Y \sim \mbox{Poi}(\mu)$ if
+$P(Y=y)= \mu^y  e^{-\mu} / y!$ for $y=\{0,1,2,\ldots}$
 
-If $y_i \sim \mbox{Poi}(\lambda_i)$ where $\lambda_i=e^{x_i^T \beta}$ indep $i=1,\ldots,n$,
+Moments: $E(Y)= \mu$, $V(Y)= \mu$
+
+**Log-likelihood.** If $y_i \sim \mbox{Poi}(\mu_i)$ where $\mu_i=e^{x_i^T \beta}$ indep $i=1,\ldots,n$,
 
 $$
 \begin{aligned}
@@ -846,13 +851,20 @@ ggplot(mygrid, aes(x=age,y=predmean,group=strong,color=strong)) +
 
 ## Residuals in GLMs
 
-Two popular types of residuals. Let $\hat{y}_i=\hat{E}(y_i \mid x_i)$
+**Def.** Let $\hat{\mu}_i=\hat{E}(y_i \mid x_i)$. The Pearson residual is
+$$
+e_i= \frac{y_i - \hat{\mu}_i}{\sqrt{\hat{V}(y_i)}}
+$$ 
 
-- Pearson residual: $(y_i - \hat{y}_i) / \sqrt{\hat{V}(y_i)}$. In logistic reg. $\hat{V}(y_i)= \hat{y}_i (1-\hat{y_i})$, in Poisson reg. $V(y_i)= \hat{y}_i$
+- Linear regression: $\hat{V}(y_i)= \hat{\sigma}^2$
 
-- Deviance residual: compares the log-likelihood of $y_i$ relative to a model with perfect prediction $\hat{y}_i=y_i$
+- Logistic regression: $\hat{V}(y_i)= \hat{\mu}_i (1-\hat{\mu}_i)$
 
-Both can be used like residuals in standard Gaussian linear regression
+- Poisson regression: $V(y_i)= \hat{\mu}_i$
+
+Alternatively, deviance residuals. They compare the log-likelihood of $y_i$ at $\mu_i=\hat{\mu}_i$ relative to a model with perfect prediction $\mu_i= y_i$
+
+Pearson/deviance residuals are used like residuals in ordinary linear regression
 
 
 ## Example
@@ -889,7 +901,7 @@ ggplot(fHHres, aes(x=predcut, y=respearson)) + geom_boxplot()
 
 ## Residual dispersion
 
-Recall that Pearson's residuals are
+Recall that Pearson residuals are
 $$
 e_i= \frac{y_i - \hat{y}_i}{\sqrt{\hat{V}(y_i)}}
 $$
@@ -905,13 +917,13 @@ sd(fHHres$respearson)
 
 ## Over-dispersion
 
-Important assumption in logistic/Poisson regression: $E(y_i)$ determines $V(y_i)$
+Assumption in logistic/Poisson regression: $\mu_i=E(y_i \mid x_i)$ determines $V(y_i \mid x_i)$
 
-- Logistic: $V(y_i)= E(y_i) [1 - E(y_i)]$
+- Logistic: $V(y_i)= \mu_i (1 - \mu_i)$
 
-- Poisson: $V(y_i)= E(y_i)$
+- Poisson: $V(y_i)= \mu_i$
 
-If the assumed $V(y_i)$ is correct, the variance of Pearson residuals $e_i= (y_i - \hat{E}(y_i))/\sqrt{\hat{V}(y_i)}$ 
+If the assumed $V(y_i \mid x_i)$ is correct, the variance of Pearson residuals
 
 - Should be $\approx 1$
 
@@ -926,7 +938,7 @@ $$
 $$
 where $e_i$ are Pearson residuals. If $\hat{\phi}$ much larger than 1, there is over-dispersion
 
-It's possible to prove that then $\hat{\beta}$ has variance $\phi V(\hat{\beta})$, where $V(\hat{\beta})$ is the covariance given by standard theory
+**Result.** If there is over-dispersion, $\hat{\beta}$ has variance $\phi V(\hat{\beta})$, where $V(\hat{\beta})$ is the covariance given by standard theory returned by `glm`
 
 One may then adjust the MLE variance $V(\hat{\beta})$ into 
 $$V_Q(\hat{\beta})= \hat{\phi} V(\hat{\beta})$$
@@ -1007,6 +1019,9 @@ Dataset `campuscrime.txt` from the [Beyond MLR book](https://bookdown.org/roback
 
 - `region`: region of the USA (C = Central, MW = Midwest, NE = Northeast, SE = Southeast, SW = Southwest, and W = West)
 
+Turn in an html with your solution [here](https://drive.google.com/drive/folders/1jhh1CrXM3hqc7qTrOYeQzo2pV8Vly1NY?usp=sharing).
+Name your file firstname_lastname.html
+
 ---
 
 **Goal.** Study how crimes differ between college and university, after accounting for enrollment and region
@@ -1018,7 +1033,9 @@ $$
 \frac{E(y_i \mid x_{i1}=U, x_{i2},\ldots,x_{ip})}{E(y_i \mid x_{i1}=C, x_{i2},\ldots,x_{ip})}
 $$
 
-- Is there evidence for over-dispersion? If so, use an over-dispersion adjustment to obtain valid 95% intervals
+- Is there evidence for over-dispersion? If so, use an over-dispersion adjustment to obtain valid 95% intervals. Do you obtain different conclusions as to whether `type` has a statistically significant effect?
+
+
 
 ---
 

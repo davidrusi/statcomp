@@ -127,11 +127,10 @@ flogregvec= function(beta, y, ytX, n, X=X, logscale=TRUE) {
 }
 
 #Negative logistic regression log-likelihood
-flogreg= function(beta, y, X, logscale=TRUE) {
+flogreg= function(beta, y, X) {
   ytX = matrix(y,nrow=1) %*% X
   Xbeta= as.vector(X %*% matrix(beta,ncol=1))
   ans= -sum(ytX * beta) + sum(log(1+exp(Xbeta)))
-  if (!logscale) ans= exp(ans)
   return(ans)
 }
 
