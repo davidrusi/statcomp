@@ -65,6 +65,8 @@ Let outcome $y \in \mathbb{R}^n$, $X_1$ is $n \times p_1$, $X_2$ is $n \times p_
 
 - Model 2 features $X_1 \beta_1 + X_2 \beta_2$, $\beta_1 \in \mathbb{R}^{p_1}$, $\beta_2 \in \mathbb{R}^{p_2}$
 
+**Example.** $y_i = x_{1i}^T \beta_1 + x_{2i}^T \beta_2 + \epsilon_i$
+
 **Goal.** Test the null hypothesis $H_0: \beta_2=0$
 
 The standard test for such $H_0$ is the *likelihood ratio test*
@@ -102,7 +104,7 @@ $$
 \mbox{LR}_{21} \stackrel{D}{\longrightarrow} \chi_{p_2}^2
 $$
 
-Note: as $n-p_2 \rightarrow \infty$, $F_{p_2,n-p_2} \stackrel{D}{\longrightarrow} \chi_{p_2}^2$
+Note: as $n \rightarrow \infty$, $F_{p_2,n-p_2} \stackrel{D}{\longrightarrow} \chi_{p_2}^2$
 
 ## Likelihood ratio test
 
@@ -112,11 +114,13 @@ $$
 y = X_1 \beta_1 + \epsilon \mbox{, where } \epsilon \sim N(0, \sigma^2 I)
 $$
 
+In R, LRTs are implemented in function `anova`
+
 Otherwise, one can estimate the distribution of $\mbox{LR}_{21}$ under $H_0$ using permutations
 
 ## Example
 
-<small> (data from Lander's [R for everyone](https://www.jaredlander.com/r-for-everyone/data-in-r-for-everyone), from NYC Open Data </small>
+<small> (data from Lander's [R for everyone](https://www.jaredlander.com/r-for-everyone/data-in-r-for-everyone), from NYC Open Data) </small>
 
 $n=2,626$ condos in different New York boroughs (2011-12)
 
@@ -261,7 +265,7 @@ then $\beta_1$ is the difference between Manhattan and the reference borough **w
 Re-parameterize the model to facilitate interpretation. Let lSqFt0 be a mean-centered version of lSqFt, so that $\mbox{lSqFt0}_i = 0 \Rightarrow \mbox{lSqFt}_i=\mbox{mean(lSqFt)}$
 
 $$
-E(y_i) = \beta_0 + \beta_1 \mbox{manhattan_i} + \beta_2 \mbox{lSqFt_i} + \beta_3 \mbox{manhattan}_i \times \mbox{lSqFt0_i}
+E(y_i) = \beta_0 + \beta_1 \mbox{manhattan_i} + \beta_2 \mbox{lSqFt0_i} + \beta_3 \mbox{manhattan}_i \times \mbox{lSqFt0_i}
 $$
 
 Now $\beta_1$ is the Manhattan effect for condos with average log-SqFt
@@ -277,6 +281,13 @@ coefplot(fit5)
 ```
 
 
+# Take-home message
+
+
+Testing $(\beta_1,\beta_2)=(0,0)$ not the same as testing $\beta_1=0$ and $\beta_2=0$. Even if the latter are both non-significant, the former may be
+
+
+We must interpret such tests carefully when there's parameter interactions. Mean-centering the covariates may help a bit
 
 
 # Best model for forecasting
@@ -285,9 +296,9 @@ coefplot(fit5)
 
 Hypothesis tests are conservative in nature, e.g. unless fairly sure that $\beta_1 \neq 0$, set $\beta_1=0$
 
-Estimating and forecasting tend to be more liberal, e.g. MLE $\hat{\beta}_1$ has good properties as $n$ grows. This said, adding unnecessary parameters to a model can hurt predictions
+Estimating and forecasting tend to be more liberal, e.g. MLE $\hat{\beta}_1$ has reasonable predictive properties as $n$ grows. This said, adding unnecessary parameters to a model can hurt predictions
 
-Over-fitting is a key notion to assess forecasting accuracy of a model/algorithm
+**Over-fitting** is a key notion to assess forecasting accuracy of a model/algorithm
 
 
 ## Example
@@ -567,14 +578,14 @@ To compare the models `fit1` and `fit3` fitted to the email data:
 
 1. Test the null hypothesis $H_0$ that all parameters added by `fit3` are truly 0. Do you reject $H_0$?
 
-2. Suppose you classify as spam whenever $\hat{\pi}_i > 0.5$. Use `cv.glm` to obtain a cross-validated estimate of the proportion of miss-classifications by `fit1` and `fit3`
+2. Suppose you classify as spam whenever $\hat{\pi}_i > 0.5$. Use `cv.glm` to obtain a cross-validated estimate of the proportion of miss-classifications by `fit1` and `fit3`. Whic of the 2 models is best?
 
 
 
 
 ## ROC curve
 
-Suppose we take $\hat{y}_i$ when $\hat{\pi}_i > t$ for some $t$ 
+Suppose we take $\hat{y}_i$ when $\hat{\pi}_i= \hat{P}(y_i=1) > t$ for some $t$ 
 
 |              |  $y_i=0$ |  $y_i=1$ |
 |--------------|:--------:|:--------:|
@@ -607,8 +618,8 @@ Receiving Operator Characteristic (ROC) curve shows spec vs sens for all $t$
 
 ```{r}
 sel= sample(1:nrow(email), size= round(0.9*nrow(email)), replace=FALSE)
-emailtrain= email[sel,]
-emailtest= email[-sel,]
+emailtrain= email[sel,] #90% for training data
+emailtest= email[-sel,] #10% for test data
 
 fit1train= glm(spam ~ to_multiple + cc + sent_email, data=emailtrain, family=binomial())
 fit3train= glm(spam ~ to_multiple + cc + sent_email + image + attach + dollar + winner, data=emailtrain, family=binomial())

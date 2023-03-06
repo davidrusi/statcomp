@@ -398,6 +398,7 @@
 <h2 id="toc-title">Table of contents</h2>
 <ul>
 <li><a href="#/testing-2-nested-models" id="/toc-testing-2-nested-models">Testing 2 nested models</a></li>
+<li><a href="#/take-home-message" id="/toc-take-home-message">Take-home message</a></li>
 <li><a href="#/best-model-for-forecasting" id="/toc-best-model-for-forecasting">Best model for forecasting</a></li>
 <li><a href="#/best-model-for-explaining" id="/toc-best-model-for-explaining">Best model for explaining</a></li>
 <li><a href="#/too-many-models" id="/toc-too-many-models">Too many models</a></li>
@@ -443,6 +444,7 @@
 <li><p>Model 1 has a regression equation driven by <span class="math inline">\(X_1 \beta_1\)</span>, <span class="math inline">\(\beta_1 \in \mathbb{R}^{p_1}\)</span></p></li>
 <li><p>Model 2 features <span class="math inline">\(X_1 \beta_1 + X_2 \beta_2\)</span>, <span class="math inline">\(\beta_1 \in \mathbb{R}^{p_1}\)</span>, <span class="math inline">\(\beta_2 \in \mathbb{R}^{p_2}\)</span></p></li>
 </ul>
+<p><strong>Example.</strong> <span class="math inline">\(y_i = x_{1i}^T \beta_1 + x_{2i}^T \beta_2 + \epsilon_i\)</span></p>
 <p><strong>Goal.</strong> Test the null hypothesis <span class="math inline">\(H_0: \beta_2=0\)</span></p>
 <p>The standard test for such <span class="math inline">\(H_0\)</span> is the <em>likelihood ratio test</em></p>
 <p>Note: models may also feature a dispersion parameter (e.g.&nbsp;<span class="math inline">\(\sigma^2\)</span>)</p>
@@ -468,7 +470,7 @@ L_2= \max_{\theta_2} \log p(y \mid \theta_2)
 <p><strong>Result.</strong> For generalized linear models, under mild technical conditions as <span class="math inline">\(n \rightarrow \infty\)</span> <span class="math display">\[
 \mbox{LR}_{21} \stackrel{D}{\longrightarrow} \chi_{p_2}^2
 \]</span></p>
-<p>Note: as <span class="math inline">\(n-p_2 \rightarrow \infty\)</span>, <span class="math inline">\(F_{p_2,n-p_2} \stackrel{D}{\longrightarrow} \chi_{p_2}^2\)</span></p>
+<p>Note: as <span class="math inline">\(n \rightarrow \infty\)</span>, <span class="math inline">\(F_{p_2,n-p_2} \stackrel{D}{\longrightarrow} \chi_{p_2}^2\)</span></p>
 </section>
 <section id="likelihood-ratio-test-2" class="slide level2">
 <h2>Likelihood ratio test</h2>
@@ -476,11 +478,12 @@ L_2= \max_{\theta_2} \log p(y \mid \theta_2)
 <p><span class="math display">\[
 y = X_1 \beta_1 + \epsilon \mbox{, where } \epsilon \sim N(0, \sigma^2 I)
 \]</span></p>
+<p>In R, LRTs are implemented in function <code>anova</code></p>
 <p>Otherwise, one can estimate the distribution of <span class="math inline">\(\mbox{LR}_{21}\)</span> under <span class="math inline">\(H_0\)</span> using permutations</p>
 </section>
 <section id="example" class="slide level2">
 <h2>Example</h2>
-<p><small> (data from Lander’s <a href="https://www.jaredlander.com/r-for-everyone/data-in-r-for-everyone">R for everyone</a>, from NYC Open Data </small></p>
+<p><small> (data from Lander’s <a href="https://www.jaredlander.com/r-for-everyone/data-in-r-for-everyone">R for everyone</a>, from NYC Open Data) </small></p>
 <p><span class="math inline">\(n=2,626\)</span> condos in different New York boroughs (2011-12)</p>
 <ul>
 <li><p>Outcome: value per square foot (<code>ValuePerSqFt</code>)</p></li>
@@ -722,7 +725,7 @@ E(y_i) = \beta_0 + \beta_1 \mbox{manhattan_i} + \beta_2 \mbox{lSqFt_i} + \beta_3
 \]</span> then <span class="math inline">\(\beta_1\)</span> is the difference between Manhattan and the reference borough <strong>when <span class="math inline">\(\mbox{lSqFt}_i=0\)</span></strong>. But all condos have <span class="math inline">\(\mbox{lSqFt}_i &gt; 2.5\)</span></p>
 <p>Re-parameterize the model to facilitate interpretation. Let lSqFt0 be a mean-centered version of lSqFt, so that <span class="math inline">\(\mbox{lSqFt0}_i = 0 \Rightarrow \mbox{lSqFt}_i=\mbox{mean(lSqFt)}\)</span></p>
 <p><span class="math display">\[
-E(y_i) = \beta_0 + \beta_1 \mbox{manhattan_i} + \beta_2 \mbox{lSqFt_i} + \beta_3 \mbox{manhattan}_i \times \mbox{lSqFt0_i}
+E(y_i) = \beta_0 + \beta_1 \mbox{manhattan_i} + \beta_2 \mbox{lSqFt0_i} + \beta_3 \mbox{manhattan}_i \times \mbox{lSqFt0_i}
 \]</span></p>
 <p>Now <span class="math inline">\(\beta_1\)</span> is the Manhattan effect for condos with average log-SqFt</p>
 </section>
@@ -736,6 +739,12 @@ E(y_i) = \beta_0 + \beta_1 \mbox{manhattan_i} + \beta_2 \mbox{lSqFt_i} + \beta_3
 
 </div>
 <img data-src="08_model_comparison_files/figure-revealjs/unnamed-chunk-17-1.png" width="960" class="r-stretch"></section></section>
+<section id="take-home-message" class="title-slide slide level1 center">
+<h1>Take-home message</h1>
+<p>Testing <span class="math inline">\((\beta_1,\beta_2)=(0,0)\)</span> not the same as testing <span class="math inline">\(\beta_1=0\)</span> and <span class="math inline">\(\beta_2=0\)</span>. Even if the latter are both non-significant, the former may be</p>
+<p>We must interpret such tests carefully when there’s parameter interactions. Mean-centering the covariates may help a bit</p>
+</section>
+
 <section>
 <section id="best-model-for-forecasting" class="title-slide slide level1 center">
 <h1>Best model for forecasting</h1>
@@ -744,8 +753,8 @@ E(y_i) = \beta_0 + \beta_1 \mbox{manhattan_i} + \beta_2 \mbox{lSqFt_i} + \beta_3
 <section id="forecasting-is-not-testing" class="slide level2">
 <h2>Forecasting is not testing</h2>
 <p>Hypothesis tests are conservative in nature, e.g.&nbsp;unless fairly sure that <span class="math inline">\(\beta_1 \neq 0\)</span>, set <span class="math inline">\(\beta_1=0\)</span></p>
-<p>Estimating and forecasting tend to be more liberal, e.g.&nbsp;MLE <span class="math inline">\(\hat{\beta}_1\)</span> has good properties as <span class="math inline">\(n\)</span> grows. This said, adding unnecessary parameters to a model can hurt predictions</p>
-<p>Over-fitting is a key notion to assess forecasting accuracy of a model/algorithm</p>
+<p>Estimating and forecasting tend to be more liberal, e.g.&nbsp;MLE <span class="math inline">\(\hat{\beta}_1\)</span> has reasonable predictive properties as <span class="math inline">\(n\)</span> grows. This said, adding unnecessary parameters to a model can hurt predictions</p>
+<p><strong>Over-fitting</strong> is a key notion to assess forecasting accuracy of a model/algorithm</p>
 </section>
 <section id="example-1" class="slide level2">
 <h2>Example</h2>
@@ -1026,12 +1035,12 @@ y_i= \sin(2\pi x) + \epsilon_i \mbox{, where } \epsilon_i \sim N(0,0.2^2)
 <p>To compare the models <code>fit1</code> and <code>fit3</code> fitted to the email data:</p>
 <ol type="1">
 <li><p>Test the null hypothesis <span class="math inline">\(H_0\)</span> that all parameters added by <code>fit3</code> are truly 0. Do you reject <span class="math inline">\(H_0\)</span>?</p></li>
-<li><p>Suppose you classify as spam whenever <span class="math inline">\(\hat{\pi}_i &gt; 0.5\)</span>. Use <code>cv.glm</code> to obtain a cross-validated estimate of the proportion of miss-classifications by <code>fit1</code> and <code>fit3</code></p></li>
+<li><p>Suppose you classify as spam whenever <span class="math inline">\(\hat{\pi}_i &gt; 0.5\)</span>. Use <code>cv.glm</code> to obtain a cross-validated estimate of the proportion of miss-classifications by <code>fit1</code> and <code>fit3</code>. Whic of the 2 models is best?</p></li>
 </ol>
 </section>
 <section id="roc-curve" class="slide level2">
 <h2>ROC curve</h2>
-<p>Suppose we take <span class="math inline">\(\hat{y}_i\)</span> when <span class="math inline">\(\hat{\pi}_i &gt; t\)</span> for some <span class="math inline">\(t\)</span></p>
+<p>Suppose we take <span class="math inline">\(\hat{y}_i\)</span> when <span class="math inline">\(\hat{\pi}_i= \hat{P}(y_i=1) &gt; t\)</span> for some <span class="math inline">\(t\)</span></p>
 <table>
 <thead>
 <tr class="header">
@@ -1074,10 +1083,10 @@ y_i= \sin(2\pi x) + \epsilon_i \mbox{, where } \epsilon_i \sim N(0,0.2^2)
 <li><p>Small <span class="math inline">\(t\)</span> reduces specificity, but increases sensitivity</p></li>
 </ul>
 <p>Receiving Operator Characteristic (ROC) curve shows spec vs sens for all <span class="math inline">\(t\)</span></p>
-<div class="cell" data-hash="08_model_comparison_cache/revealjs/unnamed-chunk-31_bee6a7cc641e7ab4c626e9fab1ce20ac">
+<div class="cell" data-hash="08_model_comparison_cache/revealjs/unnamed-chunk-31_de1d66183b3a1220ba06a25b26308c59">
 <div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>sel<span class="ot">=</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(email), <span class="at">size=</span> <span class="fu">round</span>(<span class="fl">0.9</span><span class="sc">*</span><span class="fu">nrow</span>(email)), <span class="at">replace=</span><span class="cn">FALSE</span>)</span>
-<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>emailtrain<span class="ot">=</span> email[sel,]</span>
-<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>emailtest<span class="ot">=</span> email[<span class="sc">-</span>sel,]</span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>emailtrain<span class="ot">=</span> email[sel,] <span class="co">#90% for training data</span></span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>emailtest<span class="ot">=</span> email[<span class="sc">-</span>sel,] <span class="co">#10% for test data</span></span>
 <span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>fit1train<span class="ot">=</span> <span class="fu">glm</span>(spam <span class="sc">~</span> to_multiple <span class="sc">+</span> cc <span class="sc">+</span> sent_email, <span class="at">data=</span>emailtrain, <span class="at">family=</span><span class="fu">binomial</span>())</span>
 <span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a>fit3train<span class="ot">=</span> <span class="fu">glm</span>(spam <span class="sc">~</span> to_multiple <span class="sc">+</span> cc <span class="sc">+</span> sent_email <span class="sc">+</span> image <span class="sc">+</span> attach <span class="sc">+</span> dollar <span class="sc">+</span> winner, <span class="at">data=</span>emailtrain, <span class="at">family=</span><span class="fu">binomial</span>())</span>
