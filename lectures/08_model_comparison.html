@@ -1164,6 +1164,9 @@ y_i= \sin(2\pi x) + \epsilon_i \mbox{, where } \epsilon_i \sim N(0,0.2^2)
 \end{aligned}
 \]</span> where <span class="math inline">\(p_k=\mbox{dim}(\theta_k)\)</span> is the number of parameters in <span class="math inline">\(M_k\)</span> and <span class="math inline">\(n\)</span> the sample size</p>
 <p>Model selection strategy: evaluate BIC for all candidate models <span class="math inline">\(M_1,\ldots,M_K\)</span>, choose the one with lowest BIC (analogously for AIC)</p>
+<p>If this sounds weird, recall that in linear regression <span class="math inline">\(-2 L_k(\hat{\theta}_k)\)</span> is given by the sum of squared residuals <span class="math display">\[
+\sum_{i=1}^n (y_i - x_i^T \hat{\beta}_k)^2
+\]</span></p>
 </section>
 <section id="example.-email-data" class="slide level2">
 <h2>Example. Email data</h2>

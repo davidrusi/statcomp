@@ -45,7 +45,7 @@ In some applications it can be critical to capture non-linear effects. We alread
 
 - Discretize $x_{ij}$ into several groups
 
-More refined strategies
+More refined strategies (e.g. used by `ggplot`)
 
 - Additive regression
 
@@ -54,6 +54,8 @@ More refined strategies
 - Regression trees / random forests
 
 - ...
+
+
 
 
 # Generalized additive models
@@ -105,7 +107,7 @@ legend('topright',c("Truth","Estimated"),lty=1,col=c("blue","black"))
 
 ## Additive models via basis functions
 
-Idea: transform $x_{ij} \in \mathbb{R}^p$ into vector ${\bf w}_j(x_{ij}) \in \mathbb{R}^L$. Let
+Idea: transform $x_{ij} \in \mathbb{R}$ into vector $w_j(x_{ij}) \in \mathbb{R}^L$. Let
  
 $$
 \sum_{j=1}^p f_j(x_{ij})= \sum_{j=1}^p w_j(x_{ij})^T \beta_j
@@ -155,13 +157,13 @@ Since $\sum_{j=1}^p f_j(x_{ij})= \sum_{j=1}^p w_j(x_{ij})^T \beta_j$, we can wri
 $$
 y= W \beta + \epsilon
 $$
-where $y, \epsilon \in \mathbb{R}$, $W$ contains all the $w_j(x_{ij})$'s and $\beta^T= (\beta_1^T,\ldots,\beta_p^T) \in \mathbb{R}^{pL}$ 
+where $y, \epsilon \in \mathbb{R}^n$, $W$ contains all the $w_j(x_{ij})$'s and $\beta^T= (\beta_1^T,\ldots,\beta_p^T) \in \mathbb{R}^{pL}$ 
 
 A standard linear regression model!
 
 - In principle, we could use least-squares
 
-- Since $LP$ is large, use generalized cross-validation to avoid over-fitting
+- Many parameters ($pL$), use generalized cross-validation to avoid over-fitting
 
 GCV is a computationally faster alternative to cross-validation
 

@@ -696,6 +696,11 @@ where $p_k=\mbox{dim}(\theta_k)$ is the number of parameters in $M_k$ and $n$ th
 
 Model selection strategy: evaluate BIC for all candidate models $M_1,\ldots,M_K$, choose the one with lowest BIC (analogously for AIC)
 
+If this sounds weird, recall that in linear regression $-2 L_k(\hat{\theta}_k)$ is given by the sum of squared residuals
+$$
+\sum_{i=1}^n (y_i - x_i^T \hat{\beta}_k)^2
+$$
+
 
 ## Example. Email data
 
