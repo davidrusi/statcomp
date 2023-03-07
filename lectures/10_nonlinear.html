@@ -682,9 +682,9 @@ GCV = 0.032383  Scale est. = 0.032367  n = 53940</code></pre>
 <section id="in-a-nutshell" class="slide level2">
 <h2>In a nutshell</h2>
 <p>Value of node <span class="math inline">\(k\)</span> in layer <span class="math inline">\(j\)</span>: linear combination of incoming nodes from layer <span class="math inline">\(j-1\)</span>, apply an <em>activation function</em></p>
-<p>Let <span class="math inline">\(x^{(0)}\)</span> be the input covariates. For layer <span class="math inline">\(k\)</span>, nodes <span class="math inline">\(j=1,\ldots,N_k\)</span> are <span class="math display">\[ x_j^{(k)}= g\left( w_{kj0} + w_{kj}^T x^{(k-1)} \right)\]</span></p>
+<p>Let <span class="math inline">\(x^{(0)}\)</span> be the input covariates. For layer <span class="math inline">\(k\)</span>, nodes <span class="math inline">\(j=1,\ldots,N_k\)</span> are <span class="math display">\[ x_j^{(k)}= g\left( \beta_{kj0} + \beta_{kj}^T x^{(k-1)} \right)\]</span></p>
 <p>Popular activation functions <span class="math inline">\(g()\)</span>: ReLu, softmax, sigmoid</p>
-<p>Last layer <span class="math inline">\(K+1\)</span> has 1 node: the outcome <span class="math inline">\(\hat{y}= w_{K+1, 0} + w^T_{K+1} x^{(K)}\)</span></p>
+<p>Last layer <span class="math inline">\(K+1\)</span> has 1 node: the outcome <span class="math inline">\(\hat{y}= \beta_{K+1, 0} + w^T_{K+1} x^{(K)}\)</span></p>
 <p>Finally, specify loss function: least-squares, logistic regression log-likelihood</p>
 </section>
 <section id="practical-issues" class="slide level2">
@@ -712,9 +712,9 @@ GCV = 0.032383  Scale est. = 0.032367  n = 53940</code></pre>
 <section id="pre-processing" class="slide level2">
 <h2>Pre-processing</h2>
 <p>Convert to numeric, standardize covariates to mean 0 &amp; variance 1 (important!), train/test split</p>
-<div class="cell" data-hash="10_nonlinear_cache/revealjs/unnamed-chunk-11_afc4b5babfcab446bc911fc32bff8f17">
+<div class="cell" data-hash="10_nonlinear_cache/revealjs/unnamed-chunk-11_805b9117d88b2ad086eab0017ab9eaa0">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"BreastCancer"</span>)  <span class="co">#package mlbench</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>BreastCancer <span class="ot">=</span> BreastCancer[<span class="fu">which</span>(<span class="fu">complete.cases</span>(BreastCancer)<span class="sc">==</span><span class="cn">TRUE</span>),]</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>BreastCancer <span class="ot">=</span> BreastCancer[<span class="fu">which</span>(<span class="fu">complete.cases</span>(BreastCancer)<span class="sc">==</span><span class="cn">TRUE</span>),] <span class="co">#exclude cases with missing values</span></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>BreastCancer <span class="ot">=</span> <span class="fu">mutate</span>(BreastCancer, <span class="at">Class=</span> <span class="fu">ifelse</span>(Class<span class="sc">==</span><span class="st">'malignant'</span>,<span class="dv">1</span>,<span class="dv">0</span>)) <span class="sc">|&gt;</span></span>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate_if</span>(is.factor, as.numeric) <span class="sc">|&gt;</span> <span class="co">#convert factors to numeric</span></span>
 <span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>Id)  <span class="co">#drop Id column</span></span>
@@ -723,7 +723,7 @@ GCV = 0.032383  Scale est. = 0.032367  n = 53940</code></pre>
 <span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>BreastCancer<span class="ot">=</span> <span class="fu">mutate_at</span>(BreastCancer, covars, scale) <span class="co">#standardize to mean 0, variance 1</span></span>
 <span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>n<span class="ot">=</span> <span class="fu">nrow</span>(BreastCancer)</span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>sel<span class="ot">=</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span>n, <span class="at">size=</span><span class="fu">round</span>(<span class="fl">0.8</span><span class="sc">*</span>n), <span class="at">replace=</span><span class="cn">FALSE</span>)</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>sel<span class="ot">=</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span>n, <span class="at">size=</span><span class="fu">round</span>(<span class="fl">0.8</span><span class="sc">*</span>n), <span class="at">replace=</span><span class="cn">FALSE</span>)  <span class="co">#80% of data in training set, 20% in test set</span></span>
 <span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>train<span class="ot">=</span> BreastCancer[sel,]</span>
 <span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>test<span class="ot">=</span> BreastCancer[<span class="sc">-</span>sel,]</span>
 <span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a></span>

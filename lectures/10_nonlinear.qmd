@@ -261,12 +261,12 @@ text(1,1.2,"Output", cex=1.25)
 Value of node $k$ in layer $j$: linear combination of incoming nodes from layer $j-1$, apply an *activation function*
 
 Let $x^{(0)}$ be the input covariates. For layer $k$, nodes $j=1,\ldots,N_k$ are
-$$ x_j^{(k)}= g\left( w_{kj0} + w_{kj}^T x^{(k-1)} \right)$$
+$$ x_j^{(k)}= g\left( \beta_{kj0} + \beta_{kj}^T x^{(k-1)} \right)$$
 
 Popular activation functions $g()$: ReLu, softmax, sigmoid
 
 Last layer $K+1$ has 1 node: the outcome
-$\hat{y}= w_{K+1, 0} + w^T_{K+1} x^{(K)}$
+$\hat{y}= \beta_{K+1, 0} + w^T_{K+1} x^{(K)}$
 
 Finally, specify loss function: least-squares, logistic regression log-likelihood
 
@@ -305,7 +305,7 @@ Convert to numeric, standardize covariates to mean 0 & variance 1 (important!), 
 
 ```{r}
 data("BreastCancer")  #package mlbench
-BreastCancer = BreastCancer[which(complete.cases(BreastCancer)==TRUE),]
+BreastCancer = BreastCancer[which(complete.cases(BreastCancer)==TRUE),] #exclude cases with missing values
 BreastCancer = mutate(BreastCancer, Class= ifelse(Class=='malignant',1,0)) |>
   mutate_if(is.factor, as.numeric) |> #convert factors to numeric
   select(-Id)  #drop Id column
@@ -314,7 +314,7 @@ covars= names(select(BreastCancer, -Class))
 BreastCancer= mutate_at(BreastCancer, covars, scale) #standardize to mean 0, variance 1
 
 n= nrow(BreastCancer)
-sel= sample(1:n, size=round(0.8*n), replace=FALSE)
+sel= sample(1:n, size=round(0.8*n), replace=FALSE)  #80% of data in training set, 20% in test set
 train= BreastCancer[sel,]
 test= BreastCancer[-sel,]
 
