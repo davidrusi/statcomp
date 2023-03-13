@@ -144,11 +144,11 @@ ggplot(diamonds, aes(price)) +
 
 ## Plot layout
 
-Code chunks have layouts attributes to arrange the output
+Code chunks have layout attributes to arrange the output
 
-- `#|layout-nrow`: number of rows
+- `#| layout-nrow`: number of rows
 
-- `#|layout-nrow`: number of columns
+- `#| layout-nrow`: number of columns
 
 - `#| layout: [] `: rows / columns of different sizes
 
