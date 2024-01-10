@@ -16,7 +16,7 @@ mouse-wheel: true
 code-overflow: scroll
 code-line-numbers: false
 code-copy: true
-cache: true
+cache: false
 title-slide-style: pandoc
 bibliography: references.bib
 ---
@@ -30,6 +30,7 @@ Required R packages
 ```{r, eval=FALSE}
 install.packages("dplyr")
 install.packages("ggplot2")
+install.packages("forcats")
 install.packages("tidyverse")
 install.packages("devtools")
 devtools::install_github("rstudio-education/dsbox")
@@ -39,6 +40,7 @@ Once they're installed, load them.
 
 ```{r, warning=FALSE}
 library(tidyverse)  #also loads ggplot2
+library(forcats)
 library(dplyr)
 library(dsbox)
 ```
@@ -72,7 +74,7 @@ Our definition of statistical computing
 
 A road map
 
-- Data visualization
+- Data visualization & manipulation
 
 - Models for continuous/binary/count data, interpretation, model-checking
 
@@ -93,7 +95,7 @@ Alternatively, [posit cloud](https://posit.cloud) has a free plan
 
 -   Jared Lander's *R for everyone*
 
--   Hadley Wickam's [R for Data Science](https://r4ds.had.co.nz). [Second edition (in progress)](https://r4ds.hadley.nz)
+-   Hadley Wickam's [R for Data Science](https://r4ds.had.co.nz). [Second edition](https://r4ds.hadley.nz)
 
 -   Paul Roback & Julie Legler's [Applied GLMs and multilevel models](https://bookdown.org/roback/bookdown-BeyondMLR)
 
@@ -142,7 +144,7 @@ starwars
 Scatterplots help reveal trends, and **outliers**
 
 ```{r}
-par(mar = c(4, 4, 1, .1))
+par(mar = c(4, 4, 1, .1)) #set plot margins (amount of white space)
 plot(starwars$height, starwars$mass, xlab='Height (cm)', ylab='Mass (kg)')
 ```
 
@@ -222,15 +224,14 @@ Basic data types: <small> `numeric`, `double`, `integer`, `logical`, `character`
 class(z)
 is.double(z)
 is.integer(z)
-zi= as.integer(z)
-class(zi)
-as.character(zi)
+as.integer(z)
+as.character(z)
 ```
 
 ```{r}
-sel= (z>5)
+sel= (z>5) #create a logical vector
 sel
-sel + 1
+sel + 1  #logical vectors are internally 0/1's
 ```
 
 ```{r}
@@ -250,19 +251,70 @@ starwars$human_skincolor= ifelse(starwars$skin_color %in% mycols, 'human', 'non-
 boxplot(height ~ human_skincolor, data=starwars, names=c('No','Yes'), xlab='Human skin color')
 ```
 
-------------------------------------------------------------------------
+## Character vs. factors
 
-Factors are similar to characters, but are treated differently by many R functions (e.g. they can be used in regression models)
+Characters are designed for free text, e.g. they can be searched
 
 ```{r error=TRUE}
 x= c('Low','Low','Medium','High')
 x
 nchar(x)       #number of characters
-grep('Lo', x)  #entries containing string
+grep('Lo', x)  #entries containing string 'Lo'
+```
+
+Factors are designed for categorical variables.
+They're treated differently by many R functions, e.g. regression models
+
+```{r}
 xf= factor(x)
 xf
-nchar(xf)
+table(xf)
 ```
+
+
+## Factor basics
+
+Specify order of factor levels
+
+```{r}
+m= c("Dec", "Dec", "Apr", "Jan", "Mar","Apr","May","Dec","May") 
+month_levels= c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+m= factor(m, levels=month_levels)
+table(m)
+```
+
+Arrange levels by decreasing frequency (use `fct_rev` for decreasing)
+
+```{r}
+mo= fct_infreq(m) #rearrange levels
+mo  #values stay the same
+table(mo) #table printed in rearranged order
+```
+
+---
+
+Keep top 3 categories, group others
+
+```{r}
+mtop= fct_lump(mo, n=3)
+table(mtop)
+```
+
+Recode factor levels
+
+```{r}
+season= fct_collapse(m,
+             "Winter"=c("Jan","Feb","Mar"),
+             "Spring"=c("Apr","May","Jun"),
+             "Summer"=c("Jul","Aug","Sep"),
+             "Fall"=c("Oct","Nov","Dec")
+             )
+table(season)
+```
+
+
+
+
 
 ## Missing values
 
@@ -280,31 +332,23 @@ is.na(x)
 - Base R: `|>` (newer, simpler options)
 - magrittr package: `%>%` (advanced options)
 
-Both take the output of an expression and insert it as the 1st argument of the function on the right-hand side. That is, `x %>% f()` is the same as `f(x)`
+Both take the output of an expression and insert it as the 1st argument of the function on the right-hand side. That is, `x |> f()` is the same as `f(x)`
 
 
 ```{r}
 x= 1:10; mean(x)
-x %>% mean()
-x |> mean()  #pipe from base R
+x |> mean()
 ```
 Multiple pipes can be concatenated. Sometimes pipes save programming effort, some people find them easier to read (e.g. the [tidyverse](https://www.tidyverse.org) uses lots of pipes)
 
 ```{r}
 sum(is.na(x))
-x %>% is.na %>% sum
+x |> is.na() |> sum()
 ```
 
 ## Pipes
 
 You can pass the output to an argument other than the first
-
-```{r}
-#magrittr uses . as place-holder
-4 %>% log(base=2)  #log(4, base=2)
-4 %>% log(2,.)     #log(2, base=4)
-```
-
 
 ```{r}
 #R base uses _ as place-holder. The argument name must be specified
@@ -358,7 +402,7 @@ names(mdf)  #colnames doesn't work on data frames
 ```{r}
 mdf$name      #access column with $
 mdf[,'name']  #access column as in a matrix
-mdf[,4]
+mdf[,4]       #access column by index
 ```
 
 
@@ -386,8 +430,8 @@ mtbl
 x= list(a=1:5, b=c('hey','you'), c=m)
 x
 x[1:2]  #sub-list
-x[1]    #sub-list with one element
-x[[1]]  #access 1st element
+x[1]    #sub-list with one element (returns a list)
+x[[1]]  #access 1st element (doesn't return a list)
 ```
 
 ## Concatenating
