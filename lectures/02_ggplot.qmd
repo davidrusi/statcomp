@@ -30,6 +30,7 @@ install.packages("dplyr")
 install.packages("gapminder")
 install.packages("gganimate")
 install.packages("ggplot2")
+install.packages("ggstatsplot")
 install.packages("fivethirtyeight")
 install.packages("tidyverse")
 install.packages("devtools")
@@ -45,6 +46,7 @@ library(dsbox)
 library(fivethirtyeight)
 library(gapminder)
 library(gganimate)
+library(ggstatsplot)
 ```
 
 # ggplot basics
@@ -298,6 +300,7 @@ levels(hc$hsc)= c('hs <= 0.83', '0.83 < hs <= 0.86', '0.86 < hs <= 0.9', 'hs > 0
 Hint: see `help(hate_crimes)` for how to create a scatterplot. Then add facets based on `ginic` and `hsc` created above 
 
 
+
 # Beyond scatter plots
 
 ## Violin plot
@@ -491,7 +494,33 @@ p + geom_smooth(aes(linetype= human_skincolor), method='lm', se=FALSE)
 
 There are many user-contributed extensions to ggplot. To get a feeling for what's available, see the [gallery](https://exts.ggplot2.tidyverse.org/gallery)
 
-A cool one is `gganimate` to create animations.
+Let's illustrate two cool ones
+
+- ggstatsplot: simple plots combined with tests
+
+- gganimate: animations
+
+
+## Package `ggstatsplot`
+
+Plot correlations for hate crime data
+
+```{r}
+ggcorrmat(hc[,-1])
+```
+
+## Package `ggstatsplot`
+
+```{r}
+ggscatterstats(data=hc, x=votes_trump, y=hatecrimes_fbi,
+  xlab  = "Vote for Donald Trump",
+  ylab  = "Hate crimes (FBI)",
+  title = "Hate crimes vs. Trump votes"
+)
+```
+
+## Package `gganimate`
+
 
 **gapminder data:** country life expectancy over time popularized by Dr. Hans Rosling
 
