@@ -303,31 +303,6 @@ Hint: see `help(hate_crimes)` for how to create a scatterplot. Then add facets b
 
 # Beyond scatter plots
 
-## Violin plot
-
-::: panel-tabset
-### Boxplot
-
-```{r swboxplot2}
-boxplot(height ~ human_skincolor, data=starwars, names=c('No','Yes'), xlab='Human skin color')
-```
-
-### Scatterplot
-
-```{r scatter}
-ggplot(starwars, aes(x=human_skincolor, y=height)) +
-  geom_point()
-```
-
-### Violin plot
-
-```{r swviolin}
-ggplot(starwars, aes(x=human_skincolor, y=height)) +
-  geom_point() +
-  geom_violin()
-```
-:::
-
 ## Histograms
 
 ::: panel-tabset
@@ -353,6 +328,35 @@ ggplot(starwars, aes(x=height, color=human_skincolor)) +
 ```
 
 :::
+
+
+## Violin plot
+
+::: panel-tabset
+
+### Violin plot
+
+```{r swviolin}
+ggplot(starwars, aes(x=human_skincolor, y=height)) +
+  geom_point() +
+  geom_violin()
+```
+
+### Boxplot
+
+```{r swboxplot2}
+boxplot(height ~ human_skincolor, data=starwars, names=c('No','Yes'), xlab='Human skin color')
+```
+
+### Scatterplot
+
+```{r scatter}
+ggplot(starwars, aes(x=human_skincolor, y=height)) +
+  geom_point()
+```
+
+:::
+
 
 ## Bivariate histograms
 
@@ -411,7 +415,7 @@ ggplot(diamonds) +
 
 ## Multiple barplots
 
-`fill` aesthetic split counts according to the specified variable (diamond clarity)
+`fill` aesthetic splits counts according to a specified variable (diamond clarity)
 
 ```{r}
 ggplot(diamonds) + 
@@ -434,16 +438,18 @@ Effect of vitamin C on tooth growth in guinea pigs vs dose, separately for two d
 
 ```{r}
 df= data.frame(supp=rep(c("VC", "OJ"), each=3),
-                dose=rep(c("D0.5", "D1", "D2"),2),
-                len=c(6.8, 15, 33, 4.2, 10, 29.5))
+               dose=rep(c("D0.5", "D1", "D2"),2),
+               len=c(6.8, 15, 33, 4.2, 10, 29.5))
 df
 ```
 
 ```{r}
 #| output-location: slide
+mylab= 'Delivery method'
 ggplot(data=df, aes(x=dose, y=len, group=supp, color=supp)) +
   geom_line()+
-  geom_point()
+  geom_point() +
+  labs(x='Dose', y='Teeth length (mm)', group=mylab, color=mylab)
 ```
 
 # Saving a ggplot
@@ -533,7 +539,7 @@ To animate your ggplot you add transitions: how to organize successive frames
 
 - `transition_states()`: new plot according to a discrete variable
 
-- `transition_time()`: new plot according to cont var (time)
+- `transition_time()`: new plot according to continuous var (time)
 
 - `transition_reveal()`: add elements to plot incrementally
 
@@ -559,7 +565,7 @@ Other layers (the full list of options is [here](https://gganimate.com/reference
 
 ```{r, eval=FALSE}
 ggplot(mydata, ...) #code to produce the animation
-anim_save(myfile.gif, animation=last_animation(), path="mydirectory")
+anim_save("myfile.gif", animation=last_animation(), path="mydirectory")
 ```
 
 By default the output is a .gif. You can choose other formats (e.g. an MPEG video) by calling `animate` before saving
@@ -568,7 +574,7 @@ By default the output is a .gif. You can choose other formats (e.g. an MPEG vide
 ```{r, eval=FALSE}
 p= ggplot(mydata, ...)  #code to produce the animation
 animate(p, renderer = ffmpeg_renderer())
-anim_save(myfile.gif, animation=last_animation(), path="mydirectory")
+anim_save("myfile.gif", animation=last_animation(), path="mydirectory")
 ```
 
 
@@ -586,9 +592,9 @@ gapminder
 A non-animated plot (all years are shown simultaneously)
 
 ```{r}
-ggplot(gapminder, aes(gdpPercap, lifeExp)) +
+ggplot(gapminder, aes(x=gdpPercap, y=lifeExp)) +
   geom_point(aes(colour=continent, size=pop), alpha = 0.7, show.legend = TRUE) +
-  scale_size(range = c(2, 12)) +
+  scale_size(range = c(2, 12)) +  #scale point sizes (make them larger)
   scale_x_log10() +
   labs(x='GDP per capita', y='Life expectancy')
 ```
@@ -627,7 +633,7 @@ ggplot(gapminder, aes(gdpPercap, lifeExp)) +
 ggplot(airquality, aes(Day, Temp)) + 
   geom_point(colour = 'steelblue') +
   transition_states(Month) +
-  labs(title='Month: {closest_state}')
+  labs(title='Month: {closest_state}', y='Temperature (Fahrenheit)')
 ```
 
 
@@ -640,28 +646,9 @@ You can reveal new points in an increasing fashion, as done below
 ![](figs/airquality_byday.gif)
 
 
-## Exercise
+## Further example. GDP over time
 
-Load the Gini dataset at the course's GitHub site.
-
-```{r}
-library(gganimate)
-#library(gifski)  #you may need this in Windows and Mac
-gini= as_tibble(read.csv("~/github/statcomp/datasets/gini.csv"))
-gini
-```
-
-1. Do a (non-animated) line plot of Gini vs time, with a different line colour per country
-
-2. Add `transition_reveal(Year)` to add an animation over time
-
-
-
-# Further example. GDP over time
-
-## Animated histogram
-
-Distribution of GDP/capita over time
+Animated histogram: distribution of GDP/capita over time
 
 ```{r, eval=FALSE}
 ggplot(gapminder, aes(x=gdpPercap)) +
@@ -693,6 +680,7 @@ p
 ### Find country
 
 ```{r}
+#We'll discuss group_by and top_n later
 maxgdp= group_by(gapminder, year) |>
   top_n(1, gdpPercap)
 maxgdp
@@ -705,5 +693,24 @@ p + geom_text(aes(label=country), data=maxgdp)
 ```
 
 :::
+
+
+## Exercise
+
+Load the Gini dataset at the course's GitHub site.
+
+```{r}
+library(gganimate)
+#library(gifski)  #you may need this in Windows and Mac
+gini= as_tibble(read.csv("~/github/statcomp/datasets/gini.csv"))
+gini
+```
+
+1. Do a (non-animated) line plot of Gini vs time, with a different line colour per country
+
+2. Add `transition_reveal(Year)` to add an animation over time
+
+
+
 
 

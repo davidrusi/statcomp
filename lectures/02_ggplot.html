@@ -405,7 +405,6 @@
 <li><a href="#/beyond-scatter-plots" id="/toc-beyond-scatter-plots">Beyond scatter plots</a></li>
 <li><a href="#/saving-a-ggplot" id="/toc-saving-a-ggplot">Saving a ggplot</a></li>
 <li><a href="#/ggplot-extensions" id="/toc-ggplot-extensions">ggplot extensions</a></li>
-<li><a href="#/further-example.-gdp-over-time" id="/toc-further-example.-gdp-over-time">Further example. GDP over time</a></li>
 </ul>
 </nav>
 </section>
@@ -681,70 +680,70 @@ hs                      0.164      -0.127 -0.583  1.000</code></pre>
 <h1>Beyond scatter plots</h1>
 
 </section>
-<section id="violin-plot" class="slide level2">
-<h2>Violin plot</h2>
+<section id="histograms" class="slide level2">
+<h2>Histograms</h2>
 <div class="panel-tabset">
-<ul id="tabset-1" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-1-1">Boxplot</a></li><li><a href="#tabset-1-2">Scatterplot</a></li><li><a href="#tabset-1-3">Violin plot</a></li></ul>
+<ul id="tabset-1" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-1-1">Histogram</a></li><li><a href="#tabset-1-2">Frequency polygram</a></li><li><a href="#tabset-1-3">Density plot</a></li></ul>
 <div class="tab-content">
 <div id="tabset-1-1">
-<div class="cell" data-hash="02_ggplot_cache/revealjs/swboxplot2_e2bbf9b4bc3e7ae1924f1e7b74a1695e">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(height <span class="sc">~</span> human_skincolor, <span class="at">data=</span>starwars, <span class="at">names=</span><span class="fu">c</span>(<span class="st">'No'</span>,<span class="st">'Yes'</span>), <span class="at">xlab=</span><span class="st">'Human skin color'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-19_2948678951f606d077fdd1fde55f669d">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(starwars, <span class="fu">aes</span>(<span class="at">x=</span>height, <span class="at">fill=</span>human_skincolor)) <span class="sc">+</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">alpha=</span><span class="fl">0.2</span>, <span class="at">color=</span><span class="st">'black'</span>)  <span class="co">#alpha is the color transparency</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img data-src="02_ggplot_files/figure-revealjs/swboxplot2-1.png" width="960"></p>
+<p><img data-src="02_ggplot_files/figure-revealjs/unnamed-chunk-19-1.png" width="960"></p>
 </div>
 </div>
 </div>
 <div id="tabset-1-2">
-<div class="cell" data-hash="02_ggplot_cache/revealjs/scatter_9c24a3a579242eedec7aab388fc697f7">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(starwars, <span class="fu">aes</span>(<span class="at">x=</span>human_skincolor, <span class="at">y=</span>height)) <span class="sc">+</span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-20_db303cfd762998871fd962ad22f76901">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(starwars, <span class="fu">aes</span>(<span class="at">x=</span>height, <span class="at">color=</span>human_skincolor)) <span class="sc">+</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_freqpoly</span>()  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img data-src="02_ggplot_files/figure-revealjs/scatter-1.png" width="960"></p>
+<p><img data-src="02_ggplot_files/figure-revealjs/unnamed-chunk-20-1.png" width="960"></p>
 </div>
 </div>
 </div>
 <div id="tabset-1-3">
-<div class="cell" data-hash="02_ggplot_cache/revealjs/swviolin_c32dac278c46a971926829f3380528b6">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(starwars, <span class="fu">aes</span>(<span class="at">x=</span>human_skincolor, <span class="at">y=</span>height)) <span class="sc">+</span></span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_violin</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-21_d64572d2a604e770d813b7ff34f092e4">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(starwars, <span class="fu">aes</span>(<span class="at">x=</span>height, <span class="at">color=</span>human_skincolor)) <span class="sc">+</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>()  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img data-src="02_ggplot_files/figure-revealjs/swviolin-1.png" width="960"></p>
+<p><img data-src="02_ggplot_files/figure-revealjs/unnamed-chunk-21-1.png" width="960"></p>
 </div>
 </div>
 </div>
 </div>
 </div>
 </section>
-<section id="histograms" class="slide level2">
-<h2>Histograms</h2>
+<section id="violin-plot" class="slide level2">
+<h2>Violin plot</h2>
 <div class="panel-tabset">
-<ul id="tabset-2" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-2-1">Histogram</a></li><li><a href="#tabset-2-2">Frequency polygram</a></li><li><a href="#tabset-2-3">Density plot</a></li></ul>
+<ul id="tabset-2" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-2-1">Violin plot</a></li><li><a href="#tabset-2-2">Boxplot</a></li><li><a href="#tabset-2-3">Scatterplot</a></li></ul>
 <div class="tab-content">
 <div id="tabset-2-1">
-<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-19_2948678951f606d077fdd1fde55f669d">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(starwars, <span class="fu">aes</span>(<span class="at">x=</span>height, <span class="at">fill=</span>human_skincolor)) <span class="sc">+</span></span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">alpha=</span><span class="fl">0.2</span>, <span class="at">color=</span><span class="st">'black'</span>)  <span class="co">#alpha is the color transparency</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="02_ggplot_cache/revealjs/swviolin_c32dac278c46a971926829f3380528b6">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(starwars, <span class="fu">aes</span>(<span class="at">x=</span>human_skincolor, <span class="at">y=</span>height)) <span class="sc">+</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_violin</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img data-src="02_ggplot_files/figure-revealjs/unnamed-chunk-19-1.png" width="960"></p>
+<p><img data-src="02_ggplot_files/figure-revealjs/swviolin-1.png" width="960"></p>
 </div>
 </div>
 </div>
 <div id="tabset-2-2">
-<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-20_db303cfd762998871fd962ad22f76901">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(starwars, <span class="fu">aes</span>(<span class="at">x=</span>height, <span class="at">color=</span>human_skincolor)) <span class="sc">+</span></span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_freqpoly</span>()  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="02_ggplot_cache/revealjs/swboxplot2_e2bbf9b4bc3e7ae1924f1e7b74a1695e">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(height <span class="sc">~</span> human_skincolor, <span class="at">data=</span>starwars, <span class="at">names=</span><span class="fu">c</span>(<span class="st">'No'</span>,<span class="st">'Yes'</span>), <span class="at">xlab=</span><span class="st">'Human skin color'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img data-src="02_ggplot_files/figure-revealjs/unnamed-chunk-20-1.png" width="960"></p>
+<p><img data-src="02_ggplot_files/figure-revealjs/swboxplot2-1.png" width="960"></p>
 </div>
 </div>
 </div>
 <div id="tabset-2-3">
-<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-21_d64572d2a604e770d813b7ff34f092e4">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(starwars, <span class="fu">aes</span>(<span class="at">x=</span>height, <span class="at">color=</span>human_skincolor)) <span class="sc">+</span></span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>()  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="02_ggplot_cache/revealjs/scatter_9c24a3a579242eedec7aab388fc697f7">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(starwars, <span class="fu">aes</span>(<span class="at">x=</span>human_skincolor, <span class="at">y=</span>height)) <span class="sc">+</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img data-src="02_ggplot_files/figure-revealjs/unnamed-chunk-21-1.png" width="960"></p>
+<p><img data-src="02_ggplot_files/figure-revealjs/scatter-1.png" width="960"></p>
 </div>
 </div>
 </div>
@@ -812,7 +811,7 @@ hs                      0.164      -0.127 -0.583  1.000</code></pre>
 <img data-src="02_ggplot_files/figure-revealjs/unnamed-chunk-26-1.png" width="960" class="r-stretch"></section>
 <section id="multiple-barplots" class="slide level2">
 <h2>Multiple barplots</h2>
-<p><code>fill</code> aesthetic split counts according to the specified variable (diamond clarity)</p>
+<p><code>fill</code> aesthetic splits counts according to a specified variable (diamond clarity)</p>
 <div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-27_11518711fc443c5db3f1ffe3fe9439fb">
 <div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(diamonds) <span class="sc">+</span> </span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="fu">aes</span>(<span class="at">x =</span> cut, <span class="at">fill =</span> clarity))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -831,10 +830,10 @@ hs                      0.164      -0.127 -0.583  1.000</code></pre>
 <section id="lines-plot" class="slide level2">
 <h2>Lines plot</h2>
 <p>Effect of vitamin C on tooth growth in guinea pigs vs dose, separately for two delivery methods (orange juice, ascorbic acid)</p>
-<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-29_97b92c80b46fbf2286f83d925501559c">
+<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-29_f9a877ff9043bc67109ef1730fa9f1d7">
 <div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>df<span class="ot">=</span> <span class="fu">data.frame</span>(<span class="at">supp=</span><span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"VC"</span>, <span class="st">"OJ"</span>), <span class="at">each=</span><span class="dv">3</span>),</span>
-<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">dose=</span><span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"D0.5"</span>, <span class="st">"D1"</span>, <span class="st">"D2"</span>),<span class="dv">2</span>),</span>
-<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>                <span class="at">len=</span><span class="fu">c</span>(<span class="fl">6.8</span>, <span class="dv">15</span>, <span class="dv">33</span>, <span class="fl">4.2</span>, <span class="dv">10</span>, <span class="fl">29.5</span>))</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>               <span class="at">dose=</span><span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"D0.5"</span>, <span class="st">"D1"</span>, <span class="st">"D2"</span>),<span class="dv">2</span>),</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>               <span class="at">len=</span><span class="fu">c</span>(<span class="fl">6.8</span>, <span class="dv">15</span>, <span class="dv">33</span>, <span class="fl">4.2</span>, <span class="dv">10</span>, <span class="fl">29.5</span>))</span>
 <span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  supp dose  len
@@ -846,13 +845,15 @@ hs                      0.164      -0.127 -0.583  1.000</code></pre>
 6   OJ   D2 29.5</code></pre>
 </div>
 </div>
-<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-30_6ebedbc88dee169249cede0ade413193">
-<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data=</span>df, <span class="fu">aes</span>(<span class="at">x=</span>dose, <span class="at">y=</span>len, <span class="at">group=</span>supp, <span class="at">color=</span>supp)) <span class="sc">+</span></span>
-<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>()<span class="sc">+</span></span>
-<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-30_48deb1850879606951078fe0f74d1e18">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>mylab<span class="ot">=</span> <span class="st">'Delivery method'</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data=</span>df, <span class="fu">aes</span>(<span class="at">x=</span>dose, <span class="at">y=</span>len, <span class="at">group=</span>supp, <span class="at">color=</span>supp)) <span class="sc">+</span></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>()<span class="sc">+</span></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">'Dose'</span>, <span class="at">y=</span><span class="st">'Teeth length (mm)'</span>, <span class="at">group=</span>mylab, <span class="at">color=</span>mylab)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 
-</section><section id="lines-plot-output" class="slide level2 output-location-slide"><h2>Lines plot</h2><div class="cell output-location-slide" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-30_6ebedbc88dee169249cede0ade413193">
+</section><section id="lines-plot-output" class="slide level2 output-location-slide"><h2>Lines plot</h2><div class="cell output-location-slide" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-30_48deb1850879606951078fe0f74d1e18">
 <div class="cell-output-display">
 <p><img data-src="02_ggplot_files/figure-revealjs/unnamed-chunk-30-1.png" width="960"></p>
 </div>
@@ -936,7 +937,7 @@ hs                      0.164      -0.127 -0.583  1.000</code></pre>
 <p>To animate your ggplot you add transitions: how to organize successive frames</p>
 <ul>
 <li><p><code>transition_states()</code>: new plot according to a discrete variable</p></li>
-<li><p><code>transition_time()</code>: new plot according to cont var (time)</p></li>
+<li><p><code>transition_time()</code>: new plot according to continuous var (time)</p></li>
 <li><p><code>transition_reveal()</code>: add elements to plot incrementally</p></li>
 </ul>
 <p>Other layers (the full list of options is <a href="https://gganimate.com/reference/index.html">here</a> )</p>
@@ -951,15 +952,15 @@ hs                      0.164      -0.127 -0.583  1.000</code></pre>
 <h2>Saving an animation</h2>
 <p><strong>Important.</strong> in Win/Mac you may need the <code>gifski</code> package</p>
 <p><code>anim_save()</code> saves your last animated plot into a specified file and directory (“myfile.gif” and “mydirectory” below)</p>
-<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-37_942518c6dad463564f76dae30f8a7bce">
+<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-37_ecc33309888d66e5e75e89720a4095ed">
 <div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(mydata, ...) <span class="co">#code to produce the animation</span></span>
-<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="fu">anim_save</span>(myfile.gif, <span class="at">animation=</span><span class="fu">last_animation</span>(), <span class="at">path=</span><span class="st">"mydirectory"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="fu">anim_save</span>(<span class="st">"myfile.gif"</span>, <span class="at">animation=</span><span class="fu">last_animation</span>(), <span class="at">path=</span><span class="st">"mydirectory"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>By default the output is a .gif. You can choose other formats (e.g.&nbsp;an MPEG video) by calling <code>animate</code> before saving</p>
-<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-38_0b209101352b02b8848e38555141e6fb">
+<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-38_54a888039b64cd2537c47c50ba8f4ffc">
 <div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>p<span class="ot">=</span> <span class="fu">ggplot</span>(mydata, ...)  <span class="co">#code to produce the animation</span></span>
 <span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="fu">animate</span>(p, <span class="at">renderer =</span> <span class="fu">ffmpeg_renderer</span>())</span>
-<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a><span class="fu">anim_save</span>(myfile.gif, <span class="at">animation=</span><span class="fu">last_animation</span>(), <span class="at">path=</span><span class="st">"mydirectory"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a><span class="fu">anim_save</span>(<span class="st">"myfile.gif"</span>, <span class="at">animation=</span><span class="fu">last_animation</span>(), <span class="at">path=</span><span class="st">"mydirectory"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="life-expentancy-data" class="slide level2">
@@ -988,10 +989,10 @@ hs                      0.164      -0.127 -0.583  1.000</code></pre>
 <section id="non-animated-plot" class="slide level2">
 <h2>Non-animated plot</h2>
 <p>A non-animated plot (all years are shown simultaneously)</p>
-<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-40_60d9732ac980ae24906357e3c5fda400">
-<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(gapminder, <span class="fu">aes</span>(gdpPercap, lifeExp)) <span class="sc">+</span></span>
+<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-40_94436a187ce566d71f70648de6df591f">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(gapminder, <span class="fu">aes</span>(<span class="at">x=</span>gdpPercap, <span class="at">y=</span>lifeExp)) <span class="sc">+</span></span>
 <span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">colour=</span>continent, <span class="at">size=</span>pop), <span class="at">alpha =</span> <span class="fl">0.7</span>, <span class="at">show.legend =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
-<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_size</span>(<span class="at">range =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">12</span>)) <span class="sc">+</span></span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_size</span>(<span class="at">range =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">12</span>)) <span class="sc">+</span>  <span class="co">#scale point sizes (make them larger)</span></span>
 <span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_log10</span>() <span class="sc">+</span></span>
 <span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">'GDP per capita'</span>, <span class="at">y=</span><span class="st">'Life expectancy'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
@@ -1022,11 +1023,11 @@ hs                      0.164      -0.127 -0.583  1.000</code></pre>
 <h2>transition_states</h2>
 <p><code>transition_time</code> treats time as continuous, e.g.&nbsp;adds intermediate frames between years. <code>transition_states</code> evolves in a more “discrete” manner</p>
 <p><strong>Example:</strong> airquality data</p>
-<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-42_50b3146d5114a85a66e8bf0bd2ad951f">
+<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-42_06dfd24b730e6aea10d144fce9f36c0b">
 <div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(airquality, <span class="fu">aes</span>(Day, Temp)) <span class="sc">+</span> </span>
 <span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">colour =</span> <span class="st">'steelblue'</span>) <span class="sc">+</span></span>
 <span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">transition_states</span>(Month) <span class="sc">+</span></span>
-<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title=</span><span class="st">'Month: {closest_state}'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title=</span><span class="st">'Month: {closest_state}'</span>, <span class="at">y=</span><span class="st">'Temperature (Fahrenheit)'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 
 <img data-src="figs/airquality.gif" class="r-stretch"></section>
@@ -1035,74 +1036,40 @@ hs                      0.164      -0.127 -0.583  1.000</code></pre>
 <p>You can reveal new points in an increasing fashion, as done below</p>
 
 <img data-src="figs/airquality_byday.gif" class="r-stretch"></section>
-<section id="exercise-1" class="slide level2">
-<h2>Exercise</h2>
-<p>Load the Gini dataset at the course’s GitHub site.</p>
-<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-43_2fad455dd7b14cc5ddeb6f7268aace40">
-<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gganimate)</span>
-<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a><span class="co">#library(gifski)  #you may need this in Windows and Mac</span></span>
-<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>gini<span class="ot">=</span> <span class="fu">as_tibble</span>(<span class="fu">read.csv</span>(<span class="st">"~/github/statcomp/datasets/gini.csv"</span>))</span>
-<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>gini</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 624 × 4
-   Entity    Code   Year  Gini
-   &lt;chr&gt;     &lt;chr&gt; &lt;int&gt; &lt;dbl&gt;
- 1 Argentina ARG    1961  38.8
- 2 Argentina ARG    1972  32.7
- 3 Argentina ARG    1974  32.7
- 4 Argentina ARG    1980  38.1
- 5 Argentina ARG    1986  41.1
- 6 Argentina ARG    1987  43.7
- 7 Argentina ARG    1988  44.3
- 8 Argentina ARG    1991  44.8
- 9 Argentina ARG    1992  43  
-10 Argentina ARG    1993  42.4
-# ℹ 614 more rows</code></pre>
-</div>
-</div>
-<ol type="1">
-<li><p>Do a (non-animated) line plot of Gini vs time, with a different line colour per country</p></li>
-<li><p>Add <code>transition_reveal(Year)</code> to add an animation over time</p></li>
-</ol>
-</section></section>
-<section>
-<section id="further-example.-gdp-over-time" class="title-slide slide level1 center">
-<h1>Further example. GDP over time</h1>
-
-</section>
-<section id="animated-histogram" class="slide level2">
-<h2>Animated histogram</h2>
-<p>Distribution of GDP/capita over time</p>
-<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-44_bddac5db14c06786b8706b161a2511a9">
-<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(gapminder, <span class="fu">aes</span>(<span class="at">x=</span>gdpPercap)) <span class="sc">+</span></span>
-<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins=</span><span class="dv">20</span>) <span class="sc">+</span></span>
-<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">transition_states</span>(year) <span class="sc">+</span></span>
-<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title=</span><span class="st">'Year: {closest_state}'</span>, <span class="at">x=</span><span class="st">'GDP per capita'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="further-example.-gdp-over-time" class="slide level2">
+<h2>Further example. GDP over time</h2>
+<p>Animated histogram: distribution of GDP/capita over time</p>
+<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-43_b68ab9903c3d58d7340faef1a68322a1">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(gapminder, <span class="fu">aes</span>(<span class="at">x=</span>gdpPercap)) <span class="sc">+</span></span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins=</span><span class="dv">20</span>) <span class="sc">+</span></span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">transition_states</span>(year) <span class="sc">+</span></span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title=</span><span class="st">'Year: {closest_state}'</span>, <span class="at">x=</span><span class="st">'GDP per capita'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 
 <img data-src="figs/gdp_per_year.png" class="r-stretch"></section>
 <section id="a-non-animated-violin-plot" class="slide level2">
 <h2>A (non-animated) violin plot</h2>
 <p>Sometimes a non-animated figure is more effective</p>
-<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-45_bd1609f7a2dc4d8302edcf2910eb3a16">
-<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>p<span class="ot">=</span> <span class="fu">ggplot</span>(gapminder, <span class="fu">aes</span>(<span class="at">x=</span><span class="fu">factor</span>(year), <span class="at">y=</span>gdpPercap)) <span class="sc">+</span></span>
-<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_violin</span>() <span class="sc">+</span></span>
-<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"Year"</span>, <span class="at">y=</span><span class="st">"GDP per capita"</span>)</span>
-<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a>p</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-44_55a45054c2d84afed12edb93fdf6566f">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>p<span class="ot">=</span> <span class="fu">ggplot</span>(gapminder, <span class="fu">aes</span>(<span class="at">x=</span><span class="fu">factor</span>(year), <span class="at">y=</span>gdpPercap)) <span class="sc">+</span></span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_violin</span>() <span class="sc">+</span></span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"Year"</span>, <span class="at">y=</span><span class="st">"GDP per capita"</span>)</span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a>p</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 </div>
-<img data-src="02_ggplot_files/figure-revealjs/unnamed-chunk-45-1.png" width="960" class="r-stretch"></section>
+<img data-src="02_ggplot_files/figure-revealjs/unnamed-chunk-44-1.png" width="960" class="r-stretch"></section>
 <section id="who-are-the-outliers" class="slide level2">
 <h2>Who are the outliers?</h2>
 <div class="panel-tabset">
 <ul id="tabset-4" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-4-1">Find country</a></li><li><a href="#tabset-4-2">Add labels</a></li></ul>
 <div class="tab-content">
 <div id="tabset-4-1">
-<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-46_77a9547429065d2cf91511bc3f72a108">
-<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>maxgdp<span class="ot">=</span> <span class="fu">group_by</span>(gapminder, year) <span class="sc">|&gt;</span></span>
-<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">top_n</span>(<span class="dv">1</span>, gdpPercap)</span>
-<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>maxgdp</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-45_01081898aa61bbca371f6611e077caf5">
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="co">#We'll discuss group_by and top_n later</span></span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>maxgdp<span class="ot">=</span> <span class="fu">group_by</span>(gapminder, year) <span class="sc">|&gt;</span></span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">top_n</span>(<span class="dv">1</span>, gdpPercap)</span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a>maxgdp</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 12 × 6
 # Groups:   year [12]
@@ -1124,15 +1091,45 @@ hs                      0.164      -0.127 -0.583  1.000</code></pre>
 </div>
 </div>
 <div id="tabset-4-2">
-<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-47_9b9c916066aaf1289b3aa2a192ce86a5">
-<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>p <span class="sc">+</span> <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label=</span>country), <span class="at">data=</span>maxgdp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-46_8a23b724c889225c393c7bc1615cf0d1">
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>p <span class="sc">+</span> <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label=</span>country), <span class="at">data=</span>maxgdp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img data-src="02_ggplot_files/figure-revealjs/unnamed-chunk-47-1.png" width="960"></p>
+<p><img data-src="02_ggplot_files/figure-revealjs/unnamed-chunk-46-1.png" width="960"></p>
 </div>
 </div>
 </div>
 </div>
 </div>
+</section>
+<section id="exercise-1" class="slide level2">
+<h2>Exercise</h2>
+<p>Load the Gini dataset at the course’s GitHub site.</p>
+<div class="cell" data-hash="02_ggplot_cache/revealjs/unnamed-chunk-47_0eda8befc6afef07f4e7a26b9663ff07">
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gganimate)</span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a><span class="co">#library(gifski)  #you may need this in Windows and Mac</span></span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>gini<span class="ot">=</span> <span class="fu">as_tibble</span>(<span class="fu">read.csv</span>(<span class="st">"~/github/statcomp/datasets/gini.csv"</span>))</span>
+<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>gini</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 624 × 4
+   Entity    Code   Year  Gini
+   &lt;chr&gt;     &lt;chr&gt; &lt;int&gt; &lt;dbl&gt;
+ 1 Argentina ARG    1961  38.8
+ 2 Argentina ARG    1972  32.7
+ 3 Argentina ARG    1974  32.7
+ 4 Argentina ARG    1980  38.1
+ 5 Argentina ARG    1986  41.1
+ 6 Argentina ARG    1987  43.7
+ 7 Argentina ARG    1988  44.3
+ 8 Argentina ARG    1991  44.8
+ 9 Argentina ARG    1992  43  
+10 Argentina ARG    1993  42.4
+# ℹ 614 more rows</code></pre>
+</div>
+</div>
+<ol type="1">
+<li><p>Do a (non-animated) line plot of Gini vs time, with a different line colour per country</p></li>
+<li><p>Add <code>transition_reveal(Year)</code> to add an animation over time</p></li>
+</ol>
 <div class="footer footer-default">
 
 </div>
