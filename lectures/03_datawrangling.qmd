@@ -54,7 +54,9 @@ The data are stored in a `tibble`, an extension of `data.frame` that prints nice
 flights
 ```
 
-# dplyr summary
+# dplyr
+
+## dplyr
 
 The 5 main functions
 
@@ -167,13 +169,23 @@ o= order(flights$year, flights$month, flights$day, decreasing=TRUE)
 flights[o,]
 ```
 
-## Select
+## Selecting/dropping variables
 
-Selecting a subset of variables
+:::panel-tabset
+
+### Select
 
 ```{r}
 select(flights, year, month, day, dep_delay)
 ```
+
+### Drop
+
+```{r}
+select(flights, -year, -month,-day)
+```
+
+:::
 
 ---
 
@@ -214,11 +226,25 @@ rename(flights, deptime = dep_time)
 
 We select a subset of columns and create 2 new ones
 
+:::panel-tabset
+
+### Without pipe
+
 ```{r}
 flights_sml= select(flights, year:day, contains("delay"), distance, air_time)
 
 mutate(flights_sml, gain=dep_delay - arr_delay, speed = distance / air_time * 60)
 ```
+
+### Using pipe
+
+```{r}
+flights_sml= select(flights, year:day, contains("delay"), distance, air_time) |>
+             mutate(gain=dep_delay - arr_delay, speed = distance / air_time * 60)
+flights_sml
+```
+
+:::
 
 ---
 
@@ -228,9 +254,9 @@ To only keep the new variables use `transmute`
 transmute(flights, gain = dep_delay - arr_delay, hours = air_time / 60)
 ```
 
-## Beyond trasmute
+## Alternative to mutate: base R
 
-Sometimes easier to create a variable separately, then add it to the tibble
+Some find it easier to create variables separately, then add it to the tibble
 
 **Example.** Companies get fined 100eur per hour of delay in departure, and 200eur/h of delay in arrival. There's no reward for being early
 
@@ -238,6 +264,13 @@ Sometimes easier to create a variable separately, then add it to the tibble
 
 - American airlines gets a discount from 200 to 150
 
+Let's do the exercise with and without dplyr
+
+---
+
+:::panel-tabset
+
+### No mutate
 ```{r}
 uaflight= (flights$carrier == 'UA')
 finedep= finearr= double(nrow(flights))
@@ -251,15 +284,20 @@ finearr[!aaflight] = 200 * flights$arr_delay[!aaflight]/60
 finearr[finearr<0]= 0
 
 flights$fine= finedep + finearr
-```
-
----
-
-Let's inspect the results
-
-```{r}
 select(flights, carrier, dep_delay, arr_delay, fine)
 ```
+
+### Using dplyr
+
+```{r}
+mutate(flights, uaflight= (flights$carrier=='UA'), aaflight= (flights$carrier=='AA')) |>
+  mutate(finedep= ifelse(uaflight, 75, 100) * flights$dep_delay/60) |>
+  mutate(finearr= ifelse(aaflight, 150, 200) * flights$arr_delay/60) |>
+  mutate(fine= finedep + finearr) |>
+  select(carrier, dep_delay, arr_delay, fine)
+```
+:::
+
 
 
 # Summarizing data
@@ -328,8 +366,7 @@ ggplot(data = delay, mapping = aes(x = dist, y = delay)) +
 Avoid creating intermediate datasets (`by_dest` in the previous slide)
 
 ```{r}
-delays= flights |>
-  group_by(dest) |> 
+delays= group_by(flights, dest) |> 
   summarise(count = n(),
     dist = mean(distance, na.rm = TRUE),
     delay = mean(arr_delay, na.rm = TRUE)
@@ -378,8 +415,7 @@ Cancelled flights have NA departure/arrival delays. Select non-cancelled flights
 
 ```{r}
 not_cancelled= filter(flights, !is.na(dep_delay), !is.na(arr_delay))
-delays= not_cancelled |> 
-  group_by(tailnum) |>
+delays= group_by(not_cancelled, tailnum) |>
   summarise(count= n(), delay = mean(arr_delay))
 
 ggplot(data = delays, mapping = aes(x = delay)) + 
@@ -415,8 +451,7 @@ For each player, compute batting average (hits `H` / opportunities to hit the ba
 batting= as_tibble(Lahman::Batting)
 batting
 
-batters= batting |>
-  group_by(playerID) |> 
+batters= group_by(batting, playerID) |> 
   summarise(
     ba = sum(H, na.rm = TRUE) / sum(AB, na.rm = TRUE),
     ab = sum(AB, na.rm = TRUE)
@@ -471,7 +506,7 @@ ggplot(tab, mapping = aes(x = color, y = cut)) +
 
 ## Discretize continuous variables
 
-`cut_interval`, `cut_number` and `cut_width` divide a continuous variable into groups
+`cut_interval`, `cut_number`, `cut_width`: chop a continuous variable into groups
 
 **Example.** Boxplot of diamond price vs. (discretized) carats
 
@@ -482,8 +517,8 @@ ggplot(tab, mapping = aes(x = color, y = cut)) +
 
 ```{r}
 diam2= mutate(diamonds, carat_disc= cut_width(carat, 0.1))
-ggplot(diam2, mapping = aes(x = carat, y = price)) + 
-  geom_boxplot(mapping = aes(group = carat_disc))
+ggplot(diam2, aes(x = carat, y = price)) + 
+  geom_boxplot(aes(group = carat_disc))
 ```
 
 ### Aesthetic
