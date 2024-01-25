@@ -57,6 +57,13 @@ Its less well-known context
 
 > For such a model there is no need to ask the question "Is the model true?". If "truth" is to be the "whole truth" the answer must be "No". The only question of interest is "Is the model illuminating and useful?".
 
+---
+
+Another quote by Box (he had many!)
+
+> Statisticians, like artists, have the bad habit of falling in love with their models
+
+Meaning that it's important to check whether the model fits the main features of the data
 
 # Linear models
 
@@ -85,6 +92,11 @@ X=\begin{pmatrix}
 1 & x_{11} & \ldots & x_{1p} \\
 \ldots \\
 1 & x_{n1} & \ldots & x_{np}
+\end{pmatrix}=
+\begin{pmatrix}
+x_1^T \\
+\ldots \\
+x_n^T \\
 \end{pmatrix}
 $$
 
@@ -93,9 +105,9 @@ $$\hat{\beta}= (X^T X)^{-1} X^T y= \arg\min_\beta \sum_{i=1}^n (y_i - x_i^T \bet
 
 Further, if the model assumptions hold
 
-$$\hat{\beta} \sim N(\beta, V(\hat{\beta})); V(\hat{\beta})= \sigma^2 (X^T X)^{-1}$$
+$$\hat{\beta} \sim N(\beta, V); V= \sigma^2 (X^T X)^{-1}$$
 Which gives confidence intervals and P-values, e.g.
-$\hat{\beta}_j \pm 1.96 \sqrt{\hat{V}(\hat{\beta_j})}$
+$\hat{\beta}_j \pm 1.96 \sqrt{v_{jj}}$
 
 ## Reminder
 
@@ -198,7 +210,7 @@ Fit linear model and save residuals
 
 ```{r}
 lmfit= lm(lprice ~ lcarat, data = diamonds2)
-diamonds2$res= residuals(lmfit)
+diamonds2= mutate(diamonds2, res= residuals(lmfit))
 ```
 
 Recall that worst diamond color is J (yellow-ish), worst clarity is l1
@@ -251,9 +263,7 @@ summary(lmfit2)
 Let's plot their predictive accuracy
 
 ```{r}
-diamonds2$pred1= predict(lmfit)
-diamonds2$pred2= predict(lmfit2)
-diamonds2$res2= residuals(lmfit2)
+diamonds2= mutate(diamonds2, pred1= predict(lmfit), pred2=predict(lmfit2), res2= residuals(lmfit2))
 ```
 
 :::panel-tabset
@@ -319,7 +329,7 @@ Note: R package `caret` does as well (see an [introduction](https://topepo.githu
 
 ## Plotting intervals
 
-`coefplot` helps visualize 95% confidence intervals $\hat{\beta}_j \pm 2 \sqrt{\hat{V}(\hat{\beta}_j)}$
+`coefplot` helps visualize 95% confidence intervals
 
 ```{r}
 coefplot(lmfit2, predictors="cut") #show only parameters with name including "cut"

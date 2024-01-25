@@ -46,7 +46,7 @@
 # Output: tibble with one row per coefficient, indicating its point estimate, confidence interval and P-value
 coefSummary= function(lmfit, level=0.95, digits=3) {
   require(tidyverse)
-  if (!('lm' %in% class(lmfit))) stop('lmfit must be of class lm')
+  if (!inherits(lmfit, "lm")) stop('lmfit must be of class lm')
   b= round(coef(lmfit), digits)
   ci= round(confint(lmfit, level=level), digits)
   ci= paste('(',ci[,1],',',ci[,2],')',sep='')
