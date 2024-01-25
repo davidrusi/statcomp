@@ -162,12 +162,6 @@ To sort in a descending fashion use `desc`
 arrange(flights, desc(year), desc(month), desc(day))
 ```
 
-## R's base order
-
-```{r}
-o= order(flights$year, flights$month, flights$day, decreasing=TRUE)
-flights[o,]
-```
 
 ## Selecting/dropping variables
 
@@ -290,9 +284,10 @@ select(flights, carrier, dep_delay, arr_delay, fine)
 ### Using dplyr
 
 ```{r}
-mutate(flights, uaflight= (flights$carrier=='UA'), aaflight= (flights$carrier=='AA')) |>
-  mutate(finedep= ifelse(uaflight, 75, 100) * flights$dep_delay/60) |>
-  mutate(finearr= ifelse(aaflight, 150, 200) * flights$arr_delay/60) |>
+mutate(flights, uaflight= (carrier=='UA'), aaflight= (carrier=='AA')) |>
+  mutate(finedep= ifelse(uaflight, 75, 100) * dep_delay/60) |>
+  mutate(finearr= ifelse(aaflight, 150, 200) * arr_delay/60) |>
+  mutate(finedep= ifelse(finedep>0, finedep, 0), finearr= ifelse(finearr>0, finearr, 0)) |>
   mutate(fine= finedep + finearr) |>
   select(carrier, dep_delay, arr_delay, fine)
 ```
@@ -743,7 +738,7 @@ Similar functionality, `dplyr` usually faster
 |`left_join(x,y)` | `merge(x,y,all.x=TRUE)`           |
 |`right_join(x,y)`| `merge(x,y,all.y=TRUE)`           |
 |`inner_join(x,y)`| `merge(x,y)`                      |
-|`left_join(x,y)` | `merge(x,y,all.x=TRUE,all.y=TRUE)`|
+|`full_join(x,y)` | `merge(x,y,all.x=TRUE,all.y=TRUE)`|
 
 
 

@@ -664,40 +664,14 @@
 </div>
 </div>
 </section>
-<section id="rs-base-order" class="slide level2">
-<h2>R’s base order</h2>
-<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-13_ad5dab36693e94283e623db46eec772f">
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>o<span class="ot">=</span> <span class="fu">order</span>(flights<span class="sc">$</span>year, flights<span class="sc">$</span>month, flights<span class="sc">$</span>day, <span class="at">decreasing=</span><span class="cn">TRUE</span>)</span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>flights[o,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 336,776 × 19
-    year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time
-   &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;
- 1  2013    12    31       13           2359        14      439            437
- 2  2013    12    31       18           2359        19      449            444
- 3  2013    12    31       26           2245       101      129           2353
- 4  2013    12    31      459            500        -1      655            651
- 5  2013    12    31      514            515        -1      814            812
- 6  2013    12    31      549            551        -2      925            900
- 7  2013    12    31      550            600       -10      725            745
- 8  2013    12    31      552            600        -8      811            826
- 9  2013    12    31      553            600        -7      741            754
-10  2013    12    31      554            550         4     1024           1027
-# ℹ 336,766 more rows
-# ℹ 11 more variables: arr_delay &lt;dbl&gt;, carrier &lt;chr&gt;, flight &lt;int&gt;,
-#   tailnum &lt;chr&gt;, origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;,
-#   hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;</code></pre>
-</div>
-</div>
-</section>
 <section id="selectingdropping-variables" class="slide level2">
 <h2>Selecting/dropping variables</h2>
 <div class="panel-tabset">
 <ul id="tabset-2" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-2-1">Select</a></li><li><a href="#tabset-2-2">Drop</a></li></ul>
 <div class="tab-content">
 <div id="tabset-2-1">
-<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-14_43192b136697745772606e6f8a803abd">
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">select</span>(flights, year, month, day, dep_delay)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-13_54e025a50c2631420b5b2a7bc1fbb3f7">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">select</span>(flights, year, month, day, dep_delay)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 336,776 × 4
     year month   day dep_delay
@@ -717,8 +691,8 @@
 </div>
 </div>
 <div id="tabset-2-2">
-<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-15_acf4422709d36f477e33b88554d023d9">
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">select</span>(flights, <span class="sc">-</span>year, <span class="sc">-</span>month,<span class="sc">-</span>day)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-14_78e34d61b57a7e5ef703b9bdafe4eff5">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">select</span>(flights, <span class="sc">-</span>year, <span class="sc">-</span>month,<span class="sc">-</span>day)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 336,776 × 16
    dep_time sched_dep_time dep_delay arr_time sched_arr_time arr_delay carrier
@@ -751,8 +725,8 @@
 <li><p>contains(“abc”): matches names that contain “abc”</p></li>
 <li><p>num_range(“x”, 1:3): matches x1, x2 and x3.</p></li>
 </ul>
-<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-16_3411eb61274e8b61d321958883f320d3">
-<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">select</span>(flights, <span class="fu">contains</span>(<span class="st">"delay"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-15_b2dfd6b8f95e0b73eedf8b9884bd7c13">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">select</span>(flights, <span class="fu">contains</span>(<span class="st">"delay"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 336,776 × 2
    dep_delay arr_delay
@@ -774,8 +748,8 @@
 <section class="slide level2">
 
 <p>Trick to put some columns at the start. Select them, then use <code>everything</code></p>
-<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-17_17f9bdffa4e09afe836cc5173abff0b0">
-<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">select</span>(flights, time_hour, air_time, <span class="fu">everything</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-16_aeae833704005fe9e4a251f9b4919c0a">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">select</span>(flights, time_hour, air_time, <span class="fu">everything</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 336,776 × 19
    time_hour           air_time  year month   day dep_time sched_dep_time
@@ -800,8 +774,8 @@
 <section id="rename" class="slide level2">
 <h2>Rename</h2>
 <p>Change variable names</p>
-<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-18_4679a397ebe4596ed310bb2ae953dd9b">
-<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rename</span>(flights, <span class="at">deptime =</span> dep_time)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-17_291de3c879aa3f74e592e06be38070de">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rename</span>(flights, <span class="at">deptime =</span> dep_time)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 336,776 × 19
     year month   day deptime sched_dep_time dep_delay arr_time sched_arr_time
@@ -830,10 +804,10 @@
 <ul id="tabset-3" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-3-1">Without pipe</a></li><li><a href="#tabset-3-2">Using pipe</a></li></ul>
 <div class="tab-content">
 <div id="tabset-3-1">
-<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-19_6dc8172c8e98c615fc7900a793a61228">
-<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>flights_sml<span class="ot">=</span> <span class="fu">select</span>(flights, year<span class="sc">:</span>day, <span class="fu">contains</span>(<span class="st">"delay"</span>), distance, air_time)</span>
-<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a><span class="fu">mutate</span>(flights_sml, <span class="at">gain=</span>dep_delay <span class="sc">-</span> arr_delay, <span class="at">speed =</span> distance <span class="sc">/</span> air_time <span class="sc">*</span> <span class="dv">60</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-18_c2905a4711d4d4225ad2e9234293a576">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>flights_sml<span class="ot">=</span> <span class="fu">select</span>(flights, year<span class="sc">:</span>day, <span class="fu">contains</span>(<span class="st">"delay"</span>), distance, air_time)</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="fu">mutate</span>(flights_sml, <span class="at">gain=</span>dep_delay <span class="sc">-</span> arr_delay, <span class="at">speed =</span> distance <span class="sc">/</span> air_time <span class="sc">*</span> <span class="dv">60</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 336,776 × 9
     year month   day dep_delay arr_delay distance air_time  gain speed
@@ -853,10 +827,10 @@
 </div>
 </div>
 <div id="tabset-3-2">
-<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-20_c371d6c77ea3de26f1e8b6b64b56a916">
-<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>flights_sml<span class="ot">=</span> <span class="fu">select</span>(flights, year<span class="sc">:</span>day, <span class="fu">contains</span>(<span class="st">"delay"</span>), distance, air_time) <span class="sc">|&gt;</span></span>
-<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>             <span class="fu">mutate</span>(<span class="at">gain=</span>dep_delay <span class="sc">-</span> arr_delay, <span class="at">speed =</span> distance <span class="sc">/</span> air_time <span class="sc">*</span> <span class="dv">60</span>)</span>
-<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>flights_sml</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-19_6f9b8c0cf428f3649cc9468c9253db5d">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>flights_sml<span class="ot">=</span> <span class="fu">select</span>(flights, year<span class="sc">:</span>day, <span class="fu">contains</span>(<span class="st">"delay"</span>), distance, air_time) <span class="sc">|&gt;</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>             <span class="fu">mutate</span>(<span class="at">gain=</span>dep_delay <span class="sc">-</span> arr_delay, <span class="at">speed =</span> distance <span class="sc">/</span> air_time <span class="sc">*</span> <span class="dv">60</span>)</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>flights_sml</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 336,776 × 9
     year month   day dep_delay arr_delay distance air_time  gain speed
@@ -881,8 +855,8 @@
 <section class="slide level2">
 
 <p>To only keep the new variables use <code>transmute</code></p>
-<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-21_c911d496742069bcc2d55f9421ffc694">
-<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">transmute</span>(flights, <span class="at">gain =</span> dep_delay <span class="sc">-</span> arr_delay, <span class="at">hours =</span> air_time <span class="sc">/</span> <span class="dv">60</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-20_68992d9ac7468728a89a72c9cc0af705">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">transmute</span>(flights, <span class="at">gain =</span> dep_delay <span class="sc">-</span> arr_delay, <span class="at">hours =</span> air_time <span class="sc">/</span> <span class="dv">60</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 336,776 × 2
     gain hours
@@ -917,20 +891,20 @@
 <ul id="tabset-4" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-4-1">No mutate</a></li><li><a href="#tabset-4-2">Using dplyr</a></li></ul>
 <div class="tab-content">
 <div id="tabset-4-1">
-<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-22_79e19e6c84a1cbe282d2808314358a03">
-<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>uaflight<span class="ot">=</span> (flights<span class="sc">$</span>carrier <span class="sc">==</span> <span class="st">'UA'</span>)</span>
-<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>finedep<span class="ot">=</span> finearr<span class="ot">=</span> <span class="fu">double</span>(<span class="fu">nrow</span>(flights))</span>
-<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>finedep[uaflight]<span class="ot">=</span> <span class="dv">75</span> <span class="sc">*</span> flights<span class="sc">$</span>dep_delay[uaflight]<span class="sc">/</span><span class="dv">60</span></span>
-<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>finedep[<span class="sc">!</span>uaflight]<span class="ot">=</span> <span class="dv">100</span> <span class="sc">*</span> flights<span class="sc">$</span>dep_delay[<span class="sc">!</span>uaflight]<span class="sc">/</span><span class="dv">60</span></span>
-<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>finedep[finedep<span class="sc">&lt;</span><span class="dv">0</span>]<span class="ot">=</span> <span class="dv">0</span></span>
-<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a>aaflight<span class="ot">=</span> flights<span class="sc">$</span>carrier <span class="sc">==</span> <span class="st">'AA'</span></span>
-<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a>finearr[aaflight]<span class="ot">=</span> <span class="dv">150</span> <span class="sc">*</span> flights<span class="sc">$</span>arr_delay[aaflight]<span class="sc">/</span><span class="dv">60</span></span>
-<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a>finearr[<span class="sc">!</span>aaflight] <span class="ot">=</span> <span class="dv">200</span> <span class="sc">*</span> flights<span class="sc">$</span>arr_delay[<span class="sc">!</span>aaflight]<span class="sc">/</span><span class="dv">60</span></span>
-<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a>finearr[finearr<span class="sc">&lt;</span><span class="dv">0</span>]<span class="ot">=</span> <span class="dv">0</span></span>
-<span id="cb44-11"><a href="#cb44-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-12"><a href="#cb44-12" aria-hidden="true" tabindex="-1"></a>flights<span class="sc">$</span>fine<span class="ot">=</span> finedep <span class="sc">+</span> finearr</span>
-<span id="cb44-13"><a href="#cb44-13" aria-hidden="true" tabindex="-1"></a><span class="fu">select</span>(flights, carrier, dep_delay, arr_delay, fine)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-21_37cb06729083c03aecfcd7b7f4a3e7ff">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>uaflight<span class="ot">=</span> (flights<span class="sc">$</span>carrier <span class="sc">==</span> <span class="st">'UA'</span>)</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>finedep<span class="ot">=</span> finearr<span class="ot">=</span> <span class="fu">double</span>(<span class="fu">nrow</span>(flights))</span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>finedep[uaflight]<span class="ot">=</span> <span class="dv">75</span> <span class="sc">*</span> flights<span class="sc">$</span>dep_delay[uaflight]<span class="sc">/</span><span class="dv">60</span></span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>finedep[<span class="sc">!</span>uaflight]<span class="ot">=</span> <span class="dv">100</span> <span class="sc">*</span> flights<span class="sc">$</span>dep_delay[<span class="sc">!</span>uaflight]<span class="sc">/</span><span class="dv">60</span></span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>finedep[finedep<span class="sc">&lt;</span><span class="dv">0</span>]<span class="ot">=</span> <span class="dv">0</span></span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>aaflight<span class="ot">=</span> flights<span class="sc">$</span>carrier <span class="sc">==</span> <span class="st">'AA'</span></span>
+<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a>finearr[aaflight]<span class="ot">=</span> <span class="dv">150</span> <span class="sc">*</span> flights<span class="sc">$</span>arr_delay[aaflight]<span class="sc">/</span><span class="dv">60</span></span>
+<span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a>finearr[<span class="sc">!</span>aaflight] <span class="ot">=</span> <span class="dv">200</span> <span class="sc">*</span> flights<span class="sc">$</span>arr_delay[<span class="sc">!</span>aaflight]<span class="sc">/</span><span class="dv">60</span></span>
+<span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a>finearr[finearr<span class="sc">&lt;</span><span class="dv">0</span>]<span class="ot">=</span> <span class="dv">0</span></span>
+<span id="cb42-11"><a href="#cb42-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-12"><a href="#cb42-12" aria-hidden="true" tabindex="-1"></a>flights<span class="sc">$</span>fine<span class="ot">=</span> finedep <span class="sc">+</span> finearr</span>
+<span id="cb42-13"><a href="#cb42-13" aria-hidden="true" tabindex="-1"></a><span class="fu">select</span>(flights, carrier, dep_delay, arr_delay, fine)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 336,776 × 4
    carrier dep_delay arr_delay  fine
@@ -950,12 +924,13 @@
 </div>
 </div>
 <div id="tabset-4-2">
-<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-23_483c8d9aafb0a4bebf71cbf4290d4e82">
-<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mutate</span>(flights, <span class="at">uaflight=</span> (flights<span class="sc">$</span>carrier<span class="sc">==</span><span class="st">'UA'</span>), <span class="at">aaflight=</span> (flights<span class="sc">$</span>carrier<span class="sc">==</span><span class="st">'AA'</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">finedep=</span> <span class="fu">ifelse</span>(uaflight, <span class="dv">75</span>, <span class="dv">100</span>) <span class="sc">*</span> flights<span class="sc">$</span>dep_delay<span class="sc">/</span><span class="dv">60</span>) <span class="sc">|&gt;</span></span>
-<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">finearr=</span> <span class="fu">ifelse</span>(aaflight, <span class="dv">150</span>, <span class="dv">200</span>) <span class="sc">*</span> flights<span class="sc">$</span>arr_delay<span class="sc">/</span><span class="dv">60</span>) <span class="sc">|&gt;</span></span>
-<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">fine=</span> finedep <span class="sc">+</span> finearr) <span class="sc">|&gt;</span></span>
-<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(carrier, dep_delay, arr_delay, fine)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-22_b552772004e79648488930e1668a1aeb">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mutate</span>(flights, <span class="at">uaflight=</span> (carrier<span class="sc">==</span><span class="st">'UA'</span>), <span class="at">aaflight=</span> (carrier<span class="sc">==</span><span class="st">'AA'</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">finedep=</span> <span class="fu">ifelse</span>(uaflight, <span class="dv">75</span>, <span class="dv">100</span>) <span class="sc">*</span> dep_delay<span class="sc">/</span><span class="dv">60</span>) <span class="sc">|&gt;</span></span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">finearr=</span> <span class="fu">ifelse</span>(aaflight, <span class="dv">150</span>, <span class="dv">200</span>) <span class="sc">*</span> arr_delay<span class="sc">/</span><span class="dv">60</span>) <span class="sc">|&gt;</span></span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">finedep=</span> <span class="fu">ifelse</span>(finedep<span class="sc">&gt;</span><span class="dv">0</span>, finedep, <span class="dv">0</span>), <span class="at">finearr=</span> <span class="fu">ifelse</span>(finearr<span class="sc">&gt;</span><span class="dv">0</span>, finearr, <span class="dv">0</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">fine=</span> finedep <span class="sc">+</span> finearr) <span class="sc">|&gt;</span></span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(carrier, dep_delay, arr_delay, fine)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 336,776 × 4
    carrier dep_delay arr_delay  fine
@@ -963,13 +938,13 @@
  1 UA              2        11  39.2
  2 UA              4        20  71.7
  3 AA              2        33  85.8
- 4 B6             -1       -18 -61.7
- 5 DL             -6       -25 -93.3
- 6 UA             -4        12  35  
- 7 B6             -5        19  55  
- 8 EV             -3       -14 -51.7
- 9 B6             -3        -8 -31.7
-10 AA             -2         8  16.7
+ 4 B6             -1       -18   0  
+ 5 DL             -6       -25   0  
+ 6 UA             -4        12  40  
+ 7 B6             -5        19  63.3
+ 8 EV             -3       -14   0  
+ 9 B6             -3        -8   0  
+10 AA             -2         8  20  
 # ℹ 336,766 more rows</code></pre>
 </div>
 </div>
@@ -985,9 +960,9 @@
 <section id="overall-summaries" class="slide level2">
 <h2>Overall summaries</h2>
 <p>Package <code>skimr</code> provides a nice function <code>skim()</code> to compute basic stats for all variables in a dataset. <code>skim_with()</code> has further customization options</p>
-<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-24_bd1c35733149e95fd56ba9e368300aa6">
-<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>s<span class="ot">=</span> <span class="fu">skim</span>(flights)</span>
-<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>s</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-23_c55cc9d3c578b1b32f1f6023c1e654ee">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>s<span class="ot">=</span> <span class="fu">skim</span>(flights)</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>s</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <table>
 <caption>Data summary</caption>
@@ -1373,8 +1348,8 @@
 <li><p>For &gt;1 summaries <code>dplyr</code> is more convenient</p></li>
 <li><p><code>dplyr</code> also runs faster</p></li>
 </ul>
-<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-25_6c4c8adf8acdbfda1d7298142360dbf8">
-<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">aggregate</span>(dep_delay <span class="sc">~</span> year <span class="sc">+</span> month <span class="sc">+</span> day, <span class="at">data=</span>flights, <span class="at">FUN=</span>mean, <span class="at">na.rm=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-24_a5aaf39d1658b10adaf23c630d980b23">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">aggregate</span>(dep_delay <span class="sc">~</span> year <span class="sc">+</span> month <span class="sc">+</span> day, <span class="at">data=</span>flights, <span class="at">FUN=</span>mean, <span class="at">na.rm=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>    year month day   dep_delay
 1   2013     1   1 11.54892601
@@ -1748,9 +1723,9 @@
 <section id="summarizing-by-groups-1" class="slide level2">
 <h2>Summarizing by groups</h2>
 <p>dplyr has two key functions: <code>summarise</code> and <code>group_by</code></p>
-<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-26_ff03170f42235d940bc5cf288a906d62">
-<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>by_day<span class="ot">=</span> <span class="fu">group_by</span>(flights, year, month, day) <span class="co">#create new (grouped) tibble</span></span>
-<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summarise</span>(by_day, <span class="at">delay =</span> <span class="fu">mean</span>(dep_delay, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-25_e19b8909b8724b328ef802ba29816c29">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>by_day<span class="ot">=</span> <span class="fu">group_by</span>(flights, year, month, day) <span class="co">#create new (grouped) tibble</span></span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summarise</span>(by_day, <span class="at">delay =</span> <span class="fu">mean</span>(dep_delay, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 365 × 4
 # Groups:   year, month [12]
@@ -1777,14 +1752,14 @@
 <ul id="tabset-5" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-5-1">R code</a></li><li><a href="#tabset-5-2">Plot</a></li></ul>
 <div class="tab-content">
 <div id="tabset-5-1">
-<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-27_d8ec03db806b8e59dbc0e234117ee300">
-<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>by_dest<span class="ot">=</span> <span class="fu">group_by</span>(flights, dest)</span>
-<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>delay<span class="ot">=</span> <span class="fu">summarise</span>(by_dest, <span class="at">count =</span> <span class="fu">n</span>(),</span>
-<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">dist =</span> <span class="fu">mean</span>(distance, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">delay =</span> <span class="fu">mean</span>(arr_delay, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb53-6"><a href="#cb53-6" aria-hidden="true" tabindex="-1"></a>delay<span class="ot">=</span> <span class="fu">filter</span>(delay, count <span class="sc">&gt;</span> <span class="dv">20</span>, dest <span class="sc">!=</span> <span class="st">"HNL"</span>) <span class="co">#&gt;20 flights, remove Hololulu</span></span>
-<span id="cb53-7"><a href="#cb53-7" aria-hidden="true" tabindex="-1"></a>delay</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-26_67d13cba47e3706b9a48761b79f6ec24">
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>by_dest<span class="ot">=</span> <span class="fu">group_by</span>(flights, dest)</span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>delay<span class="ot">=</span> <span class="fu">summarise</span>(by_dest, <span class="at">count =</span> <span class="fu">n</span>(),</span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">dist =</span> <span class="fu">mean</span>(distance, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">delay =</span> <span class="fu">mean</span>(arr_delay, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a>delay<span class="ot">=</span> <span class="fu">filter</span>(delay, count <span class="sc">&gt;</span> <span class="dv">20</span>, dest <span class="sc">!=</span> <span class="st">"HNL"</span>) <span class="co">#&gt;20 flights, remove Hololulu</span></span>
+<span id="cb51-7"><a href="#cb51-7" aria-hidden="true" tabindex="-1"></a>delay</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 96 × 4
    dest  count  dist delay
@@ -1804,12 +1779,12 @@
 </div>
 </div>
 <div id="tabset-5-2">
-<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-28_6127966694e1d393917ff158f841aa82">
-<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> delay, <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> dist, <span class="at">y =</span> delay)) <span class="sc">+</span></span>
-<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">size =</span> count), <span class="at">alpha =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>) <span class="sc">+</span></span>
-<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">se =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-27_362b3375d232c9bfc5d4b55e81377a11">
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> delay, <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> dist, <span class="at">y =</span> delay)) <span class="sc">+</span></span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">size =</span> count), <span class="at">alpha =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">se =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img data-src="03_datawrangling_files/figure-revealjs/unnamed-chunk-28-1.png" width="960"></p>
+<p><img data-src="03_datawrangling_files/figure-revealjs/unnamed-chunk-27-1.png" width="960"></p>
 </div>
 </div>
 </div>
@@ -1819,14 +1794,14 @@
 <section id="same-using-pipes" class="slide level2">
 <h2>Same using pipes</h2>
 <p>Avoid creating intermediate datasets (<code>by_dest</code> in the previous slide)</p>
-<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-29_595f804f9b77f96a39ddd71a0650e557">
-<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>delays<span class="ot">=</span> <span class="fu">group_by</span>(flights, dest) <span class="sc">|&gt;</span> </span>
-<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">count =</span> <span class="fu">n</span>(),</span>
-<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">dist =</span> <span class="fu">mean</span>(distance, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">delay =</span> <span class="fu">mean</span>(arr_delay, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
-<span id="cb56-6"><a href="#cb56-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(count <span class="sc">&gt;</span> <span class="dv">20</span>, dest <span class="sc">!=</span> <span class="st">"HNL"</span>)</span>
-<span id="cb56-7"><a href="#cb56-7" aria-hidden="true" tabindex="-1"></a>delays</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-28_ed19472a72d699ec37d170474323b95d">
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>delays<span class="ot">=</span> <span class="fu">group_by</span>(flights, dest) <span class="sc">|&gt;</span> </span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">count =</span> <span class="fu">n</span>(),</span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">dist =</span> <span class="fu">mean</span>(distance, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">delay =</span> <span class="fu">mean</span>(arr_delay, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb54-6"><a href="#cb54-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(count <span class="sc">&gt;</span> <span class="dv">20</span>, dest <span class="sc">!=</span> <span class="st">"HNL"</span>)</span>
+<span id="cb54-7"><a href="#cb54-7" aria-hidden="true" tabindex="-1"></a>delays</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 96 × 4
    dest  count  dist delay
@@ -1853,10 +1828,10 @@
 <li><p>Counts: <code>n</code>, <code>sum(is.na())</code>, <code>n_distinct()</code></p></li>
 </ul>
 <p>Example: number of flights with early departure (&lt;5:00am)</p>
-<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-30_dbc2026a476b6e1b15c83dddaf8c0697">
-<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>flights <span class="sc">|&gt;</span></span>
-<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(year, month, day) <span class="sc">|&gt;</span></span>
-<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">n_early =</span> <span class="fu">sum</span>(dep_time <span class="sc">&lt;</span> <span class="dv">500</span>, <span class="at">na.rm=</span><span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-29_7be035161b98d33ee246cedf21699661">
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>flights <span class="sc">|&gt;</span></span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(year, month, day) <span class="sc">|&gt;</span></span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">n_early =</span> <span class="fu">sum</span>(dep_time <span class="sc">&lt;</span> <span class="dv">500</span>, <span class="at">na.rm=</span><span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 365 × 4
 # Groups:   year, month [12]
@@ -1878,9 +1853,9 @@
 </section>
 <section id="ungrouping" class="slide level2">
 <h2>Ungrouping</h2>
-<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-31_f47e1396ddb739c1f5b96de91e93b93a">
-<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>daily<span class="ot">=</span> <span class="fu">group_by</span>(flights, year, month, day)</span>
-<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summarise</span>(daily, <span class="at">flights =</span> <span class="fu">n</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-30_b63d1cde26a5d453ced40c752e9c6e03">
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>daily<span class="ot">=</span> <span class="fu">group_by</span>(flights, year, month, day)</span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summarise</span>(daily, <span class="at">flights =</span> <span class="fu">n</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 365 × 4
 # Groups:   year, month [12]
@@ -1900,9 +1875,9 @@
 </div>
 </div>
 <p>Ungrouping</p>
-<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-32_36f7ed2393cd6d16d03d0c4b32addaf1">
-<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a>daily<span class="ot">=</span> <span class="fu">ungroup</span>(daily)</span>
-<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summarise</span>(daily, <span class="at">flights =</span> <span class="fu">n</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-31_3e0f500347a0c5dbb56cc75c1a9a9ff4">
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>daily<span class="ot">=</span> <span class="fu">ungroup</span>(daily)</span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summarise</span>(daily, <span class="at">flights =</span> <span class="fu">n</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 1 × 1
   flights
@@ -1917,15 +1892,15 @@
 <p>Cancelled flights have NA departure/arrival delays. Select non-cancelled flights and compute mean delay for each airplane (variable <code>tailnum</code>)</p>
 <div class="columns">
 <div class="column" style="width:70%;">
-<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-33_0c4a62482d54bc7a35f9f2b7cf1b405c">
-<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a>not_cancelled<span class="ot">=</span> <span class="fu">filter</span>(flights, <span class="sc">!</span><span class="fu">is.na</span>(dep_delay), <span class="sc">!</span><span class="fu">is.na</span>(arr_delay))</span>
-<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a>delays<span class="ot">=</span> <span class="fu">group_by</span>(not_cancelled, tailnum) <span class="sc">|&gt;</span></span>
-<span id="cb64-3"><a href="#cb64-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">count=</span> <span class="fu">n</span>(), <span class="at">delay =</span> <span class="fu">mean</span>(arr_delay))</span>
-<span id="cb64-4"><a href="#cb64-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-5"><a href="#cb64-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> delays, <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> delay)) <span class="sc">+</span> </span>
-<span id="cb64-6"><a href="#cb64-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_freqpoly</span>(<span class="at">binwidth =</span> <span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-32_a331da0cbb17e03778be0a1bf26b8412">
+<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a>not_cancelled<span class="ot">=</span> <span class="fu">filter</span>(flights, <span class="sc">!</span><span class="fu">is.na</span>(dep_delay), <span class="sc">!</span><span class="fu">is.na</span>(arr_delay))</span>
+<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a>delays<span class="ot">=</span> <span class="fu">group_by</span>(not_cancelled, tailnum) <span class="sc">|&gt;</span></span>
+<span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">count=</span> <span class="fu">n</span>(), <span class="at">delay =</span> <span class="fu">mean</span>(arr_delay))</span>
+<span id="cb62-4"><a href="#cb62-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-5"><a href="#cb62-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> delays, <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> delay)) <span class="sc">+</span> </span>
+<span id="cb62-6"><a href="#cb62-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_freqpoly</span>(<span class="at">binwidth =</span> <span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img data-src="03_datawrangling_files/figure-revealjs/unnamed-chunk-33-1.png" width="960"></p>
+<p><img data-src="03_datawrangling_files/figure-revealjs/unnamed-chunk-32-1.png" width="960"></p>
 </div>
 </div>
 </div><div class="column" style="width:30%;">
@@ -1936,19 +1911,19 @@
 <section class="slide level2">
 
 <p>Extreme mean delays mostly in planes with few flights (central limit theorem in action!). The mean delay is actually pretty constant</p>
-<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-34_3346876930c48612724a123eb2631c12">
-<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(delays, <span class="fu">aes</span>(<span class="at">x=</span>count, <span class="at">y=</span>delay)) <span class="sc">+</span></span>
-<span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb65-3"><a href="#cb65-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-33_16502f11b3b98e6bf508133007587181">
+<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(delays, <span class="fu">aes</span>(<span class="at">x=</span>count, <span class="at">y=</span>delay)) <span class="sc">+</span></span>
+<span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb63-3"><a href="#cb63-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 </div>
-<img data-src="03_datawrangling_files/figure-revealjs/unnamed-chunk-34-1.png" width="960" class="r-stretch"></section>
+<img data-src="03_datawrangling_files/figure-revealjs/unnamed-chunk-33-1.png" width="960" class="r-stretch"></section>
 <section id="batting-averages" class="slide level2">
 <h2>Batting averages</h2>
 <p>For each player, compute batting average (hits <code>H</code> / opportunities to hit the ball <code>AB</code>)</p>
-<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-35_2349b868bdcb82b748726bc423ceef76">
-<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a>batting<span class="ot">=</span> <span class="fu">as_tibble</span>(Lahman<span class="sc">::</span>Batting)</span>
-<span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a>batting</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-34_63a5bbc238643fb108c58d37cc7228ad">
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a>batting<span class="ot">=</span> <span class="fu">as_tibble</span>(Lahman<span class="sc">::</span>Batting)</span>
+<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a>batting</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 112,184 × 22
    playerID  yearID stint teamID lgID      G    AB     R     H   X2B   X3B    HR
@@ -1967,25 +1942,25 @@
 # ℹ 10 more variables: RBI &lt;int&gt;, SB &lt;int&gt;, CS &lt;int&gt;, BB &lt;int&gt;, SO &lt;int&gt;,
 #   IBB &lt;int&gt;, HBP &lt;int&gt;, SH &lt;int&gt;, SF &lt;int&gt;, GIDP &lt;int&gt;</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a>batters<span class="ot">=</span> <span class="fu">group_by</span>(batting, playerID) <span class="sc">|&gt;</span> </span>
-<span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb68-3"><a href="#cb68-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">ba =</span> <span class="fu">sum</span>(H, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">/</span> <span class="fu">sum</span>(AB, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb68-4"><a href="#cb68-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">ab =</span> <span class="fu">sum</span>(AB, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb68-5"><a href="#cb68-5" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a>batters<span class="ot">=</span> <span class="fu">group_by</span>(batting, playerID) <span class="sc">|&gt;</span> </span>
+<span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb66-3"><a href="#cb66-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">ba =</span> <span class="fu">sum</span>(H, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">/</span> <span class="fu">sum</span>(AB, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb66-4"><a href="#cb66-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">ab =</span> <span class="fu">sum</span>(AB, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb66-5"><a href="#cb66-5" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section class="slide level2">
 
 <p>Batting average’s mean &amp; variance associated with opportunities to hit. Can you think of a reason why?</p>
-<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-36_d09e7009a69a47b104180a7fb34e8c1f">
-<div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(batters, ab <span class="sc">&gt;</span> <span class="dv">100</span>) <span class="sc">|&gt;</span></span>
-<span id="cb69-2"><a href="#cb69-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> ab, <span class="at">y =</span> ba)) <span class="sc">+</span></span>
-<span id="cb69-3"><a href="#cb69-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
-<span id="cb69-4"><a href="#cb69-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_smooth</span>(<span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
-<span id="cb69-5"><a href="#cb69-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">x=</span><span class="st">'Opportunities to hit'</span>, <span class="at">y=</span><span class="st">'Batting average'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-35_906897752710205ad70ed6af41c8155c">
+<div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(batters, ab <span class="sc">&gt;</span> <span class="dv">100</span>) <span class="sc">|&gt;</span></span>
+<span id="cb67-2"><a href="#cb67-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> ab, <span class="at">y =</span> ba)) <span class="sc">+</span></span>
+<span id="cb67-3"><a href="#cb67-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb67-4"><a href="#cb67-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_smooth</span>(<span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb67-5"><a href="#cb67-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">x=</span><span class="st">'Opportunities to hit'</span>, <span class="at">y=</span><span class="st">'Batting average'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 </div>
-<img data-src="03_datawrangling_files/figure-revealjs/unnamed-chunk-36-1.png" width="960" class="r-stretch"></section>
+<img data-src="03_datawrangling_files/figure-revealjs/unnamed-chunk-35-1.png" width="960" class="r-stretch"></section>
 <section id="counts" class="slide level2">
 <h2>Counts</h2>
 <p>Two equivalent ways to count: <code>summarise</code> and <code>count</code></p>
@@ -1994,9 +1969,9 @@
 <ul id="tabset-6" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-6-1">summarize</a></li><li><a href="#tabset-6-2">count</a></li></ul>
 <div class="tab-content">
 <div id="tabset-6-1">
-<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-37_8b027c01a3e726c17cba4171b94b1f89">
-<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a>tab<span class="ot">=</span> <span class="fu">group_by</span>(diamonds, color, cut) <span class="sc">|&gt;</span> <span class="fu">summarise</span>(<span class="at">count=</span><span class="fu">n</span>())</span>
-<span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a>tab</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-36_3c4ff08f4b66e9d339fdf42b13e738f6">
+<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a>tab<span class="ot">=</span> <span class="fu">group_by</span>(diamonds, color, cut) <span class="sc">|&gt;</span> <span class="fu">summarise</span>(<span class="at">count=</span><span class="fu">n</span>())</span>
+<span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a>tab</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 35 × 3
 # Groups:   color [7]
@@ -2017,9 +1992,9 @@
 </div>
 </div>
 <div id="tabset-6-2">
-<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-38_010f626cd6b664a86cbc25987c9fe76e">
-<div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a>tab<span class="ot">=</span> <span class="fu">count</span>(diamonds, color, cut)</span>
-<span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a>tab</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-37_4e8a1fde40a7474fa9b3261f4e34ae8c">
+<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a>tab<span class="ot">=</span> <span class="fu">count</span>(diamonds, color, cut)</span>
+<span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a>tab</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 35 × 3
    color cut           n
@@ -2044,12 +2019,12 @@
 <section id="counts-1" class="slide level2">
 <h2>Counts</h2>
 <p>We can visualize the counts with <code>geom_tile</code></p>
-<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-39_c55bea6469336e66f4caed9962fda1f8">
-<div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(tab, <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> color, <span class="at">y =</span> cut)) <span class="sc">+</span></span>
-<span id="cb74-2"><a href="#cb74-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_tile</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">fill =</span> n))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-38_5f050b72e3406f7916abc517cdff272b">
+<div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(tab, <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> color, <span class="at">y =</span> cut)) <span class="sc">+</span></span>
+<span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_tile</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">fill =</span> n))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 </div>
-<img data-src="03_datawrangling_files/figure-revealjs/unnamed-chunk-39-1.png" width="960" class="r-stretch"></section>
+<img data-src="03_datawrangling_files/figure-revealjs/unnamed-chunk-38-1.png" width="960" class="r-stretch"></section>
 <section id="discretize-continuous-variables" class="slide level2">
 <h2>Discretize continuous variables</h2>
 <p><code>cut_interval</code>, <code>cut_number</code>, <code>cut_width</code>: chop a continuous variable into groups</p>
@@ -2058,22 +2033,22 @@
 <ul id="tabset-7" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-7-1">Mutate</a></li><li><a href="#tabset-7-2">Aesthetic</a></li></ul>
 <div class="tab-content">
 <div id="tabset-7-1">
-<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-40_4aedcfa7b6e6daa5c2ff962a24c6733d">
-<div class="sourceCode cell-code" id="cb75"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a>diam2<span class="ot">=</span> <span class="fu">mutate</span>(diamonds, <span class="at">carat_disc=</span> <span class="fu">cut_width</span>(carat, <span class="fl">0.1</span>))</span>
-<span id="cb75-2"><a href="#cb75-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(diam2, <span class="fu">aes</span>(<span class="at">x =</span> carat, <span class="at">y =</span> price)) <span class="sc">+</span> </span>
-<span id="cb75-3"><a href="#cb75-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="fu">aes</span>(<span class="at">group =</span> carat_disc))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-39_1d5cfc28e38e025a16a2b5fb9f3b4b11">
+<div class="sourceCode cell-code" id="cb73"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a>diam2<span class="ot">=</span> <span class="fu">mutate</span>(diamonds, <span class="at">carat_disc=</span> <span class="fu">cut_width</span>(carat, <span class="fl">0.1</span>))</span>
+<span id="cb73-2"><a href="#cb73-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(diam2, <span class="fu">aes</span>(<span class="at">x =</span> carat, <span class="at">y =</span> price)) <span class="sc">+</span> </span>
+<span id="cb73-3"><a href="#cb73-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="fu">aes</span>(<span class="at">group =</span> carat_disc))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img data-src="03_datawrangling_files/figure-revealjs/unnamed-chunk-40-1.png" width="960"></p>
+<p><img data-src="03_datawrangling_files/figure-revealjs/unnamed-chunk-39-1.png" width="960"></p>
 </div>
 </div>
 </div>
 <div id="tabset-7-2">
 <p>Same result, using <code>cut_width</code> within an aesthetic</p>
-<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-41_798a3e916c87349e3968f66e90706f9c">
-<div class="sourceCode cell-code" id="cb76"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(diamonds, <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> carat, <span class="at">y =</span> price)) <span class="sc">+</span> </span>
-<span id="cb76-2"><a href="#cb76-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">group =</span> <span class="fu">cut_width</span>(carat, <span class="fl">0.1</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-40_28e0cbdea896889fc7322c2a28be49c3">
+<div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(diamonds, <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> carat, <span class="at">y =</span> price)) <span class="sc">+</span> </span>
+<span id="cb74-2"><a href="#cb74-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">group =</span> <span class="fu">cut_width</span>(carat, <span class="fl">0.1</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img data-src="03_datawrangling_files/figure-revealjs/unnamed-chunk-41-1.png" width="960"></p>
+<p><img data-src="03_datawrangling_files/figure-revealjs/unnamed-chunk-40-1.png" width="960"></p>
 </div>
 </div>
 </div>
@@ -2088,9 +2063,9 @@
 <section class="slide level2">
 
 <p>To do Exercises 1-2 below load the gapminder data</p>
-<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-42_a1a30fd3d419255d984217bb938cd79f">
-<div class="sourceCode cell-code" id="cb77"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gapminder)</span>
-<span id="cb77-2"><a href="#cb77-2" aria-hidden="true" tabindex="-1"></a>gapminder</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-41_17e5929200bdd92ad9d836fba6ac6550">
+<div class="sourceCode cell-code" id="cb75"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gapminder)</span>
+<span id="cb75-2"><a href="#cb75-2" aria-hidden="true" tabindex="-1"></a>gapminder</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Turn in a single html with your solutions <a href="https://drive.google.com/drive/folders/1jhh1CrXM3hqc7qTrOYeQzo2pV8Vly1NY?usp=sharing">here</a>. Name your file firstname_lastname.html</p>
 </section>
@@ -2131,16 +2106,16 @@
 <section id="rdata-files" class="slide level2">
 <h2>.RData files</h2>
 <p><code>save</code> stores any specified objects in an <code>.RData</code> file (for large files use <code>compress=TRUE</code>).</p>
-<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-43_254333100f1aa4d08cc5d4f4ed99ea0a">
-<div class="sourceCode cell-code" id="cb78"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a>x<span class="ot">=</span> <span class="fu">rnorm</span>(<span class="dv">20</span>)</span>
-<span id="cb78-2"><a href="#cb78-2" aria-hidden="true" tabindex="-1"></a>y<span class="ot">=</span> <span class="dv">10</span> <span class="sc">+</span> <span class="dv">5</span><span class="sc">*</span>x <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="dv">20</span>)  <span class="co">#simulate data from a linear regression, errors N(0,1)</span></span>
-<span id="cb78-3"><a href="#cb78-3" aria-hidden="true" tabindex="-1"></a>fit<span class="ot">=</span> <span class="fu">lm</span>(y <span class="sc">~</span> x)</span>
-<span id="cb78-4"><a href="#cb78-4" aria-hidden="true" tabindex="-1"></a><span class="fu">save</span>(x, y, fit, <span class="at">file=</span><span class="st">'myfile.RData'</span>, <span class="at">compress=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-42_a7d7acf8a4447a8c2b0bb567780ef404">
+<div class="sourceCode cell-code" id="cb76"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a>x<span class="ot">=</span> <span class="fu">rnorm</span>(<span class="dv">20</span>)</span>
+<span id="cb76-2"><a href="#cb76-2" aria-hidden="true" tabindex="-1"></a>y<span class="ot">=</span> <span class="dv">10</span> <span class="sc">+</span> <span class="dv">5</span><span class="sc">*</span>x <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="dv">20</span>)  <span class="co">#simulate data from a linear regression, errors N(0,1)</span></span>
+<span id="cb76-3"><a href="#cb76-3" aria-hidden="true" tabindex="-1"></a>fit<span class="ot">=</span> <span class="fu">lm</span>(y <span class="sc">~</span> x)</span>
+<span id="cb76-4"><a href="#cb76-4" aria-hidden="true" tabindex="-1"></a><span class="fu">save</span>(x, y, fit, <span class="at">file=</span><span class="st">'myfile.RData'</span>, <span class="at">compress=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p><code>load</code> loads the file and all objects saved therein</p>
-<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-44_c02e17f5edc67527f1403ef883678383">
-<div class="sourceCode cell-code" id="cb79"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a href="#cb79-1" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">'myfile.RData'</span>)</span>
-<span id="cb79-2"><a href="#cb79-2" aria-hidden="true" tabindex="-1"></a>fit</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-43_7787b0917bf1d082d5aa1eca5dbc1a03">
+<div class="sourceCode cell-code" id="cb77"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">'myfile.RData'</span>)</span>
+<span id="cb77-2"><a href="#cb77-2" aria-hidden="true" tabindex="-1"></a>fit</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section></section>
 <section>
@@ -2152,12 +2127,12 @@
 
 <p>Data can be stored in different formats. In a tidy dataset, each variable is a column, each observation a row</p>
 <p>This dataset is tidy</p>
-<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-45_cd8fbda4adcc0768de2e6670c6aa73c8">
-<div class="sourceCode cell-code" id="cb80"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a>country<span class="ot">=</span> <span class="fu">c</span>(<span class="st">'UK'</span>,<span class="st">'UK'</span>,<span class="st">'Spain'</span>,<span class="st">'Spain'</span>)</span>
-<span id="cb80-2"><a href="#cb80-2" aria-hidden="true" tabindex="-1"></a>year<span class="ot">=</span> <span class="fu">c</span>(<span class="dv">2022</span>,<span class="dv">2023</span>,<span class="dv">2022</span>,<span class="dv">2023</span>)</span>
-<span id="cb80-3"><a href="#cb80-3" aria-hidden="true" tabindex="-1"></a>population<span class="ot">=</span> <span class="fu">c</span>(<span class="fl">80.5</span>,<span class="fl">81.4</span>,<span class="fl">50.1</span>,<span class="fl">50.0</span>)</span>
-<span id="cb80-4"><a href="#cb80-4" aria-hidden="true" tabindex="-1"></a>tab<span class="ot">=</span> <span class="fu">tibble</span>(country, year, population)</span>
-<span id="cb80-5"><a href="#cb80-5" aria-hidden="true" tabindex="-1"></a>tab</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-44_7f988fd726a191346d22ac0b6e4eb918">
+<div class="sourceCode cell-code" id="cb78"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a>country<span class="ot">=</span> <span class="fu">c</span>(<span class="st">'UK'</span>,<span class="st">'UK'</span>,<span class="st">'Spain'</span>,<span class="st">'Spain'</span>)</span>
+<span id="cb78-2"><a href="#cb78-2" aria-hidden="true" tabindex="-1"></a>year<span class="ot">=</span> <span class="fu">c</span>(<span class="dv">2022</span>,<span class="dv">2023</span>,<span class="dv">2022</span>,<span class="dv">2023</span>)</span>
+<span id="cb78-3"><a href="#cb78-3" aria-hidden="true" tabindex="-1"></a>population<span class="ot">=</span> <span class="fu">c</span>(<span class="fl">80.5</span>,<span class="fl">81.4</span>,<span class="fl">50.1</span>,<span class="fl">50.0</span>)</span>
+<span id="cb78-4"><a href="#cb78-4" aria-hidden="true" tabindex="-1"></a>tab<span class="ot">=</span> <span class="fu">tibble</span>(country, year, population)</span>
+<span id="cb78-5"><a href="#cb78-5" aria-hidden="true" tabindex="-1"></a>tab</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 4 × 3
   country  year population
@@ -2169,12 +2144,12 @@
 </div>
 </div>
 <p>This one has the same data, but is not tidy</p>
-<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-46_8dc87a6315b7229a955cd77ad7e4aacd">
-<div class="sourceCode cell-code" id="cb82"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb82-1"><a href="#cb82-1" aria-hidden="true" tabindex="-1"></a>country<span class="ot">=</span> <span class="fu">c</span>(<span class="st">'UK'</span>,<span class="st">'Spain'</span>)</span>
-<span id="cb82-2"><a href="#cb82-2" aria-hidden="true" tabindex="-1"></a>y2022<span class="ot">=</span> <span class="fu">c</span>(<span class="fl">80.5</span>,<span class="fl">50.1</span>); y2023<span class="ot">=</span> <span class="fu">c</span>(<span class="fl">81.4</span>,<span class="fl">50.0</span>)</span>
-<span id="cb82-3"><a href="#cb82-3" aria-hidden="true" tabindex="-1"></a>tab2<span class="ot">=</span> <span class="fu">tibble</span>(country, y2022, y2023)</span>
-<span id="cb82-4"><a href="#cb82-4" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(tab2)[<span class="dv">2</span><span class="sc">:</span><span class="dv">3</span>]<span class="ot">=</span> <span class="fu">c</span>(<span class="st">'2022'</span>,<span class="st">'2023'</span>)</span>
-<span id="cb82-5"><a href="#cb82-5" aria-hidden="true" tabindex="-1"></a>tab2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-45_e8ce5b57a03fd76cee4ae07cd04f1019">
+<div class="sourceCode cell-code" id="cb80"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a>country<span class="ot">=</span> <span class="fu">c</span>(<span class="st">'UK'</span>,<span class="st">'Spain'</span>)</span>
+<span id="cb80-2"><a href="#cb80-2" aria-hidden="true" tabindex="-1"></a>y2022<span class="ot">=</span> <span class="fu">c</span>(<span class="fl">80.5</span>,<span class="fl">50.1</span>); y2023<span class="ot">=</span> <span class="fu">c</span>(<span class="fl">81.4</span>,<span class="fl">50.0</span>)</span>
+<span id="cb80-3"><a href="#cb80-3" aria-hidden="true" tabindex="-1"></a>tab2<span class="ot">=</span> <span class="fu">tibble</span>(country, y2022, y2023)</span>
+<span id="cb80-4"><a href="#cb80-4" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(tab2)[<span class="dv">2</span><span class="sc">:</span><span class="dv">3</span>]<span class="ot">=</span> <span class="fu">c</span>(<span class="st">'2022'</span>,<span class="st">'2023'</span>)</span>
+<span id="cb80-5"><a href="#cb80-5" aria-hidden="true" tabindex="-1"></a>tab2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 2 × 3
   country `2022` `2023`
@@ -2196,8 +2171,8 @@
 <section id="example-1" class="slide level2">
 <h2>Example</h2>
 <p>Below 2022-2023 are values of the variable year</p>
-<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-47_d5cae68186ffe243efef1b181f1bc144">
-<div class="sourceCode cell-code" id="cb84"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb84-1"><a href="#cb84-1" aria-hidden="true" tabindex="-1"></a>tab2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-46_b5c2b73fdfebaa484a6b5edb3d400f0b">
+<div class="sourceCode cell-code" id="cb82"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb82-1"><a href="#cb82-1" aria-hidden="true" tabindex="-1"></a>tab2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 2 × 3
   country `2022` `2023`
@@ -2211,8 +2186,8 @@
 <li><p>The column names should be values of variable <code>year</code></p></li>
 <li><p>Their values should be in a variable <code>population</code></p></li>
 </ul>
-<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-48_549eb865945f32302cc102bdf935eb23">
-<div class="sourceCode cell-code" id="cb86"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb86-1"><a href="#cb86-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pivot_longer</span>(tab2, <span class="at">cols=</span><span class="fu">c</span>(<span class="st">'2022'</span>,<span class="st">'2023'</span>), <span class="at">names_to=</span><span class="st">"year"</span>, <span class="at">values_to=</span> <span class="st">"population"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-47_77d1ebf9bc0f452370e70d519cef6c34">
+<div class="sourceCode cell-code" id="cb84"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb84-1"><a href="#cb84-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pivot_longer</span>(tab2, <span class="at">cols=</span><span class="fu">c</span>(<span class="st">'2022'</span>,<span class="st">'2023'</span>), <span class="at">names_to=</span><span class="st">"year"</span>, <span class="at">values_to=</span> <span class="st">"population"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 4 × 3
   country year  population
@@ -2227,9 +2202,9 @@
 <section id="separating-columns" class="slide level2">
 <h2>Separating columns</h2>
 <p>Sometimes a character needs to be separated into several ones</p>
-<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-49_2a6052748ac3776322855f6c666fadbd">
-<div class="sourceCode cell-code" id="cb88"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb88-1"><a href="#cb88-1" aria-hidden="true" tabindex="-1"></a>tab<span class="ot">=</span> <span class="fu">tibble</span>(<span class="at">date=</span><span class="fu">c</span>(<span class="st">"25/12/22"</span>,<span class="st">"26/12/22"</span>), <span class="at">date2=</span><span class="fu">c</span>(<span class="st">"251222"</span>,<span class="st">"261222"</span>))</span>
-<span id="cb88-2"><a href="#cb88-2" aria-hidden="true" tabindex="-1"></a>tab</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-48_495c2f9715a9fb0296791611712de56f">
+<div class="sourceCode cell-code" id="cb86"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb86-1"><a href="#cb86-1" aria-hidden="true" tabindex="-1"></a>tab<span class="ot">=</span> <span class="fu">tibble</span>(<span class="at">date=</span><span class="fu">c</span>(<span class="st">"25/12/22"</span>,<span class="st">"26/12/22"</span>), <span class="at">date2=</span><span class="fu">c</span>(<span class="st">"251222"</span>,<span class="st">"261222"</span>))</span>
+<span id="cb86-2"><a href="#cb86-2" aria-hidden="true" tabindex="-1"></a>tab</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 2 × 2
   date     date2 
@@ -2239,8 +2214,8 @@
 </div>
 </div>
 <p><code>separate</code>: indicate character to split by. <code>convert=TRUE</code> tries to convert into numeric</p>
-<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-50_47ff14107d9f3cad8c6eabd73765845e">
-<div class="sourceCode cell-code" id="cb90"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb90-1"><a href="#cb90-1" aria-hidden="true" tabindex="-1"></a><span class="fu">separate</span>(tab, <span class="at">col=</span>date, <span class="at">sep=</span><span class="st">'/'</span>, <span class="at">into=</span><span class="fu">c</span>(<span class="st">'day'</span>,<span class="st">'month'</span>,<span class="st">'year'</span>), <span class="at">convert=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-49_d64fbc7c301264ada8d8f588a7471088">
+<div class="sourceCode cell-code" id="cb88"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb88-1"><a href="#cb88-1" aria-hidden="true" tabindex="-1"></a><span class="fu">separate</span>(tab, <span class="at">col=</span>date, <span class="at">sep=</span><span class="st">'/'</span>, <span class="at">into=</span><span class="fu">c</span>(<span class="st">'day'</span>,<span class="st">'month'</span>,<span class="st">'year'</span>), <span class="at">convert=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 2 × 4
     day month  year date2 
@@ -2250,8 +2225,8 @@
 </div>
 </div>
 <p>Or positions at which to split</p>
-<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-51_1b1e4cc1c35d7f19ac0ce07666feddbc">
-<div class="sourceCode cell-code" id="cb92"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb92-1"><a href="#cb92-1" aria-hidden="true" tabindex="-1"></a><span class="fu">separate</span>(tab, <span class="at">col=</span>date2, <span class="at">sep=</span><span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">4</span>), <span class="at">into=</span><span class="fu">c</span>(<span class="st">'day'</span>,<span class="st">'month'</span>,<span class="st">'year'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-50_cb068fcaf0f85cde42821344a10e04e8">
+<div class="sourceCode cell-code" id="cb90"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb90-1"><a href="#cb90-1" aria-hidden="true" tabindex="-1"></a><span class="fu">separate</span>(tab, <span class="at">col=</span>date2, <span class="at">sep=</span><span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">4</span>), <span class="at">into=</span><span class="fu">c</span>(<span class="st">'day'</span>,<span class="st">'month'</span>,<span class="st">'year'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 2 × 4
   date     day   month year 
@@ -2264,10 +2239,10 @@
 <section id="uniting-columns" class="slide level2">
 <h2>Uniting columns</h2>
 <p>Consider the dataset <code>stab</code></p>
-<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-52_850560ee5c6184ee343aec888522fe29">
-<div class="sourceCode cell-code" id="cb94"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb94-1"><a href="#cb94-1" aria-hidden="true" tabindex="-1"></a>stab<span class="ot">=</span> <span class="fu">separate</span>(tab, <span class="at">col=</span>date2, <span class="at">sep=</span><span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">4</span>), <span class="at">into=</span><span class="fu">c</span>(<span class="st">'day'</span>,<span class="st">'month'</span>,<span class="st">'year'</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb94-2"><a href="#cb94-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>date)</span>
-<span id="cb94-3"><a href="#cb94-3" aria-hidden="true" tabindex="-1"></a>stab</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-51_66c67a947f5e67ddad695c2a999b1429">
+<div class="sourceCode cell-code" id="cb92"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb92-1"><a href="#cb92-1" aria-hidden="true" tabindex="-1"></a>stab<span class="ot">=</span> <span class="fu">separate</span>(tab, <span class="at">col=</span>date2, <span class="at">sep=</span><span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">4</span>), <span class="at">into=</span><span class="fu">c</span>(<span class="st">'day'</span>,<span class="st">'month'</span>,<span class="st">'year'</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb92-2"><a href="#cb92-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>date)</span>
+<span id="cb92-3"><a href="#cb92-3" aria-hidden="true" tabindex="-1"></a>stab</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 2 × 3
   day   month year 
@@ -2277,8 +2252,8 @@
 </div>
 </div>
 <p>We use <code>unite</code> to paste columns together. The 2nd argument is the new column name, then we specify the columns to be pasted. <code>sep</code> is an optional separation character</p>
-<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-53_3a787af989b4b7668f42c0a07f2c4862">
-<div class="sourceCode cell-code" id="cb96"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb96-1"><a href="#cb96-1" aria-hidden="true" tabindex="-1"></a><span class="fu">unite</span>(stab, date, day, month, year, <span class="at">sep=</span><span class="st">"-"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-52_d9db73b73c254b4349fc523e4bb4c1e6">
+<div class="sourceCode cell-code" id="cb94"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb94-1"><a href="#cb94-1" aria-hidden="true" tabindex="-1"></a><span class="fu">unite</span>(stab, date, day, month, year, <span class="at">sep=</span><span class="st">"-"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 2 × 1
   date    
@@ -2296,15 +2271,15 @@
 <section class="slide level2">
 
 <p>Databases may be stored in different tables (saves space and transfer time)</p>
-<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-54_decb89f66f068aff1ef050d691d38195">
-<div class="sourceCode cell-code" id="cb98"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb98-1"><a href="#cb98-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(nycflights13)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-53_b334c34c1797121a63736fcb704005d2">
+<div class="sourceCode cell-code" id="cb96"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb96-1"><a href="#cb96-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(nycflights13)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="panel-tabset">
 <ul id="tabset-8" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-8-1">flights</a></li><li><a href="#tabset-8-2">airlines</a></li></ul>
 <div class="tab-content">
 <div id="tabset-8-1">
-<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-55_7abf8da5ebc97a375fb76fceb27e3d73">
-<div class="sourceCode cell-code" id="cb99"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb99-1"><a href="#cb99-1" aria-hidden="true" tabindex="-1"></a>flights</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-54_0029daf9867906718fb1feebbc4ea838">
+<div class="sourceCode cell-code" id="cb97"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb97-1"><a href="#cb97-1" aria-hidden="true" tabindex="-1"></a>flights</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 336,776 × 20
     year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time
@@ -2327,8 +2302,8 @@
 </div>
 </div>
 <div id="tabset-8-2">
-<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-56_07713edaf106a5e5f677eb3e3400dfbc">
-<div class="sourceCode cell-code" id="cb101"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb101-1"><a href="#cb101-1" aria-hidden="true" tabindex="-1"></a>airlines</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-55_dae18a48b0ac079eb90e7c909e7d535b">
+<div class="sourceCode cell-code" id="cb99"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb99-1"><a href="#cb99-1" aria-hidden="true" tabindex="-1"></a>airlines</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 16 × 2
    carrier name                       
@@ -2383,7 +2358,7 @@
 <td><code>merge(x,y)</code></td>
 </tr>
 <tr class="even">
-<td><code>left_join(x,y)</code></td>
+<td><code>full_join(x,y)</code></td>
 <td><code>merge(x,y,all.x=TRUE,all.y=TRUE)</code></td>
 </tr>
 </tbody>
@@ -2391,9 +2366,9 @@
 </section>
 <section id="merge" class="slide level2">
 <h2>Merge</h2>
-<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-57_00171bac74c77142a95c1f89ef707020">
-<div class="sourceCode cell-code" id="cb103"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb103-1"><a href="#cb103-1" aria-hidden="true" tabindex="-1"></a>flightsdep<span class="ot">=</span> <span class="fu">select</span>(flights, <span class="fu">c</span>(<span class="st">'year'</span>,<span class="st">'month'</span>,<span class="st">'day'</span>,<span class="st">'dep_time'</span>,<span class="st">'carrier'</span>))</span>
-<span id="cb103-2"><a href="#cb103-2" aria-hidden="true" tabindex="-1"></a><span class="fu">left_join</span>(flightsdep, airlines, <span class="at">by=</span><span class="st">'carrier'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="03_datawrangling_cache/revealjs/unnamed-chunk-56_d915ed140501bc5f6348329dfb36b2ce">
+<div class="sourceCode cell-code" id="cb101"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb101-1"><a href="#cb101-1" aria-hidden="true" tabindex="-1"></a>flightsdep<span class="ot">=</span> <span class="fu">select</span>(flights, <span class="fu">c</span>(<span class="st">'year'</span>,<span class="st">'month'</span>,<span class="st">'day'</span>,<span class="st">'dep_time'</span>,<span class="st">'carrier'</span>))</span>
+<span id="cb101-2"><a href="#cb101-2" aria-hidden="true" tabindex="-1"></a><span class="fu">left_join</span>(flightsdep, airlines, <span class="at">by=</span><span class="st">'carrier'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 336,776 × 6
     year month   day dep_time carrier name                    
