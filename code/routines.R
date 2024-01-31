@@ -43,12 +43,19 @@
 # - lmfit: fitted model of class 'lm' or 'glm'
 # - level: confidence level for the confidence intervals
 # - digits: number of digits to report for estimated coefficients (P-values always reported to 5 digits)
+# - transform: optional argument. If specified, it should be a function that will be applied to the estimated parameters. 
+#   For example, set transform= function(x) exp(x) to return exp(coef(lmfit))
 # Output: tibble with one row per coefficient, indicating its point estimate, confidence interval and P-value
-coefSummary= function(lmfit, level=0.95, digits=3) {
+coefSummary= function(lmfit, level=0.95, digits=3, transform) {
   require(tidyverse)
   if (!inherits(lmfit, "lm")) stop('lmfit must be of class lm')
-  b= round(coef(lmfit), digits)
-  ci= round(confint(lmfit, level=level), digits)
+  b= coef(lmfit)
+  ci= confint(lmfit, level=level)
+  if (!missing(transform)) {
+    b= transform(b)
+    ci= transform(ci)
+  }
+  b= round(b, digits); ci= round(ci, digits)
   ci= paste('(',ci[,1],',',ci[,2],')',sep='')
   pval= round(summary(lmfit)$coef[,4],5)
   pval[pval < 0.00001]= '<0.00001'

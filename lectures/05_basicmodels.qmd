@@ -500,18 +500,19 @@ unique(diamonds2$clarity)
 ```
 
 ```{r}
-diamonds2$cut= factor(diamonds2$cut, ordered=FALSE)
-diamonds2$color= factor(diamonds2$color, ordered=FALSE)
-diamonds2$clarity= factor(diamonds2$clarity, ordered=FALSE)
+diamonds2= mutate(diamonds2, 
+                  cut=factor(cut, ordered=FALSE), 
+                  color=factor(color, ordered=FALSE), 
+                  clarity=factor(clarity, ordered=FALSE) )
 unique(diamonds2$cut)
 ```
 
 ## model.matrix
 
-Check how R codes internally the variables
+Check how R codes internally the variables. Let's focus on `cut`
 
 ```{r}
-x= model.matrix(~ lcarat + cut + color + clarity, data=diamonds2)
+x= model.matrix(~ lcarat + cut, data=diamonds2)
 x[1:5,]
 ```
 
@@ -526,43 +527,53 @@ For `cut`, "Fair" is the reference category.
 More precisely, the model is
 
 $$
-\mbox{lprice}_i= \beta_0 + \beta_1 \mbox{good}_i + \beta_2 \mbox{very good}_i + \beta_3 \mbox{premium}_i + \beta_4 \mbox{ideal}_i + \ldots + \epsilon_i 
+\mbox{lprice}_i= \beta_0 + \beta_1 \mbox{carat}_i + \beta_2 \mbox{good}_i + \beta_3 \mbox{very good}_i + \beta_4 \mbox{premium}_i + \beta_5 \mbox{ideal}_i + \epsilon_i 
 $$
 When `cut` is fair and good we get (respectively) 
 
-$$E(\log_2 \mbox{price}_i \mid \mbox{fair}_i=1, \ldots)= \beta_0 + \ldots $$
+$$E(\mbox{lprice}_i \mid \mbox{fair}_i=1, \mbox{carat}_i)= \beta_0 + \beta_1 \mbox{lcarat}_i$$
 
 $$
-E(\log_2 \mbox{price}_i \mid \mbox{good}_i=1, \ldots)= \beta_0 + \beta_1 + \ldots
+E(\mbox{lprice}_i \mid \mbox{good}_i=1, \mbox{carat}_i)= \beta_0 + \beta_1 \mbox{lcarat}_i + \beta_2
 $$
 
-Hence
+The predicted difference cut - fair diamond is hence $\beta_2$, regardless of carats. To facilitate interpretation, since $\mbox{lprice}_i$ is $\log_2$ price,
 
 $$
-\frac{2^{E(\log_2 \mbox{price}_i \mid \mbox{good}_i=1)}}{2^{E(\log_2 \mbox{price}_i \mid \mbox{fair}_i=1)}}= 2^{\beta_1}
+\frac{2^{E(\log_2 \mbox{price}_i \mid \mbox{good}_i=1)}}{2^{E(\log_2 \mbox{price}_i \mid \mbox{fair}_i=1)}}= 2^{\beta_2}
 $$
 
 
 ##
 
-Estimates and CIs in the log2-scale
+Estimates and CIs in the log2-scale (recall: `coefSummary` is a function that we defined)
 
 ```{r}
 lmfit2= lm(lprice ~ lcarat + cut + color + clarity, data=diamonds2)
-b= cbind(summary(lmfit2)$coef[,c(1,4)], confint(lmfit2))
-b[,-2]= round(b[,-2],3)
-b
+coefSummary(lmfit2)
 ```
+
 
 ---
 
 Let's express them in the original scale. Fair -> Good increases price by 1.08 (i.e. by 8%), Fair -> Very good by 1.12 (i.e. by 12%), etc.
 
 ```{r}
-b[,-2]= 2^b[,-2]
-b[,-2]= round(b[,-2],3)
-b[-1,]
+power2= function(x) 2^x
+coefSummary(lmfit2, transform= power2)
 ```
+
+
+## Changing the reference category
+
+Set J (worst color) as the reference category for `color` 
+
+```{r}
+diamonds2= mutate(diamonds2, color=factor(color, levels=c('J','D','E','F','G','H','I')))
+lmfit3= lm(lprice ~ lcarat + cut + color + clarity, data=diamonds2)
+coefSummary(lmfit3, transform=power2)
+```
+
 
 
 
