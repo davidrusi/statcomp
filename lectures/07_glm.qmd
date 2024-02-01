@@ -1,6 +1,6 @@
 ---
 title: "Modern Statistical Computing"
-subtitle: "7. GLMs and optimization"
+subtitle: "7. Generalized Linear Models"
 author: "David Rossell"
 institute: "Pompeu Fabra University"
 execute:
