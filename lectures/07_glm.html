@@ -762,7 +762,7 @@ e^{10 \hat{\beta}_1 + \hat{\beta}_2}= e^{-0.064 \times 10 - 2.97}= 0.027
 </section>
 <section id="poisson-model" class="slide level2">
 <h2>Poisson model</h2>
-<p><strong>Def.</strong> <span class="math inline">\(Y \sim \mbox{Poi}(\mu)\)</span> if <span class="math inline">\(P(Y=y)= \mu^y e^{-\mu} / y!\)</span> for <span class="math inline">\(y=\{0,1,2,\ldots}\)</span></p>
+<p><strong>Def.</strong> <span class="math inline">\(Y \sim \mbox{Poi}(\mu)\)</span> if <span class="math inline">\(P(Y=y)= \mu^y e^{-\mu} / y!\)</span> for <span class="math inline">\(y \in \{0,1,2,\ldots \}\)</span></p>
 <p>Moments: <span class="math inline">\(E(Y)= \mu\)</span>, <span class="math inline">\(V(Y)= \mu\)</span></p>
 <p><strong>Log-likelihood.</strong> If <span class="math inline">\(y_i \sim \mbox{Poi}(\mu_i)\)</span> where <span class="math inline">\(\mu_i=e^{x_i^T \beta}\)</span> indep <span class="math inline">\(i=1,\ldots,n\)</span>,</p>
 <p><span class="math display">\[
@@ -1131,7 +1131,7 @@ e_i= \frac{y_i - \hat{y}_i}{\sqrt{\hat{V}(y_i)}}
 <p>A popular way to estimate over-dispersion <span class="math inline">\(\phi\)</span>. <span class="math display">\[
 \hat{\phi}= \frac{\sum_{i=1}^n e_i^2}{n-p}
 \]</span> where <span class="math inline">\(e_i\)</span> are Pearson residuals. If <span class="math inline">\(\hat{\phi}\)</span> much larger than 1, there is over-dispersion</p>
-<p><strong>Result.</strong> If there is over-dispersion, <span class="math inline">\(\hat{\beta}\)</span> has variance <span class="math inline">\(\phi V(\hat{\beta})\)</span>, where <span class="math inline">\(V(\hat{\beta})\)</span> is the covariance given by standard theory returned by <code>glm</code></p>
+<p><strong>Result.</strong> If there is over-dispersion, <span class="math inline">\(\hat{\beta}\)</span> has variance <span class="math inline">\(\phi V(\hat{\beta})\)</span>, where <span class="math inline">\(V(\hat{\beta})\)</span> is the covariance matrix given by standard theory returned by <code>glm</code></p>
 <p>One may then adjust the MLE variance <span class="math inline">\(V(\hat{\beta})\)</span> into <span class="math display">\[V_Q(\hat{\beta})= \hat{\phi} V(\hat{\beta})\]</span> where <span class="math inline">\(V_Q\)</span> stands for “quasi-likelihood”</p>
 </section>
 <section id="example-1" class="slide level2">
