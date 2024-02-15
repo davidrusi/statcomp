@@ -281,10 +281,10 @@ coefplot(fit5)
 ```
 
 
-# Take-home message
+## Take-home message
 
 
-Testing $(\beta_1,\beta_2)=(0,0)$ not the same as testing $\beta_1=0$ and $\beta_2=0$. Even if the latter are both non-significant, the former may be
+Testing $(\beta_1,\beta_2)=(0,0)$ is not the same as testing $\beta_1=0$ and $\beta_2=0$. Even if the latter are both non-significant, the former may be
 
 
 We must interpret such tests carefully when there's parameter interactions. Mean-centering the covariates may help a bit
@@ -578,7 +578,7 @@ To compare the models `fit1` and `fit3` fitted to the email data:
 
 1. Test the null hypothesis $H_0$ that all parameters added by `fit3` are truly 0. Do you reject $H_0$?
 
-2. Suppose you classify as spam whenever $\hat{\pi}_i > 0.5$. Use `cv.glm` to obtain a cross-validated estimate of the proportion of miss-classifications by `fit1` and `fit3`. Whic of the 2 models is best?
+2. Suppose you classify as spam whenever $\hat{\pi}_i > 0.5$. Use `cv.glm` to obtain a cross-validated estimate of the proportion of miss-classifications by `fit1` and `fit3`. Which of the 2 models is best?
 
 
 
