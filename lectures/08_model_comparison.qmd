@@ -16,7 +16,7 @@ mouse-wheel: true
 code-overflow: scroll
 code-line-numbers: false
 code-copy: true
-cache: true
+cache: false
 title-slide-style: pandoc
 bibliography: references.bib
 ---
@@ -65,13 +65,16 @@ Let outcome $y \in \mathbb{R}^n$, $X_1$ is $n \times p_1$, $X_2$ is $n \times p_
 
 - Model 2 features $X_1 \beta_1 + X_2 \beta_2$, $\beta_1 \in \mathbb{R}^{p_1}$, $\beta_2 \in \mathbb{R}^{p_2}$
 
-**Example.** $y_i = x_{1i}^T \beta_1 + x_{2i}^T \beta_2 + \epsilon_i$
+**Example.** If $y_i$ is a Gaussian outcome,
+
+Model 1: $y_i = x_{1i}^T \beta_1 + \epsilon_i$
+
+Model 2: $y_i = x_{1i}^T \beta_1 + x_{2i}^T \beta_2 + \epsilon_i$
 
 **Goal.** Test the null hypothesis $H_0: \beta_2=0$
 
 The standard test for such $H_0$ is the *likelihood ratio test*
 
-Note: models may also feature a dispersion parameter (e.g. $\sigma^2$)
 
 ## Likelihood ratio test
 
@@ -108,7 +111,7 @@ Note: as $n \rightarrow \infty$, $F_{p_2,n-p_2} \stackrel{D}{\longrightarrow} \c
 
 ## Likelihood ratio test
 
-These results assume that the model is correct, e.g. data truly follow a Normal linear regression where
+These results assume that the model is correct. For example, in linear regression, that data truly follow a Normal linear regression where
 
 $$
 y = X_1 \beta_1 + \epsilon \mbox{, where } \epsilon \sim N(0, \sigma^2 I)
@@ -258,14 +261,14 @@ anova(fit2, fit4)
 Coef. for boroughs were not significant. But recall their interpretation! If we have
 
 $$
-E(y_i) = \beta_0 + \beta_1 \mbox{manhattan_i} + \beta_2 \mbox{lSqFt_i} + \beta_3 \mbox{manhattan}_i \times \mbox{lSqFt_i}
+E(y_i) = \beta_0 + \beta_1 \mbox{manhattan}_i + \beta_2 \mbox{lSqFt}_i + \beta_3 \mbox{manhattan}_i \times \mbox{lSqFt}_i
 $$
 then $\beta_1$ is the difference between Manhattan and the reference borough **when $\mbox{lSqFt}_i=0$**. But all condos have $\mbox{lSqFt}_i > 2.5$
 
 Re-parameterize the model to facilitate interpretation. Let lSqFt0 be a mean-centered version of lSqFt, so that $\mbox{lSqFt0}_i = 0 \Rightarrow \mbox{lSqFt}_i=\mbox{mean(lSqFt)}$
 
 $$
-E(y_i) = \beta_0 + \beta_1 \mbox{manhattan_i} + \beta_2 \mbox{lSqFt0_i} + \beta_3 \mbox{manhattan}_i \times \mbox{lSqFt0_i}
+E(y_i) = \beta_0 + \beta_1 \mbox{manhattan}_i + \beta_2 \mbox{lSqFt0}_i + \beta_3 \mbox{manhattan}_i \times \mbox{lSqFt0}_i
 $$
 
 Now $\beta_1$ is the Manhattan effect for condos with average log-SqFt
@@ -330,7 +333,7 @@ lines(xseq, sin(2*pi*xseq))
 
 ---
 
-Fit polynomials of degree 0, 1, 3 and 9
+Fit polynomials of degree 0, 1, 3 and 9. Which should predict *future data* better?
 
 ```{r}
 #| code-fold: true
@@ -357,35 +360,9 @@ ggplot(df, aes(x=x)) +
 ```
 
 
----
-
-Degree 3 fit predicts better **future data** than degree 9
-
-```{r}
-#| code-fold: true
-xnew= seq(0,1, length=1000)
-ynew= sin(2*pi*xnew) + rnorm(length(xnew),0,sd=0.2)
-xpolnew= matrix(NA, nrow= length(xnew), ncol=10)
-for (j in 1:10) xpolnew[,j]= xnew^(j-1)
-
-err1new= ynew - b1[1] * xnew*b1[2]
-err3new= ynew - xpolnew[,1:4] %*% matrix(b3, ncol=1)
-err9new= ynew - xpolnew %*% matrix(b9, ncol=1)
-#sqrt(c(mean(err1new^2), mean(err3new^2), mean(err9new^2))) #root MSE
-
-errnew= c(err1new, err3new, err9new)
-degree= rep(c(1,3,9), each=length(ynew))
-df= tibble(errnew, degree)
-
-ggplot(df, aes(x=factor(degree), y=errnew)) +
-  geom_abline(slope=0, intercept=0, col='gray') +
-  geom_violin() + 
-  labs(x='Degree of polynomial', y='Prediction error in new data')
-```
-
 ## Over-fitting
 
-Over-fitting: the prediction accuracy in our **training data** does not generalize to **new data**
+The prediction accuracy in our **training data** does not generalize to **new data**
 
 - Adding parameters to a model can only improve MSE in the **training data**
 
@@ -475,7 +452,7 @@ sqrt(fit2cv$delta)
 ```
 
 
-## CV for non-continuous outcomes
+## Binary outcomes
 
 Cross-validation can be used with any measure of accuracy
 
@@ -490,30 +467,21 @@ For binary outcomes, some popular choices
 Interestingly, the last one can be applied to any probability model
 
 
-## CV log-likelihood
+## % of miss-classifications
 
-Idea: reward models that give higher probability/density to the out-of-sample data
+Suppose that we predict $\hat{y}_i=1$ when $\hat{P}(y_i=1) > 0.5$
 
-Let $Y_i^* \sim \mbox{Bern}(\pi_i)$ for $i=1,\ldots,n^*$ be out-of-sample data, and
-$$
-\hat{\pi}_i= \frac{1}{1 + e^{-x_i^T \hat{\beta}}}
-$$
-where $\hat{\beta}$ was estimated from the training data
+Function `cost_misclass` at `routines.R` implements this loss
+```{r}
+cost_misclass
+```
 
-The Bernoulli likelihood is $P(Y_i^*= a)= \pi_i^{a} (1 - \pi_i)^{1-a}$
+`cv.glm` uses MSE by default, but we can specify any loss function. We'll use the % of miss-classifications instead
 
-- If we observe $Y_i^*=1$, record the reward 
-$\log \hat{P}(Y_i^*= 1)= \log \hat{\pi}_i$
 
-- If we observe $Y_i^*=0$, record $\log \hat{P}(Y_i^*=0)= \log (1 - \hat{\pi}_i)$
+
 
 ## Example. Spam filter
-
-`cv.glm` lets us specify any loss function. Let us use the negative log-likelihood, implemented in `cost_loglik_logistic` at `routines.R`
-
-```{r}
-cost_loglik_logistic
-```
 
 Consider 4 models
 
@@ -525,62 +493,61 @@ Consider 4 models
 
 4. Add pairwise interactions to 3
 
----
-
-Fit the 4 models. Pass our `cost_loglik_logistic` to `cv.glm`
-
-`(x + y)^2` adds main effects + interactions, i.e. same as (`x + y + x:y`)
-
 ```{r, warning=FALSE}
 fit1= glm(spam ~ to_multiple + cc + sent_email, data=email, family=binomial())
-fit1cv= cv.glm(email, fit1, cost=cost_loglik_logistic, K=10)
-
 fit2= glm(spam ~ (to_multiple + cc + sent_email)^2, data=email, family=binomial())
-fit2cv= cv.glm(email, fit2, cost=cost_loglik_logistic, K=10)
-
 fit3= glm(spam ~ to_multiple + cc + sent_email + image + attach + dollar + winner, data=email, family=binomial())
-fit3cv= cv.glm(email, fit3, cost=cost_loglik_logistic, K=10)
-
 fit4= glm(spam ~ (to_multiple + cc + sent_email + image + attach + dollar + winner)^2, data=email, family=binomial())
-fit4cv= cv.glm(email, fit4, cost=cost_loglik_logistic, K=10)
+```
+
+## In-sample accuracy 
+
+Let's compare Models 1 and 4, *in-sample*
+
+```{r}
+ypred1= predict(fit1, type='response')
+mc1= cost_misclass(email$spam, ypred1, threshold=0.5)
+round(mc1,3)
+```
+
+```{r}
+ypred4= predict(fit4, type='response')
+mc3= cost_misclass(email$spam, ypred4, threshold=0.5)
+round(mc3,3)
+```
+
+Actually, we rarely predict an email to be spam
+
+```{r}
+table(email$spam, ypred1>0.5)
+```
+
+## Out-of-sample assessment
+
+Call `cv.glm`, setting argument `cost`
+
+```{r, warning=FALSE}
+fit1cv= cv.glm(email, fit1, cost=cost_misclass, K=10)
+fit2cv= cv.glm(email, fit2, cost=cost_misclass, K=10)
+fit3cv= cv.glm(email, fit3, cost=cost_misclass, K=10)
+fit4cv= cv.glm(email, fit4, cost=cost_misclass, K=10)
 
 loss= c(fit1cv$delta[1], fit2cv$delta[1], fit3cv$delta[1], fit4cv$delta[1])
 names(loss)= c('model 1', 'model 2', 'model 3', 'model 4')
-loss
+round(loss,4)
 ```
 
-## % of miss-classifications
+## Calibrating the threshold
 
-The % of miss-classified observations is another natural loss
-
-Suppose that one predicts $\hat{y}_i=1$ when $\hat{\pi}_i > 0.5$. Function `cost_misclass` at `routines.R` implements this loss
-
+We predicted spam when $\hat{P}(y_i=1) > 0.5$. We could consider a lower threshold than 0.5
 
 ```{r}
-cost_misclass
+cost_misclass(email$spam, ypred1, threshold=0.15)
 ```
-
-We first obtain said % in an in-sample fashion
 
 ```{r}
-pi1= predict(fit1, type='response')
-pi3= predict(fit3, type='response')
-
-loss.insample= c(cost_misclass(email$spam, pi1), cost_misclass(email$spam, pi3))
-names(loss.insample)= c('model 1', 'model 3')
-loss.insample
+table(email$spam, ypred1>0.15)
 ```
-
-
-## Exercise
-
-To compare the models `fit1` and `fit3` fitted to the email data:
-
-1. Test the null hypothesis $H_0$ that all parameters added by `fit3` are truly 0. Do you reject $H_0$?
-
-2. Suppose you classify as spam whenever $\hat{\pi}_i > 0.5$. Use `cv.glm` to obtain a cross-validated estimate of the proportion of miss-classifications by `fit1` and `fit3`. Which of the 2 models is best?
-
-
 
 
 ## ROC curve
@@ -617,6 +584,7 @@ Receiving Operator Characteristic (ROC) curve shows spec vs sens for all $t$
 
 
 ```{r}
+set.seed(123)
 sel= sample(1:nrow(email), size= round(0.9*nrow(email)), replace=FALSE)
 emailtrain= email[sel,] #90% for training data
 emailtest= email[-sel,] #10% for test data
@@ -645,23 +613,52 @@ c(roc1$auc, roc3$auc)
 ```
 
 
+
+
+## CV log-likelihood
+
+Idea: reward models that give higher probability/density to the out-of-sample data
+
+Let $Y_i^* \sim \mbox{Bern}(\pi_i)$ for $i=1,\ldots,n^*$ be out-of-sample data, and
+$$
+\hat{\pi}_i= \frac{1}{1 + e^{-x_i^T \hat{\beta}}}
+$$
+where $\hat{\beta}$ was estimated from the training data
+
+The Bernoulli likelihood is $P(Y_i^*= a)= \pi_i^{a} (1 - \pi_i)^{1-a}$
+
+- If we observe $Y_i^*=1$, record the reward 
+$\log \hat{P}(Y_i^*= 1)= \log \hat{\pi}_i$
+
+- If we observe $Y_i^*=0$, record $\log \hat{P}(Y_i^*=0)= \log (1 - \hat{\pi}_i)$
+
 ---
 
-In the ROC, Model 3 seems much better than Model 1
-
-Recall that the % miss-classifications using $t=0.5$ were similar. Let's check how is that possible
-
+Function `cost_loglik_logistic` at `routines.R` implements the log-likelihood loss
 
 ```{r}
-table(pi1test > 0.5, emailtest$spam)
+cost_loglik_logistic
 ```
 
 
-```{r}
-table(pi3test > 0.5, emailtest$spam)
-```
 
-$t=0.5$ corresponds to sensitivity $\approx 0$ and specificity $\approx 1$
+
+
+## Exercise. Spam filter
+
+To further compare models `fit1` and `fit3`
+
+1. Test the null hypothesis $H_0$ that all parameters added by `fit3` are truly 0. Do you reject $H_0$?
+
+2. Suppose you classify as spam whenever $\hat{\pi}_i > 0.15$. Use `cv.glm` to obtain a cross-validated estimate of the proportion of miss-classifications by `fit1` and `fit3`. Which of the 2 models is best?
+
+Hint: you need to re-define `cost_misclass` to use a threshold of 0.15
+
+3. Use `cv.glm` to compare `fit1` and `fit3` according to the log-likelihood loss. Which is best?
+
+Hint: pass our `cost_loglik_logistic` to `cv.glm`
+
+
 
 
 
