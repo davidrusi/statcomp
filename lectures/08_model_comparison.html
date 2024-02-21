@@ -403,13 +403,14 @@
 <li><a href="#/best-model-for-forecasting" id="/toc-best-model-for-forecasting">Best model for forecasting</a></li>
 <li><a href="#/best-model-for-explaining" id="/toc-best-model-for-explaining">Best model for explaining</a></li>
 <li><a href="#/too-many-models" id="/toc-too-many-models">Too many models</a></li>
+<li><a href="#/exercise" id="/toc-exercise">Exercise</a></li>
 </ul>
 </nav>
 </section>
 <section id="reproducing-these-lecture-notes" class="slide level2">
 <h2>Reproducing these lecture notes</h2>
 <p>Load required R packages</p>
-<div class="cell">
+<div class="cell" data-hash="08_model_comparison_cache/revealjs/unnamed-chunk-1_81a1ec9db06fed17043becb12f6d4814">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(boot)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(brglm)</span>
@@ -418,9 +419,14 @@
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(openintro)</span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pROC)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p><code>mombf</code> requires <code>sparseMatrixStats</code>. Install it as follows</p>
+<div class="cell" data-hash="08_model_comparison_cache/revealjs/unnamed-chunk-2_9c012e5b05098d9a45e7e28b7625c5d6">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(BiocManager)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>BiocManager<span class="sc">::</span><span class="fu">install</span>(<span class="st">"sparseMatrixStats"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <p>We also source routines.R, which has auxiliary functions</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">'../code/routines.R'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="08_model_comparison_cache/revealjs/unnamed-chunk-3_574673b833fb1c7d8881867b5e9a5f22">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">'../code/routines.R'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="section" class="slide level2">
@@ -491,9 +497,9 @@ y = X_1 \beta_1 + \epsilon \mbox{, where } \epsilon \sim N(0, \sigma^2 I)
 <li><p>Outcome: value per square foot (<code>ValuePerSqFt</code>)</p></li>
 <li><p>10 covariates: neighborhood, year built etc.</p></li>
 </ul>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>housing<span class="ot">=</span> <span class="fu">read_csv</span>(<span class="st">"../datasets/housing.csv"</span>)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>housing</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="08_model_comparison_cache/revealjs/unnamed-chunk-4_8476b2f1b9d47409d570c4ca0ef13caf">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>housing<span class="ot">=</span> <span class="fu">read_csv</span>(<span class="st">"../datasets/housing.csv"</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>housing</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 2,626 × 11
    Neighborhood Class        Units YearBuilt   SqFt IncomePerSqFt ExpensePerSqFt
@@ -520,26 +526,26 @@ y = X_1 \beta_1 + \epsilon \mbox{, where } \epsilon \sim N(0, \sigma^2 I)
 <ul id="tabset-1" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-1-1">Outcome</a></li><li><a href="#tabset-1-2">Outcome vs borough</a></li></ul>
 <div class="tab-content">
 <div id="tabset-1-1">
-<div class="cell">
+<div class="cell" data-hash="08_model_comparison_cache/revealjs/unnamed-chunk-5_65c5849d903e8523ed924b63e6299795">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(housing, <span class="fu">aes</span>(<span class="at">x=</span>ValuePerSqFt)) <span class="sc">+</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(housing, <span class="fu">aes</span>(<span class="at">x=</span>ValuePerSqFt)) <span class="sc">+</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img data-src="08_model_comparison_files/figure-revealjs/unnamed-chunk-4-1.png" width="960"></p>
+<p><img data-src="08_model_comparison_files/figure-revealjs/unnamed-chunk-5-1.png" width="960"></p>
 </div>
 </div>
 </div>
 <div id="tabset-1-2">
-<div class="cell">
+<div class="cell" data-hash="08_model_comparison_cache/revealjs/unnamed-chunk-6_ccff0c591d00f953195d3f3a2f03ec38">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(housing, <span class="fu">aes</span>(<span class="at">x=</span>ValuePerSqFt)) <span class="sc">+</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>(<span class="fu">aes</span>(<span class="at">color=</span>Boro))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(housing, <span class="fu">aes</span>(<span class="at">x=</span>ValuePerSqFt)) <span class="sc">+</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>(<span class="fu">aes</span>(<span class="at">color=</span>Boro))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img data-src="08_model_comparison_files/figure-revealjs/unnamed-chunk-5-1.png" width="960"></p>
+<p><img data-src="08_model_comparison_files/figure-revealjs/unnamed-chunk-6-1.png" width="960"></p>
 </div>
 </div>
 </div>
@@ -552,46 +558,46 @@ y = X_1 \beta_1 + \epsilon \mbox{, where } \epsilon \sim N(0, \sigma^2 I)
 <ul id="tabset-2" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-2-1">SqFt</a></li><li><a href="#tabset-2-2">Units</a></li><li><a href="#tabset-2-3">log(SqFt)</a></li><li><a href="#tabset-2-4">log(Units)</a></li></ul>
 <div class="tab-content">
 <div id="tabset-2-1">
-<div class="cell">
+<div class="cell" data-hash="08_model_comparison_cache/revealjs/unnamed-chunk-7_2a27306802c1c8ea48e65a8dbae8f194">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(housing, <span class="fu">aes</span>(<span class="at">x=</span>SqFt, <span class="at">y=</span>ValuePerSqFt)) <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="sc">+</span> <span class="fu">geom_smooth</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<p><img data-src="08_model_comparison_files/figure-revealjs/unnamed-chunk-6-1.png" width="960"></p>
-</div>
-</div>
-</div>
-<div id="tabset-2-2">
-<div class="cell">
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(housing, <span class="fu">aes</span>(<span class="at">x=</span>Units, <span class="at">y=</span>ValuePerSqFt)) <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="sc">+</span> <span class="fu">geom_smooth</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(housing, <span class="fu">aes</span>(<span class="at">x=</span>SqFt, <span class="at">y=</span>ValuePerSqFt)) <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="sc">+</span> <span class="fu">geom_smooth</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <p><img data-src="08_model_comparison_files/figure-revealjs/unnamed-chunk-7-1.png" width="960"></p>
 </div>
 </div>
 </div>
-<div id="tabset-2-3">
-<div class="cell">
+<div id="tabset-2-2">
+<div class="cell" data-hash="08_model_comparison_cache/revealjs/unnamed-chunk-8_e7a8f198ef2a50867e119f58a64c0223">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(housing, <span class="fu">aes</span>(<span class="at">x=</span><span class="fu">log10</span>(SqFt), <span class="at">y=</span>ValuePerSqFt)) <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="sc">+</span> <span class="fu">geom_smooth</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(housing, <span class="fu">aes</span>(<span class="at">x=</span>Units, <span class="at">y=</span>ValuePerSqFt)) <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="sc">+</span> <span class="fu">geom_smooth</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <p><img data-src="08_model_comparison_files/figure-revealjs/unnamed-chunk-8-1.png" width="960"></p>
 </div>
 </div>
 </div>
-<div id="tabset-2-4">
-<div class="cell">
+<div id="tabset-2-3">
+<div class="cell" data-hash="08_model_comparison_cache/revealjs/unnamed-chunk-9_f191730e2e632b55a1967dc96991dadf">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(housing, <span class="fu">aes</span>(<span class="at">x=</span><span class="fu">log10</span>(Units), <span class="at">y=</span>ValuePerSqFt)) <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="sc">+</span> <span class="fu">geom_smooth</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(housing, <span class="fu">aes</span>(<span class="at">x=</span><span class="fu">log10</span>(SqFt), <span class="at">y=</span>ValuePerSqFt)) <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="sc">+</span> <span class="fu">geom_smooth</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <p><img data-src="08_model_comparison_files/figure-revealjs/unnamed-chunk-9-1.png" width="960"></p>
+</div>
+</div>
+</div>
+<div id="tabset-2-4">
+<div class="cell" data-hash="08_model_comparison_cache/revealjs/unnamed-chunk-10_3dd121e2308c11e4830f2efdad853385">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(housing, <span class="fu">aes</span>(<span class="at">x=</span><span class="fu">log10</span>(Units), <span class="at">y=</span>ValuePerSqFt)) <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="sc">+</span> <span class="fu">geom_smooth</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img data-src="08_model_comparison_files/figure-revealjs/unnamed-chunk-10-1.png" width="960"></p>
 </div>
 </div>
 </div>
@@ -601,17 +607,17 @@ y = X_1 \beta_1 + \epsilon \mbox{, where } \epsilon \sim N(0, \sigma^2 I)
 <section id="section-1" class="slide level2">
 <h2></h2>
 <p>Fit 2 models: additive and with interactions</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>housing<span class="ot">=</span> <span class="fu">transform</span>(housing, <span class="at">lSqFt=</span> <span class="fu">log10</span>(SqFt), <span class="at">lUnits=</span> <span class="fu">log10</span>(Units))</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>fit1<span class="ot">=</span> <span class="fu">lm</span>(ValuePerSqFt <span class="sc">~</span> Boro <span class="sc">+</span> lSqFt <span class="sc">+</span> lUnits , <span class="at">data=</span>housing)</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>fit2<span class="ot">=</span> <span class="fu">lm</span>(ValuePerSqFt <span class="sc">~</span> Boro <span class="sc">+</span> lSqFt <span class="sc">+</span> lUnits <span class="sc">+</span> Boro<span class="sc">:</span>lSqFt <span class="sc">+</span> Boro<span class="sc">:</span>lUnits, <span class="at">data=</span>housing)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="08_model_comparison_cache/revealjs/unnamed-chunk-11_ec83f119c9f2c6d30bfb91eeda9d4c98">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>housing<span class="ot">=</span> <span class="fu">transform</span>(housing, <span class="at">lSqFt=</span> <span class="fu">log10</span>(SqFt), <span class="at">lUnits=</span> <span class="fu">log10</span>(Units))</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>fit1<span class="ot">=</span> <span class="fu">lm</span>(ValuePerSqFt <span class="sc">~</span> Boro <span class="sc">+</span> lSqFt <span class="sc">+</span> lUnits , <span class="at">data=</span>housing)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>fit2<span class="ot">=</span> <span class="fu">lm</span>(ValuePerSqFt <span class="sc">~</span> Boro <span class="sc">+</span> lSqFt <span class="sc">+</span> lUnits <span class="sc">+</span> Boro<span class="sc">:</span>lSqFt <span class="sc">+</span> Boro<span class="sc">:</span>lUnits, <span class="at">data=</span>housing)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="panel-tabset">
 <ul id="tabset-3" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-3-1">fit1</a></li><li><a href="#tabset-3-2">coefPlot1</a></li><li><a href="#tabset-3-3">fit2</a></li><li><a href="#tabset-3-4">coefPlot2</a></li></ul>
 <div class="tab-content">
 <div id="tabset-3-1">
-<div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">coefSummary</span>(fit1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="08_model_comparison_cache/revealjs/unnamed-chunk-12_05b2b1903296e2302f97110d6b0ec37c">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">coefSummary</span>(fit1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 7 × 4
   Parameter         Estimate `Conf. Int.`       `P-value`
@@ -627,16 +633,16 @@ y = X_1 \beta_1 + \epsilon \mbox{, where } \epsilon \sim N(0, \sigma^2 I)
 </div>
 </div>
 <div id="tabset-3-2">
-<div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">coefplot</span>(fit1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="08_model_comparison_cache/revealjs/unnamed-chunk-13_0d27d5eff59d6b33f0f0488104c59330">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">coefplot</span>(fit1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img data-src="08_model_comparison_files/figure-revealjs/unnamed-chunk-12-1.png" width="960"></p>
+<p><img data-src="08_model_comparison_files/figure-revealjs/unnamed-chunk-13-1.png" width="960"></p>
 </div>
 </div>
 </div>
 <div id="tabset-3-3">
-<div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">coefSummary</span>(fit2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="08_model_comparison_cache/revealjs/unnamed-chunk-14_79f8f31898b550746e5b2b996732c2e4">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">coefSummary</span>(fit2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 15 × 4
    Parameter                Estimate `Conf. Int.`       `P-value`
@@ -660,10 +666,10 @@ y = X_1 \beta_1 + \epsilon \mbox{, where } \epsilon \sim N(0, \sigma^2 I)
 </div>
 </div>
 <div id="tabset-3-4">
-<div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">coefplot</span>(fit2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="08_model_comparison_cache/revealjs/unnamed-chunk-15_d4b8ae9503dc8225dc2a81b138d0af62">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">coefplot</span>(fit2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img data-src="08_model_comparison_files/figure-revealjs/unnamed-chunk-14-1.png" width="960"></p>
+<p><img data-src="08_model_comparison_files/figure-revealjs/unnamed-chunk-15-1.png" width="960"></p>
 </div>
 </div>
 </div>
@@ -673,8 +679,8 @@ y = X_1 \beta_1 + \epsilon \mbox{, where } \epsilon \sim N(0, \sigma^2 I)
 <section id="section-2" class="slide level2">
 <h2></h2>
 <p>Single interaction coef. were not significant. Let’s test if <strong>the whole vector is 0</strong></p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(fit1,fit2)  <span class="co">#LRT (=F-test in Gaussian regression)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="08_model_comparison_cache/revealjs/unnamed-chunk-16_87e0055a9e4c63e1e13f97eb9fa925d1">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(fit1,fit2)  <span class="co">#LRT (=F-test in Gaussian regression)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Analysis of Variance Table
 
@@ -688,12 +694,12 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
 </div>
 <p>Same when testing each interaction separately</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>fit3<span class="ot">=</span> <span class="fu">lm</span>(ValuePerSqFt <span class="sc">~</span> Boro <span class="sc">+</span> lSqFt <span class="sc">+</span> lUnits <span class="sc">+</span> Boro<span class="sc">:</span>lSqFt, <span class="at">data=</span>housing)</span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>fit4<span class="ot">=</span> <span class="fu">lm</span>(ValuePerSqFt <span class="sc">~</span> Boro <span class="sc">+</span> lSqFt <span class="sc">+</span> lUnits <span class="sc">+</span> Boro<span class="sc">:</span>lUnits, <span class="at">data=</span>housing)</span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(fit2, fit3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="08_model_comparison_cache/revealjs/unnamed-chunk-17_2793391318dd6cce4d9efbb82be9727c">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>fit3<span class="ot">=</span> <span class="fu">lm</span>(ValuePerSqFt <span class="sc">~</span> Boro <span class="sc">+</span> lSqFt <span class="sc">+</span> lUnits <span class="sc">+</span> Boro<span class="sc">:</span>lSqFt, <span class="at">data=</span>housing)</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>fit4<span class="ot">=</span> <span class="fu">lm</span>(ValuePerSqFt <span class="sc">~</span> Boro <span class="sc">+</span> lSqFt <span class="sc">+</span> lUnits <span class="sc">+</span> Boro<span class="sc">:</span>lUnits, <span class="at">data=</span>housing)</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(fit2, fit3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Analysis of Variance Table
 
@@ -705,7 +711,7 @@ Model 2: ValuePerSqFt ~ Boro + lSqFt + lUnits + Boro:lSqFt
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(fit2, fit4)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(fit2, fit4)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Analysis of Variance Table
 
@@ -734,13 +740,13 @@ E(y_i) = \beta_0 + \beta_1 \mbox{manhattan}_i + \beta_2 \mbox{lSqFt0}_i + \beta_
 <section id="section-4" class="slide level2">
 <h2></h2>
 <p>In the mean-centered model boroughs now have a significant effect, as expected</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>housing<span class="ot">=</span> <span class="fu">transform</span>(housing, <span class="at">lSqFt0=</span> lSqFt <span class="sc">-</span> <span class="fu">mean</span>(lSqFt), <span class="at">lUnits0=</span> lUnits <span class="sc">-</span> <span class="fu">mean</span>(lUnits))</span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>fit5<span class="ot">=</span> <span class="fu">lm</span>(ValuePerSqFt <span class="sc">~</span> Boro <span class="sc">+</span> lSqFt0 <span class="sc">+</span> lUnits0 <span class="sc">+</span> Boro<span class="sc">:</span>lSqFt0 <span class="sc">+</span> Boro<span class="sc">:</span>lUnits0, <span class="at">data=</span>housing)</span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="fu">coefplot</span>(fit5)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="08_model_comparison_cache/revealjs/unnamed-chunk-18_6e6521c54df99e290c74c070915e06c0">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>housing<span class="ot">=</span> <span class="fu">transform</span>(housing, <span class="at">lSqFt0=</span> lSqFt <span class="sc">-</span> <span class="fu">mean</span>(lSqFt), <span class="at">lUnits0=</span> lUnits <span class="sc">-</span> <span class="fu">mean</span>(lUnits))</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>fit5<span class="ot">=</span> <span class="fu">lm</span>(ValuePerSqFt <span class="sc">~</span> Boro <span class="sc">+</span> lSqFt0 <span class="sc">+</span> lUnits0 <span class="sc">+</span> Boro<span class="sc">:</span>lSqFt0 <span class="sc">+</span> Boro<span class="sc">:</span>lUnits0, <span class="at">data=</span>housing)</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="fu">coefplot</span>(fit5)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 </div>
-<img data-src="08_model_comparison_files/figure-revealjs/unnamed-chunk-17-1.png" width="960" class="r-stretch"></section>
+<img data-src="08_model_comparison_files/figure-revealjs/unnamed-chunk-18-1.png" width="960" class="r-stretch"></section>
 <section id="take-home-message" class="slide level2">
 <h2>Take-home message</h2>
 <p>Testing <span class="math inline">\((\beta_1,\beta_2)=(0,0)\)</span> is not the same as testing <span class="math inline">\(\beta_1=0\)</span> and <span class="math inline">\(\beta_2=0\)</span>. Even if the latter are both non-significant, the former may be</p>
@@ -762,58 +768,58 @@ E(y_i) = \beta_0 + \beta_1 \mbox{manhattan}_i + \beta_2 \mbox{lSqFt0}_i + \beta_
 <p>Simulate <span class="math inline">\(n=10\)</span> observations from <span class="math display">\[
 y_i= \sin(2\pi x) + \epsilon_i \mbox{, where } \epsilon_i \sim N(0,0.2^2)
 \]</span></p>
-<div class="cell">
+<div class="cell" data-hash="08_model_comparison_cache/revealjs/unnamed-chunk-19_76541fa7a75c8e606dbf731fb7eff489">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>x<span class="ot">=</span> <span class="fu">seq</span>(<span class="dv">0</span>,<span class="dv">1</span>, <span class="at">length=</span><span class="dv">10</span>)</span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>y<span class="ot">=</span> <span class="fu">sin</span>(<span class="dv">2</span><span class="sc">*</span>pi<span class="sc">*</span>x) <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="dv">10</span>,<span class="dv">0</span>,<span class="at">sd=</span><span class="fl">0.2</span>)</span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>xseq<span class="ot">=</span> <span class="fu">seq</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="at">length=</span><span class="dv">500</span>)</span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="do">## Create design matrix for up to degree 9</span></span>
-<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>xpol<span class="ot">=</span> <span class="fu">matrix</span>(<span class="cn">NA</span>, <span class="at">nrow=</span> <span class="fu">length</span>(x), <span class="at">ncol=</span><span class="dv">10</span>)</span>
-<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>xseqpol<span class="ot">=</span> <span class="fu">matrix</span>(<span class="cn">NA</span>, <span class="at">nrow=</span> <span class="fu">length</span>(xseq), <span class="at">ncol=</span><span class="dv">10</span>)</span>
-<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>) {</span>
-<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>    xpol[,j]<span class="ot">=</span> x<span class="sc">^</span>(j<span class="dv">-1</span>)</span>
-<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>    xseqpol[,j]<span class="ot">=</span> xseq<span class="sc">^</span>(j<span class="dv">-1</span>)</span>
-<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar=</span><span class="fu">c</span>(<span class="dv">4</span>,<span class="dv">4</span>,.<span class="dv">1</span>,.<span class="dv">1</span>), <span class="at">cex.lab=</span><span class="fl">1.3</span>, <span class="at">cex.axis=</span><span class="fl">1.3</span>)</span>
-<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(x, y)</span>
-<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(xseq, <span class="fu">sin</span>(<span class="dv">2</span><span class="sc">*</span>pi<span class="sc">*</span>xseq))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-
-</div>
-<img data-src="08_model_comparison_files/figure-revealjs/unnamed-chunk-18-1.png" width="960" class="r-stretch"></section>
-<section class="slide level2">
-
-<p>Fit polynomials of degree 0, 1, 3 and 9. Which should predict <em>future data</em> better?</p>
-<div class="cell">
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>fit0<span class="ot">=</span> <span class="fu">lm</span>(y <span class="sc">~</span> <span class="dv">1</span>); b0<span class="ot">=</span> <span class="fu">coef</span>(fit0)</span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>fit1<span class="ot">=</span> <span class="fu">lm</span>(y <span class="sc">~</span> <span class="sc">-</span><span class="dv">1</span> <span class="sc">+</span> xpol[,<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>]); b1<span class="ot">=</span> <span class="fu">coef</span>(fit1)</span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>fit3<span class="ot">=</span> <span class="fu">lm</span>(y <span class="sc">~</span> <span class="sc">-</span><span class="dv">1</span> <span class="sc">+</span> xpol[,<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>]); b3<span class="ot">=</span> <span class="fu">coef</span>(fit3)</span>
-<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>fit9<span class="ot">=</span> <span class="fu">lm</span>(y <span class="sc">~</span> <span class="sc">-</span><span class="dv">1</span> <span class="sc">+</span> xpol); b9<span class="ot">=</span> <span class="fu">coef</span>(fit9)</span>
-<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>pred1<span class="ot">=</span> b1[<span class="dv">1</span>] <span class="sc">+</span> xseq<span class="sc">*</span>b1[<span class="dv">2</span>]</span>
-<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>pred3<span class="ot">=</span> xseqpol[,<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>] <span class="sc">%*%</span> <span class="fu">matrix</span>(b3, <span class="at">ncol=</span><span class="dv">1</span>)</span>
-<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>pred9<span class="ot">=</span> xseqpol <span class="sc">%*%</span> <span class="fu">matrix</span>(b9, <span class="at">ncol=</span><span class="dv">1</span>)</span>
-<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>dataobs<span class="ot">=</span> <span class="fu">tibble</span>(x,y)  </span>
-<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>df<span class="ot">=</span> <span class="fu">tibble</span>(<span class="at">truemean=</span><span class="fu">sin</span>(<span class="dv">2</span><span class="sc">*</span>pi<span class="sc">*</span>xseq), <span class="at">x=</span>xseq, <span class="at">pred0=</span>b0, pred1, pred3, pred9)</span>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>x<span class="ot">=</span> <span class="fu">seq</span>(<span class="dv">0</span>,<span class="dv">1</span>, <span class="at">length=</span><span class="dv">10</span>)</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>y<span class="ot">=</span> <span class="fu">sin</span>(<span class="dv">2</span><span class="sc">*</span>pi<span class="sc">*</span>x) <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="dv">10</span>,<span class="dv">0</span>,<span class="at">sd=</span><span class="fl">0.2</span>)</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>xseq<span class="ot">=</span> <span class="fu">seq</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="at">length=</span><span class="dv">500</span>)</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="do">## Create design matrix for up to degree 9</span></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>xpol<span class="ot">=</span> <span class="fu">matrix</span>(<span class="cn">NA</span>, <span class="at">nrow=</span> <span class="fu">length</span>(x), <span class="at">ncol=</span><span class="dv">10</span>)</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>xseqpol<span class="ot">=</span> <span class="fu">matrix</span>(<span class="cn">NA</span>, <span class="at">nrow=</span> <span class="fu">length</span>(xseq), <span class="at">ncol=</span><span class="dv">10</span>)</span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>) {</span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>    xpol[,j]<span class="ot">=</span> x<span class="sc">^</span>(j<span class="dv">-1</span>)</span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>    xseqpol[,j]<span class="ot">=</span> xseq<span class="sc">^</span>(j<span class="dv">-1</span>)</span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df, <span class="fu">aes</span>(<span class="at">x=</span>x)) <span class="sc">+</span></span>
-<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y=</span>truemean)) <span class="sc">+</span></span>
-<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y=</span>pred0), <span class="at">col=</span><span class="st">'gray'</span>) <span class="sc">+</span></span>
-<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y=</span>pred1), <span class="at">col=</span><span class="st">'gray'</span>) <span class="sc">+</span></span>
-<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y=</span>pred3), <span class="at">col=</span><span class="st">'blue'</span>) <span class="sc">+</span></span>
-<span id="cb26-18"><a href="#cb26-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y=</span>pred9), <span class="at">col=</span><span class="st">'red'</span>) <span class="sc">+</span></span>
-<span id="cb26-19"><a href="#cb26-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x=</span>x, <span class="at">y=</span>y), <span class="at">data=</span>dataobs) <span class="sc">+</span></span>
-<span id="cb26-20"><a href="#cb26-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y=</span><span class="st">'True mean'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar=</span><span class="fu">c</span>(<span class="dv">4</span>,<span class="dv">4</span>,.<span class="dv">1</span>,.<span class="dv">1</span>), <span class="at">cex.lab=</span><span class="fl">1.3</span>, <span class="at">cex.axis=</span><span class="fl">1.3</span>)</span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(x, y)</span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(xseq, <span class="fu">sin</span>(<span class="dv">2</span><span class="sc">*</span>pi<span class="sc">*</span>xseq))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 
 </div>
 <img data-src="08_model_comparison_files/figure-revealjs/unnamed-chunk-19-1.png" width="960" class="r-stretch"></section>
+<section class="slide level2">
+
+<p>Fit polynomials of degree 0, 1, 3 and 9. Which should predict <em>future data</em> better?</p>
+<div class="cell" data-hash="08_model_comparison_cache/revealjs/unnamed-chunk-20_dacdacd42940182f35814e8298c5b132">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>fit0<span class="ot">=</span> <span class="fu">lm</span>(y <span class="sc">~</span> <span class="dv">1</span>); b0<span class="ot">=</span> <span class="fu">coef</span>(fit0)</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>fit1<span class="ot">=</span> <span class="fu">lm</span>(y <span class="sc">~</span> <span class="sc">-</span><span class="dv">1</span> <span class="sc">+</span> xpol[,<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>]); b1<span class="ot">=</span> <span class="fu">coef</span>(fit1)</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>fit3<span class="ot">=</span> <span class="fu">lm</span>(y <span class="sc">~</span> <span class="sc">-</span><span class="dv">1</span> <span class="sc">+</span> xpol[,<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>]); b3<span class="ot">=</span> <span class="fu">coef</span>(fit3)</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>fit9<span class="ot">=</span> <span class="fu">lm</span>(y <span class="sc">~</span> <span class="sc">-</span><span class="dv">1</span> <span class="sc">+</span> xpol); b9<span class="ot">=</span> <span class="fu">coef</span>(fit9)</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>pred1<span class="ot">=</span> b1[<span class="dv">1</span>] <span class="sc">+</span> xseq<span class="sc">*</span>b1[<span class="dv">2</span>]</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>pred3<span class="ot">=</span> xseqpol[,<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>] <span class="sc">%*%</span> <span class="fu">matrix</span>(b3, <span class="at">ncol=</span><span class="dv">1</span>)</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>pred9<span class="ot">=</span> xseqpol <span class="sc">%*%</span> <span class="fu">matrix</span>(b9, <span class="at">ncol=</span><span class="dv">1</span>)</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>dataobs<span class="ot">=</span> <span class="fu">tibble</span>(x,y)  </span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>df<span class="ot">=</span> <span class="fu">tibble</span>(<span class="at">truemean=</span><span class="fu">sin</span>(<span class="dv">2</span><span class="sc">*</span>pi<span class="sc">*</span>xseq), <span class="at">x=</span>xseq, <span class="at">pred0=</span>b0, pred1, pred3, pred9)</span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df, <span class="fu">aes</span>(<span class="at">x=</span>x)) <span class="sc">+</span></span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y=</span>truemean)) <span class="sc">+</span></span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y=</span>pred0), <span class="at">col=</span><span class="st">'gray'</span>) <span class="sc">+</span></span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y=</span>pred1), <span class="at">col=</span><span class="st">'gray'</span>) <span class="sc">+</span></span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y=</span>pred3), <span class="at">col=</span><span class="st">'blue'</span>) <span class="sc">+</span></span>
+<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y=</span>pred9), <span class="at">col=</span><span class="st">'red'</span>) <span class="sc">+</span></span>
+<span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x=</span>x, <span class="at">y=</span>y), <span class="at">data=</span>dataobs) <span class="sc">+</span></span>
+<span id="cb27-20"><a href="#cb27-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y=</span><span class="st">'True mean'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+
+</div>
+<img data-src="08_model_comparison_files/figure-revealjs/unnamed-chunk-20-1.png" width="960" class="r-stretch"></section>
 <section id="over-fitting" class="slide level2">
 <h2>Over-fitting</h2>
 <p>The prediction accuracy in our <strong>training data</strong> does not generalize to <strong>new data</strong></p>
@@ -827,10 +833,10 @@ y_i= \sin(2\pi x) + \epsilon_i \mbox{, where } \epsilon_i \sim N(0,0.2^2)
 <h2>Train/test split</h2>
 <p>Use a fraction of the data to fit the model (e.g.&nbsp;90%), assess MSE on the rest</p>
 <p><strong>Example.</strong> Prices for 100 new condos not in <code>housing</code></p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>housingnew<span class="ot">=</span> <span class="fu">read_csv</span>(<span class="st">"../datasets/housingNew.csv"</span>)</span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>housingnew<span class="ot">=</span> <span class="fu">transform</span>(housingnew, <span class="at">lSqFt=</span> <span class="fu">log10</span>(SqFt), <span class="at">lUnits=</span> <span class="fu">log10</span>(Units))</span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(housingnew)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="08_model_comparison_cache/revealjs/unnamed-chunk-21_d89f2fa53058f8e8de8ba21444407381">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>housingnew<span class="ot">=</span> <span class="fu">read_csv</span>(<span class="st">"../datasets/housingNew.csv"</span>)</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>housingnew<span class="ot">=</span> <span class="fu">transform</span>(housingnew, <span class="at">lSqFt=</span> <span class="fu">log10</span>(SqFt), <span class="at">lUnits=</span> <span class="fu">log10</span>(Units))</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(housingnew)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 100  13</code></pre>
 </div>
@@ -842,28 +848,28 @@ y_i= \sin(2\pi x) + \epsilon_i \mbox{, where } \epsilon_i \sim N(0,0.2^2)
 <li><p>Fit two models on training data (<code>housing</code>)</p></li>
 <li><p>Check accuracy on test data (<code>housingnew</code>)</p></li>
 </ol>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>fit1<span class="ot">=</span> <span class="fu">lm</span>(ValuePerSqFt <span class="sc">~</span> Boro <span class="sc">+</span> lSqFt <span class="sc">+</span> lUnits , <span class="at">data=</span>housing)</span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>fit2<span class="ot">=</span> <span class="fu">lm</span>(ValuePerSqFt <span class="sc">~</span> Boro <span class="sc">+</span> lSqFt <span class="sc">+</span> lUnits <span class="sc">+</span> Boro<span class="sc">:</span>lSqFt <span class="sc">+</span> Boro<span class="sc">:</span>lUnits, <span class="at">data=</span>housing)</span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>pred1<span class="ot">=</span> <span class="fu">predict</span>(fit1, <span class="at">newdata=</span>housingnew)</span>
-<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>pred2<span class="ot">=</span> <span class="fu">predict</span>(fit2, <span class="at">newdata=</span>housingnew)</span>
-<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>ynew<span class="ot">=</span> housingnew<span class="sc">$</span>ValuePerSqFt</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="08_model_comparison_cache/revealjs/unnamed-chunk-22_bc573c3e286a6ecd1f229457d139b44d">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>fit1<span class="ot">=</span> <span class="fu">lm</span>(ValuePerSqFt <span class="sc">~</span> Boro <span class="sc">+</span> lSqFt <span class="sc">+</span> lUnits , <span class="at">data=</span>housing)</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>fit2<span class="ot">=</span> <span class="fu">lm</span>(ValuePerSqFt <span class="sc">~</span> Boro <span class="sc">+</span> lSqFt <span class="sc">+</span> lUnits <span class="sc">+</span> Boro<span class="sc">:</span>lSqFt <span class="sc">+</span> Boro<span class="sc">:</span>lUnits, <span class="at">data=</span>housing)</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>pred1<span class="ot">=</span> <span class="fu">predict</span>(fit1, <span class="at">newdata=</span>housingnew)</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>pred2<span class="ot">=</span> <span class="fu">predict</span>(fit2, <span class="at">newdata=</span>housingnew)</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>ynew<span class="ot">=</span> housingnew<span class="sc">$</span>ValuePerSqFt</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>MSE for each model</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>mse<span class="ot">=</span> <span class="fu">c</span>(<span class="fu">sqrt</span>(<span class="fu">mean</span>((ynew <span class="sc">-</span> pred1)<span class="sc">^</span><span class="dv">2</span>)), <span class="fu">sqrt</span>(<span class="fu">mean</span>((ynew <span class="sc">-</span> pred2)<span class="sc">^</span><span class="dv">2</span>)))</span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(mse)<span class="ot">=</span> <span class="fu">c</span>(<span class="st">'model 1'</span>,<span class="st">'model 2'</span>)</span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(mse, <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="08_model_comparison_cache/revealjs/unnamed-chunk-23_07718a8e51ea4a9da6513b795d4c8e49">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>mse<span class="ot">=</span> <span class="fu">c</span>(<span class="fu">sqrt</span>(<span class="fu">mean</span>((ynew <span class="sc">-</span> pred1)<span class="sc">^</span><span class="dv">2</span>)), <span class="fu">sqrt</span>(<span class="fu">mean</span>((ynew <span class="sc">-</span> pred2)<span class="sc">^</span><span class="dv">2</span>)))</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(mse)<span class="ot">=</span> <span class="fu">c</span>(<span class="st">'model 1'</span>,<span class="st">'model 2'</span>)</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(mse, <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>model 1 model 2 
  47.051  46.020 </code></pre>
 </div>
 </div>
 <p>% explained variance by each model (out-of-sample <span class="math inline">\(R^2\)</span> coefficient)</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>r2<span class="ot">=</span> <span class="fu">c</span>(<span class="fu">cor</span>(ynew, pred1)<span class="sc">^</span><span class="dv">2</span>, <span class="fu">cor</span>(ynew, pred2)<span class="sc">^</span><span class="dv">2</span>)</span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(r2)<span class="ot">=</span> <span class="fu">c</span>(<span class="st">'model 1'</span>,<span class="st">'model 2'</span>)</span>
-<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(r2, <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="08_model_comparison_cache/revealjs/unnamed-chunk-24_c41c970d363360b18d9424d691bf9ebf">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>r2<span class="ot">=</span> <span class="fu">c</span>(<span class="fu">cor</span>(ynew, pred1)<span class="sc">^</span><span class="dv">2</span>, <span class="fu">cor</span>(ynew, pred2)<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(r2)<span class="ot">=</span> <span class="fu">c</span>(<span class="st">'model 1'</span>,<span class="st">'model 2'</span>)</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(r2, <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>model 1 model 2 
   0.567   0.586 </code></pre>
@@ -885,21 +891,21 @@ y_i= \sin(2\pi x) + \epsilon_i \mbox{, where } \epsilon_i \sim N(0,0.2^2)
 <h2>Example</h2>
 <p>Function <code>cv.glm</code> in package <code>boot</code> implements cross-validation for GLMs</p>
 <p>Re-fit the linear model with <code>glm</code>, run <code>cv.glm</code> (by default K=n, i.e.&nbsp;leave-one-out)</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>fit1<span class="ot">=</span> <span class="fu">glm</span>(ValuePerSqFt <span class="sc">~</span> Boro <span class="sc">+</span> lSqFt <span class="sc">+</span> lUnits , <span class="at">data=</span>housing)</span>
-<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>fit2<span class="ot">=</span> <span class="fu">glm</span>(ValuePerSqFt <span class="sc">~</span> Boro <span class="sc">+</span> lSqFt <span class="sc">+</span> lUnits <span class="sc">+</span> Boro<span class="sc">:</span>lSqFt <span class="sc">+</span> Boro<span class="sc">:</span>lUnits, <span class="at">data=</span>housing)</span>
-<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>fit1cv<span class="ot">=</span> <span class="fu">cv.glm</span>(housing, fit1, <span class="at">K=</span><span class="dv">10</span>)</span>
-<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>fit2cv<span class="ot">=</span> <span class="fu">cv.glm</span>(housing, fit2, <span class="at">K=</span><span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="08_model_comparison_cache/revealjs/unnamed-chunk-25_f411309abc242dd77b82bb12d08842f1">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>fit1<span class="ot">=</span> <span class="fu">glm</span>(ValuePerSqFt <span class="sc">~</span> Boro <span class="sc">+</span> lSqFt <span class="sc">+</span> lUnits , <span class="at">data=</span>housing)</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>fit2<span class="ot">=</span> <span class="fu">glm</span>(ValuePerSqFt <span class="sc">~</span> Boro <span class="sc">+</span> lSqFt <span class="sc">+</span> lUnits <span class="sc">+</span> Boro<span class="sc">:</span>lSqFt <span class="sc">+</span> Boro<span class="sc">:</span>lUnits, <span class="at">data=</span>housing)</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>fit1cv<span class="ot">=</span> <span class="fu">cv.glm</span>(housing, fit1, <span class="at">K=</span><span class="dv">10</span>)</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>fit2cv<span class="ot">=</span> <span class="fu">cv.glm</span>(housing, fit2, <span class="at">K=</span><span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We get 2 numbers. The first is the K-fold cross-validated MSE, the second is a bias-adjusted version</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sqrt</span>(fit1cv<span class="sc">$</span>delta)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="08_model_comparison_cache/revealjs/unnamed-chunk-26_4a53c049618d135ae685fe85837793e8">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sqrt</span>(fit1cv<span class="sc">$</span>delta)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 43.63696 43.63093</code></pre>
+<pre><code>[1] 43.62361 43.61827</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sqrt</span>(fit2cv<span class="sc">$</span>delta)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sqrt</span>(fit2cv<span class="sc">$</span>delta)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 42.71005 42.70181</code></pre>
+<pre><code>[1] 42.71776 42.70911</code></pre>
 </div>
 </div>
 </section>
@@ -918,8 +924,8 @@ y_i= \sin(2\pi x) + \epsilon_i \mbox{, where } \epsilon_i \sim N(0,0.2^2)
 <h2>% of miss-classifications</h2>
 <p>Suppose that we predict <span class="math inline">\(\hat{y}_i=1\)</span> when <span class="math inline">\(\hat{P}(y_i=1) &gt; 0.5\)</span></p>
 <p>Function <code>cost_misclass</code> at <code>routines.R</code> implements this loss</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>cost_misclass</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="08_model_comparison_cache/revealjs/unnamed-chunk-27_e14c7cfa16ce7a18a1ef10faf34f8756">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>cost_misclass</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>function (yobs, ypred, threshold = 0.5) 
 {
@@ -941,35 +947,35 @@ y_i= \sin(2\pi x) + \epsilon_i \mbox{, where } \epsilon_i \sim N(0,0.2^2)
 <li><p>Email charac. + words used: add <code>image</code>, <code>attach</code>, <code>dollar</code>, <code>winner</code> to 1</p></li>
 <li><p>Add pairwise interactions to 3</p></li>
 </ol>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>fit1<span class="ot">=</span> <span class="fu">glm</span>(spam <span class="sc">~</span> to_multiple <span class="sc">+</span> cc <span class="sc">+</span> sent_email, <span class="at">data=</span>email, <span class="at">family=</span><span class="fu">binomial</span>())</span>
-<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>fit2<span class="ot">=</span> <span class="fu">glm</span>(spam <span class="sc">~</span> (to_multiple <span class="sc">+</span> cc <span class="sc">+</span> sent_email)<span class="sc">^</span><span class="dv">2</span>, <span class="at">data=</span>email, <span class="at">family=</span><span class="fu">binomial</span>())</span>
-<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>fit3<span class="ot">=</span> <span class="fu">glm</span>(spam <span class="sc">~</span> to_multiple <span class="sc">+</span> cc <span class="sc">+</span> sent_email <span class="sc">+</span> image <span class="sc">+</span> attach <span class="sc">+</span> dollar <span class="sc">+</span> winner, <span class="at">data=</span>email, <span class="at">family=</span><span class="fu">binomial</span>())</span>
-<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>fit4<span class="ot">=</span> <span class="fu">glm</span>(spam <span class="sc">~</span> (to_multiple <span class="sc">+</span> cc <span class="sc">+</span> sent_email <span class="sc">+</span> image <span class="sc">+</span> attach <span class="sc">+</span> dollar <span class="sc">+</span> winner)<span class="sc">^</span><span class="dv">2</span>, <span class="at">data=</span>email, <span class="at">family=</span><span class="fu">binomial</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="08_model_comparison_cache/revealjs/unnamed-chunk-28_9dc2ee648ef05358b3bc0631a6431308">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>fit1<span class="ot">=</span> <span class="fu">glm</span>(spam <span class="sc">~</span> to_multiple <span class="sc">+</span> cc <span class="sc">+</span> sent_email, <span class="at">data=</span>email, <span class="at">family=</span><span class="fu">binomial</span>())</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>fit2<span class="ot">=</span> <span class="fu">glm</span>(spam <span class="sc">~</span> (to_multiple <span class="sc">+</span> cc <span class="sc">+</span> sent_email)<span class="sc">^</span><span class="dv">2</span>, <span class="at">data=</span>email, <span class="at">family=</span><span class="fu">binomial</span>())</span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>fit3<span class="ot">=</span> <span class="fu">glm</span>(spam <span class="sc">~</span> to_multiple <span class="sc">+</span> cc <span class="sc">+</span> sent_email <span class="sc">+</span> image <span class="sc">+</span> attach <span class="sc">+</span> dollar <span class="sc">+</span> winner, <span class="at">data=</span>email, <span class="at">family=</span><span class="fu">binomial</span>())</span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>fit4<span class="ot">=</span> <span class="fu">glm</span>(spam <span class="sc">~</span> (to_multiple <span class="sc">+</span> cc <span class="sc">+</span> sent_email <span class="sc">+</span> image <span class="sc">+</span> attach <span class="sc">+</span> dollar <span class="sc">+</span> winner)<span class="sc">^</span><span class="dv">2</span>, <span class="at">data=</span>email, <span class="at">family=</span><span class="fu">binomial</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="in-sample-accuracy" class="slide level2">
 <h2>In-sample accuracy</h2>
 <p>Let’s compare Models 1 and 4, <em>in-sample</em></p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>ypred1<span class="ot">=</span> <span class="fu">predict</span>(fit1, <span class="at">type=</span><span class="st">'response'</span>)</span>
-<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>mc1<span class="ot">=</span> <span class="fu">cost_misclass</span>(email<span class="sc">$</span>spam, ypred1, <span class="at">threshold=</span><span class="fl">0.5</span>)</span>
-<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(mc1,<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="08_model_comparison_cache/revealjs/unnamed-chunk-29_e57006374fca35615e17628eaebb8b80">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>ypred1<span class="ot">=</span> <span class="fu">predict</span>(fit1, <span class="at">type=</span><span class="st">'response'</span>)</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>mc1<span class="ot">=</span> <span class="fu">cost_misclass</span>(email<span class="sc">$</span>spam, ypred1, <span class="at">threshold=</span><span class="fl">0.5</span>)</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(mc1,<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.094</code></pre>
 </div>
 </div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>ypred4<span class="ot">=</span> <span class="fu">predict</span>(fit4, <span class="at">type=</span><span class="st">'response'</span>)</span>
-<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>mc3<span class="ot">=</span> <span class="fu">cost_misclass</span>(email<span class="sc">$</span>spam, ypred4, <span class="at">threshold=</span><span class="fl">0.5</span>)</span>
-<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(mc3,<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="08_model_comparison_cache/revealjs/unnamed-chunk-30_4f036267bd79c4ed8afc1d4fcfdebfe7">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>ypred4<span class="ot">=</span> <span class="fu">predict</span>(fit4, <span class="at">type=</span><span class="st">'response'</span>)</span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>mc3<span class="ot">=</span> <span class="fu">cost_misclass</span>(email<span class="sc">$</span>spam, ypred4, <span class="at">threshold=</span><span class="fl">0.5</span>)</span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(mc3,<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.092</code></pre>
 </div>
 </div>
 <p>Actually, we rarely predict an email to be spam</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(email<span class="sc">$</span>spam, ypred1<span class="sc">&gt;</span><span class="fl">0.5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="08_model_comparison_cache/revealjs/unnamed-chunk-31_d27af475944fc41ee4ac2324dfab2a9f">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(email<span class="sc">$</span>spam, ypred1<span class="sc">&gt;</span><span class="fl">0.5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   
     FALSE TRUE
@@ -981,32 +987,32 @@ y_i= \sin(2\pi x) + \epsilon_i \mbox{, where } \epsilon_i \sim N(0,0.2^2)
 <section id="out-of-sample-assessment" class="slide level2">
 <h2>Out-of-sample assessment</h2>
 <p>Call <code>cv.glm</code>, setting argument <code>cost</code></p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>fit1cv<span class="ot">=</span> <span class="fu">cv.glm</span>(email, fit1, <span class="at">cost=</span>cost_misclass, <span class="at">K=</span><span class="dv">10</span>)</span>
-<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>fit2cv<span class="ot">=</span> <span class="fu">cv.glm</span>(email, fit2, <span class="at">cost=</span>cost_misclass, <span class="at">K=</span><span class="dv">10</span>)</span>
-<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>fit3cv<span class="ot">=</span> <span class="fu">cv.glm</span>(email, fit3, <span class="at">cost=</span>cost_misclass, <span class="at">K=</span><span class="dv">10</span>)</span>
-<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>fit4cv<span class="ot">=</span> <span class="fu">cv.glm</span>(email, fit4, <span class="at">cost=</span>cost_misclass, <span class="at">K=</span><span class="dv">10</span>)</span>
-<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a>loss<span class="ot">=</span> <span class="fu">c</span>(fit1cv<span class="sc">$</span>delta[<span class="dv">1</span>], fit2cv<span class="sc">$</span>delta[<span class="dv">1</span>], fit3cv<span class="sc">$</span>delta[<span class="dv">1</span>], fit4cv<span class="sc">$</span>delta[<span class="dv">1</span>])</span>
-<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(loss)<span class="ot">=</span> <span class="fu">c</span>(<span class="st">'model 1'</span>, <span class="st">'model 2'</span>, <span class="st">'model 3'</span>, <span class="st">'model 4'</span>)</span>
-<span id="cb48-8"><a href="#cb48-8" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(loss,<span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="08_model_comparison_cache/revealjs/unnamed-chunk-32_0a4b6930aeb4857eb4122254f5d4f5fc">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>fit1cv<span class="ot">=</span> <span class="fu">cv.glm</span>(email, fit1, <span class="at">cost=</span>cost_misclass, <span class="at">K=</span><span class="dv">10</span>)</span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>fit2cv<span class="ot">=</span> <span class="fu">cv.glm</span>(email, fit2, <span class="at">cost=</span>cost_misclass, <span class="at">K=</span><span class="dv">10</span>)</span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>fit3cv<span class="ot">=</span> <span class="fu">cv.glm</span>(email, fit3, <span class="at">cost=</span>cost_misclass, <span class="at">K=</span><span class="dv">10</span>)</span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>fit4cv<span class="ot">=</span> <span class="fu">cv.glm</span>(email, fit4, <span class="at">cost=</span>cost_misclass, <span class="at">K=</span><span class="dv">10</span>)</span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a>loss<span class="ot">=</span> <span class="fu">c</span>(fit1cv<span class="sc">$</span>delta[<span class="dv">1</span>], fit2cv<span class="sc">$</span>delta[<span class="dv">1</span>], fit3cv<span class="sc">$</span>delta[<span class="dv">1</span>], fit4cv<span class="sc">$</span>delta[<span class="dv">1</span>])</span>
+<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(loss)<span class="ot">=</span> <span class="fu">c</span>(<span class="st">'model 1'</span>, <span class="st">'model 2'</span>, <span class="st">'model 3'</span>, <span class="st">'model 4'</span>)</span>
+<span id="cb49-8"><a href="#cb49-8" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(loss,<span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>model 1 model 2 model 3 model 4 
- 0.0936  0.0939  0.0916  0.0939 </code></pre>
+ 0.0939  0.0936  0.1160  0.0941 </code></pre>
 </div>
 </div>
 </section>
 <section id="calibrating-the-threshold" class="slide level2">
 <h2>Calibrating the threshold</h2>
 <p>We predicted spam when <span class="math inline">\(\hat{P}(y_i=1) &gt; 0.5\)</span>. We could consider a lower threshold than 0.5</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cost_misclass</span>(email<span class="sc">$</span>spam, ypred1, <span class="at">threshold=</span><span class="fl">0.15</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="08_model_comparison_cache/revealjs/unnamed-chunk-33_a23c66ec79e56169ad9341f19b9774ad">
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cost_misclass</span>(email<span class="sc">$</span>spam, ypred1, <span class="at">threshold=</span><span class="fl">0.15</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.1254782</code></pre>
 </div>
 </div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(email<span class="sc">$</span>spam, ypred1<span class="sc">&gt;</span><span class="fl">0.15</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="08_model_comparison_cache/revealjs/unnamed-chunk-34_33e5061bd00fcd77aaf75d70fcb0bb39">
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(email<span class="sc">$</span>spam, ypred1<span class="sc">&gt;</span><span class="fl">0.15</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   
     FALSE TRUE
@@ -1060,32 +1066,32 @@ y_i= \sin(2\pi x) + \epsilon_i \mbox{, where } \epsilon_i \sim N(0,0.2^2)
 <li><p>Small <span class="math inline">\(t\)</span> reduces specificity, but increases sensitivity</p></li>
 </ul>
 <p>Receiving Operator Characteristic (ROC) curve shows spec vs sens for all <span class="math inline">\(t\)</span></p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
-<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>sel<span class="ot">=</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(email), <span class="at">size=</span> <span class="fu">round</span>(<span class="fl">0.9</span><span class="sc">*</span><span class="fu">nrow</span>(email)), <span class="at">replace=</span><span class="cn">FALSE</span>)</span>
-<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>emailtrain<span class="ot">=</span> email[sel,] <span class="co">#90% for training data</span></span>
-<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>emailtest<span class="ot">=</span> email[<span class="sc">-</span>sel,] <span class="co">#10% for test data</span></span>
-<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb54-6"><a href="#cb54-6" aria-hidden="true" tabindex="-1"></a>fit1train<span class="ot">=</span> <span class="fu">glm</span>(spam <span class="sc">~</span> to_multiple <span class="sc">+</span> cc <span class="sc">+</span> sent_email, <span class="at">data=</span>emailtrain, <span class="at">family=</span><span class="fu">binomial</span>())</span>
-<span id="cb54-7"><a href="#cb54-7" aria-hidden="true" tabindex="-1"></a>fit3train<span class="ot">=</span> <span class="fu">glm</span>(spam <span class="sc">~</span> to_multiple <span class="sc">+</span> cc <span class="sc">+</span> sent_email <span class="sc">+</span> image <span class="sc">+</span> attach <span class="sc">+</span> dollar <span class="sc">+</span> winner, <span class="at">data=</span>emailtrain, <span class="at">family=</span><span class="fu">binomial</span>())</span>
-<span id="cb54-8"><a href="#cb54-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb54-9"><a href="#cb54-9" aria-hidden="true" tabindex="-1"></a>pi1test<span class="ot">=</span> <span class="fu">predict</span>(fit1, <span class="at">type=</span><span class="st">'response'</span>, <span class="at">newdata=</span>emailtest)</span>
-<span id="cb54-10"><a href="#cb54-10" aria-hidden="true" tabindex="-1"></a>pi3test<span class="ot">=</span> <span class="fu">predict</span>(fit3, <span class="at">type=</span><span class="st">'response'</span>, <span class="at">newdata=</span>emailtest)</span>
-<span id="cb54-11"><a href="#cb54-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb54-12"><a href="#cb54-12" aria-hidden="true" tabindex="-1"></a>roc1<span class="ot">=</span> <span class="fu">roc</span>(emailtest<span class="sc">$</span>spam, pi1test)</span>
-<span id="cb54-13"><a href="#cb54-13" aria-hidden="true" tabindex="-1"></a>roc3<span class="ot">=</span> <span class="fu">roc</span>(emailtest<span class="sc">$</span>spam, pi3test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="08_model_comparison_cache/revealjs/unnamed-chunk-35_d1813cd51c16e088eb1f595cd28c729e">
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>sel<span class="ot">=</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(email), <span class="at">size=</span> <span class="fu">round</span>(<span class="fl">0.9</span><span class="sc">*</span><span class="fu">nrow</span>(email)), <span class="at">replace=</span><span class="cn">FALSE</span>)</span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>emailtrain<span class="ot">=</span> email[sel,] <span class="co">#90% for training data</span></span>
+<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a>emailtest<span class="ot">=</span> email[<span class="sc">-</span>sel,] <span class="co">#10% for test data</span></span>
+<span id="cb55-5"><a href="#cb55-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-6"><a href="#cb55-6" aria-hidden="true" tabindex="-1"></a>fit1train<span class="ot">=</span> <span class="fu">glm</span>(spam <span class="sc">~</span> to_multiple <span class="sc">+</span> cc <span class="sc">+</span> sent_email, <span class="at">data=</span>emailtrain, <span class="at">family=</span><span class="fu">binomial</span>())</span>
+<span id="cb55-7"><a href="#cb55-7" aria-hidden="true" tabindex="-1"></a>fit3train<span class="ot">=</span> <span class="fu">glm</span>(spam <span class="sc">~</span> to_multiple <span class="sc">+</span> cc <span class="sc">+</span> sent_email <span class="sc">+</span> image <span class="sc">+</span> attach <span class="sc">+</span> dollar <span class="sc">+</span> winner, <span class="at">data=</span>emailtrain, <span class="at">family=</span><span class="fu">binomial</span>())</span>
+<span id="cb55-8"><a href="#cb55-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-9"><a href="#cb55-9" aria-hidden="true" tabindex="-1"></a>pi1test<span class="ot">=</span> <span class="fu">predict</span>(fit1, <span class="at">type=</span><span class="st">'response'</span>, <span class="at">newdata=</span>emailtest)</span>
+<span id="cb55-10"><a href="#cb55-10" aria-hidden="true" tabindex="-1"></a>pi3test<span class="ot">=</span> <span class="fu">predict</span>(fit3, <span class="at">type=</span><span class="st">'response'</span>, <span class="at">newdata=</span>emailtest)</span>
+<span id="cb55-11"><a href="#cb55-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-12"><a href="#cb55-12" aria-hidden="true" tabindex="-1"></a>roc1<span class="ot">=</span> <span class="fu">roc</span>(emailtest<span class="sc">$</span>spam, pi1test)</span>
+<span id="cb55-13"><a href="#cb55-13" aria-hidden="true" tabindex="-1"></a>roc3<span class="ot">=</span> <span class="fu">roc</span>(emailtest<span class="sc">$</span>spam, pi3test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section class="slide level2">
 
-<div class="cell">
-<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(roc1, <span class="at">cex.axis=</span><span class="fl">1.4</span>, <span class="at">cex.lab=</span><span class="fl">1.4</span>); <span class="fu">lines</span>(roc3, <span class="at">col=</span><span class="st">'red'</span>)</span>
-<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">'bottomright'</span>, <span class="fu">c</span>(<span class="st">'Model 1'</span>,<span class="st">'Model 3'</span>), <span class="at">lty=</span><span class="dv">1</span>, <span class="at">col=</span><span class="fu">c</span>(<span class="st">'black'</span>,<span class="st">'red'</span>), <span class="at">cex=</span><span class="fl">1.4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="08_model_comparison_cache/revealjs/unnamed-chunk-36_266833a67166067d367ffd9a6cc8896a">
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(roc1, <span class="at">cex.axis=</span><span class="fl">1.4</span>, <span class="at">cex.lab=</span><span class="fl">1.4</span>); <span class="fu">lines</span>(roc3, <span class="at">col=</span><span class="st">'red'</span>)</span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">'bottomright'</span>, <span class="fu">c</span>(<span class="st">'Model 1'</span>,<span class="st">'Model 3'</span>), <span class="at">lty=</span><span class="dv">1</span>, <span class="at">col=</span><span class="fu">c</span>(<span class="st">'black'</span>,<span class="st">'red'</span>), <span class="at">cex=</span><span class="fl">1.4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 </div>
-<img data-src="08_model_comparison_files/figure-revealjs/unnamed-chunk-35-1.png" width="960" class="r-stretch"><p>ROC curves often compared via Area Under the Curve. Guessing randomly gives AUC=0.5, perfect predictions give AUC=1.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(roc1<span class="sc">$</span>auc, roc3<span class="sc">$</span>auc)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<img data-src="08_model_comparison_files/figure-revealjs/unnamed-chunk-36-1.png" width="960" class="r-stretch"><p>ROC curves often compared via Area Under the Curve. Guessing randomly gives AUC=0.5, perfect predictions give AUC=1.</p>
+<div class="cell" data-hash="08_model_comparison_cache/revealjs/unnamed-chunk-37_1c49eb4eb45f01f587d7a73236fbd4e1">
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(roc1<span class="sc">$</span>auc, roc3<span class="sc">$</span>auc)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.6906077 0.7580110</code></pre>
 </div>
@@ -1106,8 +1112,8 @@ y_i= \sin(2\pi x) + \epsilon_i \mbox{, where } \epsilon_i \sim N(0,0.2^2)
 <section class="slide level2">
 
 <p>Function <code>cost_loglik_logistic</code> at <code>routines.R</code> implements the log-likelihood loss</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>cost_loglik_logistic</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="08_model_comparison_cache/revealjs/unnamed-chunk-38_5c32a618015cf9dba003630b27f0f889">
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a>cost_loglik_logistic</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>function (yobs, ypred) 
 {
@@ -1170,16 +1176,16 @@ y_i= \sin(2\pi x) + \epsilon_i \mbox{, where } \epsilon_i \sim N(0,0.2^2)
 <li>Faster computations (no need to cross-validate)</li>
 </ul>
 <p>Warning: AIC fails to approximate cross-validation, unless <span class="math inline">\(n\)</span> is quite large and the model assumptions hold</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>fit1<span class="ot">=</span> <span class="fu">glm</span>(spam <span class="sc">~</span> to_multiple <span class="sc">+</span> cc <span class="sc">+</span> sent_email, <span class="at">data=</span>email, <span class="at">family=</span><span class="fu">binomial</span>())</span>
-<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>fit2<span class="ot">=</span> <span class="fu">glm</span>(spam <span class="sc">~</span> (to_multiple <span class="sc">+</span> cc <span class="sc">+</span> sent_email)<span class="sc">^</span><span class="dv">2</span>, <span class="at">data=</span>email, <span class="at">family=</span><span class="fu">binomial</span>())</span>
-<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a>fit3<span class="ot">=</span> <span class="fu">glm</span>(spam <span class="sc">~</span> to_multiple <span class="sc">+</span> cc <span class="sc">+</span> sent_email <span class="sc">+</span> image <span class="sc">+</span> attach <span class="sc">+</span> dollar <span class="sc">+</span> winner, <span class="at">data=</span>email, <span class="at">family=</span><span class="fu">binomial</span>())</span>
-<span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a>fit4<span class="ot">=</span> <span class="fu">glm</span>(spam <span class="sc">~</span> (to_multiple <span class="sc">+</span> cc <span class="sc">+</span> sent_email <span class="sc">+</span> image <span class="sc">+</span> attach <span class="sc">+</span> dollar <span class="sc">+</span> winner)<span class="sc">^</span><span class="dv">2</span>, <span class="at">data=</span>email, <span class="at">family=</span><span class="fu">binomial</span>())</span>
-<span id="cb60-5"><a href="#cb60-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb60-6"><a href="#cb60-6" aria-hidden="true" tabindex="-1"></a>bic<span class="ot">=</span> <span class="fu">c</span>(<span class="fu">BIC</span>(fit1), <span class="fu">BIC</span>(fit2), <span class="fu">BIC</span>(fit3), <span class="fu">BIC</span>(fit4))</span>
-<span id="cb60-7"><a href="#cb60-7" aria-hidden="true" tabindex="-1"></a>aic<span class="ot">=</span> <span class="fu">c</span>(<span class="fu">AIC</span>(fit1), <span class="fu">AIC</span>(fit2), <span class="fu">AIC</span>(fit3), <span class="fu">AIC</span>(fit4))</span>
-<span id="cb60-8"><a href="#cb60-8" aria-hidden="true" tabindex="-1"></a>models<span class="ot">=</span> <span class="fu">c</span>(<span class="st">'model 1'</span>,<span class="st">'model 2'</span>,<span class="st">'model 3'</span>,<span class="st">'model 4'</span>)</span>
-<span id="cb60-9"><a href="#cb60-9" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(models, bic, aic)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="08_model_comparison_cache/revealjs/unnamed-chunk-39_17eec7038ba7d00973d842b51d9e61f0">
+<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a>fit1<span class="ot">=</span> <span class="fu">glm</span>(spam <span class="sc">~</span> to_multiple <span class="sc">+</span> cc <span class="sc">+</span> sent_email, <span class="at">data=</span>email, <span class="at">family=</span><span class="fu">binomial</span>())</span>
+<span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a>fit2<span class="ot">=</span> <span class="fu">glm</span>(spam <span class="sc">~</span> (to_multiple <span class="sc">+</span> cc <span class="sc">+</span> sent_email)<span class="sc">^</span><span class="dv">2</span>, <span class="at">data=</span>email, <span class="at">family=</span><span class="fu">binomial</span>())</span>
+<span id="cb61-3"><a href="#cb61-3" aria-hidden="true" tabindex="-1"></a>fit3<span class="ot">=</span> <span class="fu">glm</span>(spam <span class="sc">~</span> to_multiple <span class="sc">+</span> cc <span class="sc">+</span> sent_email <span class="sc">+</span> image <span class="sc">+</span> attach <span class="sc">+</span> dollar <span class="sc">+</span> winner, <span class="at">data=</span>email, <span class="at">family=</span><span class="fu">binomial</span>())</span>
+<span id="cb61-4"><a href="#cb61-4" aria-hidden="true" tabindex="-1"></a>fit4<span class="ot">=</span> <span class="fu">glm</span>(spam <span class="sc">~</span> (to_multiple <span class="sc">+</span> cc <span class="sc">+</span> sent_email <span class="sc">+</span> image <span class="sc">+</span> attach <span class="sc">+</span> dollar <span class="sc">+</span> winner)<span class="sc">^</span><span class="dv">2</span>, <span class="at">data=</span>email, <span class="at">family=</span><span class="fu">binomial</span>())</span>
+<span id="cb61-5"><a href="#cb61-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-6"><a href="#cb61-6" aria-hidden="true" tabindex="-1"></a>bic<span class="ot">=</span> <span class="fu">c</span>(<span class="fu">BIC</span>(fit1), <span class="fu">BIC</span>(fit2), <span class="fu">BIC</span>(fit3), <span class="fu">BIC</span>(fit4))</span>
+<span id="cb61-7"><a href="#cb61-7" aria-hidden="true" tabindex="-1"></a>aic<span class="ot">=</span> <span class="fu">c</span>(<span class="fu">AIC</span>(fit1), <span class="fu">AIC</span>(fit2), <span class="fu">AIC</span>(fit3), <span class="fu">AIC</span>(fit4))</span>
+<span id="cb61-8"><a href="#cb61-8" aria-hidden="true" tabindex="-1"></a>models<span class="ot">=</span> <span class="fu">c</span>(<span class="st">'model 1'</span>,<span class="st">'model 2'</span>,<span class="st">'model 3'</span>,<span class="st">'model 4'</span>)</span>
+<span id="cb61-9"><a href="#cb61-9" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(models, bic, aic)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   models      bic      aic
 1 model 1 2139.092 2113.995
@@ -1192,9 +1198,9 @@ y_i= \sin(2\pi x) + \epsilon_i \mbox{, where } \epsilon_i \sim N(0,0.2^2)
 <section id="searching-over-models" class="slide level2">
 <h2>Searching over models</h2>
 <p><code>bestBIC</code> in package <code>mombf</code> searches all possible models (if one can enumerate them)</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a>email<span class="ot">=</span> <span class="fu">transform</span>(email, <span class="at">spam=</span> <span class="fu">as.numeric</span>(<span class="fu">as.character</span>(spam))) <span class="co">#convert outcome to numeric 0/1 values</span></span>
-<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a>fitall<span class="ot">=</span> <span class="fu">bestBIC</span>(spam <span class="sc">~</span> to_multiple<span class="sc">+</span>cc<span class="sc">+</span>sent_email<span class="sc">+</span>image<span class="sc">+</span>attach<span class="sc">+</span>dollar<span class="sc">+</span>winner, <span class="at">data=</span>email, <span class="at">family=</span><span class="st">"binomial"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="08_model_comparison_cache/revealjs/unnamed-chunk-40_ba5ae8b2b4bc9a1a3a7c86cdec245907">
+<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a>email<span class="ot">=</span> <span class="fu">transform</span>(email, <span class="at">spam=</span> <span class="fu">as.numeric</span>(<span class="fu">as.character</span>(spam))) <span class="co">#convert outcome to numeric 0/1 values</span></span>
+<span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a>fitall<span class="ot">=</span> <span class="fu">bestBIC</span>(spam <span class="sc">~</span> to_multiple<span class="sc">+</span>cc<span class="sc">+</span>sent_email<span class="sc">+</span>image<span class="sc">+</span>attach<span class="sc">+</span>dollar<span class="sc">+</span>winner, <span class="at">data=</span>email, <span class="at">family=</span><span class="st">"binomial"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Enumerating models...
  Computing posterior probabilities
@@ -1212,7 +1218,7 @@ y_i= \sin(2\pi x) + \epsilon_i \mbox{, where } \epsilon_i \sim N(0,0.2^2)
 97%
  Done</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a>fitall</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a>fitall</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>icfit object
 
@@ -1230,8 +1236,8 @@ Use coef(object$msfit) and predict(object$msfit) to get BMA estimates and predic
 <ul id="tabset-4" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-4-1">summary</a></li><li><a href="#tabset-4-2">coef, confint</a></li><li><a href="#tabset-4-3">predict</a></li></ul>
 <div class="tab-content">
 <div id="tabset-4-1">
-<div class="cell">
-<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fitall)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="08_model_comparison_cache/revealjs/unnamed-chunk-41_00aa3e62b481aa9545036202165849c1">
+<div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fitall)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
@@ -1260,8 +1266,8 @@ Number of Fisher Scoring iterations: 18</code></pre>
 </div>
 </div>
 <div id="tabset-4-2">
-<div class="cell">
-<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cbind</span>(<span class="fu">coef</span>(fitall), <span class="fu">confint</span>(fitall))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="08_model_comparison_cache/revealjs/unnamed-chunk-42_daccaae3fc118ed69c23c175675a6b48">
+<div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cbind</span>(<span class="fu">coef</span>(fitall), <span class="fu">confint</span>(fitall))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                                  2.5 %        97.5 %
 `(Intercept)`  -1.74115969   -1.8693948   -1.61632887
@@ -1275,8 +1281,8 @@ winneryes       1.72214658    1.1002982    2.33300066</code></pre>
 </div>
 </div>
 <div id="tabset-4-3">
-<div class="cell">
-<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="fu">predict</span>(fitall)[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>] <span class="co">#predictions for first 5 individuals</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="08_model_comparison_cache/revealjs/unnamed-chunk-43_f38d4e0d557a09e57de4aaf79a60de34">
+<div class="sourceCode cell-code" id="cb71"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a><span class="fu">predict</span>(fitall)[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>] <span class="co">#predictions for first 5 individuals</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>        1         2         3         4         5 
 -1.741160 -1.741160 -2.108466 -1.741160 -1.741160 </code></pre>
@@ -1289,8 +1295,8 @@ winneryes       1.72214658    1.1002982    2.33300066</code></pre>
 <section class="slide level2">
 
 <p>The standard errors for <code>sent_email</code> looked weird. Why?</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(email<span class="sc">$</span>sent_email, email<span class="sc">$</span>spam)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="08_model_comparison_cache/revealjs/unnamed-chunk-44_2373b37e720ce4b27398fb7337a79b12">
+<div class="sourceCode cell-code" id="cb73"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(email<span class="sc">$</span>sent_email, email<span class="sc">$</span>spam)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   
        0    1
@@ -1301,80 +1307,7 @@ winneryes       1.72214658    1.1002982    2.33300066</code></pre>
 <p>The estimated spam probability when <code>sent_email==1</code> is 0.</p>
 <p>The MLE doesn’t exist (it occurs at <span class="math inline">\(\hat{\beta}_3=-\infty\)</span>), breaking the technical conditions required by asymptotic theory</p>
 <p>Bootstrap won’t help either. Why?</p>
-</section>
-<section id="a-possible-fix" class="slide level2">
-<h2>A possible fix</h2>
-<p>A way to resolve MLE pathological behavior is to use a penalized likelihood method</p>
-<p>Essentially, it maximizes the log-likelihood plus a penalty for having estimates far from 0</p>
-<ul>
-<li><p>Prevents infinite estimates</p></li>
-<li><p>Improves finite <span class="math inline">\(n\)</span> bias &amp; mean squared error</p></li>
-</ul>
-<p>This is implemented in package <code>brglm2</code></p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a>f<span class="ot">=</span> <span class="fu">formula</span>(spam <span class="sc">~</span> to_multiple <span class="sc">+</span> sent_email <span class="sc">+</span> image <span class="sc">+</span> attach <span class="sc">+</span> dollar <span class="sc">+</span> winner)</span>
-<span id="cb74-2"><a href="#cb74-2" aria-hidden="true" tabindex="-1"></a>fitpen<span class="ot">=</span> <span class="fu">brglm</span>(f, <span class="at">data=</span>email, <span class="at">family=</span><span class="fu">binomial</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</section>
-<section class="slide level2">
-
-<p>The standard error for <code>sent_email</code> doesn’t explode anymore</p>
-<div class="panel-tabset">
-<ul id="tabset-5" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-5-1">summary</a></li><li><a href="#tabset-5-2">conf intervals</a></li></ul>
-<div class="tab-content">
-<div id="tabset-5-1">
-<div class="cell">
-<div class="sourceCode cell-code" id="cb75"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fitpen)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>
-Call:
-brglm(formula = f, family = binomial(), data = email)
-
-
-Coefficients:
-              Estimate Std. Error z value Pr(&gt;|z|)    
-(Intercept)   -1.74143    0.06445 -27.022  &lt; 2e-16 ***
-to_multiple1  -2.24859    0.30913  -7.274 3.49e-13 ***
-sent_email1  -17.29447    3.31371  -5.219 1.80e-07 ***
-image         -2.81497    0.49571  -5.679 1.36e-08 ***
-attach         1.12225    0.13722   8.179 2.87e-16 ***
-dollar        -0.08837    0.02151  -4.108 3.99e-05 ***
-winneryes      1.72338    0.31183   5.527 3.26e-08 ***
----
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-
-(Dispersion parameter for binomial family taken to be 1)
-
-    Null deviance: 2412.8  on 3920  degrees of freedom
-Residual deviance: 1982.8  on 3914  degrees of freedom
-Penalized deviance: 1960.46 
-AIC:  1996.8 </code></pre>
-</div>
-</div>
-</div>
-<div id="tabset-5-2">
-<div class="cell">
-<div class="sourceCode cell-code" id="cb77"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cbind</span>(<span class="fu">coef</span>(fitpen), <span class="fu">confint</span>(fitpen))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Profiling the ordinary deviance for the corresponding ML fit...
-Profiling the penalized deviance for the supplied fit...
-Calculating confidence intervals for the ML fit using deviance profiles...
-Calculating confidence intervals for the BR fit using penalized likelihood profiles...</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>                               2.5 %       97.5 %
-(Intercept)   -1.74143154 -1.8695738  -1.61632727
-to_multiple1  -2.24858956 -2.9667629  -1.68580978
-sent_email1  -17.29446698       -Inf -11.79223820
-image         -2.81496596 -4.5885176  -1.95235577
-attach         1.12225086  0.8564208   1.40083399
-dollar        -0.08837024 -0.1394542  -0.04978354
-winneryes      1.72337544  1.1003498   2.33296494</code></pre>
-</div>
-</div>
-</div>
-</div>
-</div>
+<p>Possible fix: function <code>brglm</code> from package <code>brglm2</code> uses a variation of MLE, penalized likelihood, that’s more resilient to these issues</p>
 </section></section>
 <section>
 <section id="too-many-models" class="title-slide slide level1 center">
@@ -1414,17 +1347,16 @@ winneryes      1.72337544  1.1003498   2.33296494</code></pre>
 <li><p>MCMC algorithms give <strong>dependent samples</strong> from <span class="math inline">\(\pi\)</span></p></li>
 <li><p>Define a Markov Chain with stationary distribution <span class="math inline">\(\pi\)</span></p></li>
 </ul>
-<p>A simple type of MCMC algorithm is Gibbs sampling</p>
-<p><strong>Gibbs sampler.</strong> Initialize <span class="math inline">\((z_1^{(0)},\ldots,z_p^{(0)})\)</span>.</p>
-<p>For <span class="math inline">\(b=1,\ldots,B\)</span>, update <span class="math inline">\(z_j^{(b)}\)</span> from its conditional distrib. given the current values of <span class="math inline">\((z_1,\ldots,z_{j-1},z_{j+1},\ldots,z_p)\)</span>. That is</p>
-<p><span class="math display">\[
-z_j^{(b)} \sim \pi(z_j \mid z_1^{(b)},\ldots,z_{j-1}^{(b)},z_{j+1}^{(b-1)},\ldots,z_p^{(b-1)})
-\]</span></p>
+<p><strong>Gibbs sampler.</strong> A simple type of MCMC</p>
+<p>Denote a model by <span class="math inline">\(\gamma=(\gamma_1,\ldots,\gamma_p)\)</span>, where <span class="math display">\[\gamma_j= \begin{cases} 1 \mbox{, if } \beta_j \neq 0 \\ 0 \mbox{, if } \beta_j=0 \end{cases}\]</span></p>
+<ol type="1">
+<li>Initialize <span class="math inline">\(\gamma_1^{(0)},\ldots,\gamma_p^{(0)}\)</span></li>
+<li>For <span class="math inline">\(b=1,\ldots,B\)</span>, <span class="math inline">\(j=1,\ldots,p\)</span>, update <span class="math inline">\(\gamma_j^{(b)}\)</span> from its conditional distrib. given the current values of the other <span class="math inline">\(\gamma_i\)</span>’s</li>
+</ol>
 </section>
-<section id="gibbs-model-search" class="slide level2">
-<h2>Gibbs model search</h2>
-<p>Denote a model by <span class="math inline">\(\gamma=(\gamma_1,\ldots,\gamma_p)\)</span>, where <span class="math inline">\(\gamma_j \in \{0,1\}\)</span> indicates whether parameter <span class="math inline">\(j\)</span> is in the model</p>
-<p><strong>Example.</strong> With <span class="math inline">\(p=2\)</span> continuous covariates we have</p>
+<section id="example-3" class="slide level2">
+<h2>Example</h2>
+<p>With <span class="math inline">\(p=2\)</span> continuous covariates we have</p>
 <table>
 <thead>
 <tr class="header">
@@ -1457,42 +1389,32 @@ z_j^{(b)} \sim \pi(z_j \mid z_1^{(b)},\ldots,z_{j-1}^{(b)},z_{j+1}^{(b-1)},\ldot
 </tbody>
 </table>
 <p>Initialize <span class="math inline">\(\gamma_1^{(0)}=0, \gamma_2^{(0)}=0\)</span> (for example)</p>
-<ol type="1">
-<li><p>Sample <span class="math inline">\(\gamma_1^{(b)} \sim \pi(\gamma_1 \mid \gamma_2^{(b-1)})\)</span></p></li>
-<li><p>Sample <span class="math inline">\(\gamma_2^{(b)} \sim \pi(\gamma_2 \mid \gamma_2^{(b)})\)</span></p></li>
-</ol>
+<p>Set <span class="math inline">\(\gamma_j=1\)</span> with probability</p>
+<p><span class="math display">\[
+\frac{e^{-\mbox{BIC}_1}}{e^{-\mbox{BIC}_0} + e^{-\mbox{BIC}_1}}
+\]</span> where BIC<span class="math inline">\(_1\)</span> is the BIC for the model with <span class="math inline">\(\gamma_j=1\)</span>, BIC<span class="math inline">\(_0\)</span> that for <span class="math inline">\(\gamma_j=0\)</span></p>
 </section>
-<section id="gibbs-model-search-1" class="slide level2">
-<h2>Gibbs model search</h2>
-<p>Since we defined <span class="math display">\[
-\pi(\gamma)= \frac{e^{-BIC_\gamma/2}}{\sum_{\gamma'} e^{-BIC_{\gamma'}/2}}
-\]</span> simple algebra shows that <span class="math display">\[
-\pi(\gamma_j=1 \mid \ldots,\gamma_{j-1},\gamma_{j+1},\ldots)=
-\frac{\pi(\ldots, \gamma_{j-1}, 1, \gamma_{j+1},\ldots)}{\pi(\ldots, \gamma_{j-1}, 0, \gamma_{j+1},\ldots) + \pi(\ldots, \gamma_{j-1}, 1, \gamma_{j+1},\ldots)}
-\]</span></p>
-<p>That is, we can sample <span class="math inline">\(\gamma_j\)</span> given the rest by comparing only 2 models</p>
-</section>
-<section id="example-3" class="slide level2">
+<section id="example-4" class="slide level2">
 <h2>Example</h2>
 <p>Simulate <span class="math inline">\(n=1000\)</span> observations with <span class="math inline">\(p=50\)</span> covariates</p>
 <ul>
 <li><p><span class="math inline">\(x_i \sim N(0, \Sigma)\)</span> with <span class="math inline">\(\sigma_{jj}=1\)</span>, <span class="math inline">\(\sigma_{jk}=0.5\)</span></p></li>
 <li><p><span class="math inline">\(\beta=(0,\ldots,0,0.5,0.5,1,1)\)</span>, <span class="math inline">\(\sigma^2=1\)</span></p></li>
 </ul>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb80"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a>n<span class="ot">=</span> <span class="dv">1000</span>; p<span class="ot">=</span> <span class="dv">50</span></span>
-<span id="cb80-2"><a href="#cb80-2" aria-hidden="true" tabindex="-1"></a>sigma<span class="ot">=</span> <span class="fu">diag</span>(p) <span class="co">#identity pxp matrix</span></span>
-<span id="cb80-3"><a href="#cb80-3" aria-hidden="true" tabindex="-1"></a>sigma[<span class="fu">upper.tri</span>(sigma)]<span class="ot">=</span> sigma[<span class="fu">lower.tri</span>(sigma)]<span class="ot">=</span> <span class="fl">0.5</span></span>
-<span id="cb80-4"><a href="#cb80-4" aria-hidden="true" tabindex="-1"></a>x<span class="ot">=</span> <span class="fu">rmvnorm</span>(n<span class="sc">*</span>p, <span class="at">sigma=</span>sigma)</span>
-<span id="cb80-5"><a href="#cb80-5" aria-hidden="true" tabindex="-1"></a>beta<span class="ot">=</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="fu">rep</span>(<span class="dv">0</span>,p<span class="dv">-4</span>), <span class="fu">c</span>(<span class="fl">0.5</span>,<span class="fl">0.5</span>,<span class="dv">1</span>,<span class="dv">1</span>)), <span class="at">ncol=</span><span class="dv">1</span>)</span>
-<span id="cb80-6"><a href="#cb80-6" aria-hidden="true" tabindex="-1"></a>y<span class="ot">=</span> x <span class="sc">%*%</span> beta <span class="sc">+</span> <span class="fu">rnorm</span>(n)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="08_model_comparison_cache/revealjs/unnamed-chunk-45_e23c376e5bedaed41bc9d6eb9b0506d5">
+<div class="sourceCode cell-code" id="cb75"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a>n<span class="ot">=</span> <span class="dv">1000</span>; p<span class="ot">=</span> <span class="dv">50</span></span>
+<span id="cb75-2"><a href="#cb75-2" aria-hidden="true" tabindex="-1"></a>sigma<span class="ot">=</span> <span class="fu">diag</span>(p) <span class="co">#identity pxp matrix</span></span>
+<span id="cb75-3"><a href="#cb75-3" aria-hidden="true" tabindex="-1"></a>sigma[<span class="fu">upper.tri</span>(sigma)]<span class="ot">=</span> sigma[<span class="fu">lower.tri</span>(sigma)]<span class="ot">=</span> <span class="fl">0.5</span></span>
+<span id="cb75-4"><a href="#cb75-4" aria-hidden="true" tabindex="-1"></a>x<span class="ot">=</span> <span class="fu">rmvnorm</span>(n<span class="sc">*</span>p, <span class="at">sigma=</span>sigma)</span>
+<span id="cb75-5"><a href="#cb75-5" aria-hidden="true" tabindex="-1"></a>beta<span class="ot">=</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="fu">rep</span>(<span class="dv">0</span>,p<span class="dv">-4</span>), <span class="fu">c</span>(<span class="fl">0.5</span>,<span class="fl">0.5</span>,<span class="dv">1</span>,<span class="dv">1</span>)), <span class="at">ncol=</span><span class="dv">1</span>)</span>
+<span id="cb75-6"><a href="#cb75-6" aria-hidden="true" tabindex="-1"></a>y<span class="ot">=</span> x <span class="sc">%*%</span> beta <span class="sc">+</span> <span class="fu">rnorm</span>(n)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section class="slide level2">
 
 <p><code>bestBIC</code> uses MCMC to explore the models when <span class="math inline">\(p\)</span> is large</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb81"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb81-1"><a href="#cb81-1" aria-hidden="true" tabindex="-1"></a>fit<span class="ot">=</span> <span class="fu">bestBIC</span>(y, x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="08_model_comparison_cache/revealjs/unnamed-chunk-46_fba2d66dc8e09edd512521107bb939cc">
+<div class="sourceCode cell-code" id="cb76"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a>fit<span class="ot">=</span> <span class="fu">bestBIC</span>(y, x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> Greedy searching posterior mode... Done.
  Running Gibbs sampler
@@ -1509,7 +1431,7 @@ z_j^{(b)} \sim \pi(z_j \mid z_1^{(b)},\ldots,z_{j-1}^{(b)},z_{j+1}^{(b-1)},\ldot
 100%
  Done</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb83"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb83-1"><a href="#cb83-1" aria-hidden="true" tabindex="-1"></a>fit</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb78"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a>fit</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>icfit object
 
@@ -1520,13 +1442,92 @@ Use coef(object$msfit) and predict(object$msfit) to get BMA estimates and predic
 </div>
 </div>
 <p>The selected model is the correct one, the estimates are very precise</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb85"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb85-1"><a href="#cb85-1" aria-hidden="true" tabindex="-1"></a><span class="fu">coef</span>(fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="08_model_comparison_cache/revealjs/unnamed-chunk-47_272d2f91212e5fd45435a5ae72fa3d5c">
+<div class="sourceCode cell-code" id="cb80"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a><span class="fu">coef</span>(fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> `x[,47]`  `x[,48]`  `x[,49]`  `x[,50]` 
 0.4986165 0.4946081 0.9998299 0.9994900 </code></pre>
 </div>
 </div>
+</section>
+<section class="slide level2">
+
+<p>Model with best BIC</p>
+<div class="cell" data-hash="08_model_comparison_cache/revealjs/unnamed-chunk-48_fd3add0f2dfcc8dfb2afe66859a76f06">
+<div class="sourceCode cell-code" id="cb82"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb82-1"><a href="#cb82-1" aria-hidden="true" tabindex="-1"></a>fit<span class="sc">$</span>topmodel</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "x[,47]" "x[,48]" "x[,49]" "x[,50]"</code></pre>
+</div>
+</div>
+<p>List of visited models and corresponding BIC</p>
+<div class="cell" data-hash="08_model_comparison_cache/revealjs/unnamed-chunk-49_39acc788a97b2ff31d4d8eded206d724">
+<div class="sourceCode cell-code" id="cb84"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb84-1"><a href="#cb84-1" aria-hidden="true" tabindex="-1"></a><span class="fu">unique</span>(fit<span class="sc">$</span>models) <span class="sc">|&gt;</span></span>
+<span id="cb84-2"><a href="#cb84-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(bic)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 215 × 2
+   modelid            bic
+   &lt;chr&gt;            &lt;dbl&gt;
+ 1 47,48,49,50    142644.
+ 2 32,47,48,49,50 142651.
+ 3 46,47,48,49,50 142651.
+ 4 3,47,48,49,50  142653.
+ 5 8,47,48,49,50  142654.
+ 6 2,47,48,49,50  142654.
+ 7 35,47,48,49,50 142654.
+ 8 34,47,48,49,50 142654.
+ 9 33,47,48,49,50 142654.
+10 30,47,48,49,50 142654.
+# ℹ 205 more rows</code></pre>
+</div>
+</div>
+</section></section>
+<section>
+<section id="exercise" class="title-slide slide level1 center">
+<h1>Exercise</h1>
+
+</section>
+<section class="slide level2">
+
+<p>Simulate logistic regression data with <span class="math inline">\(n=200\)</span>, <span class="math inline">\(p=10\)</span>, where truly only covariates 1-5 have an effect. Covariates are Gaussian, zero mean, pairwise correlations <code>rho</code></p>
+<div class="cell" data-hash="08_model_comparison_cache/revealjs/unnamed-chunk-50_1cc8cefdb805dcdcb3573a16b3641383">
+<div class="sourceCode cell-code" id="cb86"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb86-1"><a href="#cb86-1" aria-hidden="true" tabindex="-1"></a>simdata.logreg<span class="ot">=</span> <span class="cf">function</span>(n, beta, <span class="at">rho=</span><span class="fl">0.5</span>) {</span>
+<span id="cb86-2"><a href="#cb86-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">require</span>(mvtnorm)</span>
+<span id="cb86-3"><a href="#cb86-3" aria-hidden="true" tabindex="-1"></a>  p<span class="ot">=</span> <span class="fu">length</span>(beta)</span>
+<span id="cb86-4"><a href="#cb86-4" aria-hidden="true" tabindex="-1"></a>  sigma<span class="ot">=</span> <span class="fu">diag</span>(p)</span>
+<span id="cb86-5"><a href="#cb86-5" aria-hidden="true" tabindex="-1"></a>  sigma[<span class="fu">upper.tri</span>(sigma)]<span class="ot">=</span> sigma[<span class="fu">lower.tri</span>(sigma)]<span class="ot">=</span> rho</span>
+<span id="cb86-6"><a href="#cb86-6" aria-hidden="true" tabindex="-1"></a>  x<span class="ot">=</span> <span class="fu">rmvnorm</span>(n, <span class="at">sigma=</span>sigma)</span>
+<span id="cb86-7"><a href="#cb86-7" aria-hidden="true" tabindex="-1"></a>  beta<span class="ot">=</span> <span class="fu">matrix</span>(beta, <span class="at">ncol=</span><span class="dv">1</span>)</span>
+<span id="cb86-8"><a href="#cb86-8" aria-hidden="true" tabindex="-1"></a>  prob<span class="ot">=</span> <span class="dv">1</span><span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(<span class="sc">-</span>x <span class="sc">%*%</span> beta))</span>
+<span id="cb86-9"><a href="#cb86-9" aria-hidden="true" tabindex="-1"></a>  y<span class="ot">=</span> <span class="fu">rbinom</span>(<span class="at">n=</span>n, <span class="at">size=</span><span class="dv">1</span>, <span class="at">prob=</span>prob)</span>
+<span id="cb86-10"><a href="#cb86-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">list</span>(<span class="at">y=</span>y, <span class="at">x=</span>x))</span>
+<span id="cb86-11"><a href="#cb86-11" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Simulate data</p>
+<div class="cell" data-hash="08_model_comparison_cache/revealjs/unnamed-chunk-51_cc98778bbf09e544e4f1527fa2888b3d">
+<div class="sourceCode cell-code" id="cb87"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb87-1"><a href="#cb87-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>) <span class="co">#set random number generator seed, so you can reproduce my results</span></span>
+<span id="cb87-2"><a href="#cb87-2" aria-hidden="true" tabindex="-1"></a>beta<span class="ot">=</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="dv">0</span>,<span class="dv">5</span>), <span class="fu">rep</span>(<span class="dv">1</span>,<span class="dv">5</span>))</span>
+<span id="cb87-3"><a href="#cb87-3" aria-hidden="true" tabindex="-1"></a>data<span class="ot">=</span> <span class="fu">simdata.logreg</span>(<span class="at">n=</span><span class="dv">200</span>, <span class="at">beta=</span>beta, <span class="at">rho=</span><span class="fl">0.5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ol type="1">
+<li><p>Fit a logistic regression for <code>data$y</code> vs.&nbsp;<code>data$x</code>. What P-values are 0.05?</p></li>
+<li><p>Use <code>bestBIC</code> to get the model with best BIC. What covariates are selected?</p></li>
+</ol>
+</section>
+<section id="extended-exercise" class="slide level2">
+<h2>Extended exercise</h2>
+<p>The code below repeats the simulation 100 times. <code>selected[i,j]</code> is <code>TRUE</code> if covariate <code>j</code> in simulation <code>i</code></p>
+<p>In what % of the simulations was each variable selected?</p>
+<div class="cell" data-hash="08_model_comparison_cache/revealjs/unnamed-chunk-52_e7f0bf4a616ef83b25402d259192e944">
+<div class="sourceCode cell-code" id="cb88"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb88-1"><a href="#cb88-1" aria-hidden="true" tabindex="-1"></a>nsim<span class="ot">=</span> <span class="dv">100</span></span>
+<span id="cb88-2"><a href="#cb88-2" aria-hidden="true" tabindex="-1"></a>selected<span class="ot">=</span> <span class="fu">matrix</span>(<span class="cn">NA</span>, <span class="at">nrow=</span>nsim, <span class="at">ncol=</span><span class="fu">length</span>(beta))</span>
+<span id="cb88-3"><a href="#cb88-3" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(selected)<span class="ot">=</span> <span class="fu">paste</span>(<span class="st">'x'</span>,<span class="dv">1</span><span class="sc">:</span><span class="fu">ncol</span>(selected),<span class="at">sep=</span><span class="st">''</span>)</span>
+<span id="cb88-4"><a href="#cb88-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>nsim) {</span>
+<span id="cb88-5"><a href="#cb88-5" aria-hidden="true" tabindex="-1"></a>  data<span class="ot">=</span> <span class="fu">simdata.logreg</span>(<span class="at">n=</span><span class="dv">200</span>, <span class="at">beta=</span>beta, <span class="at">rho=</span><span class="fl">0.5</span>)</span>
+<span id="cb88-6"><a href="#cb88-6" aria-hidden="true" tabindex="-1"></a>  fit<span class="ot">=</span> <span class="fu">bestBIC</span>(data<span class="sc">$</span>y, data<span class="sc">$</span>x, <span class="at">family=</span><span class="st">'binomial'</span>, <span class="at">verbose=</span><span class="cn">FALSE</span>)</span>
+<span id="cb88-7"><a href="#cb88-7" aria-hidden="true" tabindex="-1"></a>  selected[i,]<span class="ot">=</span> fit<span class="sc">$</span>varnames <span class="sc">%in%</span> fit<span class="sc">$</span>topmodel</span>
+<span id="cb88-8"><a href="#cb88-8" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Repeat the exercise, now with <span class="math inline">\(n=500\)</span>. In what % of the simulations was each variable selected?</p>
 <div class="footer footer-default">
 
 </div>

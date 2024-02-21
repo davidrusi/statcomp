@@ -16,7 +16,7 @@ mouse-wheel: true
 code-overflow: scroll
 code-line-numbers: false
 code-copy: true
-cache: false
+cache: true
 title-slide-style: pandoc
 bibliography: references.bib
 ---
@@ -34,6 +34,13 @@ library(mombf)
 library(openintro)
 library(pROC)
 ```
+
+`mombf` requires `sparseMatrixStats`. Install it as follows
+```{r, eval=FALSE}
+library(BiocManager)
+BiocManager::install("sparseMatrixStats")
+```
+
 
 We also source routines.R, which has auxiliary functions
 
@@ -772,42 +779,8 @@ The MLE doesn't exist (it occurs at $\hat{\beta}_3=-\infty$), breaking the techn
 Bootstrap won't help either. Why?
 
 
-## A possible fix
+Possible fix: function `brglm` from package `brglm2` uses a variation of MLE, penalized likelihood, that's more resilient to these issues
 
-A way to resolve MLE pathological behavior is to use a penalized likelihood method
-
-Essentially, it maximizes the log-likelihood plus a penalty for having estimates far from 0
-
-- Prevents infinite estimates 
-
-- Improves finite $n$ bias & mean squared error
-
-This is implemented in package `brglm2`
-
-```{r}
-f= formula(spam ~ to_multiple + sent_email + image + attach + dollar + winner)
-fitpen= brglm(f, data=email, family=binomial())
-```
-
----
-
-The standard error for `sent_email` doesn't explode anymore
-
-:::panel-tabset
-
-### summary
-
-```{r}
-summary(fitpen)
-```
-
-### conf intervals
-
-```{r}
-cbind(coef(fitpen), confint(fitpen))
-```
-
-:::
 
 
 # Too many models
@@ -853,22 +826,18 @@ Finally, choose model with best $\pi(M_k)$ among the sampled ones
 
 - Define a Markov Chain with stationary distribution $\pi$
 
-A simple type of MCMC algorithm is Gibbs sampling
 
-**Gibbs sampler.** Initialize $(z_1^{(0)},\ldots,z_p^{(0)})$. 
+**Gibbs sampler.** A simple type of MCMC
 
-For $b=1,\ldots,B$, update $z_j^{(b)}$ from its conditional distrib. given the current values of $(z_1,\ldots,z_{j-1},z_{j+1},\ldots,z_p)$. That is
+Denote a model by $\gamma=(\gamma_1,\ldots,\gamma_p)$, where 
+$$\gamma_j= \begin{cases} 1 \mbox{, if } \beta_j \neq 0 \\ 0 \mbox{, if } \beta_j=0 \end{cases}$$ 
 
+1. Initialize $\gamma_1^{(0)},\ldots,\gamma_p^{(0)}$
+2. For $b=1,\ldots,B$, $j=1,\ldots,p$, update $\gamma_j^{(b)}$ from its conditional distrib. given the current values of the other $\gamma_i$'s
 
-$$
-z_j^{(b)} \sim \pi(z_j \mid z_1^{(b)},\ldots,z_{j-1}^{(b)},z_{j+1}^{(b-1)},\ldots,z_p^{(b-1)})
-$$
+## Example
 
-## Gibbs model search
-
-Denote a model by $\gamma=(\gamma_1,\ldots,\gamma_p)$, where $\gamma_j \in \{0,1\}$ indicates whether parameter $j$ is in the model
-
-**Example.** With $p=2$ continuous covariates we have
+With $p=2$ continuous covariates we have
 
 |   Model        | $\gamma_1$  | $\gamma_2$ |
 |----------------|:-----------:|:----------:|
@@ -879,23 +848,13 @@ Denote a model by $\gamma=(\gamma_1,\ldots,\gamma_p)$, where $\gamma_j \in \{0,1
 
 Initialize $\gamma_1^{(0)}=0, \gamma_2^{(0)}=0$ (for example)
 
-1. Sample $\gamma_1^{(b)} \sim \pi(\gamma_1 \mid \gamma_2^{(b-1)})$
+Set $\gamma_j=1$ with probability
 
-2. Sample $\gamma_2^{(b)} \sim \pi(\gamma_2 \mid \gamma_2^{(b)})$
+$$
+\frac{e^{-\mbox{BIC}_1}}{e^{-\mbox{BIC}_0} + e^{-\mbox{BIC}_1}}
+$$
+where BIC$_1$ is the BIC for the model with $\gamma_j=1$, BIC$_0$ that for $\gamma_j=0$
 
-## Gibbs model search
-
-Since we defined
-$$
-\pi(\gamma)= \frac{e^{-BIC_\gamma/2}}{\sum_{\gamma'} e^{-BIC_{\gamma'}/2}}
-$$
-simple algebra shows that
-$$
-\pi(\gamma_j=1 \mid \ldots,\gamma_{j-1},\gamma_{j+1},\ldots)=
-\frac{\pi(\ldots, \gamma_{j-1}, 1, \gamma_{j+1},\ldots)}{\pi(\ldots, \gamma_{j-1}, 0, \gamma_{j+1},\ldots) + \pi(\ldots, \gamma_{j-1}, 1, \gamma_{j+1},\ldots)}
-$$
-
-That is, we can sample $\gamma_j$ given the rest by comparing only 2 models
 
 
 ## Example
@@ -930,6 +889,75 @@ The selected model is the correct one, the estimates are very precise
 coef(fit)
 ```
 
+---
+
+Model with best BIC
+
+```{r}
+fit$topmodel
+```
+
+List of visited models and corresponding BIC
+
+```{r}
+unique(fit$models) |>
+  arrange(bic)
+```
+
+
+# Exercise
+
+---
+
+Simulate logistic regression data with $n=200$, $p=10$, where truly only covariates 1-5 have an effect.
+Covariates are Gaussian, zero mean, pairwise correlations `rho`
+
+```{r}
+simdata.logreg= function(n, beta, rho=0.5) {
+  require(mvtnorm)
+  p= length(beta)
+  sigma= diag(p)
+  sigma[upper.tri(sigma)]= sigma[lower.tri(sigma)]= rho
+  x= rmvnorm(n, sigma=sigma)
+  beta= matrix(beta, ncol=1)
+  prob= 1/ (1 + exp(-x %*% beta))
+  y= rbinom(n=n, size=1, prob=prob)
+  return(list(y=y, x=x))
+}
+```
+
+Simulate data
+
+```{r}
+set.seed(123) #set random number generator seed, so you can reproduce my results
+beta= c(rep(0,5), rep(1,5))
+data= simdata.logreg(n=200, beta=beta, rho=0.5)
+```
+
+1. Fit a logistic regression for `data$y` vs. `data$x`. What P-values are 0.05?
+
+2. Use `bestBIC` to get the model with best BIC. What covariates are selected?
+
+
+## Extended exercise
+
+The code below repeats the simulation 100 times. 
+`selected[i,j]` is `TRUE` if covariate `j` in simulation `i` 
+
+In what % of the simulations was each variable selected?
+
+```{r}
+nsim= 100
+selected= matrix(NA, nrow=nsim, ncol=length(beta))
+colnames(selected)= paste('x',1:ncol(selected),sep='')
+for (i in 1:nsim) {
+  data= simdata.logreg(n=200, beta=beta, rho=0.5)
+  fit= bestBIC(data$y, data$x, family='binomial', verbose=FALSE)
+  selected[i,]= fit$varnames %in% fit$topmodel
+}
+```
+
+Repeat the exercise, now with $n=500$. In what % of the simulations was each variable selected?
 
 
 
