@@ -205,24 +205,6 @@ summary(fit2)
 :::
 
 
-## Exercise
-
-Produce a residuals $\hat{y} - y$ vs. predictions $\hat{y}$ plot for the linear and GAM models
-
-
-1. Does the GAM improve the linearity assumption relative to the linear model?
-In particular, discuss any systematic biases in over- or under-predicting some of the diamonds
-
-2. Does the GAM improve the error normality assumption?
-
-Getting started
-
-```{r, eval=FALSE}
-library(tidyverse)
-library(mgcv)
-diamonds2= mutate(diamonds, lprice=log2(price), lcarat=log2(carat))
-```
-
 
 
 
@@ -413,7 +395,7 @@ testdata= data.frame(y=ytest, Xtest)
 
 gamfit= gam(Class ~ s(Cl.thickness) + s(Cell.size) + s(Cell.shape) + s(Marg.adhesion) + s(Epith.c.size) + s(Bare.nuclei) + s(Bl.cromatin) + s(Normal.nucleoli) + Mitoses, data=traindata, family=binomial())
 
-gampred= expit(predict(gamfit, newdata=testdata))
+gampred= predict(gamfit, newdata=testdata, type='response')
 ```
 
 ---
@@ -460,5 +442,39 @@ table(ytestpred > 0.5, ytest[,1])
 table(gampred > 0.5, ytest[,1])
 ```
 
+
+
+
+## Exercise 1. Diamonds data
+
+Produce a residuals $\hat{y} - y$ vs. predictions $\hat{y}$ plot for the linear and GAM models
+
+
+1. Does the GAM improve the linearity assumption relative to the linear model?
+In particular, discuss any systematic biases in over- or under-predicting some of the diamonds
+
+2. Does the GAM improve the error normality assumption?
+
+Getting started
+
+```{r, eval=FALSE}
+library(tidyverse)
+library(mgcv)
+diamonds2= mutate(diamonds, lprice=log2(price), lcarat=log2(carat))
+```
+
+
+
+## Exercise 2. Breast cancer
+
+Fit a standard logistic regression model to the breast cancer data, using the same training sample defined above. 
+
+1. Are its predictions similar to those of the GAM and neural network?
+
+2. Is the logistic regression more, less, or similarly accurate?
+
+
+Turn in a single html with your solution for both exercises [here](https://drive.google.com/drive/folders/1jhh1CrXM3hqc7qTrOYeQzo2pV8Vly1NY?usp=sharing).
+Name your file firstname_lastname.html
 
 
