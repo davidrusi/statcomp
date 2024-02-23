@@ -16,7 +16,7 @@ mouse-wheel: true
 code-overflow: scroll
 code-line-numbers: false
 code-copy: true
-cache: true
+cache: false
 title-slide-style: pandoc
 bibliography: references.bib
 ---
@@ -869,7 +869,7 @@ Simulate $n=1000$ observations with $p=50$ covariates
 n= 1000; p= 50
 sigma= diag(p) #identity pxp matrix
 sigma[upper.tri(sigma)]= sigma[lower.tri(sigma)]= 0.5
-x= rmvnorm(n*p, sigma=sigma)
+x= rmvnorm(n, sigma=sigma)
 beta= matrix(c(rep(0,p-4), c(0.5,0.5,1,1)), ncol=1)
 y= x %*% beta + rnorm(n)
 ```
