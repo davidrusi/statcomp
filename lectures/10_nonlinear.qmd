@@ -252,6 +252,8 @@ $\hat{y}= \beta_{K+1, 0} + w^T_{K+1} x^{(K)}$
 
 Finally, specify loss function: least-squares, logistic regression log-likelihood
 
+**Estimation:** stochastic gradient descent [video](https://www.youtube.com/watch?v=IHZwWFHWa-w&list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi&index=3&ab_channel=3Blue1Brown) (first 3 minutes)
+
 
 ## Practical issues
 
