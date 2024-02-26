@@ -32,10 +32,17 @@ library(mlbench)
 library(mgcv)
 library(tensorflow)
 library(reshape2)
+library(caret)
+library(randomForest)
+library(randomForestExplainer)
+library(rpart)
+library(rpart.plot)
+library(plotROC)
 #install_tensorflow()  #run this the first time you use tensorflow
 source("../code/routines.R")
 ```
 
+We use `dplyr::select` to avoid tidyverse's `select` (`dplyr` package) to be confused with `select` defined in other packages
 
 ## Non-linear models
 
@@ -292,9 +299,9 @@ data("BreastCancer")  #package mlbench
 BreastCancer = BreastCancer[which(complete.cases(BreastCancer)==TRUE),] #exclude cases with missing values
 BreastCancer = mutate(BreastCancer, Class= ifelse(Class=='malignant',1,0)) |>
   mutate_if(is.factor, as.numeric) |> #convert factors to numeric
-  select(-Id)  #drop Id column
+  dplyr::select(-Id)  #drop Id column
 
-covars= names(select(BreastCancer, -Class))
+covars= names(dplyr::select(BreastCancer, -Class))
 BreastCancer= mutate_at(BreastCancer, covars, scale) #standardize to mean 0, variance 1
 
 n= nrow(BreastCancer)
@@ -302,11 +309,11 @@ sel= sample(1:n, size=round(0.8*n), replace=FALSE)  #80% of data in training set
 train= BreastCancer[sel,]
 test= BreastCancer[-sel,]
 
-Xtrain= data.matrix(select(train, -Class))
-ytrain= data.matrix(select(train, Class))
+Xtrain= data.matrix(dplyr::select(train, -Class))
+ytrain= data.matrix(dplyr::select(train, Class))
 
-Xtest= data.matrix(select(test, -Class))
-ytest= data.matrix(select(test, Class))
+Xtest= data.matrix(dplyr::select(test, -Class))
+ytest= data.matrix(dplyr::select(test, Class))
 
 ```
 
@@ -479,4 +486,408 @@ Fit a standard logistic regression model to the breast cancer data, using the sa
 Turn in a single html with your solution for both exercises [here](https://drive.google.com/drive/folders/1jhh1CrXM3hqc7qTrOYeQzo2pV8Vly1NY?usp=sharing).
 Name your file firstname_lastname.html
 
+
+
+# Trees
+
+
+## Classification and regression trees
+
+Predict $y_i$ as a piecewise-constant function of $x_i$, allowing for interactions
+
+```{r, echo=FALSE}
+library(igraph)
+
+#Define node locations
+layout= cbind(c(0,-1,1,-2,0), c(0,-1,-1,-2,-2))
+
+#Define edges between multiple layers
+edge= rbind(c(1,2), c(1,3), c(2,4), c(2,5))
+
+#Plot network
+g= graph.data.frame(edge, directed=TRUE)
+par(mar=rep(0,4), oma=rep(0,4))
+plot(g, layout=layout, vertex.label=NA, xlim=c(-1,1), ylim=c(-1.1,1.1), asp=0)
+text(-0.3, 0.3, expression(x[1] <= 5), cex=1.25)
+text(1, 0.3, expression(x[1] > 5), cex=1.25)
+text(-1, -0.7, expression(x[2] == 0), cex=1.25)
+text(0.35, -0.7, expression(x[2] == 1), cex=1.25)
+text(-1, -1, expression(beta[1]), cex=1.25)
+text(0.33, -1, expression(beta[2]), cex=1.25)
+text(1, 0, expression(beta[3]), cex=1.25)
+```
+
+- Continuous $y_i$: $\hat{\beta}_j$'s are sample means
+
+- Binary $y_i$: $\hat{\beta}_j$'s are the proportion of 1's
+
+
+---
+
+CART typically fit in a greedy fashion. At each split:
+
+- Take variable $j$ and threshold $\tau_j$ reducing MSE (or suitable loss function) the most
+
+- Binary split $x_{ij} > \tau_j$
+
+- Note: variable $j$ can be used again in future splits
+
+Continue until all nodes have few indiv. / meets a purity criterion, then prune
+
+Sufficiently deep trees: small bias, but large variance
+
+**Idea:** build several trees and average to reduce variance
+
+- Bagging (bootstrap aggregation)
+
+- Random forests
+
+- Boosting
+
+
+## Bagging and variance reduction
+
+ Bagging: for each bootstrap sample $b=1,\ldots,B$
+
+- Train tree, obtain $\hat{y}_i^{(b)}$
+- Report $\hat{y}_i= \frac{1}{B} \sum_{b=1}^B y_i^{(b)}$
+
+**Result.** If each tree is identically distrib with $V(\hat{y}_i^{(b)})= \sigma^2$ and $\mbox{Cor}(\hat{y}_i^{(b)}, \hat{y}_i^{(b')})=\rho$
+$$
+V(\hat{y}_i)= \rho \sigma^2 + \frac{(1 - \rho)}{B} \sigma^2
+$$
+
+- As $B \rightarrow \infty$, $V(\hat{y}_i)$ does not vanish
+
+- Random forests reduce $\rho$ using different variables in each tree
+
+
+## Random forests
+
+For each boostrap sample $b=1,\ldots,B$
+
+1. Select $m$ variables at random (`mtry` parameter)
+2. Train tree, obtain $\hat{y}_i^{(b)}$
+3. Report $\hat{y}_i= \frac{1}{B} \sum_{b=1}^B y_i^{(b)}$
+4. Store error for all samples, including out-of-bag (OOB) samples
+
+Typically $m$ is small (so $\rho$ is also small) and set via cross-val
+
+
+## Example: Titanic
+
+Outcome: did passenger survive? Data from $n=891$ passengers
+
+- Gender
+- Ticket class (1st, 2nd, 3rd)
+- Number of siblings/spouses aboard the Titanic
+- Number of parents/children aboard
+- Passenger fare	
+- Embarkation port (Cherbourg, Queenstown, Southampton)
+
+500 trees, `mtry`=1,...,8 variables for each tree (5-fold cross-val)
+
+OOB estimated error rate: 19% 
+
+---
+
+Code outcome as factor, gender as numeric, exclude age (many NA's, no marginal association with the outcome)
+
+```{r, message=FALSE}
+data= read.table('../datasets/titanic.csv',sep=',',header=TRUE)
+data= transform(data, Survived= factor(data$Survived), female= ifelse(Sex=='female', 1, 0)) |>
+  dplyr::select(-Age)  #use dplyr::select over select, other packages also define a select function
+```
+
+Package `caret` offers unified interface for many methods
+
+- `method="rf` for random forests
+- `trControl` to tune parameters via 5-fold cross-validation
+
+
+```{r}
+tuneGrid= data.frame(mtry=1:8)
+trControl=trainControl(method='cv',number=5)
+model.rf= caret::train(Survived ~ Pclass + female + SibSp + Embarked + Parch + Fare, data=data, method='rf', trControl=trControl, tuneGrid=tuneGrid)
+model.rf
+```
+
+## Accuracy vs number of variables (`mtry`)
+
+```{r}
+ggplot(model.rf)  #plot(model.rf) also works
+```
+
+## Interpreting the predictions
+
+`rpart` fits a single tree. `rpart.plot` gives, 
+for each node: (1) predicted class; (2) proportions of 1's; (3) % observations in the node
+
+:::panel-tabset
+
+### Tree for observed outcome
+
+```{r}
+fit.tree = rpart(Survived ~ Pclass + Sex + SibSp + Embarked + Parch + Fare, data=data, method = "class")
+rpart.plot(fit.tree)
+```
+
+### Tree for RF prediction
+
+`predict` extracts predictions. `type="raw"` for predicted 0/1, `type="prob"` for class probabilities (enough to keep the 2nd one)
+
+```{r}
+data= transform(data, 
+                ypred.rf= predict(model.rf, newdata=data, type='raw'), 
+                prob.rf= predict(model.rf, newdata=data, type='prob')[,2])
+fit.tree = rpart(ypred.rf ~ Pclass + Sex + SibSp + Embarked + Parch + Fare, data=data, method = "class")
+rpart.plot(fit.tree)
+```
+
+:::
+
+
+---
+
+For further summaries, we use `randomForest` 
+
+```{r}
+rf= randomForest(Survived ~ Pclass + female + SibSp + Embarked + Parch + Fare, data=data, ntree=500, mtry=3)
+rf
+```
+## Accuracy vs. number of trees
+
+```{r}
+plot(rf, cex.lab=1.3, cex.axis=1.3)
+legend('topright', c('Overall','Class 0','Class 1'), col=1:3, lty=1:3, cex=1.3)
+```
+
+## Measuring variable importance
+
+Mean decrease in accuracy when not using each variable. Accuracy measured with MSE (continuous) or Gini index (binary, based on $-\log(p (1-p))$) 
+
+:::panel-tabset
+
+### Importance
+
+```{r}
+rf$importance #measures mean decrease in accuracy when not using each variable
+```
+### Plot
+
+```{r}
+varImpPlot(rf)
+```
+
+:::
+
+---
+
+`randomForestExplainer` package: further importance measures for each variable. How often it's the root of a tree, average minimal depth
+
+```{r}
+importance_frame= measure_importance(rf)
+importance_frame
+```
+
+
+# caret
+
+---
+
+`train` can fit many predictive models. Type `names(getModelInfo())` for a list
+
+- Logistic regression: `method=glm` with `family="binomial"` 
+
+- GAM logistic regression: `method=gam` with `family="binomial"`  
+
+- Neural networks: `method=nnet` for 1 hidden layer, `method=mlpML` for >1 layers
+
+
+Resources
+
+- [Brief introduction](https://cran.r-project.org/web/packages/caret/vignettes/caret.html)
+
+- [Main help pages](https://topepo.github.io/caret)
+
+
+## Example: Titanic data
+
+
+:::panel-tabset
+
+### RF
+
+```{r}
+model.rf  #Random forest fitted previously
+```
+
+### Log. reg.
+
+```{r}
+model.logreg= caret::train(Survived ~ Pclass + female + SibSp + Embarked + Parch + Fare, data=data, family='binomial', method='glm')
+model.logreg
+```
+
+### GAM
+
+```{r}
+#library(RSNNS)
+model.gam= caret::train(Survived ~ Pclass + female + SibSp + Embarked + Parch + Fare, data=data, family='binomial', method='gam')
+model.gam
+```
+
+### Neural net
+
+```{r}
+model.nnet= caret::train(Survived ~ Pclass + female + SibSp + Embarked + Parch + Fare, data=data, family='binomial', method='nnet', trace=FALSE)
+#tuneGrid= data.frame(layer1= c(50,100), layer2= c(50,100), layer3=1)
+#trControl=trainControl(method='cv',number=5)
+#model.nnet= caret::train(Survived ~ Pclass + female + SibSp + Embarked + Parch + Fare, data=data, family='binomial', method='mlpML', tuneGrid=tuneGrid, trControl=trControl)
+model.nnet
+```
+
+
+
+:::
+
+
+## ROC
+
+To store measures of performance in `trainControl` we set `summaryFunction`, a function taking outcome and predictions and returning measures of performance
+
+For example, `twoClassSummary` gives area under the ROC curve, sensitivity and specificity. The ROC needs predicted probabilities, we store them with `classProbs=TRUE`. We must also specify `metric="ROC"` 
+
+```{r}
+trControl=trainControl(method='cv',number=5, classProbs=TRUE, summaryFunction=twoClassSummary)
+data= transform(data, SurvivedTxt= ifelse(Survived==1,'Yes','No'))
+```
+
+:::panel-tabset
+
+### Logistic regr.
+
+```{r}
+model.logreg= caret::train(SurvivedTxt ~ Pclass + female + SibSp + Embarked + Parch + Fare, data=data, family='binomial', method='glm',  trControl=trControl, metric='ROC')
+model.logreg
+```
+
+### RF
+
+```{r}
+model.rf= caret::train(SurvivedTxt ~ Pclass + female + SibSp + Embarked + Parch + Fare, data=data, method='rf', trControl=trControl, metric='ROC', tuneGrid=tuneGrid)
+model.rf
+```
+
+:::
+
+
+## Train-test split
+
+`createDataPartition` splits into train/test. We set 75%/25%
+
+```{r}
+inTrain= createDataPartition(y=data$Survived, p=0.75, list=FALSE)
+training= data[inTrain,]
+testing= data[-inTrain,]
+```
+
+```{r}
+model.logreg.train= caret::train(SurvivedTxt ~ Pclass + female + SibSp + Embarked + Parch + Fare, data=training, family='binomial', method='glm',  trControl=trControl, metric='ROC')
+model.rf.train= caret::train(SurvivedTxt ~ Pclass + female + SibSp + Embarked + Parch + Fare, data=training, method='rf', trControl=trControl, metric='ROC', tuneGrid=tuneGrid)
+```
+
+Store predictions in `testing` (out of sample)
+
+```{r}
+testing= transform(testing,
+        prob.rf= predict(model.rf.train, newdata=testing, type='prob')[,2],
+        prob.logreg= predict(model.logreg.train, newdata=testing, type='prob')[,2])
+```
+
+Store predictions for all data (in-sample!)
+
+```{r}
+data= transform(data,
+        prob.rf= predict(model.rf, newdata=data, type='prob')[,2],
+        prob.logreg= predict(model.logreg, newdata=data, type='prob')[,2])
+```
+
+
+
+## ROC curves
+
+`geom_roc` from package `plotROC` gives nice-looking plots.
+
+Careful: in-sample ROC for random forests is overly optimistic 
+
+
+:::panel-tabset
+
+### Test data
+
+```{r}
+ggplot(testing, aes(d= ifelse(Survived=='1',1,0))) +  #d is the observed outcome
+  geom_roc(aes(m= prob.logreg)) +                  #m is the predicted probability
+  geom_roc(aes(m= prob.rf), color='blue')
+```
+
+### All data
+
+```{r}
+ggplot(data, aes(d= ifelse(Survived=='1',1,0))) +  #d is the observed outcome
+  geom_roc(aes(m= prob.logreg)) +                  #m is the predicted probability
+  geom_roc(aes(m= prob.rf), color='blue')
+```
+
+:::
+
+
+## Confusion matrix
+
+:::panel-tabset
+
+### Logistic regr.
+
+```{r}
+testing= transform(testing, ypred.logreg= factor(ifelse(prob.logreg > 0.5, 1, 0)))
+confusionMatrix(testing$ypred.logreg, testing$Survived)
+```
+
+
+### RF
+
+```{r}
+confusionMatrix(testing$ypred.rf, testing$Survived)
+```
+
+:::
+
+
+## Exercise. Breast cancer data
+
+
+1. Use random forests to predict breast cancer
+
+2. Compare out-of-sample accuracy vs. logistic regr. and neural nets (80% training, 20% test)
+
+3. Plot out-of-sample AUC curve for the 3 methods
+
+
+Getting started (data pre-processing)
+
+```{r}
+data("BreastCancer")  #package mlbench
+BreastCancer = BreastCancer[which(complete.cases(BreastCancer)==TRUE),] #exclude cases with missing values
+BreastCancer = mutate(BreastCancer, Class= ifelse(Class=='malignant',1,0)) |>
+  mutate_if(is.factor, as.numeric) |> #convert factors to numeric
+  dplyr::select(-Id)  #drop Id column
+
+covars= names(dplyr::select(BreastCancer, -Class))
+BreastCancer= mutate_at(BreastCancer, covars, scale) #standardize to mean 0, variance 1
+
+inTrain= createDataPartition(y=BreastCancer$Class, p=0.8, list=FALSE)
+training= BreastCancer[inTrain,]
+testing= BreastCancer[-inTrain,]
+```
 
