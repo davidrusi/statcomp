@@ -6182,12 +6182,9 @@ The final values used for the model were select = FALSE and method = GCV.Cp.</co
 </div>
 </div>
 <div id="tabset-6-4">
-<div class="cell" data-hash="10_nonlinear_cache/revealjs/unnamed-chunk-42_800d091492d449d6f565cc5569af7850">
+<div class="cell" data-hash="10_nonlinear_cache/revealjs/unnamed-chunk-42_d1745234d7a5abf1136d7e5603af5089">
 <div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a>model.nnet<span class="ot">=</span> caret<span class="sc">::</span><span class="fu">train</span>(Survived <span class="sc">~</span> Pclass <span class="sc">+</span> female <span class="sc">+</span> SibSp <span class="sc">+</span> Embarked <span class="sc">+</span> Parch <span class="sc">+</span> Fare, <span class="at">data=</span>data, <span class="at">family=</span><span class="st">'binomial'</span>, <span class="at">method=</span><span class="st">'nnet'</span>, <span class="at">trace=</span><span class="cn">FALSE</span>)</span>
-<span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a><span class="co">#tuneGrid= data.frame(layer1= c(50,100), layer2= c(50,100), layer3=1)</span></span>
-<span id="cb61-3"><a href="#cb61-3" aria-hidden="true" tabindex="-1"></a><span class="co">#trControl=trainControl(method='cv',number=5)</span></span>
-<span id="cb61-4"><a href="#cb61-4" aria-hidden="true" tabindex="-1"></a><span class="co">#model.nnet= caret::train(Survived ~ Pclass + female + SibSp + Embarked + Parch + Fare, data=data, family='binomial', method='mlpML', tuneGrid=tuneGrid, trControl=trControl)</span></span>
-<span id="cb61-5"><a href="#cb61-5" aria-hidden="true" tabindex="-1"></a>model.nnet</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a>model.nnet</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Neural Network 
 
@@ -6419,25 +6416,20 @@ Prediction   0   1
 </section>
 <section id="exercise.-breast-cancer-data" class="slide level2">
 <h2>Exercise. Breast cancer data</h2>
+<p>Use <code>caret</code> to do the following analyses:</p>
 <ol type="1">
 <li><p>Use random forests to predict breast cancer</p></li>
-<li><p>Compare out-of-sample accuracy vs.&nbsp;logistic regr. and neural nets (80% training, 20% test)</p></li>
-<li><p>Plot out-of-sample AUC curve for the 3 methods</p></li>
+<li><p>Compare out-of-sample accuracy vs.&nbsp;logistic regr (80% training, 20% test)</p></li>
+<li><p>Plot out-of-sample AUC curve for both methods</p></li>
 </ol>
-<p>Getting started (data pre-processing)</p>
-<div class="cell" data-hash="10_nonlinear_cache/revealjs/unnamed-chunk-54_53968f22c9082860b8a417fe23f73d20">
+<p>Getting started</p>
+<div class="cell" data-hash="10_nonlinear_cache/revealjs/unnamed-chunk-54_478afa5b7f08054f1a35b456bdf4fda6">
 <div class="sourceCode cell-code" id="cb78"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"BreastCancer"</span>)  <span class="co">#package mlbench</span></span>
 <span id="cb78-2"><a href="#cb78-2" aria-hidden="true" tabindex="-1"></a>BreastCancer <span class="ot">=</span> BreastCancer[<span class="fu">which</span>(<span class="fu">complete.cases</span>(BreastCancer)<span class="sc">==</span><span class="cn">TRUE</span>),] <span class="co">#exclude cases with missing values</span></span>
-<span id="cb78-3"><a href="#cb78-3" aria-hidden="true" tabindex="-1"></a>BreastCancer <span class="ot">=</span> <span class="fu">mutate</span>(BreastCancer, <span class="at">Class=</span> <span class="fu">ifelse</span>(Class<span class="sc">==</span><span class="st">'malignant'</span>,<span class="dv">1</span>,<span class="dv">0</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb78-4"><a href="#cb78-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate_if</span>(is.factor, as.numeric) <span class="sc">|&gt;</span> <span class="co">#convert factors to numeric</span></span>
-<span id="cb78-5"><a href="#cb78-5" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span>Id)  <span class="co">#drop Id column</span></span>
-<span id="cb78-6"><a href="#cb78-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb78-7"><a href="#cb78-7" aria-hidden="true" tabindex="-1"></a>covars<span class="ot">=</span> <span class="fu">names</span>(dplyr<span class="sc">::</span><span class="fu">select</span>(BreastCancer, <span class="sc">-</span>Class))</span>
-<span id="cb78-8"><a href="#cb78-8" aria-hidden="true" tabindex="-1"></a>BreastCancer<span class="ot">=</span> <span class="fu">mutate_at</span>(BreastCancer, covars, scale) <span class="co">#standardize to mean 0, variance 1</span></span>
-<span id="cb78-9"><a href="#cb78-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb78-10"><a href="#cb78-10" aria-hidden="true" tabindex="-1"></a>inTrain<span class="ot">=</span> <span class="fu">createDataPartition</span>(<span class="at">y=</span>BreastCancer<span class="sc">$</span>Class, <span class="at">p=</span><span class="fl">0.8</span>, <span class="at">list=</span><span class="cn">FALSE</span>)</span>
-<span id="cb78-11"><a href="#cb78-11" aria-hidden="true" tabindex="-1"></a>training<span class="ot">=</span> BreastCancer[inTrain,]</span>
-<span id="cb78-12"><a href="#cb78-12" aria-hidden="true" tabindex="-1"></a>testing<span class="ot">=</span> BreastCancer[<span class="sc">-</span>inTrain,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb78-3"><a href="#cb78-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb78-4"><a href="#cb78-4" aria-hidden="true" tabindex="-1"></a>inTrain<span class="ot">=</span> <span class="fu">createDataPartition</span>(<span class="at">y=</span>BreastCancer<span class="sc">$</span>Class, <span class="at">p=</span><span class="fl">0.8</span>, <span class="at">list=</span><span class="cn">FALSE</span>)</span>
+<span id="cb78-5"><a href="#cb78-5" aria-hidden="true" tabindex="-1"></a>training<span class="ot">=</span> BreastCancer[inTrain,]</span>
+<span id="cb78-6"><a href="#cb78-6" aria-hidden="true" tabindex="-1"></a>testing<span class="ot">=</span> BreastCancer[<span class="sc">-</span>inTrain,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="footer footer-default">
 

@@ -741,9 +741,6 @@ model.gam
 
 ```{r}
 model.nnet= caret::train(Survived ~ Pclass + female + SibSp + Embarked + Parch + Fare, data=data, family='binomial', method='nnet', trace=FALSE)
-#tuneGrid= data.frame(layer1= c(50,100), layer2= c(50,100), layer3=1)
-#trControl=trainControl(method='cv',number=5)
-#model.nnet= caret::train(Survived ~ Pclass + female + SibSp + Embarked + Parch + Fare, data=data, family='binomial', method='mlpML', tuneGrid=tuneGrid, trControl=trControl)
 model.nnet
 ```
 
@@ -867,24 +864,20 @@ confusionMatrix(testing$ypred.rf, testing$Survived)
 ## Exercise. Breast cancer data
 
 
+Use `caret` to do the following analyses:
+
 1. Use random forests to predict breast cancer
 
-2. Compare out-of-sample accuracy vs. logistic regr. and neural nets (80% training, 20% test)
+2. Compare out-of-sample accuracy vs. logistic regr (80% training, 20% test)
 
-3. Plot out-of-sample AUC curve for the 3 methods
+3. Plot out-of-sample AUC curve for both methods
 
 
-Getting started (data pre-processing)
+Getting started
 
 ```{r}
 data("BreastCancer")  #package mlbench
 BreastCancer = BreastCancer[which(complete.cases(BreastCancer)==TRUE),] #exclude cases with missing values
-BreastCancer = mutate(BreastCancer, Class= ifelse(Class=='malignant',1,0)) |>
-  mutate_if(is.factor, as.numeric) |> #convert factors to numeric
-  dplyr::select(-Id)  #drop Id column
-
-covars= names(dplyr::select(BreastCancer, -Class))
-BreastCancer= mutate_at(BreastCancer, covars, scale) #standardize to mean 0, variance 1
 
 inTrain= createDataPartition(y=BreastCancer$Class, p=0.8, list=FALSE)
 training= BreastCancer[inTrain,]
