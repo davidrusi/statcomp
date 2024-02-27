@@ -209,8 +209,8 @@ These intervals are valid if linear model assumptions hold (linearity, constant 
 ## Check model assumptions
 
 ```{r}
-mtcars.pred= tibble(mpg=mtcars$mpg, mpg_pred= predict(fit))
-mtcars.pred$res= mtcars.pred$mpg - mtcars.pred$mpg_pred
+mtcars.pred= tibble(mpg=mtcars$mpg, mpg_pred= predict(fit)) |>
+  mutate(res= mpg - mpg_pred)
 ```
 
 :::panel-tabset
@@ -290,22 +290,29 @@ ggplot(bhat.bootlong, aes(x=bootstrap_value)) +
 ```
 
 
-## Bootstrapped intervals
+## Bootstrap intervals
+
+Compare bootstrap intervals vs. least-squares theory
 
 
-Bootstrap 95% confidence intervals
+:::panel-tabset
+
+### Bootstrap
 
 ```{r}
 #map_df gets quantiles for all columns, returns a data frame (tibble)
 bhat.ci= map_df(bhat.boot, quantile, probs=c(0.025,0.975), na.rm=TRUE)
-bhat.ci= cbind(varname= names(bhat.boot), bhat.ci) 
+bhat.ci= cbind(varname= names(bhat.boot), round(bhat.ci,4)) 
+bhat.ci
 ```
 
-Those from least-squares theory. Some are quite different!
+### Least-squares theory
 
 ```{r}
 coefSummary(fit)
 ```
+
+:::
 
 ---
 

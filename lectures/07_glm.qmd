@@ -1,6 +1,6 @@
 ---
 title: "Modern Statistical Computing"
-subtitle: "7. GLMs and optimization"
+subtitle: "7. Generalized Linear Models"
 author: "David Rossell"
 institute: "Pompeu Fabra University"
 execute:
@@ -341,7 +341,7 @@ $$
 ## Poisson model
 
 **Def.** $Y \sim \mbox{Poi}(\mu)$ if
-$P(Y=y)= \mu^y  e^{-\mu} / y!$ for $y=\{0,1,2,\ldots}$
+$P(Y=y)= \mu^y  e^{-\mu} / y!$ for $y \in \{0,1,2,\ldots \}$
 
 Moments: $E(Y)= \mu$, $V(Y)= \mu$
 
@@ -660,7 +660,7 @@ $$
 $$
 where $e_i$ are Pearson residuals. If $\hat{\phi}$ much larger than 1, there is over-dispersion
 
-**Result.** If there is over-dispersion, $\hat{\beta}$ has variance $\phi V(\hat{\beta})$, where $V(\hat{\beta})$ is the covariance given by standard theory returned by `glm`
+**Result.** If there is over-dispersion, $\hat{\beta}$ has variance $\phi V(\hat{\beta})$, where $V(\hat{\beta})$ is the covariance matrix given by standard theory returned by `glm`
 
 One may then adjust the MLE variance $V(\hat{\beta})$ into 
 $$V_Q(\hat{\beta})= \hat{\phi} V(\hat{\beta})$$

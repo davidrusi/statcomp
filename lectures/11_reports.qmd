@@ -37,6 +37,7 @@ library(plotly)
 library(threejs)
 library(tidyquant)
 library(shiny)
+library(viridis)
 ```
 
 ## Reporting results
@@ -419,6 +420,276 @@ globejs(lat=cities$lat, long=cities$long, value=value, color=col, atmosphere=TRU
 datatable(gapminder, rownames=FALSE, caption="Life expectancy", options = list(pageLength=5))
 
 ```
+
+
+# Maps
+
+
+## R packages
+
+`sf` (simple feature) and `terra` define objects to store map-related data.
+
+`tmap` generates maps. It accepts `sf` and `terra` objects, plus other spatial classes
+
+```{r, warning=FALSE, message=FALSE}
+
+library(sf)      # sf format to store data
+library(terra)   # format to store data
+library(tmap)    # static and interactive maps
+
+```
+
+Obtaining spatial data
+
+```{r, warning=FALSE, message=FALSE}
+
+library(geodata)  #download spatial data (region boundaries)
+library(spData)       #pre-defined spatial data
+library(spDataLarge)  #pre-defined spatial data
+
+```
+
+Interactive maps
+
+```{r, warning=FALSE, message=FALSE}
+
+library(mapview)  #interactive maps
+library(leaflet) # for interactive maps
+
+```
+
+## tmap
+
+Basic functions
+
+- `tm_shape`: draw map boundaries
+
+- `tm_fill`: fill map with colours
+
+- `tm_borders`: draw region borders
+
+- `tm_polygons`: `tm_fill` + `tm_borders`
+
+ - `tm_raster`: color cells (see `tm_rgb`)
+ 
+ - `tm_text`: add text
+ 
+ - `tm_arrange`: show various maps together
+
+ - `tmap_mode("plot")`, `tmap_mode("view")`: static / interactive plots
+
+
+## Example. New Zealand
+
+Package `spData` includes dataset `nz`, an object of type `sf`
+
+```{r}
+class(nz)
+nz
+```
+
+## Plotting regions
+
+:::panel-tabset
+
+### Borders
+
+```{r}
+
+tm_shape(nz) +  # draw boundaries
+  tm_fill() +   # fill map with gray-scale
+  tm_borders()  # add borders
+  
+#same as tm_shape(nz) + tm_polygons()
+
+```
+
+### Region centers
+
+```{r}
+
+tm_shape(nz) +
+    tm_polygons() + 
+    tm_symbols() #add points at center of each region
+
+```
+
+:::
+
+## Elevations
+
+Load elevation data `nz_elev` from package `spDataLarge`
+
+
+```{r}
+
+nz_elev = rast(system.file("raster/nz_elev.tif", package = "spDataLarge"))
+map_nz = tm_shape(nz) + tm_polygons()
+map_nz1 = map_nz +
+  tm_shape(nz_elev) + tm_raster(col_alpha = 0.7)
+map_nz1
+
+```
+
+
+## Arrange several maps
+
+```{r}
+
+tmap_arrange(map_nz, map_nz1)
+
+```
+
+## Color by variable
+
+```{r}
+
+names(nz) # variables in the data
+
+```
+
+:::panel-tabset
+
+### Default breaks
+
+```{r}
+
+tm_shape(nz) + tm_fill(fill = "Median_income")
+
+```
+
+### Set breaks
+
+```{r}
+
+tm_shape(nz) +
+  tm_polygons(fill="Median_income", fill.scale=tm_scale(breaks= c(0,30000,40000,50000)))
+
+```
+
+### Set number of breaks
+
+```{r}
+
+tm_shape(nz) +
+  tm_polygons(fill="Median_income", fill.scale=tm_scale(n= 10))
+
+```
+
+:::
+
+
+## Getting data
+
+Package `geodata` downloads geographical boundaries
+
+- `gadm`: administrative boundaries for any country
+
+- `world`: boundaries for countries in the world
+
+## Example. Spain
+
+:::panel-tabset
+
+### Level 0
+
+```{r}
+
+esp= gadm("spain", level=1, path="~/Downloads/geodata") #level=0 for country, level=1 for first subdivision, etc
+
+tm_shape(esp) + tm_polygons()
+
+```
+
+### Level 1
+
+```{r}
+
+esp2= gadm("spain", level=2, path="~/Downloads/geodata")
+tm_shape(esp2) + tm_polygons()
+
+```
+
+### Remove Canary Islands
+
+```{r}
+
+#tidyverse functions like filter & select don't work
+esp2= esp2[esp2$NAME_1 != 'Islas Canarias', ]
+tm_shape(esp2) + tm_polygons()
+
+```
+
+:::
+
+## Interactive map
+
+
+```{r}
+
+mapview(esp)
+
+```
+
+Try also
+
+```{r, eval=FALSE}
+
+tmap_mode("view")
+tm_shape(esp) + tm_polygons()
+tmap_mode("plot")
+
+```
+
+
+
+## World bank statistics
+
+`wbstats` package downloads data from the World Bank
+
+- Search available indicators with `wb_search`, `wb_cache`
+
+- Download specified indicators with `wb_data`
+
+
+```{r}
+
+library(wbstats)
+#indicators= wb_search(pattern = "inequality")
+#wbdata= wb_cache()  #data available at the World Bank
+#wbdata$indicator
+d= wb_data(indicator= "BN.GSR.GNFS.CD", start_date=2022, end_date=2022) #net trade in goods and services US$
+
+```
+
+---
+
+Get world boundaries, convert to `sf` and fix errors in object
+
+```{r}
+
+w= world(path="~/Downloads/geodata")
+wsf= sf::st_as_sf(w)      #convert SpatVector w into sf
+wsf= st_make_valid(wsf)   #fix errors
+
+```
+
+Merge with World bank data by country (column NAME_0 in `wsf`, country in `d`)
+
+```{r}
+
+map1= left_join(wsf, d, by = c("NAME_0" = "country"))
+
+```
+
+```{r}
+
+ggplot(map1) + geom_sf(aes(fill = BN.GSR.GNFS.CD)) +
+  scale_fill_viridis() + labs(fill = "NET TRADE (US$)") + theme_bw()
+
+```
+
+
 
 
 # Shiny apps
