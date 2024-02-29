@@ -16,7 +16,7 @@ mouse-wheel: true
 code-overflow: scroll
 code-line-numbers: false
 code-copy: true
-cache: true
+cache: false
 title-slide-style: pandoc
 bibliography: references.bib
 ---
@@ -257,12 +257,12 @@ Some packages to create interactive plots without using any Javascript (if you k
 
 `dygraph` visualizes times series interactively
 
-- 1st argument is the data. Either a time series (`xts` object) or a data.frame where the 1st column is the x-axis
+- 1st argument is the data. Either a time series (`xts` object) or a data.frame
 
 - Other arguments to set labels etc.
 
 
-**Example.** Female and male deaths from lunch cancer
+**Example.** Female and male deaths from lung cancer
 
 ```{r}
 
@@ -328,7 +328,9 @@ layout(fig, xaxis = list(title = "Continent"), yaxis = list(title = "Life Expect
 ## plotly for time series
 
 ```{r}
+
 getSymbols("GOOG", from="2020-01-01", to="2021-12-31") #creates dataset GOOG
+
 ```
 
 ```{r}
@@ -343,6 +345,7 @@ stock= data.frame(GOOG$GOOG.Adjusted)
 stock$GOOG.Adjusted= stock$GOOG.Adjusted/stock$GOOG.Adjusted[1]
 stock= data.frame(stock,rownames(stock))
 colnames(stock)= c('GOOG','date')
+
 ```
 
 ```{r}
