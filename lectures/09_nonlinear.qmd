@@ -1,6 +1,6 @@
 ---
 title: "Modern Statistical Computing"
-subtitle: "10. Non-linear models"
+subtitle: "09. Non-linear models"
 author: "David Rossell"
 institute: "Pompeu Fabra University"
 execute:
@@ -725,7 +725,7 @@ model.rf  #Random forest fitted previously
 ### Log. reg.
 
 ```{r}
-model.logreg= caret::train(Survived ~ Pclass + female + SibSp + Embarked + Parch + Fare, data=data, family='binomial', method='glm')
+model.logreg= caret::train(Survived ~ Pclass + female + SibSp + Embarked + Parch + Fare, data=data, family='binomial', method='glm', trControl=trControl)
 model.logreg
 ```
 
@@ -733,14 +733,14 @@ model.logreg
 
 ```{r}
 #library(RSNNS)
-model.gam= caret::train(Survived ~ Pclass + female + SibSp + Embarked + Parch + Fare, data=data, family='binomial', method='gam')
+model.gam= caret::train(Survived ~ Pclass + female + SibSp + Embarked + Parch + Fare, data=data, family='binomial', method='gam', trControl=trControl)
 model.gam
 ```
 
 ### Neural net
 
 ```{r}
-model.nnet= caret::train(Survived ~ Pclass + female + SibSp + Embarked + Parch + Fare, data=data, family='binomial', method='nnet', trace=FALSE)
+model.nnet= caret::train(Survived ~ Pclass + female + SibSp + Embarked + Parch + Fare, data=data, family='binomial', method='nnet', trace=FALSE, trControl=trControl)
 model.nnet
 ```
 
@@ -870,7 +870,7 @@ Use `caret` to do the following analyses:
 
 2. Compare out-of-sample accuracy vs. logistic regr (80% training, 20% test)
 
-3. Plot out-of-sample AUC curve for both methods
+3. Plot out-of-sample ROC curve for both methods
 
 
 Getting started
