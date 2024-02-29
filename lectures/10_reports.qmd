@@ -424,6 +424,14 @@ datatable(gapminder, rownames=FALSE, caption="Life expectancy", options = list(p
 
 ```
 
+## Exercise
+
+Reproduce two examples of your choice from the [plotly gallery](https://plotly.com/r)
+
+
+Turn in an html with your solution [here](https://drive.google.com/drive/folders/1jhh1CrXM3hqc7qTrOYeQzo2pV8Vly1NY?usp=sharing).
+Name your file firstname_lastname.html
+
 
 # Maps
 
