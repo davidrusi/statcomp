@@ -429,7 +429,7 @@ datatable(gapminder, rownames=FALSE, caption="Life expectancy", options = list(p
 Reproduce two examples of your choice from the [plotly gallery](https://plotly.com/r)
 
 
-Turn in an html with your solution [here](https://drive.google.com/drive/folders/1jhh1CrXM3hqc7qTrOYeQzo2pV8Vly1NY?usp=sharing).
+Turn in an html with your solution at Aula Global
 Name your file firstname_lastname.html
 
 
@@ -537,7 +537,7 @@ Load elevation data `nz_elev` from package `spDataLarge`
 nz_elev = rast(system.file("raster/nz_elev.tif", package = "spDataLarge"))
 map_nz = tm_shape(nz) + tm_polygons()
 map_nz1 = map_nz +
-  tm_shape(nz_elev) + tm_raster(col_alpha = 0.7)
+  tm_shape(nz_elev) + tm_raster(alpha = 0.7)
 map_nz1
 
 ```
@@ -574,18 +574,22 @@ tm_shape(nz) + tm_fill(fill = "Median_income")
 ```{r}
 
 tm_shape(nz) +
-  tm_polygons(fill="Median_income", fill.scale=tm_scale(breaks= c(0,30000,40000,50000)))
+  tm_fill("Median_income", breaks= c(0,25000,30000,35000)) +
+  tm_polygons()
 
 ```
+
 
 ### Set number of breaks
 
 ```{r}
 
 tm_shape(nz) +
-  tm_polygons(fill="Median_income", fill.scale=tm_scale(n= 10))
+  tm_fill("Median_income", n=10) +
+  tm_polygons()
 
 ```
+
 
 :::
 
@@ -608,6 +612,8 @@ Package `geodata` downloads geographical boundaries
 
 esp= gadm("spain", level=1, path="~/Downloads/geodata") #level=0 for country, level=1 for first subdivision, etc
 
+esp= sf::st_as_sf(esp) #convert to class sf
+
 tm_shape(esp) + tm_polygons()
 
 ```
@@ -617,6 +623,9 @@ tm_shape(esp) + tm_polygons()
 ```{r}
 
 esp2= gadm("spain", level=2, path="~/Downloads/geodata")
+
+esp2= sf::st_as_sf(esp2) #convert to class sf
+
 tm_shape(esp2) + tm_polygons()
 
 ```

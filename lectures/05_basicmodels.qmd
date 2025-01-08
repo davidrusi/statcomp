@@ -465,7 +465,7 @@ hc= filter(hc, !is.na(hatecrimes_fbi)) #outcome must be non-missing
 
 2. Assess the model assumptions: linearity, constant error variance, error normality. To what extent are they violated?
 
-Turn in an html with your solution [here](https://drive.google.com/drive/folders/1jhh1CrXM3hqc7qTrOYeQzo2pV8Vly1NY?usp=sharing).
+Turn in an html with your solution at Aula Global
 Name your file firstname_lastname.html
 
 ---

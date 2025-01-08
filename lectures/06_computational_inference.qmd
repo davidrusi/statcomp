@@ -601,7 +601,7 @@ In these data the linearity assumption is violated.
 
 2. Compare the permutation test P-values to those from `lm`
 
-Turn in an html with your solution [here](https://drive.google.com/drive/folders/1jhh1CrXM3hqc7qTrOYeQzo2pV8Vly1NY?usp=sharing).
+Turn in an html with your solution at Aula Global
 Name your file firstname_lastname.html
 
 ---

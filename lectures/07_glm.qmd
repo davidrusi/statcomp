@@ -741,7 +741,7 @@ Dataset `campuscrime.txt` from the [Beyond MLR book](https://bookdown.org/roback
 
 - `region`: region of the USA (C = Central, MW = Midwest, NE = Northeast, SE = Southeast, SW = Southwest, and W = West)
 
-Turn in an html with your solution [here](https://drive.google.com/drive/folders/1jhh1CrXM3hqc7qTrOYeQzo2pV8Vly1NY?usp=sharing).
+Turn in an html with your solution at Aula Global
 Name your file firstname_lastname.html
 
 ---

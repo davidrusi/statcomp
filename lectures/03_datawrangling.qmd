@@ -539,7 +539,7 @@ library(gapminder)
 gapminder
 ```
 
-Turn in a single html with your solutions [here](https://drive.google.com/drive/folders/1jhh1CrXM3hqc7qTrOYeQzo2pV8Vly1NY?usp=sharing).
+Turn in a single html with your solutions at Aula Global
 Name your file firstname_lastname.html
 
 
