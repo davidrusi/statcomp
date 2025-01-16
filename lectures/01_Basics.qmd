@@ -283,7 +283,7 @@ m= factor(m, levels=month_levels)
 table(m)
 ```
 
-Arrange levels by decreasing frequency (use `fct_rev` for decreasing)
+Arrange levels by decreasing frequency (use `fct_rev` for increasing)
 
 ```{r}
 mo= fct_infreq(m) #rearrange levels

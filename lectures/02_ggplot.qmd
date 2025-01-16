@@ -99,11 +99,21 @@ ggplot(data = starwars) +
 
 `mapping` is shared, pass it to `ggplot` and all geoms will use it (by default)
 
-```{r}
+```{r, eval=FALSE}
 ggplot(data = starwars, mapping = aes(x = height, y = mass)) +
   geom_point() +
   geom_smooth(method='lm', se=FALSE)
 ```
+
+Omitting argument names. By default, the 1st argument to `ggplot` is `data` and the 2nd `mapping`. The 1st argument to any geom function is `aes`
+
+```{r, eval=FALSE}
+ggplot(starwars, aes(x = height, y = mass)) +
+  geom_point() +
+  geom_smooth(method='lm', se=FALSE)
+```
+
+
 
 ## Point color and shape
 
@@ -113,7 +123,7 @@ Set point color and shape according to `human_skincolor`
 mycols= c('fair','white','light','brown','dark')
 starwars$human_skincolor= ifelse(starwars$skin_color %in% mycols, 'human', 'non-human')
 
-ggplot(data = starwars, aes(x = height, y = mass)) +
+ggplot(starwars, aes(x = height, y = mass)) +
   geom_point(aes(color= human_skincolor, shape= human_skincolor)) +
   geom_smooth(method='lm', se=FALSE)
 ```
@@ -123,7 +133,7 @@ ggplot(data = starwars, aes(x = height, y = mass)) +
 Facets split the plot by one or more variables
 
 ```{r}
-ggplot(data = starwars, aes(x = height, y = mass)) +
+ggplot(starwars, aes(x = height, y = mass)) +
   geom_point() +
   geom_smooth(method='lm') +
   facet_wrap(~ human_skincolor)
@@ -134,7 +144,7 @@ ggplot(data = starwars, aes(x = height, y = mass)) +
 By default, all panels use the same x and y scales. Alternatively, set `scale` to `free`, `free_x` or `free_y`
 
 ```{r}
-ggplot(data = starwars, aes(x = height, y = mass)) +
+ggplot(starwars, aes(x = height, y = mass)) +
   geom_point() +
   geom_smooth(method='lm') +
   facet_wrap(~ human_skincolor, scale="free_y")
@@ -182,7 +192,7 @@ Facets: `facet_grid`, `facet_wrap`
 ## Line types
 
 ```{r}
-ggplot(data = starwars, aes(x = height, y = mass, color=human_skincolor)) +
+ggplot(starwars, aes(x = height, y = mass, color=human_skincolor)) +
   geom_point(aes(shape=human_skincolor)) +
   geom_smooth(aes(linetype= human_skincolor), method='lm', se=TRUE)
 ```
@@ -213,7 +223,7 @@ ggplot(data = starwars, aes(x = height, y = mass, color=human_skincolor)) +
   geom_smooth(aes(linetype= human_skincolor), method='lm', se=TRUE) +
   labs(x='Height(cm)', y='Mass (kg)', title='Starwars characters', color=mylab, shape=mylab, linetype=mylab) +
   theme(legend.position = c(0.1,0.7)) +
-  coord_cartesian(ylim = c(0, 200))
+  coord_cartesian(ylim = c(0, 200))  #same as ylim(0,200)
 ```
 
 ## Non-linear trends
@@ -559,14 +569,22 @@ Other layers (the full list of options is [here](https://gganimate.com/reference
 
 ## Saving an animation
 
-**Important.** in Win/Mac you may need the `gifski` package
-
 `anim_save()` saves your last animated plot into a specified file and directory ("myfile.gif" and "mydirectory" below)
 
 ```{r, eval=FALSE}
 ggplot(mydata, ...) #code to produce the animation
 anim_save("myfile.gif", animation=last_animation(), path="mydirectory")
 ```
+
+**Important.** in Win/Mac you need the `gifski` package, and specify the `renderer` option
+
+```{r, eval=FALSE}
+library(gifski)
+p= ggplot(mydata, ...)  #code to produce the animation
+animate(p, renderer = gifski_renderer())
+anim_save("myfile.gif", animation=last_animation(), path="mydirectory")
+```
+
 
 By default the output is a .gif. You can choose other formats (e.g. an MPEG video) by calling `animate` before saving
 
