@@ -554,7 +554,7 @@ Name your file firstname_lastname.html
 
 **Exercise 2.** Inequality of GDP/capita across countries over time
 
-1. For each year, compute the inter-quartile range or the GDP/capita across countries
+1. For each year, compute the inter-quartile range of the GDP/capita across countries
 
 2. Do a scatterplot of IQR vs. year. Add lines to the plot
 
