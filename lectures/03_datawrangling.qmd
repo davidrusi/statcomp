@@ -248,40 +248,15 @@ To only keep the new variables use `transmute`
 transmute(flights, gain = dep_delay - arr_delay, hours = air_time / 60)
 ```
 
-## Alternative to mutate: base R
+## Example 
 
-Some find it easier to create variables separately, then add it to the tibble
-
-**Example.** Companies get fined 100eur per hour of delay in departure, and 200eur/h of delay in arrival. There's no reward for being early
+Companies get fined 100eur per hour of delay in departure, and 200eur/h of delay in arrival. There's no reward for being early
 
 - United airlines negotiates a discount from 100 to 75
 
 - American airlines gets a discount from 200 to 150
 
-Let's do the exercise with and without dplyr
-
 ---
-
-:::panel-tabset
-
-### No mutate
-```{r}
-uaflight= (flights$carrier == 'UA')
-finedep= finearr= double(nrow(flights))
-finedep[uaflight]= 75 * flights$dep_delay[uaflight]/60
-finedep[!uaflight]= 100 * flights$dep_delay[!uaflight]/60
-finedep[finedep<0]= 0
-
-aaflight= flights$carrier == 'AA'
-finearr[aaflight]= 150 * flights$arr_delay[aaflight]/60
-finearr[!aaflight] = 200 * flights$arr_delay[!aaflight]/60
-finearr[finearr<0]= 0
-
-flights$fine= finedep + finearr
-select(flights, carrier, dep_delay, arr_delay, fine)
-```
-
-### Using dplyr
 
 ```{r}
 mutate(flights, uaflight= (carrier=='UA'), aaflight= (carrier=='AA')) |>
@@ -291,8 +266,6 @@ mutate(flights, uaflight= (carrier=='UA'), aaflight= (carrier=='AA')) |>
   mutate(fine= finedep + finearr) |>
   select(carrier, dep_delay, arr_delay, fine)
 ```
-:::
-
 
 
 # Summarizing data
