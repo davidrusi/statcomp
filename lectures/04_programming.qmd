@@ -131,25 +131,6 @@ fun(1:2)
 
 Allows passing parameters that are not explicitly defined
 
-:::panel-tabset
-
-### Example 1
-
-```{r, error=TRUE}
-fun= function(x, y=0, ...) {
-  return(sum(x, ...) + sum(y, ...))
-}
-
-fun(x=c(1,2,NA), y=10)
-```
-
-Here, any arguments beyond `x` and `y` are passed to `fun`
-
-```{r, error=TRUE}
-fun(x=c(1,2,NA), y=10, na.rm=TRUE)
-```
-
-### Example 2
 
 ```{r}
 myplot= function(x, y, ...) {
@@ -161,9 +142,6 @@ myplot= function(x, y, ...) {
 ```{r}
 myplot(fandango$imdb, fandango$rt_norm, xlab='IMDB score', col='blue')
 ```
-
-:::
-
 
 
 ## Debugging
@@ -287,13 +265,15 @@ abline(v= opt, lty=2)
 
 Function to produce descriptive analysis for all variables in a dataset
 
-- `describe_discvar` for factors
+- Use `describe_discvar` for factors
 
-- `describe_contvar` for numeric
+- Use `describe_contvar` for numeric
+
+- Otherwise, skip the variable
 
 ```{r}
 describe_dataset= function(data) {
-  ans= vector("list", length=ncol(data))
+  ans= vector("list", length=ncol(data)) #create empty list with ncol(data) elements
   names(ans)= names(data)
   for (i in 1:ncol(data)) {
     #if data is a list, data.frame or tibble,
