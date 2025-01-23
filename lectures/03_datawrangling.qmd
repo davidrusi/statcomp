@@ -30,7 +30,6 @@ library(tidyverse)
 library(gapminder)
 library(Lahman)
 library(nycflights13)
-library(skimr)
 ```
 
 
@@ -54,7 +53,7 @@ The data are stored in a `tibble`, an extension of `data.frame` that prints nice
 flights
 ```
 
-# dplyr
+# Data wrangling with dplyr
 
 ## dplyr
 
@@ -269,16 +268,6 @@ mutate(flights, uaflight= (carrier=='UA'), aaflight= (carrier=='AA')) |>
 
 
 # Summarizing data
-
-## Overall summaries
-
-Package `skimr` provides a nice function `skim()` to compute basic stats for all variables in a dataset. `skim_with()` has further customization options
-
-```{r}
-s= skim(flights)
-s
-```
-
 
 ## Summarizing by groups
 
