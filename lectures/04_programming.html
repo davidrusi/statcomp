@@ -402,7 +402,6 @@
 <ul>
 <li><a href="#/functions" id="/toc-functions">Functions</a></li>
 <li><a href="#/loops" id="/toc-loops">Loops</a></li>
-<li><a href="#/speeding-up-loops" id="/toc-speeding-up-loops">Speeding up loops</a></li>
 <li><a href="#/iteration" id="/toc-iteration">Iteration</a></li>
 <li><a href="#/exercises" id="/toc-exercises">Exercises</a></li>
 </ul>
@@ -413,14 +412,12 @@
 <p>Required R packages</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"tidyverse"</span>)</span>
-<span id="cb1-2"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"fivethirtyeight"</span>)</span>
-<span id="cb1-3"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"compiler"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-2"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"fivethirtyeight"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Once they’re installed, load them.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb2-2"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fivethirtyeight)</span>
-<span id="cb2-3"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(compiler)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-2"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fivethirtyeight)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="functions-and-iteration" class="slide level2">
@@ -703,6 +700,10 @@
 <li><p>Use <code>describe_contvar</code> for numeric</p></li>
 <li><p>Otherwise, skip the variable</p></li>
 </ul>
+<div class="panel-tabset">
+<ul id="tabset-1" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-1-1">for</a></li><li><a href="#tabset-1-2">while</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="" aria-hidden="true" tabindex="-1"></a>describe_dataset<span class="ot">=</span> <span class="cf">function</span>(data) {</span>
 <span id="cb31-2"><a href="" aria-hidden="true" tabindex="-1"></a>  ans<span class="ot">=</span> <span class="fu">vector</span>(<span class="st">"list"</span>, <span class="at">length=</span><span class="fu">ncol</span>(data)) <span class="co">#create empty list with ncol(data) elements</span></span>
@@ -719,16 +720,39 @@
 <span id="cb31-13"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(ans)</span>
 <span id="cb31-14"><a href="" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+</div>
+<div id="tabset-1-2">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="" aria-hidden="true" tabindex="-1"></a>describe_dataset2<span class="ot">=</span> <span class="cf">function</span>(data) {</span>
+<span id="cb32-2"><a href="" aria-hidden="true" tabindex="-1"></a>  ans<span class="ot">=</span> <span class="fu">vector</span>(<span class="st">"list"</span>, <span class="at">length=</span><span class="fu">ncol</span>(data)) <span class="co">#create empty list with ncol(data) elements</span></span>
+<span id="cb32-3"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">names</span>(ans)<span class="ot">=</span> <span class="fu">names</span>(data)</span>
+<span id="cb32-4"><a href="" aria-hidden="true" tabindex="-1"></a>  i<span class="ot">=</span> <span class="dv">0</span></span>
+<span id="cb32-5"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="cf">while</span> (i <span class="sc">&lt;</span> <span class="fu">ncol</span>(data)) {</span>
+<span id="cb32-6"><a href="" aria-hidden="true" tabindex="-1"></a>    <span class="co">#if data is a list, data.frame or tibble,</span></span>
+<span id="cb32-7"><a href="" aria-hidden="true" tabindex="-1"></a>    <span class="do">##data[[i]] selects its i^th element / variable</span></span>
+<span id="cb32-8"><a href="" aria-hidden="true" tabindex="-1"></a>    i<span class="ot">=</span> i<span class="sc">+</span><span class="dv">1</span></span>
+<span id="cb32-9"><a href="" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">is.factor</span>(data[[i]])) {</span>
+<span id="cb32-10"><a href="" aria-hidden="true" tabindex="-1"></a>      ans[[i]]<span class="ot">=</span> <span class="fu">describe_discvar</span>(data[[i]])</span>
+<span id="cb32-11"><a href="" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> <span class="cf">if</span> (<span class="fu">is.numeric</span>(data[[i]])) {</span>
+<span id="cb32-12"><a href="" aria-hidden="true" tabindex="-1"></a>      ans[[i]]<span class="ot">=</span> <span class="fu">describe_contvar</span>(data[[i]])</span>
+<span id="cb32-13"><a href="" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb32-14"><a href="" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb32-15"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(ans)</span>
+<span id="cb32-16"><a href="" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</div>
 </section>
 <section class="slide level2">
 
 <p>Convert year into factor, and select normalized film scores</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="" aria-hidden="true" tabindex="-1"></a>fandango<span class="ot">=</span> <span class="fu">mutate</span>(fandango, <span class="at">year=</span> <span class="fu">as.factor</span>(year))</span>
-<span id="cb32-2"><a href="" aria-hidden="true" tabindex="-1"></a>fandango_norm<span class="ot">=</span> <span class="fu">select</span>(fandango, <span class="fu">c</span>(<span class="st">'year'</span>,<span class="st">'rt_norm'</span>,<span class="st">'rt_user_norm'</span>,<span class="st">'metacritic_norm'</span>,<span class="st">'imdb_norm'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="" aria-hidden="true" tabindex="-1"></a>fandango<span class="ot">=</span> <span class="fu">mutate</span>(fandango, <span class="at">year=</span> <span class="fu">as.factor</span>(year))</span>
+<span id="cb33-2"><a href="" aria-hidden="true" tabindex="-1"></a>fandango_norm<span class="ot">=</span> <span class="fu">select</span>(fandango, <span class="fu">c</span>(<span class="st">'year'</span>,<span class="st">'rt_norm'</span>,<span class="st">'rt_user_norm'</span>,<span class="st">'metacritic_norm'</span>,<span class="st">'imdb_norm'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">describe_dataset</span>(fandango_norm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">describe_dataset</span>(fandango_norm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>$year
 # A tibble: 2 × 3
@@ -755,82 +779,50 @@ mean   sd  p25  p75
 </div>
 </div>
 </section>
-<section id="functions-can-also-be-arguments" class="slide level2">
-<h2>Functions can also be arguments</h2>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="" aria-hidden="true" tabindex="-1"></a>describe_contvar_custom<span class="ot">=</span> <span class="cf">function</span>(x, funs) {</span>
-<span id="cb35-2"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="co">#funs should be a list of functions, funs[[i]] return a scalar</span></span>
-<span id="cb35-3"><a href="" aria-hidden="true" tabindex="-1"></a>  ans<span class="ot">=</span> <span class="fu">double</span>(<span class="fu">length</span>(funs))</span>
-<span id="cb35-4"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(funs)) {</span>
-<span id="cb35-5"><a href="" aria-hidden="true" tabindex="-1"></a>    ans[i]<span class="ot">=</span> funs[[i]](x)</span>
-<span id="cb35-6"><a href="" aria-hidden="true" tabindex="-1"></a>  }  </span>
-<span id="cb35-7"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">round</span>(ans,<span class="dv">1</span>))</span>
-<span id="cb35-8"><a href="" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">describe_contvar_custom</span>(fandango<span class="sc">$</span>rt_norm, <span class="at">funs=</span><span class="fu">list</span>(mean,sd))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 3.0 1.5</code></pre>
-</div>
-</div>
-</section></section>
-<section>
-<section id="speeding-up-loops" class="title-slide slide level1 center">
-<h1>Speeding up loops</h1>
-
-</section>
-<section class="slide level2 scrollable">
-
+<section id="speeding-up-loops" class="slide level2 scrollable">
+<h2>Speeding up loops</h2>
 <p>Loops are slow in R (things like <code>[</code> are functions, and cost time to evaluate)</p>
 <ol type="1">
 <li><p>Operate with vectors when possible</p></li>
 <li><p>If available, use R’s purpose-built functions</p></li>
-<li><p>Compile functions with <code>cmpfun</code></p></li>
+<li><p>Advanced: compile functions with <code>cmpfun</code>, code in C++</p></li>
 </ol>
-<p><strong>Example.</strong> Sum of two vectors</p>
+<div class="panel-tabset">
+<ul id="tabset-2" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-2-1">Sum two vectors</a></li><li><a href="#tabset-2-2">Column sums</a></li></ul>
+<div class="tab-content">
+<div id="tabset-2-1">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="" aria-hidden="true" tabindex="-1"></a>n<span class="ot">=</span><span class="dv">10</span><span class="sc">^</span><span class="dv">6</span>; x<span class="ot">=</span> <span class="fu">rnorm</span>(n); y<span class="ot">=</span> <span class="fu">runif</span>(n)</span>
-<span id="cb38-2"><a href="" aria-hidden="true" tabindex="-1"></a>z<span class="ot">=</span> <span class="fu">double</span>(n)</span>
-<span id="cb38-3"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>(<span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n) z[i]<span class="ot">=</span> x[i] <span class="sc">+</span> y[i])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="" aria-hidden="true" tabindex="-1"></a>n<span class="ot">=</span><span class="dv">10</span><span class="sc">^</span><span class="dv">6</span>; x<span class="ot">=</span> <span class="fu">rnorm</span>(n); y<span class="ot">=</span> <span class="fu">runif</span>(n)</span>
+<span id="cb36-2"><a href="" aria-hidden="true" tabindex="-1"></a>z<span class="ot">=</span> <span class="fu">double</span>(n)</span>
+<span id="cb36-3"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>(<span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n) z[i]<span class="ot">=</span> x[i] <span class="sc">+</span> y[i])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   user  system elapsed 
-  0.032   0.003   0.035 </code></pre>
+  0.054   0.000   0.054 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>(z <span class="ot">&lt;-</span> x <span class="sc">+</span> y)  <span class="co">#can't use z=x+y within system.time!</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>(z <span class="ot">&lt;-</span> x <span class="sc">+</span> y)  <span class="co">#can't use z=x+y within system.time!</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   user  system elapsed 
-  0.001   0.001   0.001 </code></pre>
+  0.002   0.000   0.002 </code></pre>
 </div>
 </div>
-</section>
-<section id="example.-sum-of-each-variable-in-a-matrix" class="slide level2">
-<h2>Example. Sum of each variable in a matrix</h2>
+</div>
+<div id="tabset-2-2">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="" aria-hidden="true" tabindex="-1"></a>n<span class="ot">=</span> <span class="dv">100</span>; p<span class="ot">=</span><span class="dv">10000</span></span>
-<span id="cb42-2"><a href="" aria-hidden="true" tabindex="-1"></a>x<span class="ot">=</span> <span class="fu">matrix</span>(<span class="fu">rnorm</span>(n<span class="sc">*</span>p), <span class="at">nrow=</span>n, <span class="at">ncol=</span>p) <span class="co">#n x p matrix with entries ~ N(0,1)</span></span>
-<span id="cb42-3"><a href="" aria-hidden="true" tabindex="-1"></a>mysum<span class="ot">=</span> <span class="fu">double</span>(p)</span>
-<span id="cb42-4"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>(<span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>p) { mysum[i]<span class="ot">=</span> <span class="fu">sum</span>(x[,i]) })</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="" aria-hidden="true" tabindex="-1"></a>n<span class="ot">=</span> <span class="dv">100</span>; p<span class="ot">=</span><span class="dv">50000</span></span>
+<span id="cb40-2"><a href="" aria-hidden="true" tabindex="-1"></a>x<span class="ot">=</span> <span class="fu">matrix</span>(<span class="fu">rnorm</span>(n<span class="sc">*</span>p), <span class="at">nrow=</span>n, <span class="at">ncol=</span>p) <span class="co">#n x p matrix with entries ~ N(0,1)</span></span>
+<span id="cb40-3"><a href="" aria-hidden="true" tabindex="-1"></a>mysum<span class="ot">=</span> <span class="fu">double</span>(p)</span>
+<span id="cb40-4"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>(<span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>p) { mysum[i]<span class="ot">=</span> <span class="fu">sum</span>(x[,i]) })</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   user  system elapsed 
-  0.009   0.000   0.009 </code></pre>
+  0.045   0.008   0.054 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="" aria-hidden="true" tabindex="-1"></a>mycolSums<span class="ot">=</span> <span class="cf">function</span>(x) {</span>
-<span id="cb44-2"><a href="" aria-hidden="true" tabindex="-1"></a>  p<span class="ot">=</span> <span class="fu">ncol</span>(x); ans<span class="ot">=</span> <span class="fu">double</span>(p)</span>
-<span id="cb44-3"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>p) { ans[i]<span class="ot">=</span> <span class="fu">sum</span>(x[,i]) }</span>
-<span id="cb44-4"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(ans)</span>
-<span id="cb44-5"><a href="" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb44-6"><a href="" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-7"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(compiler)</span>
-<span id="cb44-8"><a href="" aria-hidden="true" tabindex="-1"></a>mycolSums_cmp<span class="ot">=</span> <span class="fu">cmpfun</span>(mycolSums)</span>
-<span id="cb44-9"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>(mysum <span class="ot">&lt;-</span> <span class="fu">mycolSums_cmp</span>(x))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>(mysum <span class="ot">&lt;-</span> <span class="fu">colSums</span>(x)) <span class="co">#R's built-in colSums is faster</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   user  system elapsed 
-  0.007   0.000   0.007 </code></pre>
+  0.003   0.000   0.003 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>(mysum <span class="ot">&lt;-</span> <span class="fu">colSums</span>(x)) <span class="co">#R's built-in colSums is faster</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>   user  system elapsed 
-  0.001   0.000   0.001 </code></pre>
+</div>
+</div>
 </div>
 </div>
 </section></section>
@@ -849,7 +841,7 @@ mean   sd  p25  p75
 <li><code>map_df()</code>: formats results into a data frame</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">map</span>(fandango_norm[,<span class="sc">-</span><span class="dv">1</span>], mean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">map</span>(fandango_norm[,<span class="sc">-</span><span class="dv">1</span>], mean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>$rt_norm
 [1] 3.042466
@@ -865,7 +857,7 @@ $imdb_norm
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">map_dbl</span>(fandango_norm[,<span class="sc">-</span><span class="dv">1</span>], mean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">map_dbl</span>(fandango_norm[,<span class="sc">-</span><span class="dv">1</span>], mean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>        rt_norm    rt_user_norm metacritic_norm       imdb_norm 
        3.042466        3.193836        2.940411        3.368493 </code></pre>
@@ -875,7 +867,7 @@ $imdb_norm
 <section class="slide level2">
 
 <div class="cell">
-<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">map</span>(fandango_norm[,<span class="sc">-</span><span class="dv">1</span>], describe_contvar)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">map</span>(fandango_norm[,<span class="sc">-</span><span class="dv">1</span>], describe_contvar)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>$rt_norm
 mean   sd  p25  p75 
@@ -896,10 +888,10 @@ mean   sd  p25  p75
 </div>
 <p>Use <code>map_df</code> to get output formatted as a tibble</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="" aria-hidden="true" tabindex="-1"></a>fandango_sum<span class="ot">=</span> <span class="fu">map_df</span>(fandango_norm[,<span class="sc">-</span><span class="dv">1</span>], describe_contvar) <span class="sc">|&gt;</span></span>
-<span id="cb54-2"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">varname=</span> <span class="fu">names</span>(fandango_norm)[<span class="sc">-</span><span class="dv">1</span>])</span>
-<span id="cb54-3"><a href="" aria-hidden="true" tabindex="-1"></a>fandango_sum<span class="ot">=</span> <span class="fu">relocate</span>(fandango_sum, varname) <span class="co">#put varname as 1st column</span></span>
-<span id="cb54-4"><a href="" aria-hidden="true" tabindex="-1"></a>fandango_sum</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="" aria-hidden="true" tabindex="-1"></a>fandango_sum<span class="ot">=</span> <span class="fu">map_df</span>(fandango_norm[,<span class="sc">-</span><span class="dv">1</span>], describe_contvar) <span class="sc">|&gt;</span></span>
+<span id="cb50-2"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">varname=</span> <span class="fu">names</span>(fandango_norm)[<span class="sc">-</span><span class="dv">1</span>]) <span class="sc">|&gt;</span></span>
+<span id="cb50-3"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(varname, <span class="fu">everything</span>()) <span class="co">#put varname as 1st column</span></span>
+<span id="cb50-4"><a href="" aria-hidden="true" tabindex="-1"></a>fandango_sum</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 4 × 5
   varname          mean    sd   p25   p75
@@ -918,17 +910,17 @@ mean   sd  p25  p75
 </section>
 <section id="exercise-1" class="slide level2">
 <h2>Exercise 1</h2>
-<p>Create a function <code>all_numeric</code> that returns <code>TRUE</code> if all columns in a dataset <code>x</code> are numeric (i.e.&nbsp;return true to <code>is.numeric</code>, and <code>FALSE</code> otherwise)</p>
+<p>Create a function <code>all_numeric</code> that returns <code>TRUE</code> if all columns in a dataset <code>x</code> are numeric (i.e.&nbsp;return true to <code>is.numeric</code>), and <code>FALSE</code> otherwise</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="" aria-hidden="true" tabindex="-1"></a>all_numeric<span class="ot">=</span> <span class="cf">function</span>(x) {</span>
-<span id="cb56-2"><a href="" aria-hidden="true" tabindex="-1"></a>  ...</span>
-<span id="cb56-3"><a href="" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="" aria-hidden="true" tabindex="-1"></a>all_numeric<span class="ot">=</span> <span class="cf">function</span>(x) {</span>
+<span id="cb52-2"><a href="" aria-hidden="true" tabindex="-1"></a>  ...</span>
+<span id="cb52-3"><a href="" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Test the function by running</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">all_numeric</span>(fandango_norm) <span class="co">#should return FALSE</span></span>
-<span id="cb57-2"><a href="" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb57-3"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">all_numeric</span>(fandango_norm[,<span class="sc">-</span><span class="dv">1</span>])  <span class="co">#should return TRUE</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">all_numeric</span>(fandango_norm) <span class="co">#should return FALSE</span></span>
+<span id="cb53-2"><a href="" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-3"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">all_numeric</span>(fandango_norm[,<span class="sc">-</span><span class="dv">1</span>])  <span class="co">#should return TRUE</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="exercise-2" class="slide level2">
@@ -940,33 +932,33 @@ mean   sd  p25  p75
 </ul>
 <p>Hint: fill in … with your code in the function below</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="" aria-hidden="true" tabindex="-1"></a>vartypes<span class="ot">=</span> <span class="cf">function</span>(x) {</span>
-<span id="cb58-2"><a href="" aria-hidden="true" tabindex="-1"></a>  ans<span class="ot">=</span> <span class="fu">vector</span>(<span class="st">"list"</span>, <span class="dv">3</span>)  <span class="co">#create a list with 3 entries</span></span>
-<span id="cb58-3"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">names</span>(ans)<span class="ot">=</span> <span class="fu">c</span>(<span class="st">'numeric'</span>,<span class="st">'factor'</span>,<span class="st">'character'</span>)</span>
-<span id="cb58-4"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="co">#use ans[[1]] to access the 1st entry, ans[[2]] the 2nd etc</span></span>
-<span id="cb58-5"><a href="" aria-hidden="true" tabindex="-1"></a>  ...</span>
-<span id="cb58-6"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(ans)</span>
-<span id="cb58-7"><a href="" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="" aria-hidden="true" tabindex="-1"></a>vartypes<span class="ot">=</span> <span class="cf">function</span>(x) {</span>
+<span id="cb54-2"><a href="" aria-hidden="true" tabindex="-1"></a>  ans<span class="ot">=</span> <span class="fu">vector</span>(<span class="st">"list"</span>, <span class="dv">3</span>)  <span class="co">#create a list with 3 entries</span></span>
+<span id="cb54-3"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">names</span>(ans)<span class="ot">=</span> <span class="fu">c</span>(<span class="st">'numeric'</span>,<span class="st">'factor'</span>,<span class="st">'character'</span>)</span>
+<span id="cb54-4"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="co">#use ans[[1]] to access the 1st entry, ans[[2]] the 2nd etc</span></span>
+<span id="cb54-5"><a href="" aria-hidden="true" tabindex="-1"></a>  ...</span>
+<span id="cb54-6"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(ans)</span>
+<span id="cb54-7"><a href="" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="exercise-3-advanced" class="slide level2">
 <h2>Exercise 3 (advanced)</h2>
 <p>Function <code>summarizeContVars</code> returns (mean, sd, Q1, Q3) for all variables (i.e.&nbsp;it puts what we did a few slides ago into a function). It uses <code>all_numeric</code> from Exercise 1, and <code>describe_contvar</code> defined earlier</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="" aria-hidden="true" tabindex="-1"></a>summarizeContVars<span class="ot">=</span> <span class="cf">function</span>(x) {</span>
-<span id="cb59-2"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">all_numeric</span>(x)) <span class="fu">stop</span>(<span class="st">"All columns in x must be numeric"</span>)</span>
-<span id="cb59-3"><a href="" aria-hidden="true" tabindex="-1"></a>  x_sum<span class="ot">=</span> <span class="fu">map_df</span>(x, describe_contvar) <span class="sc">|&gt;</span></span>
-<span id="cb59-4"><a href="" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">varname=</span> <span class="fu">names</span>(x))</span>
-<span id="cb59-5"><a href="" aria-hidden="true" tabindex="-1"></a>  x_sum<span class="ot">=</span> <span class="fu">relocate</span>(x_sum, varname) <span class="co">#put varname as 1st column</span></span>
-<span id="cb59-6"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(x_sum)</span>
-<span id="cb59-7"><a href="" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="" aria-hidden="true" tabindex="-1"></a>summarizeContVars<span class="ot">=</span> <span class="cf">function</span>(x) {</span>
+<span id="cb55-2"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">all_numeric</span>(x)) <span class="fu">stop</span>(<span class="st">"All columns in x must be numeric"</span>)</span>
+<span id="cb55-3"><a href="" aria-hidden="true" tabindex="-1"></a>  x_sum<span class="ot">=</span> <span class="fu">map_df</span>(x, describe_contvar) <span class="sc">|&gt;</span></span>
+<span id="cb55-4"><a href="" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">varname=</span> <span class="fu">names</span>(x)) <span class="sc">|&gt;</span></span>
+<span id="cb55-5"><a href="" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(x_sum, varname, <span class="fu">everything</span>()) <span class="co">#put varname as 1st column</span></span>
+<span id="cb55-6"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(x_sum)</span>
+<span id="cb55-7"><a href="" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="exercise-3-advanced-1" class="slide level2">
 <h2>Exercise 3 (advanced)</h2>
 <p>Create a function <code>summarizeContVars_bygroups(x, groups)</code></p>
 <ul>
-<li><p><code>x</code>: dataset with numeric columns</p></li>
+<li><p><code>x</code>: dataset with numeric columns, and a column defining groups</p></li>
 <li><p><code>groups</code>: character indicating the name of a column in <code>x</code></p></li>
 </ul>
 <p>Output: a list, where each entry is the result of applying <code>summarizeContVars</code> to each group</p>
@@ -974,16 +966,16 @@ mean   sd  p25  p75
 <ul>
 <li><p>Use <code>x[[groups]]</code> to select the variable</p></li>
 <li><p>Use <code>groupids= unique(x[[groups]])</code> to find the unique entries in <code>x[,groups]</code></p></li>
-<li><p>Use a <code>foor</code> loop over groups. For each group, select the subset of rows in <code>x</code> and use <code>summarizeContVars</code></p></li>
+<li><p>Use a <code>for</code> loop over groups. For each group, select the subset of rows in <code>x</code> and use <code>summarizeContVars</code></p></li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="" aria-hidden="true" tabindex="-1"></a>summarizeContVars_bygroups<span class="ot">=</span> <span class="cf">function</span>(x, groups) {</span>
-<span id="cb60-2"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">missing</span>(groups)) <span class="fu">stop</span>(<span class="st">"groups cannot be missing"</span>)</span>
-<span id="cb60-3"><a href="" aria-hidden="true" tabindex="-1"></a>  othervars<span class="ot">=</span> (<span class="fu">names</span>(x) <span class="sc">!=</span> groups) <span class="co">#vars other than the one defining the groups</span></span>
-<span id="cb60-4"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">all_numeric</span>(x[,othervars])) <span class="fu">stop</span>(<span class="st">"All columns other than 'groups' must be numeric"</span>)</span>
-<span id="cb60-5"><a href="" aria-hidden="true" tabindex="-1"></a>  groupids<span class="ot">=</span> <span class="fu">unique</span>(x[[groups]])</span>
-<span id="cb60-6"><a href="" aria-hidden="true" tabindex="-1"></a>  ...</span>
-<span id="cb60-7"><a href="" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="" aria-hidden="true" tabindex="-1"></a>summarizeContVars_bygroups<span class="ot">=</span> <span class="cf">function</span>(x, groups) {</span>
+<span id="cb56-2"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">missing</span>(groups)) <span class="fu">stop</span>(<span class="st">"groups cannot be missing"</span>)</span>
+<span id="cb56-3"><a href="" aria-hidden="true" tabindex="-1"></a>  othervars<span class="ot">=</span> (<span class="fu">names</span>(x) <span class="sc">!=</span> groups) <span class="co">#vars other than the one defining the groups</span></span>
+<span id="cb56-4"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">all_numeric</span>(x[,othervars])) <span class="fu">stop</span>(<span class="st">"All columns other than 'groups' must be numeric"</span>)</span>
+<span id="cb56-5"><a href="" aria-hidden="true" tabindex="-1"></a>  groupids<span class="ot">=</span> <span class="fu">unique</span>(x[[groups]])</span>
+<span id="cb56-6"><a href="" aria-hidden="true" tabindex="-1"></a>  ...</span>
+<span id="cb56-7"><a href="" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="quarto-auto-generated-content">
 <div class="footer footer-default">

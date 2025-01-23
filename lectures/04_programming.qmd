@@ -28,7 +28,6 @@ Required R packages
 ```{r, eval=FALSE}
 install.packages("tidyverse")
 install.packages("fivethirtyeight")
-install.packages("compiler")
 ```
 
 Once they're installed, load them.
@@ -36,7 +35,6 @@ Once they're installed, load them.
 ```{r, warning=FALSE}
 library(tidyverse)
 library(fivethirtyeight)
-library(compiler)
 ```
 
 ## Functions and iteration
@@ -271,6 +269,10 @@ Function to produce descriptive analysis for all variables in a dataset
 
 - Otherwise, skip the variable
 
+:::panel-tabset
+
+### for
+
 ```{r}
 describe_dataset= function(data) {
   ans= vector("list", length=ncol(data)) #create empty list with ncol(data) elements
@@ -288,6 +290,30 @@ describe_dataset= function(data) {
 }
 ```
 
+### while
+
+```{r}
+describe_dataset2= function(data) {
+  ans= vector("list", length=ncol(data)) #create empty list with ncol(data) elements
+  names(ans)= names(data)
+  i= 0
+  while (i < ncol(data)) {
+    #if data is a list, data.frame or tibble,
+    ##data[[i]] selects its i^th element / variable
+    i= i+1
+    if (is.factor(data[[i]])) {
+      ans[[i]]= describe_discvar(data[[i]])
+    } else if (is.numeric(data[[i]])) {
+      ans[[i]]= describe_contvar(data[[i]])
+    }
+  }
+  return(ans)
+}
+```
+
+
+:::
+
 ---
 
 Convert year into factor, and select normalized film scores
@@ -301,28 +327,9 @@ fandango_norm= select(fandango, c('year','rt_norm','rt_user_norm','metacritic_no
 describe_dataset(fandango_norm)
 ```
 
-## Functions can also be arguments
-
-```{r}
-describe_contvar_custom= function(x, funs) {
-  #funs should be a list of functions, funs[[i]] return a scalar
-  ans= double(length(funs))
-  for (i in 1:length(funs)) {
-    ans[i]= funs[[i]](x)
-  }  
-  return(round(ans,1))
-}
-```
-
-```{r}
-describe_contvar_custom(fandango$rt_norm, funs=list(mean,sd))
-```
 
 
-
-# Speeding up loops
-
----
+## Speeding up loops
 
 Loops are slow in R (things like `[` are functions, and cost time to evaluate)
 
@@ -330,9 +337,11 @@ Loops are slow in R (things like `[` are functions, and cost time to evaluate)
 
 2. If available, use R's purpose-built functions
 
-3. Compile functions with `cmpfun`
+3. Advanced: compile functions with `cmpfun`, code in C++
 
-**Example.** Sum of two vectors
+::: panel-tabset
+
+### Sum two vectors
 
 ```{r}
 n=10^6; x= rnorm(n); y= runif(n)
@@ -341,27 +350,18 @@ system.time(for (i in 1:n) z[i]= x[i] + y[i])
 system.time(z <- x + y)  #can't use z=x+y within system.time!
 ```
 
-## Example. Sum of each variable in a matrix
+### Column sums
 
 ```{r}
-n= 100; p=10000
+n= 100; p=50000
 x= matrix(rnorm(n*p), nrow=n, ncol=p) #n x p matrix with entries ~ N(0,1)
 mysum= double(p)
 system.time(for (i in 1:p) { mysum[i]= sum(x[,i]) })
 
-mycolSums= function(x) {
-  p= ncol(x); ans= double(p)
-  for (i in 1:p) { ans[i]= sum(x[,i]) }
-  return(ans)
-}
-
-library(compiler)
-mycolSums_cmp= cmpfun(mycolSums)
-system.time(mysum <- mycolSums_cmp(x))
-
 system.time(mysum <- colSums(x)) #R's built-in colSums is faster
 ```
 
+:::
 
 
 # Iteration
@@ -393,8 +393,8 @@ Use `map_df` to get output formatted as a tibble
 
 ```{r}
 fandango_sum= map_df(fandango_norm[,-1], describe_contvar) |>
-  mutate(varname= names(fandango_norm)[-1])
-fandango_sum= relocate(fandango_sum, varname) #put varname as 1st column
+  mutate(varname= names(fandango_norm)[-1]) |>
+  select(varname, everything()) #put varname as 1st column
 fandango_sum
 ```
 
@@ -402,7 +402,7 @@ fandango_sum
 
 ## Exercise 1
 
-Create a function `all_numeric` that returns `TRUE` if all columns in a dataset `x` are numeric (i.e. return true to `is.numeric`, and `FALSE` otherwise)
+Create a function `all_numeric` that returns `TRUE` if all columns in a dataset `x` are numeric (i.e. return true to `is.numeric`), and `FALSE` otherwise
 
 ```{r, eval=FALSE}
 all_numeric= function(x) {
@@ -448,8 +448,8 @@ It uses `all_numeric` from Exercise 1, and `describe_contvar` defined earlier
 summarizeContVars= function(x) {
   if (!all_numeric(x)) stop("All columns in x must be numeric")
   x_sum= map_df(x, describe_contvar) |>
-    mutate(varname= names(x))
-  x_sum= relocate(x_sum, varname) #put varname as 1st column
+    mutate(varname= names(x)) |>
+    select(x_sum, varname, everything()) #put varname as 1st column
   return(x_sum)
 }
 ```
@@ -460,7 +460,7 @@ summarizeContVars= function(x) {
 
 Create a function `summarizeContVars_bygroups(x, groups)`
 
-- `x`: dataset with numeric columns
+- `x`: dataset with numeric columns, and a column defining groups
 
 - `groups`: character indicating the name of a column in `x`
 
@@ -472,7 +472,7 @@ Hints:
 
 - Use `groupids= unique(x[[groups]])` to find the unique entries in `x[,groups]`
 
-- Use a `foor` loop over groups. For each group, select the subset of rows in `x` and use `summarizeContVars`
+- Use a `for` loop over groups. For each group, select the subset of rows in `x` and use `summarizeContVars`
 
 ```{r, eval=FALSE}
 summarizeContVars_bygroups= function(x, groups) {
