@@ -344,7 +344,7 @@ coefplot(lmfit2, predictors="cut") #show only parameters with name including "cu
 
 - Constant error variance
 
-- Error normality (if $n$ large, only important for prediction)
+- Error normality (if $n$ large, only important for predictive intervals)
 
 - Uncorrelated errors
 
@@ -414,8 +414,8 @@ lines(xseq, dnorm(xseq))
 ### qq-plot
 
 ```{r}
-ggplot(diamonds2, aes(sample=scale(res))) +
-  geom_qq() +
+ggplot(diamonds2) +
+  geom_qq(aes(sample=scale(res))) +
   geom_abline(slope=1, intercept=0)
 ```
 
@@ -449,15 +449,13 @@ Plus variables about racial diversity, economics etc (see `help(hate_crimes)`)
 
 ---
 
-Load the data, create a smaller version with the needed variables, and remove Hawaii (outcome not reported)
+Load the data, select and rename the needed variables, and remove Hawaii (outcome not reported)
 
 ```{r, warning=FALSE}
 library(tidyverse)
 library(fivethirtyeight)
 source("../code/routines.R")
-sel= c('state_abbrev','avg_hatecrimes_per_100k_fbi','share_vote_trump','gini_index','share_pop_hs')
-hc= hate_crimes[,sel]
-names(hc)= c('state','hatecrimes_fbi','votes_trump','gini','hs')
+hc= transmute(hate_crimes, state=state_abbrev, hatecrimes_fbi=avg_hatecrimes_per_100k_fbi, votes_trump=share_vote_trump, gini=gini_index, hs=share_pop_hs)
 hc= filter(hc, !is.na(hatecrimes_fbi)) #outcome must be non-missing
 ```
 

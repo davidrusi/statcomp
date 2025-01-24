@@ -900,7 +900,7 @@ clarity^7    0.0443251857  0.052424836</code></pre>
 <ul>
 <li><p>Linearity</p></li>
 <li><p>Constant error variance</p></li>
-<li><p>Error normality (if <span class="math inline">\(n\)</span> large, only important for prediction)</p></li>
+<li><p>Error normality (if <span class="math inline">\(n\)</span> large, only important for predictive intervals)</p></li>
 <li><p>Uncorrelated errors</p></li>
 </ul>
 <p>Residuals vs predicted values</p>
@@ -978,8 +978,8 @@ clarity^7    0.0443251857  0.052424836</code></pre>
 </div>
 <div id="tabset-5-3">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(diamonds2, <span class="fu">aes</span>(<span class="at">sample=</span><span class="fu">scale</span>(res))) <span class="sc">+</span></span>
-<span id="cb41-2"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_qq</span>() <span class="sc">+</span></span>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(diamonds2) <span class="sc">+</span></span>
+<span id="cb41-2"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_qq</span>(<span class="fu">aes</span>(<span class="at">sample=</span><span class="fu">scale</span>(res))) <span class="sc">+</span></span>
 <span id="cb41-3"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="at">slope=</span><span class="dv">1</span>, <span class="at">intercept=</span><span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
@@ -1025,15 +1025,13 @@ clarity^7    0.0443251857  0.052424836</code></pre>
 </section>
 <section class="slide level2 scrollable">
 
-<p>Load the data, create a smaller version with the needed variables, and remove Hawaii (outcome not reported)</p>
+<p>Load the data, select and rename the needed variables, and remove Hawaii (outcome not reported)</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb43-2"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fivethirtyeight)</span>
 <span id="cb43-3"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"../code/routines.R"</span>)</span>
-<span id="cb43-4"><a href="" aria-hidden="true" tabindex="-1"></a>sel<span class="ot">=</span> <span class="fu">c</span>(<span class="st">'state_abbrev'</span>,<span class="st">'avg_hatecrimes_per_100k_fbi'</span>,<span class="st">'share_vote_trump'</span>,<span class="st">'gini_index'</span>,<span class="st">'share_pop_hs'</span>)</span>
-<span id="cb43-5"><a href="" aria-hidden="true" tabindex="-1"></a>hc<span class="ot">=</span> hate_crimes[,sel]</span>
-<span id="cb43-6"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(hc)<span class="ot">=</span> <span class="fu">c</span>(<span class="st">'state'</span>,<span class="st">'hatecrimes_fbi'</span>,<span class="st">'votes_trump'</span>,<span class="st">'gini'</span>,<span class="st">'hs'</span>)</span>
-<span id="cb43-7"><a href="" aria-hidden="true" tabindex="-1"></a>hc<span class="ot">=</span> <span class="fu">filter</span>(hc, <span class="sc">!</span><span class="fu">is.na</span>(hatecrimes_fbi)) <span class="co">#outcome must be non-missing</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb43-4"><a href="" aria-hidden="true" tabindex="-1"></a>hc<span class="ot">=</span> <span class="fu">transmute</span>(hate_crimes, <span class="at">state=</span>state_abbrev, <span class="at">hatecrimes_fbi=</span>avg_hatecrimes_per_100k_fbi, <span class="at">votes_trump=</span>share_vote_trump, <span class="at">gini=</span>gini_index, <span class="at">hs=</span>share_pop_hs)</span>
+<span id="cb43-5"><a href="" aria-hidden="true" tabindex="-1"></a>hc<span class="ot">=</span> <span class="fu">filter</span>(hc, <span class="sc">!</span><span class="fu">is.na</span>(hatecrimes_fbi)) <span class="co">#outcome must be non-missing</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <ol type="1">
 <li><p>Fit a linear regression for <code>hatecrimes_fbi</code> vs.&nbsp;<code>votes_trump</code>, <code>gini</code>, <code>hs</code>. Report the point estimate, 95% intervals and P-values for the 3 covariates. Which of them are significantly associated to hate crimes?</p></li>
