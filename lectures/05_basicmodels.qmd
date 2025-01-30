@@ -907,9 +907,10 @@ dplyr::filter(coef_gm, R2 < 0.5) |> dplyr::select(country, continent, R2)
 Unnest the dataset and add predictions
 
 ```{r}
-coef_gmu= unnest(coef_gm, cols=names(coef_gm))  #unnest & keep all columns
-coef_gmu$pred= coef_gmu$b0 + coef_gmu$b1 * coef_gmu$year
-coef_gmu
+coef_gmu= unnest(coef_gm, cols=names(coef_gm)) |>  #unnest & keep all columns
+          transform(pred= b0 + b1*year) |>         #add predictions
+          transform(R2=round(R2,3), lifeExp=round(lifeExp,1), pred=round(pred,1)) #round
+select(coef_gmu, country, year, lifeExp, gdpPercap, R2, pred)
 ```
 
 ---
