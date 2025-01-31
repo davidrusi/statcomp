@@ -123,6 +123,10 @@ Central Limit Theorem: numerator and denominator in $\hat{\theta}$ approx. Norma
 
 Define a function to compute the batting average
 
+:::panel-tabset
+
+### Base R
+
 ```{r}
 bat.avg= function(data, indices=1:nrow(data)) {
  sum(data[indices, "h"], na.rm=TRUE) /
@@ -130,6 +134,20 @@ bat.avg= function(data, indices=1:nrow(data)) {
 }
 bat.avg(baseball)
 ```
+### Tidyverse
+
+```{r}
+bat.avg= function(data, indices=1:nrow(data)) {
+  slice(data, indices) |>  #slice is like filter, giving indices instead of logical values
+    summarize(sum(h, na.rm=TRUE) / sum(ab, na.rm=TRUE)) |>
+    as.numeric()
+}
+bat.avg(baseball)
+```
+
+
+:::
+
 
 For each boostrapped dataset, compute the batting average
 
@@ -143,10 +161,12 @@ for (b in 1:B) {
 }
 ```
 
+
 ## Example. Baseball
 
 ```{r}
-quantile(th, probs=c(.025,0.975)) #Boostrap-based 95% CI
+ci= quantile(th, probs=c(.025,0.975)) #Boostrap-based 95% CI
+ci
 ```
 
 :::panel-tabset
@@ -155,7 +175,9 @@ quantile(th, probs=c(.025,0.975)) #Boostrap-based 95% CI
 
 ```{r}
 th= tibble(th)
-ggplot(th, aes(x=th)) + geom_histogram(aes(y= ..density..)) + stat_overlay_normal_density(linetype='dashed')
+ggplot(th, aes(x=th)) + geom_histogram(aes(y= ..density..)) +   
+  stat_overlay_normal_density(linetype='dashed') +
+  geom_vline(xintercept=ci)
 ```
 
 ### qq-plot
@@ -184,8 +206,7 @@ Further options, including parallel computing
 
 ```{r}
 avgBoot= boot(data=baseball, statistic=bat.avg, R=2000)
-summary(avgBoot)
-quantile(avgBoot$t, probs=c(0.025,0.975))
+boot.ci(avgBoot, conf=0.95, type="basic")
 ```
 
 
@@ -282,6 +303,19 @@ bhat.bootlong
 There are deviations from normality.
 Set `scales="free"` so that each panel uses different axis limits
 
+:::panel-tabset
+
+### qq-plot
+
+```{r, warning=FALSE}
+ggplot(bhat.bootlong, aes(sample=bootstrap_value)) +
+  geom_qq() + 
+  geom_qq_line(col='red') +
+  facet_wrap(~ variable, scales="free")
+```
+
+### Histogram
+
 ```{r}
 ggplot(bhat.bootlong, aes(x=bootstrap_value)) +
   geom_histogram(aes(y= ..density..)) +
@@ -289,6 +323,7 @@ ggplot(bhat.bootlong, aes(x=bootstrap_value)) +
   facet_wrap(~ variable, scales="free")
 ```
 
+:::
 
 ## Bootstrap intervals
 
@@ -330,6 +365,48 @@ ggplot(ci) +
   labs(x='Confidence interval', y='') +
   theme(axis.text.y=element_blank(),  axis.ticks.y=element_blank()) #remove y axis labels 
 ```
+
+# Exercise 
+
+---
+
+Data `hate_crimes`. Outcome: pre-election number of hate crimes per 100,000 population by the FBI
+
+- education (% adults $\geq$ 25 with high school degree)
+
+- % of people who voted Donald Trump
+
+- Income inequality (Gini index)
+
+In these data the linearity assumption is violated. 
+
+Compare the intervals reported by `lm` to those from bootstrap
+
+Turn in an html with your solution at Aula Global
+Name your file firstname_lastname.html
+
+---
+
+Load packages and format data.
+
+```{r}
+library(tidyverse)
+library(boot)
+library(fivethirtyeight)
+library(lmPerm)
+source("~/github/statcomp/code/routines.R")
+sel= c('state_abbrev','avg_hatecrimes_per_100k_fbi','share_vote_trump','gini_index','share_pop_hs')
+hc= hate_crimes[,sel]
+names(hc)= c('state','hatecrimes_fbi','votes_trump','gini','hs')
+hc= filter(hc, !is.na(hatecrimes_fbi)) #outcome must be non-missing
+```
+
+The model is fit by least-squares as follows.
+
+```{r}
+fit= lm(hatecrimes_fbi ~ votes_trump + gini + hs, data=hc)
+```
+
 
 
 # Permutation tests
@@ -597,12 +674,7 @@ Data `hate_crimes`. Outcome: pre-election number of hate crimes per 100,000 popu
 
 In these data the linearity assumption is violated. 
 
-1. Compare the intervals reported by `lm` to those from bootstrap
-
-2. Compare the permutation test P-values to those from `lm`
-
-Turn in an html with your solution at Aula Global
-Name your file firstname_lastname.html
+Compare the permutation test P-values to those from `lm`
 
 ---
 

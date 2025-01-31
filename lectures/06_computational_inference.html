@@ -401,8 +401,9 @@
 <h2 id="toc-title">Table of contents</h2>
 <ul>
 <li><a href="#/bootstrap" id="/toc-bootstrap">Bootstrap</a></li>
-<li><a href="#/permutation-tests" id="/toc-permutation-tests">Permutation tests</a></li>
 <li><a href="#/exercise" id="/toc-exercise">Exercise</a></li>
+<li><a href="#/permutation-tests" id="/toc-permutation-tests">Permutation tests</a></li>
+<li><a href="#/exercise-1" id="/toc-exercise-1">Exercise</a></li>
 </ul>
 </nav>
 </section>
@@ -504,6 +505,10 @@ E(\hat{\beta})= (X^T X)^{-1} X^T X \beta= \beta; \mbox{Cov}(\hat{\beta})= \sigma
 <section id="example.-baseball-1" class="slide level2">
 <h2>Example. Baseball</h2>
 <p>Define a function to compute the batting average</p>
+<div class="panel-tabset">
+<ul id="tabset-1" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-1-1">Base R</a></li><li><a href="#tabset-1-2">Tidyverse</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="" aria-hidden="true" tabindex="-1"></a>bat.avg<span class="ot">=</span> <span class="cf">function</span>(data, <span class="at">indices=</span><span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(data)) {</span>
 <span id="cb5-2"><a href="" aria-hidden="true" tabindex="-1"></a> <span class="fu">sum</span>(data[indices, <span class="st">"h"</span>], <span class="at">na.rm=</span><span class="cn">TRUE</span>) <span class="sc">/</span></span>
@@ -514,49 +519,68 @@ E(\hat{\beta})= (X^T X)^{-1} X^T X \beta= \beta; \mbox{Cov}(\hat{\beta})= \sigma
 <pre><code>[1] 0.2729972</code></pre>
 </div>
 </div>
+</div>
+<div id="tabset-1-2">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="" aria-hidden="true" tabindex="-1"></a>bat.avg<span class="ot">=</span> <span class="cf">function</span>(data, <span class="at">indices=</span><span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(data)) {</span>
+<span id="cb7-2"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(data, indices) <span class="sc">|&gt;</span>  <span class="co">#slice is like filter, giving indices instead of logical values</span></span>
+<span id="cb7-3"><a href="" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarize</span>(<span class="fu">sum</span>(h, <span class="at">na.rm=</span><span class="cn">TRUE</span>) <span class="sc">/</span> <span class="fu">sum</span>(ab, <span class="at">na.rm=</span><span class="cn">TRUE</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb7-4"><a href="" aria-hidden="true" tabindex="-1"></a>    <span class="fu">as.numeric</span>()</span>
+<span id="cb7-5"><a href="" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-6"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">bat.avg</span>(baseball)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.2729972</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
 <p>For each boostrapped dataset, compute the batting average</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">12345</span>)</span>
-<span id="cb7-2"><a href="" aria-hidden="true" tabindex="-1"></a>B<span class="ot">=</span> <span class="dv">2000</span>; n<span class="ot">=</span> <span class="fu">nrow</span>(baseball)</span>
-<span id="cb7-3"><a href="" aria-hidden="true" tabindex="-1"></a>th<span class="ot">=</span> <span class="fu">double</span>(B)</span>
-<span id="cb7-4"><a href="" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (b <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>B) {</span>
-<span id="cb7-5"><a href="" aria-hidden="true" tabindex="-1"></a>  idx<span class="ot">=</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span>n, <span class="at">size=</span>n, <span class="at">replace=</span><span class="cn">TRUE</span>)</span>
-<span id="cb7-6"><a href="" aria-hidden="true" tabindex="-1"></a>  th[b]<span class="ot">=</span> <span class="fu">bat.avg</span>(baseball, <span class="at">indices=</span>idx)</span>
-<span id="cb7-7"><a href="" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">12345</span>)</span>
+<span id="cb9-2"><a href="" aria-hidden="true" tabindex="-1"></a>B<span class="ot">=</span> <span class="dv">2000</span>; n<span class="ot">=</span> <span class="fu">nrow</span>(baseball)</span>
+<span id="cb9-3"><a href="" aria-hidden="true" tabindex="-1"></a>th<span class="ot">=</span> <span class="fu">double</span>(B)</span>
+<span id="cb9-4"><a href="" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (b <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>B) {</span>
+<span id="cb9-5"><a href="" aria-hidden="true" tabindex="-1"></a>  idx<span class="ot">=</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span>n, <span class="at">size=</span>n, <span class="at">replace=</span><span class="cn">TRUE</span>)</span>
+<span id="cb9-6"><a href="" aria-hidden="true" tabindex="-1"></a>  th[b]<span class="ot">=</span> <span class="fu">bat.avg</span>(baseball, <span class="at">indices=</span>idx)</span>
+<span id="cb9-7"><a href="" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="example.-baseball-2" class="slide level2">
 <h2>Example. Baseball</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">quantile</span>(th, <span class="at">probs=</span><span class="fu">c</span>(.<span class="dv">025</span>,<span class="fl">0.975</span>)) <span class="co">#Boostrap-based 95% CI</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="" aria-hidden="true" tabindex="-1"></a>ci<span class="ot">=</span> <span class="fu">quantile</span>(th, <span class="at">probs=</span><span class="fu">c</span>(.<span class="dv">025</span>,<span class="fl">0.975</span>)) <span class="co">#Boostrap-based 95% CI</span></span>
+<span id="cb10-2"><a href="" aria-hidden="true" tabindex="-1"></a>ci</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>     2.5%     97.5% 
 0.2716847 0.2743102 </code></pre>
 </div>
 </div>
 <div class="panel-tabset">
-<ul id="tabset-1" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-1-1">Histogram</a></li><li><a href="#tabset-1-2">qq-plot</a></li></ul>
+<ul id="tabset-2" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-2-1">Histogram</a></li><li><a href="#tabset-2-2">qq-plot</a></li></ul>
 <div class="tab-content">
-<div id="tabset-1-1">
+<div id="tabset-2-1">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="" aria-hidden="true" tabindex="-1"></a>th<span class="ot">=</span> <span class="fu">tibble</span>(th)</span>
-<span id="cb10-2"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(th, <span class="fu">aes</span>(<span class="at">x=</span>th)) <span class="sc">+</span> <span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">y=</span> ..density..)) <span class="sc">+</span> <span class="fu">stat_overlay_normal_density</span>(<span class="at">linetype=</span><span class="st">'dashed'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="" aria-hidden="true" tabindex="-1"></a>th<span class="ot">=</span> <span class="fu">tibble</span>(th)</span>
+<span id="cb12-2"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(th, <span class="fu">aes</span>(<span class="at">x=</span>th)) <span class="sc">+</span> <span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">y=</span> ..density..)) <span class="sc">+</span>   </span>
+<span id="cb12-3"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_overlay_normal_density</span>(<span class="at">linetype=</span><span class="st">'dashed'</span>) <span class="sc">+</span></span>
+<span id="cb12-4"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept=</span>ci)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure>
-<p><img data-src="06_computational_inference_files/figure-revealjs/unnamed-chunk-7-1.png" width="960"></p>
+<p><img data-src="06_computational_inference_files/figure-revealjs/unnamed-chunk-8-1.png" width="960"></p>
 </figure>
 </div>
 </div>
 </div>
 </div>
-<div id="tabset-1-2">
+<div id="tabset-2-2">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(th, <span class="fu">aes</span>(<span class="at">sample=</span>th)) <span class="sc">+</span> <span class="fu">geom_qq</span>() <span class="sc">+</span> <span class="fu">geom_qq_line</span>(<span class="at">col=</span><span class="st">'red'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(th, <span class="fu">aes</span>(<span class="at">sample=</span>th)) <span class="sc">+</span> <span class="fu">geom_qq</span>() <span class="sc">+</span> <span class="fu">geom_qq_line</span>(<span class="at">col=</span><span class="st">'red'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure>
-<p><img data-src="06_computational_inference_files/figure-revealjs/unnamed-chunk-8-1.png" width="960"></p>
+<p><img data-src="06_computational_inference_files/figure-revealjs/unnamed-chunk-9-1.png" width="960"></p>
 </figure>
 </div>
 </div>
@@ -576,16 +600,19 @@ E(\hat{\beta})= (X^T X)^{-1} X^T X \beta= \beta; \mbox{Cov}(\hat{\beta})= \sigma
 </ul>
 <p>Further options, including parallel computing</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="" aria-hidden="true" tabindex="-1"></a>avgBoot<span class="ot">=</span> <span class="fu">boot</span>(<span class="at">data=</span>baseball, <span class="at">statistic=</span>bat.avg, <span class="at">R=</span><span class="dv">2000</span>)</span>
-<span id="cb12-2"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(avgBoot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="" aria-hidden="true" tabindex="-1"></a>avgBoot<span class="ot">=</span> <span class="fu">boot</span>(<span class="at">data=</span>baseball, <span class="at">statistic=</span>bat.avg, <span class="at">R=</span><span class="dv">2000</span>)</span>
+<span id="cb14-2"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">boot.ci</span>(avgBoot, <span class="at">conf=</span><span class="fl">0.95</span>, <span class="at">type=</span><span class="st">"basic"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>     R original    bootBias     bootSE bootMed
-1 2000    0.273 -7.7399e-06 0.00065833 0.27298</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">quantile</span>(avgBoot<span class="sc">$</span>t, <span class="at">probs=</span><span class="fu">c</span>(<span class="fl">0.025</span>,<span class="fl">0.975</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>    2.5%    97.5% 
-0.271656 0.274337 </code></pre>
+<pre><code>BOOTSTRAP CONFIDENCE INTERVAL CALCULATIONS
+Based on 2000 bootstrap replicates
+
+CALL : 
+boot.ci(boot.out = avgBoot, conf = 0.95, type = "basic")
+
+Intervals : 
+Level      Basic         
+95%   ( 0.2717,  0.2743 )  
+Calculations and Intervals on Original Scale</code></pre>
 </div>
 </div>
 </section>
@@ -626,9 +653,9 @@ E(\hat{\beta})= (X^T X)^{-1} X^T X \beta= \beta; \mbox{Cov}(\hat{\beta})= \sigma
 <span id="cb20-2"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">res=</span> mpg <span class="sc">-</span> mpg_pred)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="panel-tabset">
-<ul id="tabset-2" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-2-1">Linearity</a></li><li><a href="#tabset-2-2">Error normality</a></li></ul>
+<ul id="tabset-3" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-3-1">Linearity</a></li><li><a href="#tabset-3-2">Error normality</a></li></ul>
 <div class="tab-content">
-<div id="tabset-2-1">
+<div id="tabset-3-1">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(mtcars.pred, <span class="fu">aes</span>(<span class="at">x=</span>mpg_pred, <span class="at">y=</span>res)) <span class="sc">+</span></span>
 <span id="cb21-2"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
@@ -636,13 +663,13 @@ E(\hat{\beta})= (X^T X)^{-1} X^T X \beta= \beta; \mbox{Cov}(\hat{\beta})= \sigma
 <div class="cell-output-display">
 <div>
 <figure>
-<p><img data-src="06_computational_inference_files/figure-revealjs/unnamed-chunk-13-1.png" width="960"></p>
+<p><img data-src="06_computational_inference_files/figure-revealjs/unnamed-chunk-14-1.png" width="960"></p>
 </figure>
 </div>
 </div>
 </div>
 </div>
-<div id="tabset-2-2">
+<div id="tabset-3-2">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(mtcars.pred, <span class="fu">aes</span>(<span class="at">sample=</span>res)) <span class="sc">+</span> </span>
 <span id="cb22-2"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_qq</span>() <span class="sc">+</span> </span>
@@ -651,7 +678,7 @@ E(\hat{\beta})= (X^T X)^{-1} X^T X \beta= \beta; \mbox{Cov}(\hat{\beta})= \sigma
 <div class="cell-output-display">
 <div>
 <figure>
-<p><img data-src="06_computational_inference_files/figure-revealjs/unnamed-chunk-14-1.png" width="960"></p>
+<p><img data-src="06_computational_inference_files/figure-revealjs/unnamed-chunk-15-1.png" width="960"></p>
 </figure>
 </div>
 </div>
@@ -752,26 +779,54 @@ E(\hat{\beta})= (X^T X)^{-1} X^T X \beta= \beta; \mbox{Cov}(\hat{\beta})= \sigma
 <section id="sampling-distribution-of-hattheta-1" class="slide level2">
 <h2>Sampling distribution of <span class="math inline">\(\hat{\theta}\)</span></h2>
 <p>There are deviations from normality. Set <code>scales="free"</code> so that each panel uses different axis limits</p>
+<div class="panel-tabset">
+<ul id="tabset-4" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-4-1">qq-plot</a></li><li><a href="#tabset-4-2">Histogram</a></li></ul>
+<div class="tab-content">
+<div id="tabset-4-1">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(bhat.bootlong, <span class="fu">aes</span>(<span class="at">x=</span>bootstrap_value)) <span class="sc">+</span></span>
-<span id="cb35-2"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">y=</span> ..density..)) <span class="sc">+</span></span>
-<span id="cb35-3"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_overlay_normal_density</span>(<span class="at">linetype=</span><span class="st">'dashed'</span>) <span class="sc">+</span></span>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(bhat.bootlong, <span class="fu">aes</span>(<span class="at">sample=</span>bootstrap_value)) <span class="sc">+</span></span>
+<span id="cb35-2"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_qq</span>() <span class="sc">+</span> </span>
+<span id="cb35-3"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_qq_line</span>(<span class="at">col=</span><span class="st">'red'</span>) <span class="sc">+</span></span>
 <span id="cb35-4"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> variable, <span class="at">scales=</span><span class="st">"free"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="06_computational_inference_files/figure-revealjs/unnamed-chunk-21-1.png" width="960"></p>
+</figure>
 </div>
-<img data-src="06_computational_inference_files/figure-revealjs/unnamed-chunk-20-1.png" width="960" class="r-stretch"></section>
+</div>
+</div>
+</div>
+<div id="tabset-4-2">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(bhat.bootlong, <span class="fu">aes</span>(<span class="at">x=</span>bootstrap_value)) <span class="sc">+</span></span>
+<span id="cb36-2"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">y=</span> ..density..)) <span class="sc">+</span></span>
+<span id="cb36-3"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_overlay_normal_density</span>(<span class="at">linetype=</span><span class="st">'dashed'</span>) <span class="sc">+</span></span>
+<span id="cb36-4"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> variable, <span class="at">scales=</span><span class="st">"free"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="06_computational_inference_files/figure-revealjs/unnamed-chunk-22-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
 <section id="bootstrap-intervals" class="slide level2">
 <h2>Bootstrap intervals</h2>
 <p>Compare bootstrap intervals vs.&nbsp;least-squares theory</p>
 <div class="panel-tabset">
-<ul id="tabset-3" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-3-1">Bootstrap</a></li><li><a href="#tabset-3-2">Least-squares theory</a></li></ul>
+<ul id="tabset-5" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-5-1">Bootstrap</a></li><li><a href="#tabset-5-2">Least-squares theory</a></li></ul>
 <div class="tab-content">
-<div id="tabset-3-1">
+<div id="tabset-5-1">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co">#map_df gets quantiles for all columns, returns a data frame (tibble)</span></span>
-<span id="cb36-2"><a href="" aria-hidden="true" tabindex="-1"></a>bhat.ci<span class="ot">=</span> <span class="fu">map_df</span>(bhat.boot, quantile, <span class="at">probs=</span><span class="fu">c</span>(<span class="fl">0.025</span>,<span class="fl">0.975</span>), <span class="at">na.rm=</span><span class="cn">TRUE</span>)</span>
-<span id="cb36-3"><a href="" aria-hidden="true" tabindex="-1"></a>bhat.ci<span class="ot">=</span> <span class="fu">cbind</span>(<span class="at">varname=</span> <span class="fu">names</span>(bhat.boot), <span class="fu">round</span>(bhat.ci,<span class="dv">4</span>)) </span>
-<span id="cb36-4"><a href="" aria-hidden="true" tabindex="-1"></a>bhat.ci</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co">#map_df gets quantiles for all columns, returns a data frame (tibble)</span></span>
+<span id="cb37-2"><a href="" aria-hidden="true" tabindex="-1"></a>bhat.ci<span class="ot">=</span> <span class="fu">map_df</span>(bhat.boot, quantile, <span class="at">probs=</span><span class="fu">c</span>(<span class="fl">0.025</span>,<span class="fl">0.975</span>), <span class="at">na.rm=</span><span class="cn">TRUE</span>)</span>
+<span id="cb37-3"><a href="" aria-hidden="true" tabindex="-1"></a>bhat.ci<span class="ot">=</span> <span class="fu">cbind</span>(<span class="at">varname=</span> <span class="fu">names</span>(bhat.boot), <span class="fu">round</span>(bhat.ci,<span class="dv">4</span>)) </span>
+<span id="cb37-4"><a href="" aria-hidden="true" tabindex="-1"></a>bhat.ci</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>      varname     2.5%   97.5%
 1 (Intercept) -48.3929 49.3768
@@ -786,9 +841,9 @@ E(\hat{\beta})= (X^T X)^{-1} X^T X \beta= \beta; \mbox{Cov}(\hat{\beta})= \sigma
 </div>
 </div>
 </div>
-<div id="tabset-3-2">
+<div id="tabset-5-2">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">coefSummary</span>(fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">coefSummary</span>(fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 9 × 4
   Parameter   Estimate `Conf. Int.`     `P-value`
@@ -814,19 +869,55 @@ E(\hat{\beta})= (X^T X)^{-1} X^T X \beta= \beta; \mbox{Cov}(\hat{\beta})= \sigma
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="" aria-hidden="true" tabindex="-1"></a>yvals<span class="ot">=</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(<span class="fu">coef</span>(fit))</span>
-<span id="cb40-2"><a href="" aria-hidden="true" tabindex="-1"></a>ci<span class="ot">=</span> <span class="fu">cbind</span>(bhat.ci, <span class="fu">confint</span>(fit), <span class="at">y.ols=</span>yvals, <span class="at">y.boot=</span>yvals<span class="fl">+.1</span>)</span>
-<span id="cb40-3"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(ci)<span class="ot">=</span> <span class="fu">c</span>(<span class="st">'varname'</span>,<span class="st">'low.boot'</span>,<span class="st">'high.boot'</span>,<span class="st">'low.ols'</span>,<span class="st">'high.ols'</span>,<span class="st">'y.ols'</span>,<span class="st">'y.boot'</span>)</span>
-<span id="cb40-4"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(ci) <span class="sc">+</span> </span>
-<span id="cb40-5"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">x=</span>low.ols,<span class="at">xend=</span>high.ols,<span class="at">y=</span>y.ols,<span class="at">yend=</span>y.ols)) <span class="sc">+</span></span>
-<span id="cb40-6"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">x=</span>low.boot,<span class="at">xend=</span>high.boot,<span class="at">y=</span>y.boot,<span class="at">yend=</span>y.boot), <span class="at">color=</span><span class="st">'red'</span>) <span class="sc">+</span></span>
-<span id="cb40-7"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">x=</span>low.ols, <span class="at">y=</span>y.ols, <span class="at">label=</span>varname), <span class="at">nudge_y =</span> <span class="fl">0.3</span>) <span class="sc">+</span></span>
-<span id="cb40-8"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">'Confidence interval'</span>, <span class="at">y=</span><span class="st">''</span>) <span class="sc">+</span></span>
-<span id="cb40-9"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.y=</span><span class="fu">element_blank</span>(),  <span class="at">axis.ticks.y=</span><span class="fu">element_blank</span>()) <span class="co">#remove y axis labels </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="" aria-hidden="true" tabindex="-1"></a>yvals<span class="ot">=</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(<span class="fu">coef</span>(fit))</span>
+<span id="cb41-2"><a href="" aria-hidden="true" tabindex="-1"></a>ci<span class="ot">=</span> <span class="fu">cbind</span>(bhat.ci, <span class="fu">confint</span>(fit), <span class="at">y.ols=</span>yvals, <span class="at">y.boot=</span>yvals<span class="fl">+.1</span>)</span>
+<span id="cb41-3"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(ci)<span class="ot">=</span> <span class="fu">c</span>(<span class="st">'varname'</span>,<span class="st">'low.boot'</span>,<span class="st">'high.boot'</span>,<span class="st">'low.ols'</span>,<span class="st">'high.ols'</span>,<span class="st">'y.ols'</span>,<span class="st">'y.boot'</span>)</span>
+<span id="cb41-4"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(ci) <span class="sc">+</span> </span>
+<span id="cb41-5"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">x=</span>low.ols,<span class="at">xend=</span>high.ols,<span class="at">y=</span>y.ols,<span class="at">yend=</span>y.ols)) <span class="sc">+</span></span>
+<span id="cb41-6"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">x=</span>low.boot,<span class="at">xend=</span>high.boot,<span class="at">y=</span>y.boot,<span class="at">yend=</span>y.boot), <span class="at">color=</span><span class="st">'red'</span>) <span class="sc">+</span></span>
+<span id="cb41-7"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">x=</span>low.ols, <span class="at">y=</span>y.ols, <span class="at">label=</span>varname), <span class="at">nudge_y =</span> <span class="fl">0.3</span>) <span class="sc">+</span></span>
+<span id="cb41-8"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">'Confidence interval'</span>, <span class="at">y=</span><span class="st">''</span>) <span class="sc">+</span></span>
+<span id="cb41-9"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.y=</span><span class="fu">element_blank</span>(),  <span class="at">axis.ticks.y=</span><span class="fu">element_blank</span>()) <span class="co">#remove y axis labels </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 
 </div>
-<img data-src="06_computational_inference_files/figure-revealjs/unnamed-chunk-23-1.png" width="960" class="r-stretch"></section></section>
+<img data-src="06_computational_inference_files/figure-revealjs/unnamed-chunk-25-1.png" width="960" class="r-stretch"></section></section>
+<section>
+<section id="exercise" class="title-slide slide level1 center">
+<h1>Exercise</h1>
+
+</section>
+<section class="slide level2">
+
+<p>Data <code>hate_crimes</code>. Outcome: pre-election number of hate crimes per 100,000 population by the FBI</p>
+<ul>
+<li><p>education (% adults <span class="math inline">\(\geq\)</span> 25 with high school degree)</p></li>
+<li><p>% of people who voted Donald Trump</p></li>
+<li><p>Income inequality (Gini index)</p></li>
+</ul>
+<p>In these data the linearity assumption is violated.</p>
+<p>Compare the intervals reported by <code>lm</code> to those from bootstrap</p>
+<p>Turn in an html with your solution at Aula Global Name your file firstname_lastname.html</p>
+</section>
+<section class="slide level2">
+
+<p>Load packages and format data.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb42-2"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(boot)</span>
+<span id="cb42-3"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fivethirtyeight)</span>
+<span id="cb42-4"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lmPerm)</span>
+<span id="cb42-5"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"~/github/statcomp/code/routines.R"</span>)</span>
+<span id="cb42-6"><a href="" aria-hidden="true" tabindex="-1"></a>sel<span class="ot">=</span> <span class="fu">c</span>(<span class="st">'state_abbrev'</span>,<span class="st">'avg_hatecrimes_per_100k_fbi'</span>,<span class="st">'share_vote_trump'</span>,<span class="st">'gini_index'</span>,<span class="st">'share_pop_hs'</span>)</span>
+<span id="cb42-7"><a href="" aria-hidden="true" tabindex="-1"></a>hc<span class="ot">=</span> hate_crimes[,sel]</span>
+<span id="cb42-8"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(hc)<span class="ot">=</span> <span class="fu">c</span>(<span class="st">'state'</span>,<span class="st">'hatecrimes_fbi'</span>,<span class="st">'votes_trump'</span>,<span class="st">'gini'</span>,<span class="st">'hs'</span>)</span>
+<span id="cb42-9"><a href="" aria-hidden="true" tabindex="-1"></a>hc<span class="ot">=</span> <span class="fu">filter</span>(hc, <span class="sc">!</span><span class="fu">is.na</span>(hatecrimes_fbi)) <span class="co">#outcome must be non-missing</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The model is fit by least-squares as follows.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="" aria-hidden="true" tabindex="-1"></a>fit<span class="ot">=</span> <span class="fu">lm</span>(hatecrimes_fbi <span class="sc">~</span> votes_trump <span class="sc">+</span> gini <span class="sc">+</span> hs, <span class="at">data=</span>hc)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section></section>
 <section>
 <section id="permutation-tests" class="title-slide slide level1 center">
 <h1>Permutation tests</h1>
@@ -867,11 +958,11 @@ T= \sum_{k=1}^K (\bar{y}_k - \bar{y})^2
 <section id="mouse-data" class="slide level2">
 <h2>Mouse data</h2>
 <div class="panel-tabset">
-<ul id="tabset-4" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-4-1">Data</a></li><li><a href="#tabset-4-2">Scatter plot</a></li></ul>
+<ul id="tabset-6" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-6-1">Data</a></li><li><a href="#tabset-6-2">Scatter plot</a></li></ul>
 <div class="tab-content">
-<div id="tabset-4-1">
+<div id="tabset-6-1">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="" aria-hidden="true" tabindex="-1"></a>rotarod</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="" aria-hidden="true" tabindex="-1"></a>rotarod</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   time     group
 1   300   control
@@ -901,13 +992,13 @@ T= \sum_{k=1}^K (\bar{y}_k - \bar{y})^2
 </div>
 </div>
 </div>
-<div id="tabset-4-2">
+<div id="tabset-6-2">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(rotarod, <span class="fu">aes</span>(group, time)) <span class="sc">+</span> <span class="fu">geom_point</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(rotarod, <span class="fu">aes</span>(group, time)) <span class="sc">+</span> <span class="fu">geom_point</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure>
-<p><img data-src="06_computational_inference_files/figure-revealjs/unnamed-chunk-26-1.png" width="960"></p>
+<p><img data-src="06_computational_inference_files/figure-revealjs/unnamed-chunk-30-1.png" width="960"></p>
 </figure>
 </div>
 </div>
@@ -920,49 +1011,49 @@ T= \sum_{k=1}^K (\bar{y}_k - \bar{y})^2
 <h2>Permutation test</h2>
 <p>First, define function to compute test statistic</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="" aria-hidden="true" tabindex="-1"></a>tstat<span class="ot">=</span> <span class="cf">function</span>(data) {</span>
-<span id="cb44-2"><a href="" aria-hidden="true" tabindex="-1"></a>  xbar<span class="ot">=</span> <span class="fu">aggregate</span>(time <span class="sc">~</span> group, <span class="at">data=</span>data, <span class="at">FUN=</span>mean)</span>
-<span id="cb44-3"><a href="" aria-hidden="true" tabindex="-1"></a>  ans<span class="ot">=</span> <span class="fu">sum</span>((xbar<span class="sc">$</span>time <span class="sc">-</span> <span class="fu">mean</span>(xbar<span class="sc">$</span>time))<span class="sc">^</span><span class="dv">2</span>)</span>
-<span id="cb44-4"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(ans)</span>
-<span id="cb44-5"><a href="" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="" aria-hidden="true" tabindex="-1"></a>tstat<span class="ot">=</span> <span class="cf">function</span>(data) {</span>
+<span id="cb47-2"><a href="" aria-hidden="true" tabindex="-1"></a>  xbar<span class="ot">=</span> <span class="fu">aggregate</span>(time <span class="sc">~</span> group, <span class="at">data=</span>data, <span class="at">FUN=</span>mean)</span>
+<span id="cb47-3"><a href="" aria-hidden="true" tabindex="-1"></a>  ans<span class="ot">=</span> <span class="fu">sum</span>((xbar<span class="sc">$</span>time <span class="sc">-</span> <span class="fu">mean</span>(xbar<span class="sc">$</span>time))<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb47-4"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(ans)</span>
+<span id="cb47-5"><a href="" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Second, obtain test statistic for the observed data</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="" aria-hidden="true" tabindex="-1"></a>tobs<span class="ot">=</span> <span class="fu">tstat</span>(rotarod)</span>
-<span id="cb45-2"><a href="" aria-hidden="true" tabindex="-1"></a>tobs</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="" aria-hidden="true" tabindex="-1"></a>tobs<span class="ot">=</span> <span class="fu">tstat</span>(rotarod)</span>
+<span id="cb48-2"><a href="" aria-hidden="true" tabindex="-1"></a>tobs</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 3140.281</code></pre>
 </div>
 </div>
 <p>Finally, obtain test stat under permuted data</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="" aria-hidden="true" tabindex="-1"></a>B<span class="ot">=</span> <span class="dv">2000</span>; n<span class="ot">=</span> <span class="fu">nrow</span>(rotarod)</span>
-<span id="cb47-2"><a href="" aria-hidden="true" tabindex="-1"></a>t0<span class="ot">=</span> <span class="fu">double</span>(B)</span>
-<span id="cb47-3"><a href="" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (b <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>B) {</span>
-<span id="cb47-4"><a href="" aria-hidden="true" tabindex="-1"></a>  groupperm<span class="ot">=</span> rotarod<span class="sc">$</span>group[<span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span>n, <span class="at">size=</span>n, <span class="at">replace=</span><span class="cn">FALSE</span>)]</span>
-<span id="cb47-5"><a href="" aria-hidden="true" tabindex="-1"></a>  dataperm<span class="ot">=</span> <span class="fu">data.frame</span>(<span class="at">time=</span>rotarod<span class="sc">$</span>time, <span class="at">group=</span>groupperm)</span>
-<span id="cb47-6"><a href="" aria-hidden="true" tabindex="-1"></a>  t0[b]<span class="ot">=</span> <span class="fu">tstat</span>(dataperm)</span>
-<span id="cb47-7"><a href="" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="" aria-hidden="true" tabindex="-1"></a>B<span class="ot">=</span> <span class="dv">2000</span>; n<span class="ot">=</span> <span class="fu">nrow</span>(rotarod)</span>
+<span id="cb50-2"><a href="" aria-hidden="true" tabindex="-1"></a>t0<span class="ot">=</span> <span class="fu">double</span>(B)</span>
+<span id="cb50-3"><a href="" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (b <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>B) {</span>
+<span id="cb50-4"><a href="" aria-hidden="true" tabindex="-1"></a>  groupperm<span class="ot">=</span> rotarod<span class="sc">$</span>group[<span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span>n, <span class="at">size=</span>n, <span class="at">replace=</span><span class="cn">FALSE</span>)]</span>
+<span id="cb50-5"><a href="" aria-hidden="true" tabindex="-1"></a>  dataperm<span class="ot">=</span> <span class="fu">data.frame</span>(<span class="at">time=</span>rotarod<span class="sc">$</span>time, <span class="at">group=</span>groupperm)</span>
+<span id="cb50-6"><a href="" aria-hidden="true" tabindex="-1"></a>  t0[b]<span class="ot">=</span> <span class="fu">tstat</span>(dataperm)</span>
+<span id="cb50-7"><a href="" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="distribution-under-h_0" class="slide level2">
 <h2>Distribution under <span class="math inline">\(H_0\)</span></h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="" aria-hidden="true" tabindex="-1"></a>pvalue<span class="ot">=</span> <span class="fu">mean</span>(t0 <span class="sc">&gt;=</span> tobs) <span class="co">#proportion of t0's &gt;= tobs </span></span>
-<span id="cb48-2"><a href="" aria-hidden="true" tabindex="-1"></a>pvalue</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="" aria-hidden="true" tabindex="-1"></a>pvalue<span class="ot">=</span> <span class="fu">mean</span>(t0 <span class="sc">&gt;=</span> tobs) <span class="co">#proportion of t0's &gt;= tobs </span></span>
+<span id="cb51-2"><a href="" aria-hidden="true" tabindex="-1"></a>pvalue</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.039</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(t0,<span class="at">main=</span><span class="st">''</span>,<span class="at">xlab=</span><span class="st">'Test statistic'</span>); <span class="fu">abline</span>(<span class="at">v=</span> tobs, <span class="at">col=</span><span class="st">'blue'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(t0,<span class="at">main=</span><span class="st">''</span>,<span class="at">xlab=</span><span class="st">'Test statistic'</span>); <span class="fu">abline</span>(<span class="at">v=</span> tobs, <span class="at">col=</span><span class="st">'blue'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 </div>
-<img data-src="06_computational_inference_files/figure-revealjs/unnamed-chunk-30-1.png" width="960" class="r-stretch"></section>
+<img data-src="06_computational_inference_files/figure-revealjs/unnamed-chunk-34-1.png" width="960" class="r-stretch"></section>
 <section id="r-package-coin" class="slide level2">
 <h2>R package coin</h2>
 <p><code>coin</code> implements permutation tests (with additional options)</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co">#based on asymptotic theory</span></span>
-<span id="cb51-2"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">independence_test</span>(time <span class="sc">~</span> group, <span class="at">data=</span>rotarod, <span class="at">teststat=</span><span class="st">"quadratic"</span>, <span class="at">distribution=</span><span class="st">"asymptotic"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co">#based on asymptotic theory</span></span>
+<span id="cb54-2"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">independence_test</span>(time <span class="sc">~</span> group, <span class="at">data=</span>rotarod, <span class="at">teststat=</span><span class="st">"quadratic"</span>, <span class="at">distribution=</span><span class="st">"asymptotic"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
     Asymptotic General Independence Test
@@ -970,8 +1061,8 @@ T= \sum_{k=1}^K (\bar{y}_k - \bar{y})^2
 data:  time by group (control, treatment)
 chi-squared = 4.5771, df = 1, p-value = 0.0324</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co">#permutation-based</span></span>
-<span id="cb53-2"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">independence_test</span>(time <span class="sc">~</span> group, <span class="at">data=</span>rotarod, <span class="at">teststat=</span><span class="st">"quadratic"</span>, <span class="at">distribution=</span><span class="st">"approximate"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co">#permutation-based</span></span>
+<span id="cb56-2"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">independence_test</span>(time <span class="sc">~</span> group, <span class="at">data=</span>rotarod, <span class="at">teststat=</span><span class="st">"quadratic"</span>, <span class="at">distribution=</span><span class="st">"approximate"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
     Approximative General Independence Test
@@ -987,11 +1078,11 @@ chi-squared = 4.5771, p-value = 0.0344</code></pre>
 <p>With <span class="math inline">\(p&gt;1\)</span> covariates however, some care is needed</p>
 <p><strong>Example.</strong> Does murder rate (per 100,000 population) depend on population, after accounting for literacy, income, and number of days below freezing temperature?</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="" aria-hidden="true" tabindex="-1"></a>states<span class="ot">=</span> <span class="fu">as.data.frame</span>(state.x77)</span>
-<span id="cb55-2"><a href="" aria-hidden="true" tabindex="-1"></a>sel<span class="ot">=</span> <span class="fu">c</span>(<span class="st">'Population'</span>,<span class="st">'Illiteracy'</span>,<span class="st">'Income'</span>,<span class="st">'Frost'</span>)</span>
-<span id="cb55-3"><a href="" aria-hidden="true" tabindex="-1"></a>states[,sel]<span class="ot">=</span> <span class="fu">scale</span>(states[,sel])  <span class="co">#standardize to zero mean, unit variance</span></span>
-<span id="cb55-4"><a href="" aria-hidden="true" tabindex="-1"></a>fit1<span class="ot">=</span> <span class="fu">lm</span>(Murder<span class="sc">~</span>Population <span class="sc">+</span> Illiteracy<span class="sc">+</span>Income<span class="sc">+</span>Frost, <span class="at">data=</span>states)</span>
-<span id="cb55-5"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">coefSummary</span>(fit1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="" aria-hidden="true" tabindex="-1"></a>states<span class="ot">=</span> <span class="fu">as.data.frame</span>(state.x77)</span>
+<span id="cb58-2"><a href="" aria-hidden="true" tabindex="-1"></a>sel<span class="ot">=</span> <span class="fu">c</span>(<span class="st">'Population'</span>,<span class="st">'Illiteracy'</span>,<span class="st">'Income'</span>,<span class="st">'Frost'</span>)</span>
+<span id="cb58-3"><a href="" aria-hidden="true" tabindex="-1"></a>states[,sel]<span class="ot">=</span> <span class="fu">scale</span>(states[,sel])  <span class="co">#standardize to zero mean, unit variance</span></span>
+<span id="cb58-4"><a href="" aria-hidden="true" tabindex="-1"></a>fit1<span class="ot">=</span> <span class="fu">lm</span>(Murder<span class="sc">~</span>Population <span class="sc">+</span> Illiteracy<span class="sc">+</span>Income<span class="sc">+</span>Frost, <span class="at">data=</span>states)</span>
+<span id="cb58-5"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">coefSummary</span>(fit1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 5 × 4
   Parameter   Estimate `Conf. Int.`   `P-value`
@@ -1008,11 +1099,11 @@ chi-squared = 4.5771, p-value = 0.0344</code></pre>
 
 <p>Package <code>lmPerm</code> offers a permutation test for regression</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="" aria-hidden="true" tabindex="-1"></a>fit2<span class="ot">=</span> <span class="fu">lmp</span>(Murder<span class="sc">~</span>Population <span class="sc">+</span> Illiteracy<span class="sc">+</span>Income<span class="sc">+</span>Frost, <span class="at">data=</span>states)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="" aria-hidden="true" tabindex="-1"></a>fit2<span class="ot">=</span> <span class="fu">lmp</span>(Murder<span class="sc">~</span>Population <span class="sc">+</span> Illiteracy<span class="sc">+</span>Income<span class="sc">+</span>Frost, <span class="at">data=</span>states)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "Settings:  unique SS : numeric variables centered"</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
@@ -1063,49 +1154,49 @@ F-statistic: 14.73 on 4 and 45 DF,  p-value: 9.133e-08 </code></pre>
 
 <p>Define an R function (saved in routines.R)</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co">#Residual permutation test for a single variable in linear regression</span></span>
-<span id="cb61-2"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co">#Input</span></span>
-<span id="cb61-3"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co"># - y: outcome</span></span>
-<span id="cb61-4"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co"># - x1: covariate of interest</span></span>
-<span id="cb61-5"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co"># - x2: other covariates</span></span>
-<span id="cb61-6"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co"># - B: number of residual permutations to consider</span></span>
-<span id="cb61-7"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co"># Output: estimated coefficients for x1 in the B permutations</span></span>
-<span id="cb61-8"><a href="" aria-hidden="true" tabindex="-1"></a>lmResPerm.onevar<span class="ot">=</span> <span class="cf">function</span>(y, x1, x2, <span class="at">B=</span><span class="dv">5000</span>) {</span>
-<span id="cb61-9"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.matrix</span>(x2)) x2<span class="ot">=</span> <span class="fu">as.matrix</span>(x2)</span>
-<span id="cb61-10"><a href="" aria-hidden="true" tabindex="-1"></a>  fit<span class="ot">=</span> <span class="fu">lm</span>(x1 <span class="sc">~</span> x2)</span>
-<span id="cb61-11"><a href="" aria-hidden="true" tabindex="-1"></a>  x1hat<span class="ot">=</span> <span class="fu">predict</span>(fit)</span>
-<span id="cb61-12"><a href="" aria-hidden="true" tabindex="-1"></a>  e<span class="ot">=</span> <span class="fu">residuals</span>(fit)</span>
-<span id="cb61-13"><a href="" aria-hidden="true" tabindex="-1"></a>  bperm<span class="ot">=</span> <span class="fu">double</span>(B)</span>
-<span id="cb61-14"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (b <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>B) {</span>
-<span id="cb61-15"><a href="" aria-hidden="true" tabindex="-1"></a>    eperm<span class="ot">=</span> <span class="fu">sample</span>(e, <span class="at">size=</span><span class="fu">length</span>(e), <span class="at">replace=</span><span class="cn">FALSE</span>)</span>
-<span id="cb61-16"><a href="" aria-hidden="true" tabindex="-1"></a>    x1tilde<span class="ot">=</span> x1hat <span class="sc">+</span> eperm</span>
-<span id="cb61-17"><a href="" aria-hidden="true" tabindex="-1"></a>    fitperm<span class="ot">=</span> <span class="fu">lm</span>(y <span class="sc">~</span> x1tilde <span class="sc">+</span> x2)</span>
-<span id="cb61-18"><a href="" aria-hidden="true" tabindex="-1"></a>    bperm[b]<span class="ot">=</span> <span class="fu">coef</span>(fitperm)[<span class="st">'x1tilde'</span>]    </span>
-<span id="cb61-19"><a href="" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb61-20"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(bperm)  </span>
-<span id="cb61-21"><a href="" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co">#Residual permutation test for a single variable in linear regression</span></span>
+<span id="cb64-2"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co">#Input</span></span>
+<span id="cb64-3"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co"># - y: outcome</span></span>
+<span id="cb64-4"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co"># - x1: covariate of interest</span></span>
+<span id="cb64-5"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co"># - x2: other covariates</span></span>
+<span id="cb64-6"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co"># - B: number of residual permutations to consider</span></span>
+<span id="cb64-7"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co"># Output: estimated coefficients for x1 in the B permutations</span></span>
+<span id="cb64-8"><a href="" aria-hidden="true" tabindex="-1"></a>lmResPerm.onevar<span class="ot">=</span> <span class="cf">function</span>(y, x1, x2, <span class="at">B=</span><span class="dv">5000</span>) {</span>
+<span id="cb64-9"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.matrix</span>(x2)) x2<span class="ot">=</span> <span class="fu">as.matrix</span>(x2)</span>
+<span id="cb64-10"><a href="" aria-hidden="true" tabindex="-1"></a>  fit<span class="ot">=</span> <span class="fu">lm</span>(x1 <span class="sc">~</span> x2)</span>
+<span id="cb64-11"><a href="" aria-hidden="true" tabindex="-1"></a>  x1hat<span class="ot">=</span> <span class="fu">predict</span>(fit)</span>
+<span id="cb64-12"><a href="" aria-hidden="true" tabindex="-1"></a>  e<span class="ot">=</span> <span class="fu">residuals</span>(fit)</span>
+<span id="cb64-13"><a href="" aria-hidden="true" tabindex="-1"></a>  bperm<span class="ot">=</span> <span class="fu">double</span>(B)</span>
+<span id="cb64-14"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (b <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>B) {</span>
+<span id="cb64-15"><a href="" aria-hidden="true" tabindex="-1"></a>    eperm<span class="ot">=</span> <span class="fu">sample</span>(e, <span class="at">size=</span><span class="fu">length</span>(e), <span class="at">replace=</span><span class="cn">FALSE</span>)</span>
+<span id="cb64-16"><a href="" aria-hidden="true" tabindex="-1"></a>    x1tilde<span class="ot">=</span> x1hat <span class="sc">+</span> eperm</span>
+<span id="cb64-17"><a href="" aria-hidden="true" tabindex="-1"></a>    fitperm<span class="ot">=</span> <span class="fu">lm</span>(y <span class="sc">~</span> x1tilde <span class="sc">+</span> x2)</span>
+<span id="cb64-18"><a href="" aria-hidden="true" tabindex="-1"></a>    bperm[b]<span class="ot">=</span> <span class="fu">coef</span>(fitperm)[<span class="st">'x1tilde'</span>]    </span>
+<span id="cb64-19"><a href="" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb64-20"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(bperm)  </span>
+<span id="cb64-21"><a href="" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section class="slide level2">
 
 <p>Obtain a residual permutation P-value for Population</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="" aria-hidden="true" tabindex="-1"></a>y<span class="ot">=</span> states<span class="sc">$</span>Murder; x1<span class="ot">=</span> states<span class="sc">$</span>Population; x2<span class="ot">=</span> states[,<span class="fu">c</span>(<span class="st">'Illiteracy'</span>,<span class="st">'Income'</span>,<span class="st">'Frost'</span>)]</span>
-<span id="cb62-2"><a href="" aria-hidden="true" tabindex="-1"></a>bperm<span class="ot">=</span> <span class="fu">lmResPerm.onevar</span>(y, x1, x2, <span class="at">B=</span><span class="dv">5000</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="" aria-hidden="true" tabindex="-1"></a>y<span class="ot">=</span> states<span class="sc">$</span>Murder; x1<span class="ot">=</span> states<span class="sc">$</span>Population; x2<span class="ot">=</span> states[,<span class="fu">c</span>(<span class="st">'Illiteracy'</span>,<span class="st">'Income'</span>,<span class="st">'Frost'</span>)]</span>
+<span id="cb65-2"><a href="" aria-hidden="true" tabindex="-1"></a>bperm<span class="ot">=</span> <span class="fu">lmResPerm.onevar</span>(y, x1, x2, <span class="at">B=</span><span class="dv">5000</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="" aria-hidden="true" tabindex="-1"></a>bobs<span class="ot">=</span> <span class="fu">coef</span>(fit1)[<span class="st">'Population'</span>]</span>
-<span id="cb63-2"><a href="" aria-hidden="true" tabindex="-1"></a>pvalue<span class="ot">=</span> <span class="fu">mean</span>(<span class="fu">abs</span>(bperm) <span class="sc">&gt;</span> <span class="fu">abs</span>(bobs))</span>
-<span id="cb63-3"><a href="" aria-hidden="true" tabindex="-1"></a>pvalue</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="" aria-hidden="true" tabindex="-1"></a>bobs<span class="ot">=</span> <span class="fu">coef</span>(fit1)[<span class="st">'Population'</span>]</span>
+<span id="cb66-2"><a href="" aria-hidden="true" tabindex="-1"></a>pvalue<span class="ot">=</span> <span class="fu">mean</span>(<span class="fu">abs</span>(bperm) <span class="sc">&gt;</span> <span class="fu">abs</span>(bobs))</span>
+<span id="cb66-3"><a href="" aria-hidden="true" tabindex="-1"></a>pvalue</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.021</code></pre>
 </div>
 </div>
 <p>Now for all covariates (<code>lmResPerm</code> is in routines.R)</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="" aria-hidden="true" tabindex="-1"></a>x<span class="ot">=</span> <span class="fu">cbind</span>(<span class="at">Population=</span>x1, x2)</span>
-<span id="cb65-2"><a href="" aria-hidden="true" tabindex="-1"></a>fit1.resperm<span class="ot">=</span> <span class="fu">lmResPerm</span>(y, x, <span class="at">B=</span><span class="dv">5000</span>)</span>
-<span id="cb65-3"><a href="" aria-hidden="true" tabindex="-1"></a>fit1.resperm<span class="sc">$</span>pvalue</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="" aria-hidden="true" tabindex="-1"></a>x<span class="ot">=</span> <span class="fu">cbind</span>(<span class="at">Population=</span>x1, x2)</span>
+<span id="cb68-2"><a href="" aria-hidden="true" tabindex="-1"></a>fit1.resperm<span class="ot">=</span> <span class="fu">lmResPerm</span>(y, x, <span class="at">B=</span><span class="dv">5000</span>)</span>
+<span id="cb68-3"><a href="" aria-hidden="true" tabindex="-1"></a>fit1.resperm<span class="sc">$</span>pvalue</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Population Illiteracy     Income      Frost 
     0.0218     0.0000     0.9288     0.9530 </code></pre>
@@ -1113,7 +1204,7 @@ F-statistic: 14.73 on 4 and 45 DF,  p-value: 9.133e-08 </code></pre>
 </div>
 <p>Recall the results from package <code>lmPerm</code></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit2)<span class="sc">$</span>coef</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit2)<span class="sc">$</span>coef</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>              Estimate Iter   Pr(Prob)
 (Intercept) 7.37800000 5000 0.00000000
@@ -1136,11 +1227,11 @@ Frost       0.03021675   51 0.96078431</code></pre>
 <p>Dependent data: bootstrap needs to be adjusted (model-based bootstrap, block-based bootstrap…). See package <code>boot</code></p>
 </section></section>
 <section>
-<section id="exercise" class="title-slide slide level1 center">
+<section id="exercise-1" class="title-slide slide level1 center">
 <h1>Exercise</h1>
 
 </section>
-<section class="slide level2 scrollable">
+<section class="slide level2">
 
 <p>Data <code>hate_crimes</code>. Outcome: pre-election number of hate crimes per 100,000 population by the FBI</p>
 <ul>
@@ -1149,29 +1240,25 @@ Frost       0.03021675   51 0.96078431</code></pre>
 <li><p>Income inequality (Gini index)</p></li>
 </ul>
 <p>In these data the linearity assumption is violated.</p>
-<ol type="1">
-<li><p>Compare the intervals reported by <code>lm</code> to those from bootstrap</p></li>
-<li><p>Compare the permutation test P-values to those from <code>lm</code></p></li>
-</ol>
-<p>Turn in an html with your solution at Aula Global Name your file firstname_lastname.html</p>
+<p>Compare the permutation test P-values to those from <code>lm</code></p>
 </section>
 <section class="slide level2">
 
 <p>Load packages and format data.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb69-2"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(boot)</span>
-<span id="cb69-3"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fivethirtyeight)</span>
-<span id="cb69-4"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lmPerm)</span>
-<span id="cb69-5"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"~/github/statcomp/code/routines.R"</span>)</span>
-<span id="cb69-6"><a href="" aria-hidden="true" tabindex="-1"></a>sel<span class="ot">=</span> <span class="fu">c</span>(<span class="st">'state_abbrev'</span>,<span class="st">'avg_hatecrimes_per_100k_fbi'</span>,<span class="st">'share_vote_trump'</span>,<span class="st">'gini_index'</span>,<span class="st">'share_pop_hs'</span>)</span>
-<span id="cb69-7"><a href="" aria-hidden="true" tabindex="-1"></a>hc<span class="ot">=</span> hate_crimes[,sel]</span>
-<span id="cb69-8"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(hc)<span class="ot">=</span> <span class="fu">c</span>(<span class="st">'state'</span>,<span class="st">'hatecrimes_fbi'</span>,<span class="st">'votes_trump'</span>,<span class="st">'gini'</span>,<span class="st">'hs'</span>)</span>
-<span id="cb69-9"><a href="" aria-hidden="true" tabindex="-1"></a>hc<span class="ot">=</span> <span class="fu">filter</span>(hc, <span class="sc">!</span><span class="fu">is.na</span>(hatecrimes_fbi)) <span class="co">#outcome must be non-missing</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb72-2"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(boot)</span>
+<span id="cb72-3"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fivethirtyeight)</span>
+<span id="cb72-4"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lmPerm)</span>
+<span id="cb72-5"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"~/github/statcomp/code/routines.R"</span>)</span>
+<span id="cb72-6"><a href="" aria-hidden="true" tabindex="-1"></a>sel<span class="ot">=</span> <span class="fu">c</span>(<span class="st">'state_abbrev'</span>,<span class="st">'avg_hatecrimes_per_100k_fbi'</span>,<span class="st">'share_vote_trump'</span>,<span class="st">'gini_index'</span>,<span class="st">'share_pop_hs'</span>)</span>
+<span id="cb72-7"><a href="" aria-hidden="true" tabindex="-1"></a>hc<span class="ot">=</span> hate_crimes[,sel]</span>
+<span id="cb72-8"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(hc)<span class="ot">=</span> <span class="fu">c</span>(<span class="st">'state'</span>,<span class="st">'hatecrimes_fbi'</span>,<span class="st">'votes_trump'</span>,<span class="st">'gini'</span>,<span class="st">'hs'</span>)</span>
+<span id="cb72-9"><a href="" aria-hidden="true" tabindex="-1"></a>hc<span class="ot">=</span> <span class="fu">filter</span>(hc, <span class="sc">!</span><span class="fu">is.na</span>(hatecrimes_fbi)) <span class="co">#outcome must be non-missing</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The model is fit by least-squares as follows.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="" aria-hidden="true" tabindex="-1"></a>fit<span class="ot">=</span> <span class="fu">lm</span>(hatecrimes_fbi <span class="sc">~</span> votes_trump <span class="sc">+</span> gini <span class="sc">+</span> hs, <span class="at">data=</span>hc)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb73"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href="" aria-hidden="true" tabindex="-1"></a>fit<span class="ot">=</span> <span class="fu">lm</span>(hatecrimes_fbi <span class="sc">~</span> votes_trump <span class="sc">+</span> gini <span class="sc">+</span> hs, <span class="at">data=</span>hc)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="quarto-auto-generated-content">
 <div class="footer footer-default">
