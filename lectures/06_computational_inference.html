@@ -945,7 +945,7 @@ Calculations and Intervals on Original Scale</code></pre>
 <p><span class="math display">\[
 \mbox{P-value}= P(T \geq t \mid H_0)
 \]</span></p>
-<p>Idea: if <span class="math inline">\(y_i\)</span> independent of <span class="math inline">\(x_i\)</span> (so <span class="math inline">\(H_0\)</span> true) we can permute <span class="math inline">\(x_i\)</span></p>
+<p><strong>Idea:</strong> if <span class="math inline">\(y_i\)</span> indep. of <span class="math inline">\(x_i\)</span> (so <span class="math inline">\(H_0\)</span> true) we can permute <span class="math inline">\(x_i\)</span> without altering the distribution of <span class="math inline">\((y_i,x_i)\)</span></p>
 </section>
 <section class="slide level2">
 
@@ -1078,20 +1078,21 @@ chi-squared = 4.5771, p-value = 0.0344</code></pre>
 <p>With <span class="math inline">\(p&gt;1\)</span> covariates however, some care is needed</p>
 <p><strong>Example.</strong> Does murder rate (per 100,000 population) depend on population, after accounting for literacy, income, and number of days below freezing temperature?</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="" aria-hidden="true" tabindex="-1"></a>states<span class="ot">=</span> <span class="fu">as.data.frame</span>(state.x77)</span>
-<span id="cb58-2"><a href="" aria-hidden="true" tabindex="-1"></a>sel<span class="ot">=</span> <span class="fu">c</span>(<span class="st">'Population'</span>,<span class="st">'Illiteracy'</span>,<span class="st">'Income'</span>,<span class="st">'Frost'</span>)</span>
-<span id="cb58-3"><a href="" aria-hidden="true" tabindex="-1"></a>states[,sel]<span class="ot">=</span> <span class="fu">scale</span>(states[,sel])  <span class="co">#standardize to zero mean, unit variance</span></span>
-<span id="cb58-4"><a href="" aria-hidden="true" tabindex="-1"></a>fit1<span class="ot">=</span> <span class="fu">lm</span>(Murder<span class="sc">~</span>Population <span class="sc">+</span> Illiteracy<span class="sc">+</span>Income<span class="sc">+</span>Frost, <span class="at">data=</span>states)</span>
-<span id="cb58-5"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">coefSummary</span>(fit1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="" aria-hidden="true" tabindex="-1"></a>states<span class="ot">=</span> <span class="fu">as.data.frame</span>(state.x77) <span class="sc">|&gt;</span></span>
+<span id="cb58-2"><a href="" aria-hidden="true" tabindex="-1"></a>          <span class="fu">select</span>(Murder, Population, Illiteracy, Income, Frost) <span class="sc">|&gt;</span></span>
+<span id="cb58-3"><a href="" aria-hidden="true" tabindex="-1"></a>          <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="sc">-</span>Murder, scale)) <span class="co">#standardize all vars except Murder to mean 0, variance 1</span></span>
+<span id="cb58-4"><a href="" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-5"><a href="" aria-hidden="true" tabindex="-1"></a>fit1<span class="ot">=</span> <span class="fu">lm</span>(Murder<span class="sc">~</span>Population <span class="sc">+</span> Illiteracy<span class="sc">+</span>Income<span class="sc">+</span>Frost, <span class="at">data=</span>states)</span>
+<span id="cb58-6"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">coefSummary</span>(fit1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 5 × 4
   Parameter   Estimate `Conf. Int.`   `P-value`
   &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;          &lt;chr&gt;    
-1 (Intercept)    7.38  (6.656,8.1)    &lt;0.00001 
-2 Population     0.999 (0.185,1.813)  0.01732  
-3 Illiteracy     2.52  (1.452,3.599)  2e-05    
-4 Income         0.04  (-0.807,0.886) 0.92534  
-5 Frost          0.03  (-1.022,1.083) 0.95415  </code></pre>
+1 (Intercept)    1.24  (-6.552,9.021) 0.75095  
+2 Population     0     (0,0)          0.01732  
+3 Illiteracy     4.14  (2.382,5.904)  2e-05    
+4 Income         0     (-0.001,0.001) 0.92534  
+5 Frost          0.001 (-0.02,0.021)  0.95415  </code></pre>
 </div>
 </div>
 </section>
@@ -1099,7 +1100,7 @@ chi-squared = 4.5771, p-value = 0.0344</code></pre>
 
 <p>Package <code>lmPerm</code> offers a permutation test for regression</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="" aria-hidden="true" tabindex="-1"></a>fit2<span class="ot">=</span> <span class="fu">lmp</span>(Murder<span class="sc">~</span>Population <span class="sc">+</span> Illiteracy<span class="sc">+</span>Income<span class="sc">+</span>Frost, <span class="at">data=</span>states)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="" aria-hidden="true" tabindex="-1"></a>fit2<span class="ot">=</span> <span class="fu">lmp</span>(Murder <span class="sc">~</span> Population <span class="sc">+</span> Illiteracy <span class="sc">+</span> Income <span class="sc">+</span> Frost, <span class="at">data=</span>states)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "Settings:  unique SS : numeric variables centered"</code></pre>
 </div>
@@ -1115,11 +1116,11 @@ Residuals:
 -4.79597 -1.64946 -0.08112  1.48150  7.62104 
 
 Coefficients:
-           Estimate Iter Pr(Prob)    
-Population  0.99860 4864   0.0201 *  
-Illiteracy  2.52520 5000   &lt;2e-16 ***
-Income      0.03959   51   0.8824    
-Frost       0.03022   51   0.9608    
+            Estimate Iter Pr(Prob)    
+Population 2.237e-04   51    1.000    
+Illiteracy 4.143e+00 5000   &lt;2e-16 ***
+Income     6.442e-05   51    0.882    
+Frost      5.813e-04   51    0.961    
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
@@ -1231,7 +1232,7 @@ Frost       0.03021675   51 0.96078431</code></pre>
 <h1>Exercise</h1>
 
 </section>
-<section class="slide level2">
+<section class="slide level2 scrollable">
 
 <p>Data <code>hate_crimes</code>. Outcome: pre-election number of hate crimes per 100,000 population by the FBI</p>
 <ul>
@@ -1240,7 +1241,10 @@ Frost       0.03021675   51 0.96078431</code></pre>
 <li><p>Income inequality (Gini index)</p></li>
 </ul>
 <p>In these data the linearity assumption is violated.</p>
-<p>Compare the permutation test P-values to those from <code>lm</code></p>
+<ol type="1">
+<li><p>Use bootstrap to assess whether the distribution of <span class="math inline">\(\hat{\beta}\)</span> is approximately normal. For example, for each covariate <span class="math inline">\(j\)</span>, obtain qq-normal plots for the <span class="math inline">\(B\)</span> bootstrap estimates <span class="math inline">\(\hat{\beta}_j^{(1)},\ldots,\hat{\beta}_j^{(B)}\)</span></p></li>
+<li><p>Compare the permutation test P-values to those from <code>lm</code></p></li>
+</ol>
 </section>
 <section class="slide level2">
 

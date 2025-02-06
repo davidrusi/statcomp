@@ -441,7 +441,7 @@ $$
 \mbox{P-value}= P(T \geq t \mid H_0)
 $$
 
-Idea: if $y_i$ independent of $x_i$ (so $H_0$ true) we can permute $x_i$
+**Idea:** if $y_i$ indep. of $x_i$ (so $H_0$ true) we can permute $x_i$ without altering the distribution of $(y_i,x_i)$
 
 
 ----
@@ -540,9 +540,10 @@ With $p>1$ covariates however, some care is needed
 **Example.** Does murder rate (per 100,000 population) depend on population, after accounting for literacy, income, and number of days below freezing temperature?
 
 ```{r}
-states= as.data.frame(state.x77)
-sel= c('Population','Illiteracy','Income','Frost')
-states[,sel]= scale(states[,sel])  #standardize to zero mean, unit variance
+states= as.data.frame(state.x77) |>
+          select(Murder, Population, Illiteracy, Income, Frost) |>
+          mutate(across(-Murder, scale)) #standardize all vars except Murder to mean 0, variance 1
+
 fit1= lm(Murder~Population + Illiteracy+Income+Frost, data=states)
 coefSummary(fit1)
 ```
@@ -552,7 +553,7 @@ coefSummary(fit1)
 Package `lmPerm` offers a permutation test for regression
 
 ```{r}
-fit2= lmp(Murder~Population + Illiteracy+Income+Frost, data=states)
+fit2= lmp(Murder ~ Population + Illiteracy + Income + Frost, data=states)
 summary(fit2)
 ```
 
@@ -674,7 +675,9 @@ Data `hate_crimes`. Outcome: pre-election number of hate crimes per 100,000 popu
 
 In these data the linearity assumption is violated. 
 
-Compare the permutation test P-values to those from `lm`
+1. Use bootstrap to assess whether the distribution of $\hat{\beta}$ is approximately normal. For example, for each covariate $j$, obtain qq-normal plots for the $B$ bootstrap estimates $\hat{\beta}_j^{(1)},\ldots,\hat{\beta}_j^{(B)}$
+
+2. Compare the permutation test P-values to those from `lm`
 
 ---
 
