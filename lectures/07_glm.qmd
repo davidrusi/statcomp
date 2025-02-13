@@ -147,7 +147,7 @@ email
 ### Spam vs. Number char.
 
 ```{r}
-ggplot(email, aes(x=num_char)) + geom_density(aes(color=spam))
+ggplot(email, aes(x=spam, y=num_char)) + geom_violin()
 ```
 
 ### Spam vs. Re: in subject
@@ -217,7 +217,19 @@ round(exp(ci),3)
 
 ## Plotting the predictions
 
-We use goodies from package `modelr`
+`add_predictions` (package `modelr`) gives $x_i^T \hat{\beta}$. Obtain $\hat{P}(y_i=1 \mid x_i)$?
+
+:::panel-tabset
+
+### Set type="response"
+
+```{r}
+mygrid= data_grid(email, num_char, re_subj, .model=fit)
+fitpred= add_predictions(mygrid, model=fit, type='response') #obtain email probabilities
+ggplot(fitpred, aes(x=num_char,y=pred,color=re_subj)) + geom_line() + labs(y='Spam probability', x='Number of characters')
+```
+
+### Manually
 
 ```{r}
 mygrid= data_grid(email, num_char, re_subj, .model=fit)
@@ -225,6 +237,10 @@ fitpred= add_predictions(mygrid, model=fit) #obtain logit email probabilities
 fitpred= mutate(fitpred, predprob= 1/(1 + exp(-pred))) #compute email probabilities
 ggplot(fitpred, aes(x=num_char,y=predprob,color=re_subj)) + geom_line() + labs(y='Spam probability', x='Number of characters')
 ```
+
+
+:::
+
 
 ## Marginal plots
 
@@ -297,8 +313,7 @@ Is the interaction statistically significant (at the usual 0.05 level)?
 
 Plot the estimated spam probability vs. `numchar` and `re_subj`. Does it look similar to the predictions from the model with no interaction? (previous slides)
 
-Turn in an html with your solution [here](https://drive.google.com/drive/folders/1jhh1CrXM3hqc7qTrOYeQzo2pV8Vly1NY?usp=sharing).
-Name your file firstname_lastname.html
+Turn in an html with your solution at Aula Global. Name your file firstname_lastname.html
 
 
 ---

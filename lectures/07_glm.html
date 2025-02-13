@@ -527,7 +527,7 @@ P(Y_i=y_i)= \pi_i^{y_i} (1-\pi_i)^{1-y_i} = \begin{cases} \pi_i \mbox{ if } y_i=
 <div class="tab-content">
 <div id="tabset-1-1">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(email, <span class="fu">aes</span>(<span class="at">x=</span>num_char)) <span class="sc">+</span> <span class="fu">geom_density</span>(<span class="fu">aes</span>(<span class="at">color=</span>spam))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(email, <span class="fu">aes</span>(<span class="at">x=</span>spam, <span class="at">y=</span>num_char)) <span class="sc">+</span> <span class="fu">geom_violin</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure>
@@ -610,24 +610,51 @@ e^{10 \hat{\beta}_1 + \hat{\beta}_2}= e^{-0.064 \times 10 - 2.97}= 0.027
 </section>
 <section id="plotting-the-predictions" class="slide level2">
 <h2>Plotting the predictions</h2>
-<p>We use goodies from package <code>modelr</code></p>
+<p><code>add_predictions</code> (package <code>modelr</code>) gives <span class="math inline">\(x_i^T \hat{\beta}\)</span>. Obtain <span class="math inline">\(\hat{P}(y_i=1 \mid x_i)\)</span>?</p>
+<div class="panel-tabset">
+<ul id="tabset-2" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-2-1">Set type=“response”</a></li><li><a href="#tabset-2-2">Manually</a></li></ul>
+<div class="tab-content">
+<div id="tabset-2-1">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="" aria-hidden="true" tabindex="-1"></a>mygrid<span class="ot">=</span> <span class="fu">data_grid</span>(email, num_char, re_subj, <span class="at">.model=</span>fit)</span>
-<span id="cb11-2"><a href="" aria-hidden="true" tabindex="-1"></a>fitpred<span class="ot">=</span> <span class="fu">add_predictions</span>(mygrid, <span class="at">model=</span>fit) <span class="co">#obtain logit email probabilities</span></span>
-<span id="cb11-3"><a href="" aria-hidden="true" tabindex="-1"></a>fitpred<span class="ot">=</span> <span class="fu">mutate</span>(fitpred, <span class="at">predprob=</span> <span class="dv">1</span><span class="sc">/</span>(<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(<span class="sc">-</span>pred))) <span class="co">#compute email probabilities</span></span>
-<span id="cb11-4"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fitpred, <span class="fu">aes</span>(<span class="at">x=</span>num_char,<span class="at">y=</span>predprob,<span class="at">color=</span>re_subj)) <span class="sc">+</span> <span class="fu">geom_line</span>() <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">y=</span><span class="st">'Spam probability'</span>, <span class="at">x=</span><span class="st">'Number of characters'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-
+<span id="cb11-2"><a href="" aria-hidden="true" tabindex="-1"></a>fitpred<span class="ot">=</span> <span class="fu">add_predictions</span>(mygrid, <span class="at">model=</span>fit, <span class="at">type=</span><span class="st">'response'</span>) <span class="co">#obtain email probabilities</span></span>
+<span id="cb11-3"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fitpred, <span class="fu">aes</span>(<span class="at">x=</span>num_char,<span class="at">y=</span>pred,<span class="at">color=</span>re_subj)) <span class="sc">+</span> <span class="fu">geom_line</span>() <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">y=</span><span class="st">'Spam probability'</span>, <span class="at">x=</span><span class="st">'Number of characters'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="07_glm_files/figure-revealjs/unnamed-chunk-8-1.png" width="960"></p>
+</figure>
 </div>
-<img data-src="07_glm_files/figure-revealjs/unnamed-chunk-8-1.png" width="960" class="r-stretch"></section>
+</div>
+</div>
+</div>
+<div id="tabset-2-2">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="" aria-hidden="true" tabindex="-1"></a>mygrid<span class="ot">=</span> <span class="fu">data_grid</span>(email, num_char, re_subj, <span class="at">.model=</span>fit)</span>
+<span id="cb12-2"><a href="" aria-hidden="true" tabindex="-1"></a>fitpred<span class="ot">=</span> <span class="fu">add_predictions</span>(mygrid, <span class="at">model=</span>fit) <span class="co">#obtain logit email probabilities</span></span>
+<span id="cb12-3"><a href="" aria-hidden="true" tabindex="-1"></a>fitpred<span class="ot">=</span> <span class="fu">mutate</span>(fitpred, <span class="at">predprob=</span> <span class="dv">1</span><span class="sc">/</span>(<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(<span class="sc">-</span>pred))) <span class="co">#compute email probabilities</span></span>
+<span id="cb12-4"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fitpred, <span class="fu">aes</span>(<span class="at">x=</span>num_char,<span class="at">y=</span>predprob,<span class="at">color=</span>re_subj)) <span class="sc">+</span> <span class="fu">geom_line</span>() <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">y=</span><span class="st">'Spam probability'</span>, <span class="at">x=</span><span class="st">'Number of characters'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="07_glm_files/figure-revealjs/unnamed-chunk-9-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
 <section id="marginal-plots" class="slide level2">
 <h2>Marginal plots</h2>
 <p>Display effect of 1 covariate, keeping others constant</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="" aria-hidden="true" tabindex="-1"></a>expit<span class="ot">=</span> <span class="cf">function</span>(x) <span class="dv">1</span><span class="sc">/</span>(<span class="dv">1</span><span class="sc">+</span><span class="fu">exp</span>(<span class="sc">-</span>x)) <span class="co">#inverse of logit function</span></span>
-<span id="cb12-2"><a href="" aria-hidden="true" tabindex="-1"></a>fitpred<span class="ot">=</span> <span class="fu">data_grid</span>(email, num_char, <span class="at">.model=</span>fit) <span class="sc">|&gt;</span></span>
-<span id="cb12-3"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_predictions</span>(fit) <span class="sc">|&gt;</span></span>
-<span id="cb12-4"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">predprob=</span> <span class="fu">expit</span>(pred))</span>
-<span id="cb12-5"><a href="" aria-hidden="true" tabindex="-1"></a>fitpred</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="" aria-hidden="true" tabindex="-1"></a>expit<span class="ot">=</span> <span class="cf">function</span>(x) <span class="dv">1</span><span class="sc">/</span>(<span class="dv">1</span><span class="sc">+</span><span class="fu">exp</span>(<span class="sc">-</span>x)) <span class="co">#inverse of logit function</span></span>
+<span id="cb13-2"><a href="" aria-hidden="true" tabindex="-1"></a>fitpred<span class="ot">=</span> <span class="fu">data_grid</span>(email, num_char, <span class="at">.model=</span>fit) <span class="sc">|&gt;</span></span>
+<span id="cb13-3"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_predictions</span>(fit) <span class="sc">|&gt;</span></span>
+<span id="cb13-4"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">predprob=</span> <span class="fu">expit</span>(pred))</span>
+<span id="cb13-5"><a href="" aria-hidden="true" tabindex="-1"></a>fitpred</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 3,362 × 4
    num_char re_subj  pred predprob
@@ -650,18 +677,18 @@ e^{10 \hat{\beta}_1 + \hat{\beta}_2}= e^{-0.064 \times 10 - 2.97}= 0.027
 <section id="marginal-plots-1" class="slide level2">
 <h2>Marginal plots</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fitpred, <span class="fu">aes</span>(num_char, predprob)) <span class="sc">+</span> <span class="fu">geom_line</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fitpred, <span class="fu">aes</span>(num_char, predprob)) <span class="sc">+</span> <span class="fu">geom_line</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 </div>
-<img data-src="07_glm_files/figure-revealjs/unnamed-chunk-10-1.png" width="960" class="r-stretch"></section>
+<img data-src="07_glm_files/figure-revealjs/unnamed-chunk-11-1.png" width="960" class="r-stretch"></section>
 <section id="marginal-plots-2" class="slide level2">
 <h2>Marginal plots</h2>
 <p>Better practice to set all other covariates to their mean value.</p>
 <p>We can’t do this with <code>data_grid</code> for factors. Instead, we can do it manually by creating the design matrix</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="" aria-hidden="true" tabindex="-1"></a>x<span class="ot">=</span> <span class="fu">model.matrix</span>( <span class="sc">~</span> num_char <span class="sc">+</span> re_subj, <span class="at">data=</span>email)</span>
-<span id="cb15-2"><a href="" aria-hidden="true" tabindex="-1"></a>emailnum<span class="ot">=</span> <span class="fu">data.frame</span>(<span class="at">spam=</span>email<span class="sc">$</span>spam, x[,<span class="sc">-</span><span class="dv">1</span>]) <span class="co">#x contains intercept, remove</span></span>
-<span id="cb15-3"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(emailnum) <span class="co">#now re_subj1 is a numeric vector</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="" aria-hidden="true" tabindex="-1"></a>x<span class="ot">=</span> <span class="fu">model.matrix</span>( <span class="sc">~</span> num_char <span class="sc">+</span> re_subj, <span class="at">data=</span>email)</span>
+<span id="cb16-2"><a href="" aria-hidden="true" tabindex="-1"></a>emailnum<span class="ot">=</span> <span class="fu">data.frame</span>(<span class="at">spam=</span>email<span class="sc">$</span>spam, x[,<span class="sc">-</span><span class="dv">1</span>]) <span class="co">#x contains intercept, remove</span></span>
+<span id="cb16-3"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(emailnum) <span class="co">#now re_subj1 is a numeric vector</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  spam num_char re_subj1
 1    0   11.370        0
@@ -674,13 +701,13 @@ e^{10 \hat{\beta}_1 + \hat{\beta}_2}= e^{-0.064 \times 10 - 2.97}= 0.027
 </div>
 <p>Then fit the model as usual</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="" aria-hidden="true" tabindex="-1"></a>fitnum<span class="ot">=</span> <span class="fu">glm</span>(spam <span class="sc">~</span> num_char <span class="sc">+</span> re_subj1, <span class="at">data=</span>emailnum, <span class="at">family=</span><span class="fu">binomial</span>()) </span>
-<span id="cb17-2"><a href="" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-3"><a href="" aria-hidden="true" tabindex="-1"></a>m<span class="ot">=</span> <span class="fu">mean</span>(emailnum<span class="sc">$</span>re_subj1)</span>
-<span id="cb17-4"><a href="" aria-hidden="true" tabindex="-1"></a>fitpred<span class="ot">=</span> <span class="fu">data_grid</span>(emailnum, num_char, <span class="at">re_subj1=</span>m, <span class="at">.model=</span>fitnum) <span class="sc">|&gt;</span></span>
-<span id="cb17-5"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_predictions</span>(fitnum)</span>
-<span id="cb17-6"><a href="" aria-hidden="true" tabindex="-1"></a>fitpred<span class="sc">$</span>predprob<span class="ot">=</span> <span class="fu">expit</span>(fitpred<span class="sc">$</span>pred)</span>
-<span id="cb17-7"><a href="" aria-hidden="true" tabindex="-1"></a>fitpred</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="" aria-hidden="true" tabindex="-1"></a>fitnum<span class="ot">=</span> <span class="fu">glm</span>(spam <span class="sc">~</span> num_char <span class="sc">+</span> re_subj1, <span class="at">data=</span>emailnum, <span class="at">family=</span><span class="fu">binomial</span>()) </span>
+<span id="cb18-2"><a href="" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-3"><a href="" aria-hidden="true" tabindex="-1"></a>m<span class="ot">=</span> <span class="fu">mean</span>(emailnum<span class="sc">$</span>re_subj1)</span>
+<span id="cb18-4"><a href="" aria-hidden="true" tabindex="-1"></a>fitpred<span class="ot">=</span> <span class="fu">data_grid</span>(emailnum, num_char, <span class="at">re_subj1=</span>m, <span class="at">.model=</span>fitnum) <span class="sc">|&gt;</span></span>
+<span id="cb18-5"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_predictions</span>(fitnum)</span>
+<span id="cb18-6"><a href="" aria-hidden="true" tabindex="-1"></a>fitpred<span class="sc">$</span>predprob<span class="ot">=</span> <span class="fu">expit</span>(fitpred<span class="sc">$</span>pred)</span>
+<span id="cb18-7"><a href="" aria-hidden="true" tabindex="-1"></a>fitpred</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 3,362 × 4
    num_char re_subj1  pred predprob
@@ -702,12 +729,12 @@ e^{10 \hat{\beta}_1 + \hat{\beta}_2}= e^{-0.064 \times 10 - 2.97}= 0.027
 <section class="slide level2">
 
 <div class="cell">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fitpred, <span class="fu">aes</span>(num_char, predprob)) <span class="sc">+</span> </span>
-<span id="cb19-2"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span> </span>
-<span id="cb19-3"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"Number of characters"</span>, <span class="at">y=</span><span class="st">"Estimated spam probability"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fitpred, <span class="fu">aes</span>(num_char, predprob)) <span class="sc">+</span> </span>
+<span id="cb20-2"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span> </span>
+<span id="cb20-3"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"Number of characters"</span>, <span class="at">y=</span><span class="st">"Estimated spam probability"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 </div>
-<img data-src="07_glm_files/figure-revealjs/unnamed-chunk-13-1.png" width="960" class="r-stretch"></section>
+<img data-src="07_glm_files/figure-revealjs/unnamed-chunk-14-1.png" width="960" class="r-stretch"></section>
 <section id="exercise" class="slide level2">
 <h2>Exercise</h2>
 <p>Fit a model with an interaction <code>numchar:re_subj</code>. For what value of <code>re_subj</code> is the estimated effect of <code>numchar</code> stronger?</p>
@@ -718,16 +745,16 @@ e^{10 \hat{\beta}_1 + \hat{\beta}_2}= e^{-0.064 \times 10 - 2.97}= 0.027
 </ul>
 <p>Is the interaction statistically significant (at the usual 0.05 level)?</p>
 <p>Plot the estimated spam probability vs.&nbsp;<code>numchar</code> and <code>re_subj</code>. Does it look similar to the predictions from the model with no interaction? (previous slides)</p>
-<p>Turn in an html with your solution <a href="https://drive.google.com/drive/folders/1jhh1CrXM3hqc7qTrOYeQzo2pV8Vly1NY?usp=sharing">here</a>. Name your file firstname_lastname.html</p>
+<p>Turn in an html with your solution at Aula Global. Name your file firstname_lastname.html</p>
 </section>
 <section class="slide level2">
 
 <p>Getting started</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb20-2"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(openintro)</span>
-<span id="cb20-3"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"../code/routines.R"</span>)</span>
-<span id="cb20-4"><a href="" aria-hidden="true" tabindex="-1"></a>email</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb21-2"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(openintro)</span>
+<span id="cb21-3"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"../code/routines.R"</span>)</span>
+<span id="cb21-4"><a href="" aria-hidden="true" tabindex="-1"></a>email</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 3,921 × 21
    spam  to_multiple from     cc sent_email time                image attach
@@ -804,8 +831,8 @@ e^{10 \hat{\beta}_1 + \hat{\beta}_2}= e^{-0.064 \times 10 - 2.97}= 0.027
 <section class="slide level2">
 
 <div class="cell">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="" aria-hidden="true" tabindex="-1"></a>fHH<span class="ot">=</span> <span class="fu">as_tibble</span>(<span class="fu">read.table</span>(<span class="st">"../datasets/fHH1.txt"</span>, <span class="at">header=</span><span class="cn">TRUE</span>))</span>
-<span id="cb22-2"><a href="" aria-hidden="true" tabindex="-1"></a>fHH</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="" aria-hidden="true" tabindex="-1"></a>fHH<span class="ot">=</span> <span class="fu">as_tibble</span>(<span class="fu">read.table</span>(<span class="st">"../datasets/fHH1.txt"</span>, <span class="at">header=</span><span class="cn">TRUE</span>))</span>
+<span id="cb23-2"><a href="" aria-hidden="true" tabindex="-1"></a>fHH</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 1,500 × 5
    location       age total numLT5 roof           
@@ -827,23 +854,11 @@ e^{10 \hat{\beta}_1 + \hat{\beta}_2}= e^{-0.064 \times 10 - 2.97}= 0.027
 <section id="exploratory-data-analysis-1" class="slide level2">
 <h2>Exploratory data analysis</h2>
 <div class="panel-tabset">
-<ul id="tabset-2" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-2-1">Barplot</a></li><li><a href="#tabset-2-2">Scatterplot</a></li><li><a href="#tabset-2-3">Jittered scatterplot</a></li><li><a href="#tabset-2-4">By region</a></li><li><a href="#tabset-2-5">By roof</a></li></ul>
+<ul id="tabset-3" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-3-1">Barplot</a></li><li><a href="#tabset-3-2">Scatterplot</a></li><li><a href="#tabset-3-3">Jittered scatterplot</a></li><li><a href="#tabset-3-4">By region</a></li><li><a href="#tabset-3-5">By roof</a></li></ul>
 <div class="tab-content">
-<div id="tabset-2-1">
+<div id="tabset-3-1">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fHH, <span class="fu">aes</span>(<span class="at">x=</span>total)) <span class="sc">+</span> <span class="fu">geom_bar</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div>
-<figure>
-<p><img data-src="07_glm_files/figure-revealjs/unnamed-chunk-16-1.png" width="960"></p>
-</figure>
-</div>
-</div>
-</div>
-</div>
-<div id="tabset-2-2">
-<div class="cell">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fHH, <span class="fu">aes</span>(<span class="at">x=</span>age, <span class="at">y=</span>total)) <span class="sc">+</span> <span class="fu">geom_point</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fHH, <span class="fu">aes</span>(<span class="at">x=</span>total)) <span class="sc">+</span> <span class="fu">geom_bar</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure>
@@ -853,9 +868,9 @@ e^{10 \hat{\beta}_1 + \hat{\beta}_2}= e^{-0.064 \times 10 - 2.97}= 0.027
 </div>
 </div>
 </div>
-<div id="tabset-2-3">
+<div id="tabset-3-2">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fHH, <span class="fu">aes</span>(<span class="at">x=</span>age, <span class="at">y=</span>total)) <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">position=</span><span class="st">"jitter"</span>) <span class="sc">+</span> <span class="fu">geom_smooth</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fHH, <span class="fu">aes</span>(<span class="at">x=</span>age, <span class="at">y=</span>total)) <span class="sc">+</span> <span class="fu">geom_point</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure>
@@ -865,9 +880,9 @@ e^{10 \hat{\beta}_1 + \hat{\beta}_2}= e^{-0.064 \times 10 - 2.97}= 0.027
 </div>
 </div>
 </div>
-<div id="tabset-2-4">
+<div id="tabset-3-3">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fHH, <span class="fu">aes</span>(<span class="at">x=</span>age,<span class="at">y=</span>total, <span class="at">color=</span>location)) <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">position=</span><span class="st">"jitter"</span>) <span class="sc">+</span> <span class="fu">geom_smooth</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fHH, <span class="fu">aes</span>(<span class="at">x=</span>age, <span class="at">y=</span>total)) <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">position=</span><span class="st">"jitter"</span>) <span class="sc">+</span> <span class="fu">geom_smooth</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure>
@@ -877,13 +892,25 @@ e^{10 \hat{\beta}_1 + \hat{\beta}_2}= e^{-0.064 \times 10 - 2.97}= 0.027
 </div>
 </div>
 </div>
-<div id="tabset-2-5">
+<div id="tabset-3-4">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fHH, <span class="fu">aes</span>(<span class="at">x=</span>age,<span class="at">y=</span>total, <span class="at">color=</span>roof)) <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">position=</span><span class="st">"jitter"</span>) <span class="sc">+</span> <span class="fu">geom_smooth</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fHH, <span class="fu">aes</span>(<span class="at">x=</span>age,<span class="at">y=</span>total, <span class="at">color=</span>location)) <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">position=</span><span class="st">"jitter"</span>) <span class="sc">+</span> <span class="fu">geom_smooth</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure>
 <p><img data-src="07_glm_files/figure-revealjs/unnamed-chunk-20-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-3-5">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fHH, <span class="fu">aes</span>(<span class="at">x=</span>age,<span class="at">y=</span>total, <span class="at">color=</span>roof)) <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">position=</span><span class="st">"jitter"</span>) <span class="sc">+</span> <span class="fu">geom_smooth</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="07_glm_files/figure-revealjs/unnamed-chunk-21-1.png" width="960"></p>
 </figure>
 </div>
 </div>
@@ -900,8 +927,8 @@ e^{10 \hat{\beta}_1 + \hat{\beta}_2}= e^{-0.064 \times 10 - 2.97}= 0.027
 <li><p>Add a quadratic effect</p></li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="" aria-hidden="true" tabindex="-1"></a>fHH<span class="ot">=</span> <span class="fu">mutate</span>(fHH, <span class="at">aged=</span> <span class="fu">cut_width</span>(age, <span class="dv">5</span>), <span class="at">age2=</span> age<span class="sc">^</span><span class="dv">2</span>)</span>
-<span id="cb29-2"><a href="" aria-hidden="true" tabindex="-1"></a>fHH</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="" aria-hidden="true" tabindex="-1"></a>fHH<span class="ot">=</span> <span class="fu">mutate</span>(fHH, <span class="at">aged=</span> <span class="fu">cut_width</span>(age, <span class="dv">5</span>), <span class="at">age2=</span> age<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb30-2"><a href="" aria-hidden="true" tabindex="-1"></a>fHH</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 1,500 × 7
    location       age total numLT5 roof            aged         age2
@@ -923,12 +950,12 @@ e^{10 \hat{\beta}_1 + \hat{\beta}_2}= e^{-0.064 \times 10 - 2.97}= 0.027
 <section id="model-fit" class="slide level2">
 <h2>Model fit</h2>
 <div class="panel-tabset">
-<ul id="tabset-3" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-3-1">Discretized age</a></li><li><a href="#tabset-3-2">Quadratic age effect</a></li></ul>
+<ul id="tabset-4" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-4-1">Discretized age</a></li><li><a href="#tabset-4-2">Quadratic age effect</a></li></ul>
 <div class="tab-content">
-<div id="tabset-3-1">
+<div id="tabset-4-1">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="" aria-hidden="true" tabindex="-1"></a>fit<span class="ot">=</span> <span class="fu">glm</span>(total <span class="sc">~</span> location <span class="sc">+</span> roof <span class="sc">+</span> aged, <span class="at">data=</span>fHH, <span class="at">family=</span><span class="fu">poisson</span>())</span>
-<span id="cb31-2"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit)<span class="sc">$</span>coef</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="" aria-hidden="true" tabindex="-1"></a>fit<span class="ot">=</span> <span class="fu">glm</span>(total <span class="sc">~</span> location <span class="sc">+</span> roof <span class="sc">+</span> aged, <span class="at">data=</span>fHH, <span class="at">family=</span><span class="fu">poisson</span>())</span>
+<span id="cb32-2"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit)<span class="sc">$</span>coef</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                         Estimate   Std. Error     z value    Pr(&gt;|z|)
 (Intercept)            0.55832487   0.28285851  1.97386624 0.048396954
@@ -956,10 +983,10 @@ aged(97.5,102]       -12.90652463 284.65930021 -0.04534025 0.963836103</code></p
 </div>
 </div>
 </div>
-<div id="tabset-3-2">
+<div id="tabset-4-2">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="" aria-hidden="true" tabindex="-1"></a>fit2<span class="ot">=</span> <span class="fu">glm</span>(total <span class="sc">~</span> location <span class="sc">+</span> roof <span class="sc">+</span> age <span class="sc">+</span> age2, <span class="at">data=</span>fHH, <span class="at">family=</span><span class="fu">poisson</span>())</span>
-<span id="cb33-2"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit2)<span class="sc">$</span>coef</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="" aria-hidden="true" tabindex="-1"></a>fit2<span class="ot">=</span> <span class="fu">glm</span>(total <span class="sc">~</span> location <span class="sc">+</span> roof <span class="sc">+</span> age <span class="sc">+</span> age2, <span class="at">data=</span>fHH, <span class="at">family=</span><span class="fu">poisson</span>())</span>
+<span id="cb34-2"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit2)<span class="sc">$</span>coef</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                          Estimate   Std. Error     z value     Pr(&gt;|z|)
 (Intercept)          -0.4285599211 0.1865283425  -2.2975593 2.158689e-02
@@ -979,37 +1006,16 @@ age2                 -0.0007034333 0.0000641942 -10.9578954 6.089915e-28</code><
 <section id="plotting-the-fit" class="slide level2">
 <h2>Plotting the fit</h2>
 <div class="panel-tabset">
-<ul id="tabset-4" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-4-1">aged, location</a></li><li><a href="#tabset-4-2">aged, roof</a></li><li><a href="#tabset-4-3">age2, location</a></li><li><a href="#tabset-4-4">age2, roof</a></li></ul>
+<ul id="tabset-5" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-5-1">aged, location</a></li><li><a href="#tabset-5-2">aged, roof</a></li><li><a href="#tabset-5-3">age2, location</a></li><li><a href="#tabset-5-4">age2, roof</a></li></ul>
 <div class="tab-content">
-<div id="tabset-4-1">
+<div id="tabset-5-1">
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="" aria-hidden="true" tabindex="-1"></a>mygrid<span class="ot">=</span> <span class="fu">data_grid</span>(fHH, aged, location, <span class="at">.model=</span>fit)</span>
-<span id="cb35-2"><a href="" aria-hidden="true" tabindex="-1"></a>fitpred<span class="ot">=</span> <span class="fu">add_predictions</span>(mygrid, <span class="at">model=</span>fit)</span>
-<span id="cb35-3"><a href="" aria-hidden="true" tabindex="-1"></a>fitpred<span class="sc">$</span>predmean<span class="ot">=</span> <span class="fu">exp</span>(fitpred<span class="sc">$</span>pred)</span>
-<span id="cb35-4"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fitpred, <span class="fu">aes</span>(<span class="at">x=</span>aged,<span class="at">y=</span>predmean,<span class="at">group=</span>location, <span class="at">color=</span>location)) <span class="sc">+</span> </span>
-<span id="cb35-5"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb35-6"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">90</span>, <span class="at">vjust =</span> <span class="fl">0.5</span>, <span class="at">hjust=</span><span class="dv">1</span>)) <span class="sc">+</span></span>
-<span id="cb35-7"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">'Age of household head'</span>, <span class="at">y=</span><span class="st">'Expected number of people in household'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<div>
-<figure>
-<p><img data-src="07_glm_files/figure-revealjs/unnamed-chunk-24-1.png" width="960"></p>
-</figure>
-</div>
-</div>
-</div>
-</div>
-<div id="tabset-4-2">
-<div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="" aria-hidden="true" tabindex="-1"></a>mygrid<span class="ot">=</span> <span class="fu">data_grid</span>(fHH, aged, roof, <span class="at">.model=</span>fit)</span>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="" aria-hidden="true" tabindex="-1"></a>mygrid<span class="ot">=</span> <span class="fu">data_grid</span>(fHH, aged, location, <span class="at">.model=</span>fit)</span>
 <span id="cb36-2"><a href="" aria-hidden="true" tabindex="-1"></a>fitpred<span class="ot">=</span> <span class="fu">add_predictions</span>(mygrid, <span class="at">model=</span>fit)</span>
 <span id="cb36-3"><a href="" aria-hidden="true" tabindex="-1"></a>fitpred<span class="sc">$</span>predmean<span class="ot">=</span> <span class="fu">exp</span>(fitpred<span class="sc">$</span>pred)</span>
-<span id="cb36-4"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fitpred, <span class="fu">aes</span>(<span class="at">x=</span>aged,<span class="at">y=</span>predmean,<span class="at">group=</span>roof, <span class="at">color=</span>roof)) <span class="sc">+</span> </span>
+<span id="cb36-4"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fitpred, <span class="fu">aes</span>(<span class="at">x=</span>aged,<span class="at">y=</span>predmean,<span class="at">group=</span>location, <span class="at">color=</span>location)) <span class="sc">+</span> </span>
 <span id="cb36-5"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
 <span id="cb36-6"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">90</span>, <span class="at">vjust =</span> <span class="fl">0.5</span>, <span class="at">hjust=</span><span class="dv">1</span>)) <span class="sc">+</span></span>
 <span id="cb36-7"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">'Age of household head'</span>, <span class="at">y=</span><span class="st">'Expected number of people in household'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1023,20 +1029,17 @@ age2                 -0.0007034333 0.0000641942 -10.9578954 6.089915e-28</code><
 </div>
 </div>
 </div>
-<div id="tabset-4-3">
+<div id="tabset-5-2">
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="" aria-hidden="true" tabindex="-1"></a>mygrid<span class="ot">=</span> <span class="fu">data_grid</span>(fHH, age, location, <span class="at">.model=</span>fit2)</span>
-<span id="cb37-2"><a href="" aria-hidden="true" tabindex="-1"></a>mygrid<span class="ot">=</span> <span class="fu">mutate</span>(mygrid, <span class="at">age2=</span> age<span class="sc">^</span><span class="dv">2</span>)</span>
-<span id="cb37-3"><a href="" aria-hidden="true" tabindex="-1"></a>fitpred<span class="ot">=</span> <span class="fu">add_predictions</span>(mygrid, <span class="at">model=</span>fit2)</span>
-<span id="cb37-4"><a href="" aria-hidden="true" tabindex="-1"></a>fitpred<span class="sc">$</span>predmean<span class="ot">=</span> <span class="fu">exp</span>(fitpred<span class="sc">$</span>pred)</span>
-<span id="cb37-5"><a href="" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-6"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fitpred, <span class="fu">aes</span>(<span class="at">x=</span>age,<span class="at">y=</span>predmean,<span class="at">group=</span>location,<span class="at">color=</span>location)) <span class="sc">+</span> </span>
-<span id="cb37-7"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
-<span id="cb37-8"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">90</span>, <span class="at">vjust =</span> <span class="fl">0.5</span>, <span class="at">hjust=</span><span class="dv">1</span>)) <span class="sc">+</span></span>
-<span id="cb37-9"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">'Age of household head'</span>, <span class="at">y=</span><span class="st">'Expected number of people in household'</span>) <span class="sc">+</span></span>
-<span id="cb37-10"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="dv">0</span>,<span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="" aria-hidden="true" tabindex="-1"></a>mygrid<span class="ot">=</span> <span class="fu">data_grid</span>(fHH, aged, roof, <span class="at">.model=</span>fit)</span>
+<span id="cb37-2"><a href="" aria-hidden="true" tabindex="-1"></a>fitpred<span class="ot">=</span> <span class="fu">add_predictions</span>(mygrid, <span class="at">model=</span>fit)</span>
+<span id="cb37-3"><a href="" aria-hidden="true" tabindex="-1"></a>fitpred<span class="sc">$</span>predmean<span class="ot">=</span> <span class="fu">exp</span>(fitpred<span class="sc">$</span>pred)</span>
+<span id="cb37-4"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fitpred, <span class="fu">aes</span>(<span class="at">x=</span>aged,<span class="at">y=</span>predmean,<span class="at">group=</span>roof, <span class="at">color=</span>roof)) <span class="sc">+</span> </span>
+<span id="cb37-5"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb37-6"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">90</span>, <span class="at">vjust =</span> <span class="fl">0.5</span>, <span class="at">hjust=</span><span class="dv">1</span>)) <span class="sc">+</span></span>
+<span id="cb37-7"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">'Age of household head'</span>, <span class="at">y=</span><span class="st">'Expected number of people in household'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -1047,16 +1050,16 @@ age2                 -0.0007034333 0.0000641942 -10.9578954 6.089915e-28</code><
 </div>
 </div>
 </div>
-<div id="tabset-4-4">
+<div id="tabset-5-3">
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="" aria-hidden="true" tabindex="-1"></a>mygrid<span class="ot">=</span> <span class="fu">data_grid</span>(fHH, age, roof, <span class="at">.model=</span>fit2)</span>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="" aria-hidden="true" tabindex="-1"></a>mygrid<span class="ot">=</span> <span class="fu">data_grid</span>(fHH, age, location, <span class="at">.model=</span>fit2)</span>
 <span id="cb38-2"><a href="" aria-hidden="true" tabindex="-1"></a>mygrid<span class="ot">=</span> <span class="fu">mutate</span>(mygrid, <span class="at">age2=</span> age<span class="sc">^</span><span class="dv">2</span>)</span>
 <span id="cb38-3"><a href="" aria-hidden="true" tabindex="-1"></a>fitpred<span class="ot">=</span> <span class="fu">add_predictions</span>(mygrid, <span class="at">model=</span>fit2)</span>
 <span id="cb38-4"><a href="" aria-hidden="true" tabindex="-1"></a>fitpred<span class="sc">$</span>predmean<span class="ot">=</span> <span class="fu">exp</span>(fitpred<span class="sc">$</span>pred)</span>
 <span id="cb38-5"><a href="" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-6"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fitpred, <span class="fu">aes</span>(<span class="at">x=</span>age,<span class="at">y=</span>predmean,<span class="at">group=</span>roof,<span class="at">color=</span>roof)) <span class="sc">+</span> </span>
+<span id="cb38-6"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fitpred, <span class="fu">aes</span>(<span class="at">x=</span>age,<span class="at">y=</span>predmean,<span class="at">group=</span>location,<span class="at">color=</span>location)) <span class="sc">+</span> </span>
 <span id="cb38-7"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
 <span id="cb38-8"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">90</span>, <span class="at">vjust =</span> <span class="fl">0.5</span>, <span class="at">hjust=</span><span class="dv">1</span>)) <span class="sc">+</span></span>
 <span id="cb38-9"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">'Age of household head'</span>, <span class="at">y=</span><span class="st">'Expected number of people in household'</span>) <span class="sc">+</span></span>
@@ -1071,6 +1074,30 @@ age2                 -0.0007034333 0.0000641942 -10.9578954 6.089915e-28</code><
 </div>
 </div>
 </div>
+<div id="tabset-5-4">
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="" aria-hidden="true" tabindex="-1"></a>mygrid<span class="ot">=</span> <span class="fu">data_grid</span>(fHH, age, roof, <span class="at">.model=</span>fit2)</span>
+<span id="cb39-2"><a href="" aria-hidden="true" tabindex="-1"></a>mygrid<span class="ot">=</span> <span class="fu">mutate</span>(mygrid, <span class="at">age2=</span> age<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb39-3"><a href="" aria-hidden="true" tabindex="-1"></a>fitpred<span class="ot">=</span> <span class="fu">add_predictions</span>(mygrid, <span class="at">model=</span>fit2)</span>
+<span id="cb39-4"><a href="" aria-hidden="true" tabindex="-1"></a>fitpred<span class="sc">$</span>predmean<span class="ot">=</span> <span class="fu">exp</span>(fitpred<span class="sc">$</span>pred)</span>
+<span id="cb39-5"><a href="" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-6"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fitpred, <span class="fu">aes</span>(<span class="at">x=</span>age,<span class="at">y=</span>predmean,<span class="at">group=</span>roof,<span class="at">color=</span>roof)) <span class="sc">+</span> </span>
+<span id="cb39-7"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb39-8"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">90</span>, <span class="at">vjust =</span> <span class="fl">0.5</span>, <span class="at">hjust=</span><span class="dv">1</span>)) <span class="sc">+</span></span>
+<span id="cb39-9"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">'Age of household head'</span>, <span class="at">y=</span><span class="st">'Expected number of people in household'</span>) <span class="sc">+</span></span>
+<span id="cb39-10"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="dv">0</span>,<span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="07_glm_files/figure-revealjs/unnamed-chunk-28-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
 </div>
 </div>
 </section>
@@ -1078,14 +1105,14 @@ age2                 -0.0007034333 0.0000641942 -10.9578954 6.089915e-28</code><
 <h2>Exercise</h2>
 <p>Based on the plot below, an interaction roof vs.&nbsp;age and age<span class="math inline">\(^2\)</span> may be needed. Add them to the model and display the model predictions as a function of age &amp; roof</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fHH, <span class="fu">aes</span>(<span class="at">x=</span>age,<span class="at">y=</span>total, <span class="at">color=</span>roof)) <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">position=</span><span class="st">"jitter"</span>) <span class="sc">+</span> <span class="fu">geom_smooth</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fHH, <span class="fu">aes</span>(<span class="at">x=</span>age,<span class="at">y=</span>total, <span class="at">color=</span>roof)) <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">position=</span><span class="st">"jitter"</span>) <span class="sc">+</span> <span class="fu">geom_smooth</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 </div>
-<img data-src="07_glm_files/figure-revealjs/unnamed-chunk-28-1.png" width="960" class="r-stretch"></section>
+<img data-src="07_glm_files/figure-revealjs/unnamed-chunk-29-1.png" width="960" class="r-stretch"></section>
 <section id="a-possible-solution" class="slide level2">
 <h2>A possible solution</h2>
 
-<img data-src="07_glm_files/figure-revealjs/unnamed-chunk-30-1.png" width="960" class="r-stretch"></section></section>
+<img data-src="07_glm_files/figure-revealjs/unnamed-chunk-31-1.png" width="960" class="r-stretch"></section></section>
 <section>
 <section id="residuals-and-over-dispersion" class="title-slide slide level1 center">
 <h1>Residuals and over-dispersion</h1>
@@ -1108,26 +1135,14 @@ e_i= \frac{y_i - \hat{\mu}_i}{\sqrt{\hat{V}(y_i)}}
 <h2>Example</h2>
 <p>Take the household occupancy data with a quadratic age effect</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="" aria-hidden="true" tabindex="-1"></a>fHHres<span class="ot">=</span> <span class="fu">mutate</span>(fHH, <span class="at">pred=</span> <span class="fu">predict</span>(fit2), <span class="at">resdev=</span> <span class="fu">residuals</span>(fit2, <span class="at">type=</span><span class="st">'deviance'</span>), <span class="at">respearson=</span> <span class="fu">residuals</span>(fit2, <span class="at">type=</span><span class="st">'pearson'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="" aria-hidden="true" tabindex="-1"></a>fHHres<span class="ot">=</span> <span class="fu">mutate</span>(fHH, <span class="at">pred=</span> <span class="fu">predict</span>(fit2), <span class="at">resdev=</span> <span class="fu">residuals</span>(fit2, <span class="at">type=</span><span class="st">'deviance'</span>), <span class="at">respearson=</span> <span class="fu">residuals</span>(fit2, <span class="at">type=</span><span class="st">'pearson'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="panel-tabset">
-<ul id="tabset-5" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-5-1">Deviance res.</a></li><li><a href="#tabset-5-2">Pearson res.</a></li><li><a href="#tabset-5-3">Constant variance</a></li></ul>
+<ul id="tabset-6" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-6-1">Deviance res.</a></li><li><a href="#tabset-6-2">Pearson res.</a></li><li><a href="#tabset-6-3">Constant variance</a></li></ul>
 <div class="tab-content">
-<div id="tabset-5-1">
+<div id="tabset-6-1">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fHHres, <span class="fu">aes</span>(pred, resdev)) <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="sc">+</span> <span class="fu">geom_smooth</span>() <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">x=</span><span class="st">'Predicted (log)'</span>, <span class="at">y=</span><span class="st">'Deviance residual'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div>
-<figure>
-<p><img data-src="07_glm_files/figure-revealjs/unnamed-chunk-32-1.png" width="960"></p>
-</figure>
-</div>
-</div>
-</div>
-</div>
-<div id="tabset-5-2">
-<div class="cell">
-<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fHHres, <span class="fu">aes</span>(pred, respearson)) <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="sc">+</span> <span class="fu">geom_smooth</span>() <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">x=</span><span class="st">'Predicted (log)'</span>, <span class="at">y=</span><span class="st">'Pearson residual'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fHHres, <span class="fu">aes</span>(pred, resdev)) <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="sc">+</span> <span class="fu">geom_smooth</span>() <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">x=</span><span class="st">'Predicted (log)'</span>, <span class="at">y=</span><span class="st">'Deviance residual'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure>
@@ -1137,14 +1152,26 @@ e_i= \frac{y_i - \hat{\mu}_i}{\sqrt{\hat{V}(y_i)}}
 </div>
 </div>
 </div>
-<div id="tabset-5-3">
+<div id="tabset-6-2">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="" aria-hidden="true" tabindex="-1"></a>fHHres<span class="ot">=</span> <span class="fu">mutate</span>(fHHres, <span class="at">predcut=</span> <span class="fu">cut_number</span>(pred, <span class="dv">10</span>))</span>
-<span id="cb43-2"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fHHres, <span class="fu">aes</span>(<span class="at">x=</span>predcut, <span class="at">y=</span>respearson)) <span class="sc">+</span> <span class="fu">geom_boxplot</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fHHres, <span class="fu">aes</span>(pred, respearson)) <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="sc">+</span> <span class="fu">geom_smooth</span>() <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">x=</span><span class="st">'Predicted (log)'</span>, <span class="at">y=</span><span class="st">'Pearson residual'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure>
 <p><img data-src="07_glm_files/figure-revealjs/unnamed-chunk-34-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-6-3">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="" aria-hidden="true" tabindex="-1"></a>fHHres<span class="ot">=</span> <span class="fu">mutate</span>(fHHres, <span class="at">predcut=</span> <span class="fu">cut_number</span>(pred, <span class="dv">10</span>))</span>
+<span id="cb44-2"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fHHres, <span class="fu">aes</span>(<span class="at">x=</span>predcut, <span class="at">y=</span>respearson)) <span class="sc">+</span> <span class="fu">geom_boxplot</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="07_glm_files/figure-revealjs/unnamed-chunk-35-1.png" width="960"></p>
 </figure>
 </div>
 </div>
@@ -1160,11 +1187,11 @@ e_i= \frac{y_i - \hat{y}_i}{\sqrt{\hat{V}(y_i)}}
 \]</span></p>
 <p>What should the mean &amp; variance of <span class="math inline">\(e_i\)</span> be? Do we observe that in the Philippines data below?</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(fHHres<span class="sc">$</span>respearson)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(fHHres<span class="sc">$</span>respearson)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.0004764168</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">sd</span>(fHHres<span class="sc">$</span>respearson)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">sd</span>(fHHres<span class="sc">$</span>respearson)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 1.186753</code></pre>
 </div>
@@ -1194,14 +1221,14 @@ e_i= \frac{y_i - \hat{y}_i}{\sqrt{\hat{V}(y_i)}}
 <section id="example-1" class="slide level2">
 <h2>Example</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="" aria-hidden="true" tabindex="-1"></a>fit2q<span class="ot">=</span> <span class="fu">glm</span>(total <span class="sc">~</span> location <span class="sc">+</span> roof <span class="sc">+</span> age <span class="sc">+</span> age2, <span class="at">data=</span>fHH, <span class="at">family=</span>quasipoisson)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="" aria-hidden="true" tabindex="-1"></a>fit2q<span class="ot">=</span> <span class="fu">glm</span>(total <span class="sc">~</span> location <span class="sc">+</span> roof <span class="sc">+</span> age <span class="sc">+</span> age2, <span class="at">data=</span>fHH, <span class="at">family=</span>quasipoisson)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="panel-tabset">
-<ul id="tabset-6" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-6-1">No over-dispersion</a></li><li><a href="#tabset-6-2">Over-dispersion</a></li></ul>
+<ul id="tabset-7" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-7-1">No over-dispersion</a></li><li><a href="#tabset-7-2">Over-dispersion</a></li></ul>
 <div class="tab-content">
-<div id="tabset-6-1">
+<div id="tabset-7-1">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
@@ -1231,9 +1258,9 @@ Number of Fisher Scoring iterations: 5</code></pre>
 </div>
 </div>
 </div>
-<div id="tabset-6-2">
+<div id="tabset-7-2">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit2q)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit2q)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
@@ -1270,15 +1297,15 @@ Number of Fisher Scoring iterations: 5</code></pre>
 <h2>Over-dispersion</h2>
 <p>Easier to compare visually with <code>multiplot</code> from package <code>coefplot</code></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">multiplot</span>(fit2, fit2q)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">multiplot</span>(fit2, fit2q)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 </div>
-<img data-src="07_glm_files/figure-revealjs/unnamed-chunk-39-1.png" width="960" class="r-stretch"></section>
+<img data-src="07_glm_files/figure-revealjs/unnamed-chunk-40-1.png" width="960" class="r-stretch"></section>
 <section id="bootstrap" class="slide level2">
 <h2>Bootstrap</h2>
 <p>Function <code>bootGLM</code> at <code>routines.R</code> implements the bootstrap for GLMs</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="" aria-hidden="true" tabindex="-1"></a>bootGLM</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="" aria-hidden="true" tabindex="-1"></a>bootGLM</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>function (data, formula, family, level = 0.95, R = 2000) 
 {
@@ -1292,7 +1319,7 @@ Number of Fisher Scoring iterations: 5</code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="" aria-hidden="true" tabindex="-1"></a>mleGLM</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="" aria-hidden="true" tabindex="-1"></a>mleGLM</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>function (data, indices = 1:nrow(data), formula, family) 
 {
@@ -1307,14 +1334,14 @@ Number of Fisher Scoring iterations: 5</code></pre>
 <section class="slide level2">
 
 <div class="cell">
-<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="" aria-hidden="true" tabindex="-1"></a>f<span class="ot">=</span> <span class="fu">formula</span>(total <span class="sc">~</span> location <span class="sc">+</span> roof <span class="sc">+</span> age <span class="sc">+</span> age2)</span>
-<span id="cb58-2"><a href="" aria-hidden="true" tabindex="-1"></a>fit2.bootci<span class="ot">=</span> <span class="fu">bootGLM</span>(fHH, <span class="at">formula=</span>f, <span class="at">family=</span><span class="fu">poisson</span>(), <span class="at">level=</span><span class="fl">0.95</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="" aria-hidden="true" tabindex="-1"></a>f<span class="ot">=</span> <span class="fu">formula</span>(total <span class="sc">~</span> location <span class="sc">+</span> roof <span class="sc">+</span> age <span class="sc">+</span> age2)</span>
+<span id="cb59-2"><a href="" aria-hidden="true" tabindex="-1"></a>fit2.bootci<span class="ot">=</span> <span class="fu">bootGLM</span>(fHH, <span class="at">formula=</span>f, <span class="at">family=</span><span class="fu">poisson</span>(), <span class="at">level=</span><span class="fl">0.95</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The bootstrap intervals are also wider than those from MLE theory</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="" aria-hidden="true" tabindex="-1"></a>allci<span class="ot">=</span> <span class="fu">round</span>(<span class="fu">cbind</span>(fit2.bootci[,<span class="sc">-</span><span class="dv">1</span>], <span class="fu">confint</span>(fit2), <span class="fu">confint</span>(fit2q)), <span class="dv">3</span>)</span>
-<span id="cb59-2"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(allci)<span class="ot">=</span> <span class="fu">paste</span>(<span class="fu">c</span>(<span class="st">'Boot'</span>,<span class="st">'Boot'</span>,<span class="st">'MLE'</span>,<span class="st">'MLE'</span>,<span class="st">'Q'</span>,<span class="st">'Q'</span>), <span class="fu">names</span>(allci), <span class="at">sep=</span><span class="st">''</span>)</span>
-<span id="cb59-3"><a href="" aria-hidden="true" tabindex="-1"></a>allci</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="" aria-hidden="true" tabindex="-1"></a>allci<span class="ot">=</span> <span class="fu">round</span>(<span class="fu">cbind</span>(fit2.bootci[,<span class="sc">-</span><span class="dv">1</span>], <span class="fu">confint</span>(fit2), <span class="fu">confint</span>(fit2q)), <span class="dv">3</span>)</span>
+<span id="cb60-2"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(allci)<span class="ot">=</span> <span class="fu">paste</span>(<span class="fu">c</span>(<span class="st">'Boot'</span>,<span class="st">'Boot'</span>,<span class="st">'MLE'</span>,<span class="st">'MLE'</span>,<span class="st">'Q'</span>,<span class="st">'Q'</span>), <span class="fu">names</span>(allci), <span class="at">sep=</span><span class="st">''</span>)</span>
+<span id="cb60-3"><a href="" aria-hidden="true" tabindex="-1"></a>allci</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                     Boot2.5% Boot97.5% MLE2.5 % MLE97.5 % Q2.5 % Q97.5 %
 (Intercept)            -0.826    -0.064   -0.797    -0.066 -0.868   0.002
@@ -1359,10 +1386,10 @@ age2                   -0.001    -0.001   -0.001    -0.001 -0.001  -0.001</code>
 
 <p>Getting started</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb61-2"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"../code/routines.R"</span>)</span>
-<span id="cb61-3"><a href="" aria-hidden="true" tabindex="-1"></a>crime<span class="ot">=</span> <span class="fu">as_tibble</span>(<span class="fu">read.table</span>(<span class="st">"../datasets/campuscrime.txt"</span>, <span class="at">header=</span><span class="cn">TRUE</span>, <span class="at">sep=</span><span class="st">"</span><span class="sc">\t</span><span class="st">"</span>))</span>
-<span id="cb61-4"><a href="" aria-hidden="true" tabindex="-1"></a>crime</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb62-2"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"../code/routines.R"</span>)</span>
+<span id="cb62-3"><a href="" aria-hidden="true" tabindex="-1"></a>crime<span class="ot">=</span> <span class="fu">as_tibble</span>(<span class="fu">read.table</span>(<span class="st">"../datasets/campuscrime.txt"</span>, <span class="at">header=</span><span class="cn">TRUE</span>, <span class="at">sep=</span><span class="st">"</span><span class="sc">\t</span><span class="st">"</span>))</span>
+<span id="cb62-4"><a href="" aria-hidden="true" tabindex="-1"></a>crime</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 81 × 4
    type     nv enroll1000 region
