@@ -1013,12 +1013,11 @@ age2                 -0.0007034333 0.0000641942 -10.9578954 6.089915e-28</code><
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="" aria-hidden="true" tabindex="-1"></a>mygrid<span class="ot">=</span> <span class="fu">data_grid</span>(fHH, aged, location, <span class="at">.model=</span>fit)</span>
-<span id="cb36-2"><a href="" aria-hidden="true" tabindex="-1"></a>fitpred<span class="ot">=</span> <span class="fu">add_predictions</span>(mygrid, <span class="at">model=</span>fit)</span>
-<span id="cb36-3"><a href="" aria-hidden="true" tabindex="-1"></a>fitpred<span class="sc">$</span>predmean<span class="ot">=</span> <span class="fu">exp</span>(fitpred<span class="sc">$</span>pred)</span>
-<span id="cb36-4"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fitpred, <span class="fu">aes</span>(<span class="at">x=</span>aged,<span class="at">y=</span>predmean,<span class="at">group=</span>location, <span class="at">color=</span>location)) <span class="sc">+</span> </span>
-<span id="cb36-5"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb36-6"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">90</span>, <span class="at">vjust =</span> <span class="fl">0.5</span>, <span class="at">hjust=</span><span class="dv">1</span>)) <span class="sc">+</span></span>
-<span id="cb36-7"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">'Age of household head'</span>, <span class="at">y=</span><span class="st">'Expected number of people in household'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb36-2"><a href="" aria-hidden="true" tabindex="-1"></a>fitpred<span class="ot">=</span> <span class="fu">add_predictions</span>(mygrid, <span class="at">model=</span>fit, <span class="at">type=</span><span class="st">'response'</span>)</span>
+<span id="cb36-3"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fitpred, <span class="fu">aes</span>(<span class="at">x=</span>aged,<span class="at">y=</span>pred,<span class="at">group=</span>location, <span class="at">color=</span>location)) <span class="sc">+</span> </span>
+<span id="cb36-4"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb36-5"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">90</span>, <span class="at">vjust =</span> <span class="fl">0.5</span>, <span class="at">hjust=</span><span class="dv">1</span>)) <span class="sc">+</span></span>
+<span id="cb36-6"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">'Age of household head'</span>, <span class="at">y=</span><span class="st">'Expected number of people in household'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -1034,12 +1033,11 @@ age2                 -0.0007034333 0.0000641942 -10.9578954 6.089915e-28</code><
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="" aria-hidden="true" tabindex="-1"></a>mygrid<span class="ot">=</span> <span class="fu">data_grid</span>(fHH, aged, roof, <span class="at">.model=</span>fit)</span>
-<span id="cb37-2"><a href="" aria-hidden="true" tabindex="-1"></a>fitpred<span class="ot">=</span> <span class="fu">add_predictions</span>(mygrid, <span class="at">model=</span>fit)</span>
-<span id="cb37-3"><a href="" aria-hidden="true" tabindex="-1"></a>fitpred<span class="sc">$</span>predmean<span class="ot">=</span> <span class="fu">exp</span>(fitpred<span class="sc">$</span>pred)</span>
-<span id="cb37-4"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fitpred, <span class="fu">aes</span>(<span class="at">x=</span>aged,<span class="at">y=</span>predmean,<span class="at">group=</span>roof, <span class="at">color=</span>roof)) <span class="sc">+</span> </span>
-<span id="cb37-5"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb37-6"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">90</span>, <span class="at">vjust =</span> <span class="fl">0.5</span>, <span class="at">hjust=</span><span class="dv">1</span>)) <span class="sc">+</span></span>
-<span id="cb37-7"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">'Age of household head'</span>, <span class="at">y=</span><span class="st">'Expected number of people in household'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb37-2"><a href="" aria-hidden="true" tabindex="-1"></a>fitpred<span class="ot">=</span> <span class="fu">add_predictions</span>(mygrid, <span class="at">model=</span>fit, <span class="at">type=</span><span class="st">"response"</span>)</span>
+<span id="cb37-3"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fitpred, <span class="fu">aes</span>(<span class="at">x=</span>aged,<span class="at">y=</span>pred,<span class="at">group=</span>roof, <span class="at">color=</span>roof)) <span class="sc">+</span> </span>
+<span id="cb37-4"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb37-5"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">90</span>, <span class="at">vjust =</span> <span class="fl">0.5</span>, <span class="at">hjust=</span><span class="dv">1</span>)) <span class="sc">+</span></span>
+<span id="cb37-6"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">'Age of household head'</span>, <span class="at">y=</span><span class="st">'Expected number of people in household'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -1056,14 +1054,13 @@ age2                 -0.0007034333 0.0000641942 -10.9578954 6.089915e-28</code><
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="" aria-hidden="true" tabindex="-1"></a>mygrid<span class="ot">=</span> <span class="fu">data_grid</span>(fHH, age, location, <span class="at">.model=</span>fit2)</span>
 <span id="cb38-2"><a href="" aria-hidden="true" tabindex="-1"></a>mygrid<span class="ot">=</span> <span class="fu">mutate</span>(mygrid, <span class="at">age2=</span> age<span class="sc">^</span><span class="dv">2</span>)</span>
-<span id="cb38-3"><a href="" aria-hidden="true" tabindex="-1"></a>fitpred<span class="ot">=</span> <span class="fu">add_predictions</span>(mygrid, <span class="at">model=</span>fit2)</span>
-<span id="cb38-4"><a href="" aria-hidden="true" tabindex="-1"></a>fitpred<span class="sc">$</span>predmean<span class="ot">=</span> <span class="fu">exp</span>(fitpred<span class="sc">$</span>pred)</span>
-<span id="cb38-5"><a href="" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-6"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fitpred, <span class="fu">aes</span>(<span class="at">x=</span>age,<span class="at">y=</span>predmean,<span class="at">group=</span>location,<span class="at">color=</span>location)) <span class="sc">+</span> </span>
-<span id="cb38-7"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
-<span id="cb38-8"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">90</span>, <span class="at">vjust =</span> <span class="fl">0.5</span>, <span class="at">hjust=</span><span class="dv">1</span>)) <span class="sc">+</span></span>
-<span id="cb38-9"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">'Age of household head'</span>, <span class="at">y=</span><span class="st">'Expected number of people in household'</span>) <span class="sc">+</span></span>
-<span id="cb38-10"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="dv">0</span>,<span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb38-3"><a href="" aria-hidden="true" tabindex="-1"></a>fitpred<span class="ot">=</span> <span class="fu">add_predictions</span>(mygrid, <span class="at">model=</span>fit2, <span class="at">type=</span><span class="st">"response"</span>)</span>
+<span id="cb38-4"><a href="" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-5"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fitpred, <span class="fu">aes</span>(<span class="at">x=</span>age, <span class="at">y=</span>pred, <span class="at">group=</span>location, <span class="at">color=</span>location)) <span class="sc">+</span> </span>
+<span id="cb38-6"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb38-7"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">90</span>, <span class="at">vjust =</span> <span class="fl">0.5</span>, <span class="at">hjust=</span><span class="dv">1</span>)) <span class="sc">+</span></span>
+<span id="cb38-8"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">'Age of household head'</span>, <span class="at">y=</span><span class="st">'Expected number of people in household'</span>) <span class="sc">+</span></span>
+<span id="cb38-9"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="dv">0</span>,<span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -1080,14 +1077,13 @@ age2                 -0.0007034333 0.0000641942 -10.9578954 6.089915e-28</code><
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="" aria-hidden="true" tabindex="-1"></a>mygrid<span class="ot">=</span> <span class="fu">data_grid</span>(fHH, age, roof, <span class="at">.model=</span>fit2)</span>
 <span id="cb39-2"><a href="" aria-hidden="true" tabindex="-1"></a>mygrid<span class="ot">=</span> <span class="fu">mutate</span>(mygrid, <span class="at">age2=</span> age<span class="sc">^</span><span class="dv">2</span>)</span>
-<span id="cb39-3"><a href="" aria-hidden="true" tabindex="-1"></a>fitpred<span class="ot">=</span> <span class="fu">add_predictions</span>(mygrid, <span class="at">model=</span>fit2)</span>
-<span id="cb39-4"><a href="" aria-hidden="true" tabindex="-1"></a>fitpred<span class="sc">$</span>predmean<span class="ot">=</span> <span class="fu">exp</span>(fitpred<span class="sc">$</span>pred)</span>
-<span id="cb39-5"><a href="" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-6"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fitpred, <span class="fu">aes</span>(<span class="at">x=</span>age,<span class="at">y=</span>predmean,<span class="at">group=</span>roof,<span class="at">color=</span>roof)) <span class="sc">+</span> </span>
-<span id="cb39-7"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
-<span id="cb39-8"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">90</span>, <span class="at">vjust =</span> <span class="fl">0.5</span>, <span class="at">hjust=</span><span class="dv">1</span>)) <span class="sc">+</span></span>
-<span id="cb39-9"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">'Age of household head'</span>, <span class="at">y=</span><span class="st">'Expected number of people in household'</span>) <span class="sc">+</span></span>
-<span id="cb39-10"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="dv">0</span>,<span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb39-3"><a href="" aria-hidden="true" tabindex="-1"></a>fitpred<span class="ot">=</span> <span class="fu">add_predictions</span>(mygrid, <span class="at">model=</span>fit2, <span class="at">type=</span><span class="st">"response"</span>)</span>
+<span id="cb39-4"><a href="" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-5"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fitpred, <span class="fu">aes</span>(<span class="at">x=</span>age, <span class="at">y=</span>pred, <span class="at">group=</span>roof, <span class="at">color=</span>roof)) <span class="sc">+</span> </span>
+<span id="cb39-6"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb39-7"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">90</span>, <span class="at">vjust =</span> <span class="fl">0.5</span>, <span class="at">hjust=</span><span class="dv">1</span>)) <span class="sc">+</span></span>
+<span id="cb39-8"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">'Age of household head'</span>, <span class="at">y=</span><span class="st">'Expected number of people in household'</span>) <span class="sc">+</span></span>
+<span id="cb39-9"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="dv">0</span>,<span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -1135,7 +1131,9 @@ e_i= \frac{y_i - \hat{\mu}_i}{\sqrt{\hat{V}(y_i)}}
 <h2>Example</h2>
 <p>Take the household occupancy data with a quadratic age effect</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="" aria-hidden="true" tabindex="-1"></a>fHHres<span class="ot">=</span> <span class="fu">mutate</span>(fHH, <span class="at">pred=</span> <span class="fu">predict</span>(fit2), <span class="at">resdev=</span> <span class="fu">residuals</span>(fit2, <span class="at">type=</span><span class="st">'deviance'</span>), <span class="at">respearson=</span> <span class="fu">residuals</span>(fit2, <span class="at">type=</span><span class="st">'pearson'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="" aria-hidden="true" tabindex="-1"></a>fHHres<span class="ot">=</span> <span class="fu">mutate</span>(fHH, <span class="at">pred=</span> <span class="fu">predict</span>(fit2), </span>
+<span id="cb41-2"><a href="" aria-hidden="true" tabindex="-1"></a>                    <span class="at">resdev=</span> <span class="fu">residuals</span>(fit2, <span class="at">type=</span><span class="st">'deviance'</span>), </span>
+<span id="cb41-3"><a href="" aria-hidden="true" tabindex="-1"></a>                    <span class="at">respearson=</span> <span class="fu">residuals</span>(fit2, <span class="at">type=</span><span class="st">'pearson'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="panel-tabset">
 <ul id="tabset-6" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-6-1">Deviance res.</a></li><li><a href="#tabset-6-2">Pearson res.</a></li><li><a href="#tabset-6-3">Constant variance</a></li></ul>
@@ -1207,7 +1205,7 @@ e_i= \frac{y_i - \hat{y}_i}{\sqrt{\hat{V}(y_i)}}
 <p>If the assumed <span class="math inline">\(V(y_i \mid x_i)\)</span> is correct, the variance of Pearson residuals</p>
 <ul>
 <li><p>Should be <span class="math inline">\(\approx 1\)</span></p></li>
-<li><p>Should be constant as <span class="math inline">\(\hat{y}_i\)</span> varies</p></li>
+<li><p>Should be constant as <span class="math inline">\(\hat{y}_i\)</span> varies (and as any individual covariate varies)</p></li>
 </ul>
 </section>
 <section id="over-dispersion-1" class="slide level2">
@@ -1369,7 +1367,6 @@ age2                   -0.001    -0.001   -0.001    -0.001 -0.001  -0.001</code>
 <li><p><code>enroll1000</code>: number of students enrolled at the school (thousands)</p></li>
 <li><p><code>region</code>: region of the USA (C = Central, MW = Midwest, NE = Northeast, SE = Southeast, SW = Southwest, and W = West)</p></li>
 </ul>
-<p>Turn in an html with your solution at Aula Global Name your file firstname_lastname.html</p>
 </section>
 <section class="slide level2">
 

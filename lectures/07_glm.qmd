@@ -490,9 +490,8 @@ summary(fit2)$coef
 ```{r}
 #| code-fold: true
 mygrid= data_grid(fHH, aged, location, .model=fit)
-fitpred= add_predictions(mygrid, model=fit)
-fitpred$predmean= exp(fitpred$pred)
-ggplot(fitpred, aes(x=aged,y=predmean,group=location, color=location)) + 
+fitpred= add_predictions(mygrid, model=fit, type='response')
+ggplot(fitpred, aes(x=aged,y=pred,group=location, color=location)) + 
   geom_point() +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
   labs(x='Age of household head', y='Expected number of people in household')
@@ -504,9 +503,8 @@ ggplot(fitpred, aes(x=aged,y=predmean,group=location, color=location)) +
 ```{r}
 #| code-fold: true
 mygrid= data_grid(fHH, aged, roof, .model=fit)
-fitpred= add_predictions(mygrid, model=fit)
-fitpred$predmean= exp(fitpred$pred)
-ggplot(fitpred, aes(x=aged,y=predmean,group=roof, color=roof)) + 
+fitpred= add_predictions(mygrid, model=fit, type="response")
+ggplot(fitpred, aes(x=aged,y=pred,group=roof, color=roof)) + 
   geom_point() +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
   labs(x='Age of household head', y='Expected number of people in household')
@@ -518,10 +516,9 @@ ggplot(fitpred, aes(x=aged,y=predmean,group=roof, color=roof)) +
 #| code-fold: true
 mygrid= data_grid(fHH, age, location, .model=fit2)
 mygrid= mutate(mygrid, age2= age^2)
-fitpred= add_predictions(mygrid, model=fit2)
-fitpred$predmean= exp(fitpred$pred)
+fitpred= add_predictions(mygrid, model=fit2, type="response")
 
-ggplot(fitpred, aes(x=age,y=predmean,group=location,color=location)) + 
+ggplot(fitpred, aes(x=age, y=pred, group=location, color=location)) + 
   geom_line() +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
   labs(x='Age of household head', y='Expected number of people in household') +
@@ -534,10 +531,9 @@ ggplot(fitpred, aes(x=age,y=predmean,group=location,color=location)) +
 #| code-fold: true
 mygrid= data_grid(fHH, age, roof, .model=fit2)
 mygrid= mutate(mygrid, age2= age^2)
-fitpred= add_predictions(mygrid, model=fit2)
-fitpred$predmean= exp(fitpred$pred)
+fitpred= add_predictions(mygrid, model=fit2, type="response")
 
-ggplot(fitpred, aes(x=age,y=predmean,group=roof,color=roof)) + 
+ggplot(fitpred, aes(x=age, y=pred, group=roof, color=roof)) + 
   geom_line() +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
   labs(x='Age of household head', y='Expected number of people in household') +
@@ -572,12 +568,14 @@ anova(fit2, fit3, test="Chisq")
 fHHint= mutate(fHH, strong= (roof=='Strong Material')) |>
   mutate(agestrong= age*strong, age2strong= age2*strong)
 fit4= glm(total ~ strong + age + age2 + agestrong + age2strong, data=fHHint, family=poisson())
+fit5= glm(total ~ strong + age + age2, data=fHHint, family=poisson())
+#anova(fit4,fit5) #statistical significance of interaction
 
 mygrid= data_grid(fHHint, strong, age)
 mygrid= mutate(mygrid, age2= age^2, agestrong= age*strong, age2strong= age^2 * strong)
-mygrid= add_predictions(mygrid, model=fit4) %>% mutate(predmean= exp(pred))
+mygrid= add_predictions(mygrid, model=fit4, type="response")
 
-ggplot(mygrid, aes(x=age,y=predmean,group=strong,color=strong)) + 
+ggplot(mygrid, aes(x=age, y=pred, group=strong, color=strong)) + 
   geom_line() +
   labs(x='Age of household head', y='Expected number of people in household', color="Strong roof") +
   ylim(0,5)
@@ -609,7 +607,9 @@ Pearson/deviance residuals are used like residuals in ordinary linear regression
 Take the household occupancy data with a quadratic age effect
 
 ```{r}
-fHHres= mutate(fHH, pred= predict(fit2), resdev= residuals(fit2, type='deviance'), respearson= residuals(fit2, type='pearson'))
+fHHres= mutate(fHH, pred= predict(fit2), 
+                    resdev= residuals(fit2, type='deviance'), 
+                    respearson= residuals(fit2, type='pearson'))
 ```
 
 :::panel-tabset
@@ -664,7 +664,7 @@ If the assumed $V(y_i \mid x_i)$ is correct, the variance of Pearson residuals
 
 - Should be $\approx 1$
 
-- Should be constant as $\hat{y}_i$ varies
+- Should be constant as $\hat{y}_i$ varies (and as any individual covariate varies)
 
 
 ## Over-dispersion
@@ -756,8 +756,6 @@ Dataset `campuscrime.txt` from the [Beyond MLR book](https://bookdown.org/roback
 
 - `region`: region of the USA (C = Central, MW = Midwest, NE = Northeast, SE = Southeast, SW = Southwest, and W = West)
 
-Turn in an html with your solution at Aula Global
-Name your file firstname_lastname.html
 
 ---
 
