@@ -38,14 +38,27 @@
 
 
 
-# coefSummary: summarize the estimated coefficients of a lm/glm object
-# Input
-# - lmfit: fitted model of class 'lm' or 'glm'
-# - level: confidence level for the confidence intervals
-# - digits: number of digits to report for estimated coefficients (P-values always reported to 5 digits)
-# - transform: optional argument. If specified, it should be a function that will be applied to the estimated parameters. 
-#   For example, set transform= function(x) exp(x) to return exp(coef(lmfit))
-# Output: tibble with one row per coefficient, indicating its point estimate, confidence interval and P-value
+
+
+#' Summarize the estimated coefficients of a lm/glm object
+#'
+#' @param fitted Fitted model, an object of class 'lm' or 'glm' 
+#' @param level Confidence level for the confidence intervals
+#' @param digits Number of digits to report for estimated coefficients (P-values always reported to 5 digits)
+#' @param transform Optional argument. If specified, it should be a function that will be applied to the estimated parameters. For example, set transform= function(x) exp(x) to return exp(coef(lmfit))
+#'
+#' @returns Tibble with one row per coefficient, indicating its point estimate, confidence interval and P-value
+#' @export
+#'
+#' @examples
+#' x= rnorm(100)
+#' y= rnorm(100, 5 + 10*x)
+#' fit= lm(y ~ x)
+#' coefSummary(fit)
+#' 
+#' y2= rpois(100, 5 + 10*x)
+#' fit2= glm(y2 ~ x, family=poisson())
+#' coefSummary(fit2, transform= exp) #Inference for exp(coef(fit2))
 coefSummary= function(lmfit, level=0.95, digits=3, transform) {
   require(tidyverse)
   if (!inherits(lmfit, "lm")) stop('lmfit must be of class lm')
@@ -70,13 +83,16 @@ coefSummary= function(lmfit, level=0.95, digits=3, transform) {
 # PERMUTATION TESTS
 ###########################################################################################
 
-#Residual permutation test for a single variable in linear regression
-#Input
-# - y: outcome
-# - x1: covariate of interest
-# - x2: other covariates (excluding the intercept)
-# - B: number of residual permutations to consider
-# Output: estimated coefficients for x1 in the B permutations
+#' Residual permutation test for a single variable in linear regression
+#'
+#' @param y Outcome
+#' @param x1 Covariate of interest
+#' @param x2 Other covariates
+#' @param B Number of residual permutations to perform
+#'
+#' @returns Estimated coefficients for x1 in the B permutations
+#'
+#' @examples
 lmResPerm.onevar= function(y, x1, x2, B=5000) {
   if (!is.matrix(x2)) x2= as.matrix(x2)
   fit= lm(x1 ~ x2)
@@ -92,15 +108,17 @@ lmResPerm.onevar= function(y, x1, x2, B=5000) {
   return(bperm)  
 }
 
-
-#Residual permutation test for all variables in linear regression
-#Input
-# - y: outcome
-# - x: covariates (excluding the intercept)
-# - B: number of residual permutations
-#Output: a list with two elements
-# - bperm: matrix with B rows and ncol(x) columns. Column j contains the permuted least-squares estimates for covariate j
-# - pvalue: a vector with ncol(x) entries with the permutation-based P-value for each covariate
+#' Residual permutation test for all variables in linear regression
+#'
+#' @param y Outcome
+#' @param x Covariates (excluding the intercept)
+#' @param B Number of residual permutations to perform
+#'
+#' @returns A list with two elements. 
+#'
+#' - bperm: matrix with B rows and ncol(x) columns. Column j contains the permuted least-squares estimates for covariate j
+#' - pvalue: a vector with ncol(x) entries with the permutation-based P-value for each covariate
+#' @examples
 lmResPerm= function(y, x, B=5000) {
   if (!is.matrix(x)) x= as.matrix(x)
   p= ncol(x)
@@ -200,14 +218,17 @@ fppoisreg= function(beta, ytX, Xbeta, X, colsumX, XtX) {
 ## BOOTSTRAP FOR GLMs
 ###########################################################################################
 
-#Bootstrap confidence intervals for a GLM
-# Input
-# - data: dataset
-# - formula: GLM formula of the type formula(y ~ x)
-# - family: GLM family
-# - level: confidence level
-# - R: number of bootstrap samples
-# Output: a tibble with a confidence interval for each regression parameter
+#' Bootstrap confidence intervals for a GLM
+#'
+#' @param data Dataset
+#' @param formula GLM formula of the type formula(y ~ x)
+#' @param family GLM family, e.g. poisson() for Poisson regression
+#' @param level Confidence level for confidence intervals
+#' @param R Number of booxtrap samples
+#'
+#' @returns A tibble with a confidence interval for each regression parameter
+#'
+#' @examples
 bootGLM= function(data, formula, family, level=0.95, R=2000) {
   require(tidyverse)
   require(boot)
@@ -217,25 +238,28 @@ bootGLM= function(data, formula, family, level=0.95, R=2000) {
   return(ans)
 }
 
-#Obtain MLE under a GLM
-# Input
-# - data: dataset
-# - indices: MLE is obtained for data[indices,]
-# - formula: GLM formula of the type formula(y ~ x)
-# - family: GLM family
-# Output: MLE
+#' Obtain MLE under a GLM
+#'
+#' @param data Dataset
+#' @param indices Subset of the data to be used to obtain the MLE, i.e. the MLE is obtained for data[indices,]
+#' @param formula GLM formula of the type formula(y ~ x)
+#' @param family  GLM family, e.g. family=poisson() for Poisson regression
+#'
+#' @returns MLE
 mleGLM= function(data, indices=1:nrow(data), formula, family) {
   if (missing(family)) stop("family must be specified")
   fit= glm(formula, data=data[indices,], family=family)
   return(coef(fit))
 }
 
-#Extract confidence intervals from object returned by "boot"
-# Input
-# - fit: object returned by glm, containing the MLE for the original observed data
-# - bootfit: object returned by "boot"
-# - level: confidence level
-# Output: a tibble with a confidence interval for each regression parameter
+#' Extract confidence intervals from object returned by "boot"
+#'
+#' @param fit Object returned by glm, containing the MLE for the original observed data
+#' @param bootfit Object returned by "boot"
+#' @param level Confidence level for confidence intervals
+#'
+#' @returns A tibble with a confidence interval for each regression parameter
+#' @examples
 bootCI= function(fit, bootfit, level=0.95) {
   bhat= coef(fit)
   probs= c((1-level)/2, 1 - (1-level)/2)
@@ -245,13 +269,17 @@ bootCI= function(fit, bootfit, level=0.95) {
 }
 
 
-# BOOTSTRAP PARAMETRIC TEST FOR NESTED RANDOM EFFECTS MODELS
-# Input
-# - modelA: larger model, fitted by lmer
-# - model0: null model, i.e. maller model nested within modelA, fitted by lmer
-# - B: number of boostrap samples
-# Output: likelihood ratio test, with Bootstrap-based P-value
-# NOTE: Adapted from https://github.com/proback/BeyondMLR
+# NOTE: bootstrapAnova was adapted from https://github.com/proback/BeyondMLR
+
+#' Boostrap parametric test for nested random effects models
+#'
+#' @param modelA Larger model fitted by lmer
+#' @param model0 Null model fitted by lmer, i.e. smaller model nested within modelA
+#' @param B Number of boostrap samples
+#'
+#' @returns Likelihood ratio test, with Bootstrap-based P-value
+#'
+#' @examples
 bootstrapAnova = function(modelA, model0, B=1000){
   require(lme4)
   oneBootstrap = function(model0, modelA){ #LRT test statistic for 1 simulated dataset
@@ -276,22 +304,26 @@ bootstrapAnova = function(modelA, model0, B=1000){
 ## LOSS FUNCTIONS FOR CROSS-VALIDATION
 ###########################################################################################
 
-# cost_loglik_logistic: logistic regression log-likelihood loss
-# Input
-# - yobs: observed class (must be binary)
-# - ypred: predicted probability for yobs=1
-# Output: logistic regression logistic regression log-likelihood
+#' Log-likelihood loss for logistic regression
+#'
+#' @param yobs Observed class (must be a binary vector)
+#' @param ypred Predicted probability for yobs=1
+#'
+#' @returns Logistic regression log-likelihood loss
+#' @examples
 cost_loglik_logistic= function(yobs, ypred) {
   loglik= dbinom(yobs, size=1, prob=ypred, log=TRUE)
   return(sum(-loglik))
 }
 
-# cost_misclass: proportion of miss-classified observations given predicted class probabilities
-# Input
-# - yobs: observed class (must be binary)
-# - ypred: predicted probability for yobs=1
-# - threshold: if ypred > threshold then yobs=1 is predicted, else yobs=0 is predicted
 # Output: proportion of miss-classified observations in yobs
+#' Proportion of miss-classified observations with estimated class probabilities
+#'
+#' @param yobs Observed class (must be a binary vector)
+#' @param ypred Estimated probability for yobs=1
+#' @param threshold  If ypred > threshold then yobs=1 is predicted, else yobs=0 is predicted
+#'
+#' @returns Proportion of miss-classified observations in yobs
 cost_misclass= function(yobs, ypred, threshold=0.5) {
   err1= (ypred > threshold) & (yobs==0)
   err2= (ypred < threshold) & (yobs==1)
