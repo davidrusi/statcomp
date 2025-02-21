@@ -651,21 +651,6 @@ cost_loglik_logistic
 
 
 
-## Exercise. Spam filter
-
-To further compare models `fit1` and `fit3`
-
-1. Test the null hypothesis $H_0$ that all parameters added by `fit3` are truly 0. Do you reject $H_0$?
-
-2. Suppose you classify as spam whenever $\hat{\pi}_i > 0.15$. Use `cv.glm` to obtain a cross-validated estimate of the proportion of miss-classifications by `fit1` and `fit3`. Which of the 2 models is best?
-
-Hint: you need to re-define `cost_misclass` to use a threshold of 0.15
-
-3. Use `cv.glm` to compare `fit1` and `fit3` according to the log-likelihood loss. Which is best?
-
-Hint: pass our `cost_loglik_logistic` to `cv.glm`
-
-
 
 
 
@@ -851,7 +836,7 @@ Initialize $\gamma_1^{(0)}=0, \gamma_2^{(0)}=0$ (for example)
 Set $\gamma_j=1$ with probability
 
 $$
-\frac{e^{-\mbox{BIC}_1}}{e^{-\mbox{BIC}_0} + e^{-\mbox{BIC}_1}}
+\frac{e^{-\mbox{BIC}_1/2}}{e^{-\mbox{BIC}_0/2} + e^{-\mbox{BIC}_1/2}}
 $$
 where BIC$_1$ is the BIC for the model with $\gamma_j=1$, BIC$_0$ that for $\gamma_j=0$
 
@@ -906,7 +891,26 @@ unique(fit$models) |>
 ```
 
 
-# Exercise
+# Exercise 1 (to turn in)
+
+Spam data. Consider models `fit1` and `fit3`
+
+```{r, warning=FALSE}
+library(openintro) #contains email dataset
+fit1= glm(spam ~ to_multiple + cc + sent_email, data=email, family=binomial())
+fit3= glm(spam ~ to_multiple + cc + sent_email + image + attach + dollar + winner, data=email, family=binomial())
+```
+
+1. Test the null hypothesis $H_0$ that all parameters added by `fit3` are truly 0.
+
+2. Classify as spam whenever $\hat{\pi}_i > 0.15$. Use `cv.glm` to estimate the proportion of miss-classifications out-of-sample by `fit1` and `fit3`. Which model is best?
+Hint: re-define `cost_misclass` to use a threshold of 0.15
+
+3. Use `cv.glm` to compare `fit1` and `fit3` according to the log-likelihood loss. Which is best?
+Hint: pass our `cost_loglik_logistic` to `cv.glm`
+
+
+# Exercise 2 (to turn in)
 
 ---
 
@@ -935,12 +939,12 @@ beta= c(rep(0,5), rep(1,5))
 data= simdata.logreg(n=200, beta=beta, rho=0.5)
 ```
 
-1. Fit a logistic regression for `data$y` vs. `data$x`. What P-values are 0.05?
+1. Fit a logistic regression for `data$y` vs. `data$x`. What P-values are <0.05?
 
 2. Use `bestBIC` to get the model with best BIC. What covariates are selected?
 
 
-## Extended exercise
+## Exercise 2 extension (not to turn in)
 
 The code below repeats the simulation 100 times. 
 `selected[i,j]` is `TRUE` if covariate `j` in simulation `i` 

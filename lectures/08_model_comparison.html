@@ -404,7 +404,8 @@
 <li><a href="#/best-model-for-forecasting" id="/toc-best-model-for-forecasting">Best model for forecasting</a></li>
 <li><a href="#/best-model-for-explaining" id="/toc-best-model-for-explaining">Best model for explaining</a></li>
 <li><a href="#/too-many-models" id="/toc-too-many-models">Too many models</a></li>
-<li><a href="#/exercise" id="/toc-exercise">Exercise</a></li>
+<li><a href="#/exercise-1-to-turn-in" id="/toc-exercise-1-to-turn-in">Exercise 1 (to turn in)</a></li>
+<li><a href="#/exercise-2-to-turn-in" id="/toc-exercise-2-to-turn-in">Exercise 2 (to turn in)</a></li>
 </ul>
 </nav>
 </section>
@@ -934,11 +935,11 @@ y_i= \sin(2\pi x) + \epsilon_i \mbox{, where } \epsilon_i \sim N(0,0.2^2)
 <div class="cell">
 <div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">sqrt</span>(fit1cv<span class="sc">$</span>delta)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 43.59077 43.58718</code></pre>
+<pre><code>[1] 43.60450 43.60018</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">sqrt</span>(fit2cv<span class="sc">$</span>delta)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 42.70400 42.69606</code></pre>
+<pre><code>[1] 42.67668 42.67023</code></pre>
 </div>
 </div>
 </section>
@@ -1031,7 +1032,7 @@ y_i= \sin(2\pi x) + \epsilon_i \mbox{, where } \epsilon_i \sim N(0,0.2^2)
 <span id="cb49-8"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(loss,<span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>model 1 model 2 model 3 model 4 
- 0.0939  0.0936  0.0903  0.0933 </code></pre>
+ 0.0939  0.0939  0.0898  0.0936 </code></pre>
 </div>
 </div>
 </section>
@@ -1155,19 +1156,6 @@ y_i= \sin(2\pi x) + \epsilon_i \mbox{, where } \epsilon_i \sim N(0,0.2^2)
 }</code></pre>
 </div>
 </div>
-</section>
-<section id="exercise.-spam-filter" class="slide level2 scrollable">
-<h2>Exercise. Spam filter</h2>
-<p>To further compare models <code>fit1</code> and <code>fit3</code></p>
-<ol type="1">
-<li><p>Test the null hypothesis <span class="math inline">\(H_0\)</span> that all parameters added by <code>fit3</code> are truly 0. Do you reject <span class="math inline">\(H_0\)</span>?</p></li>
-<li><p>Suppose you classify as spam whenever <span class="math inline">\(\hat{\pi}_i &gt; 0.15\)</span>. Use <code>cv.glm</code> to obtain a cross-validated estimate of the proportion of miss-classifications by <code>fit1</code> and <code>fit3</code>. Which of the 2 models is best?</p></li>
-</ol>
-<p>Hint: you need to re-define <code>cost_misclass</code> to use a threshold of 0.15</p>
-<ol start="3" type="1">
-<li>Use <code>cv.glm</code> to compare <code>fit1</code> and <code>fit3</code> according to the log-likelihood loss. Which is best?</li>
-</ol>
-<p>Hint: pass our <code>cost_loglik_logistic</code> to <code>cv.glm</code></p>
 </section></section>
 <section>
 <section id="best-model-for-explaining" class="title-slide slide level1 center">
@@ -1424,7 +1412,7 @@ winneryes       1.72214658    1.1002982    2.33300066</code></pre>
 <p>Initialize <span class="math inline">\(\gamma_1^{(0)}=0, \gamma_2^{(0)}=0\)</span> (for example)</p>
 <p>Set <span class="math inline">\(\gamma_j=1\)</span> with probability</p>
 <p><span class="math display">\[
-\frac{e^{-\mbox{BIC}_1}}{e^{-\mbox{BIC}_0} + e^{-\mbox{BIC}_1}}
+\frac{e^{-\mbox{BIC}_1/2}}{e^{-\mbox{BIC}_0/2} + e^{-\mbox{BIC}_1/2}}
 \]</span> where BIC<span class="math inline">\(_1\)</span> is the BIC for the model with <span class="math inline">\(\gamma_j=1\)</span>, BIC<span class="math inline">\(_0\)</span> that for <span class="math inline">\(\gamma_j=0\)</span></p>
 </section>
 <section id="example-4" class="slide level2">
@@ -1515,51 +1503,66 @@ Use coef(object$msfit) and predict(object$msfit) to get BMA estimates and predic
 </div>
 </div>
 </section></section>
+<section id="exercise-1-to-turn-in" class="title-slide slide level1 center scrollable">
+<h1>Exercise 1 (to turn in)</h1>
+<p>Spam data. Consider models <code>fit1</code> and <code>fit3</code></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb86"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb86-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(openintro) <span class="co">#contains email dataset</span></span>
+<span id="cb86-2"><a href="" aria-hidden="true" tabindex="-1"></a>fit1<span class="ot">=</span> <span class="fu">glm</span>(spam <span class="sc">~</span> to_multiple <span class="sc">+</span> cc <span class="sc">+</span> sent_email, <span class="at">data=</span>email, <span class="at">family=</span><span class="fu">binomial</span>())</span>
+<span id="cb86-3"><a href="" aria-hidden="true" tabindex="-1"></a>fit3<span class="ot">=</span> <span class="fu">glm</span>(spam <span class="sc">~</span> to_multiple <span class="sc">+</span> cc <span class="sc">+</span> sent_email <span class="sc">+</span> image <span class="sc">+</span> attach <span class="sc">+</span> dollar <span class="sc">+</span> winner, <span class="at">data=</span>email, <span class="at">family=</span><span class="fu">binomial</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ol type="1">
+<li><p>Test the null hypothesis <span class="math inline">\(H_0\)</span> that all parameters added by <code>fit3</code> are truly 0.</p></li>
+<li><p>Classify as spam whenever <span class="math inline">\(\hat{\pi}_i &gt; 0.15\)</span>. Use <code>cv.glm</code> to estimate the proportion of miss-classifications out-of-sample by <code>fit1</code> and <code>fit3</code>. Which model is best? Hint: re-define <code>cost_misclass</code> to use a threshold of 0.15</p></li>
+<li><p>Use <code>cv.glm</code> to compare <code>fit1</code> and <code>fit3</code> according to the log-likelihood loss. Which is best? Hint: pass our <code>cost_loglik_logistic</code> to <code>cv.glm</code></p></li>
+</ol>
+</section>
+
 <section>
-<section id="exercise" class="title-slide slide level1 center">
-<h1>Exercise</h1>
+<section id="exercise-2-to-turn-in" class="title-slide slide level1 center">
+<h1>Exercise 2 (to turn in)</h1>
 
 </section>
 <section class="slide level2 scrollable">
 
 <p>Simulate logistic regression data with <span class="math inline">\(n=200\)</span>, <span class="math inline">\(p=10\)</span>, where truly only covariates 1-5 have an effect. Covariates are Gaussian, zero mean, pairwise correlations <code>rho</code></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb86"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb86-1"><a href="" aria-hidden="true" tabindex="-1"></a>simdata.logreg<span class="ot">=</span> <span class="cf">function</span>(n, beta, <span class="at">rho=</span><span class="fl">0.5</span>) {</span>
-<span id="cb86-2"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">require</span>(mvtnorm)</span>
-<span id="cb86-3"><a href="" aria-hidden="true" tabindex="-1"></a>  p<span class="ot">=</span> <span class="fu">length</span>(beta)</span>
-<span id="cb86-4"><a href="" aria-hidden="true" tabindex="-1"></a>  sigma<span class="ot">=</span> <span class="fu">diag</span>(p)</span>
-<span id="cb86-5"><a href="" aria-hidden="true" tabindex="-1"></a>  sigma[<span class="fu">upper.tri</span>(sigma)]<span class="ot">=</span> sigma[<span class="fu">lower.tri</span>(sigma)]<span class="ot">=</span> rho</span>
-<span id="cb86-6"><a href="" aria-hidden="true" tabindex="-1"></a>  x<span class="ot">=</span> <span class="fu">rmvnorm</span>(n, <span class="at">sigma=</span>sigma)</span>
-<span id="cb86-7"><a href="" aria-hidden="true" tabindex="-1"></a>  beta<span class="ot">=</span> <span class="fu">matrix</span>(beta, <span class="at">ncol=</span><span class="dv">1</span>)</span>
-<span id="cb86-8"><a href="" aria-hidden="true" tabindex="-1"></a>  prob<span class="ot">=</span> <span class="dv">1</span><span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(<span class="sc">-</span>x <span class="sc">%*%</span> beta))</span>
-<span id="cb86-9"><a href="" aria-hidden="true" tabindex="-1"></a>  y<span class="ot">=</span> <span class="fu">rbinom</span>(<span class="at">n=</span>n, <span class="at">size=</span><span class="dv">1</span>, <span class="at">prob=</span>prob)</span>
-<span id="cb86-10"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">list</span>(<span class="at">y=</span>y, <span class="at">x=</span>x))</span>
-<span id="cb86-11"><a href="" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb87"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb87-1"><a href="" aria-hidden="true" tabindex="-1"></a>simdata.logreg<span class="ot">=</span> <span class="cf">function</span>(n, beta, <span class="at">rho=</span><span class="fl">0.5</span>) {</span>
+<span id="cb87-2"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">require</span>(mvtnorm)</span>
+<span id="cb87-3"><a href="" aria-hidden="true" tabindex="-1"></a>  p<span class="ot">=</span> <span class="fu">length</span>(beta)</span>
+<span id="cb87-4"><a href="" aria-hidden="true" tabindex="-1"></a>  sigma<span class="ot">=</span> <span class="fu">diag</span>(p)</span>
+<span id="cb87-5"><a href="" aria-hidden="true" tabindex="-1"></a>  sigma[<span class="fu">upper.tri</span>(sigma)]<span class="ot">=</span> sigma[<span class="fu">lower.tri</span>(sigma)]<span class="ot">=</span> rho</span>
+<span id="cb87-6"><a href="" aria-hidden="true" tabindex="-1"></a>  x<span class="ot">=</span> <span class="fu">rmvnorm</span>(n, <span class="at">sigma=</span>sigma)</span>
+<span id="cb87-7"><a href="" aria-hidden="true" tabindex="-1"></a>  beta<span class="ot">=</span> <span class="fu">matrix</span>(beta, <span class="at">ncol=</span><span class="dv">1</span>)</span>
+<span id="cb87-8"><a href="" aria-hidden="true" tabindex="-1"></a>  prob<span class="ot">=</span> <span class="dv">1</span><span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(<span class="sc">-</span>x <span class="sc">%*%</span> beta))</span>
+<span id="cb87-9"><a href="" aria-hidden="true" tabindex="-1"></a>  y<span class="ot">=</span> <span class="fu">rbinom</span>(<span class="at">n=</span>n, <span class="at">size=</span><span class="dv">1</span>, <span class="at">prob=</span>prob)</span>
+<span id="cb87-10"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">list</span>(<span class="at">y=</span>y, <span class="at">x=</span>x))</span>
+<span id="cb87-11"><a href="" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Simulate data</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb87"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb87-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>) <span class="co">#set random number generator seed, so you can reproduce my results</span></span>
-<span id="cb87-2"><a href="" aria-hidden="true" tabindex="-1"></a>beta<span class="ot">=</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="dv">0</span>,<span class="dv">5</span>), <span class="fu">rep</span>(<span class="dv">1</span>,<span class="dv">5</span>))</span>
-<span id="cb87-3"><a href="" aria-hidden="true" tabindex="-1"></a>data<span class="ot">=</span> <span class="fu">simdata.logreg</span>(<span class="at">n=</span><span class="dv">200</span>, <span class="at">beta=</span>beta, <span class="at">rho=</span><span class="fl">0.5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb88"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb88-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>) <span class="co">#set random number generator seed, so you can reproduce my results</span></span>
+<span id="cb88-2"><a href="" aria-hidden="true" tabindex="-1"></a>beta<span class="ot">=</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="dv">0</span>,<span class="dv">5</span>), <span class="fu">rep</span>(<span class="dv">1</span>,<span class="dv">5</span>))</span>
+<span id="cb88-3"><a href="" aria-hidden="true" tabindex="-1"></a>data<span class="ot">=</span> <span class="fu">simdata.logreg</span>(<span class="at">n=</span><span class="dv">200</span>, <span class="at">beta=</span>beta, <span class="at">rho=</span><span class="fl">0.5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <ol type="1">
-<li><p>Fit a logistic regression for <code>data$y</code> vs.&nbsp;<code>data$x</code>. What P-values are 0.05?</p></li>
+<li><p>Fit a logistic regression for <code>data$y</code> vs.&nbsp;<code>data$x</code>. What P-values are &lt;0.05?</p></li>
 <li><p>Use <code>bestBIC</code> to get the model with best BIC. What covariates are selected?</p></li>
 </ol>
 </section>
-<section id="extended-exercise" class="slide level2">
-<h2>Extended exercise</h2>
+<section id="exercise-2-extension-not-to-turn-in" class="slide level2">
+<h2>Exercise 2 extension (not to turn in)</h2>
 <p>The code below repeats the simulation 100 times. <code>selected[i,j]</code> is <code>TRUE</code> if covariate <code>j</code> in simulation <code>i</code></p>
 <p>In what % of the simulations was each variable selected?</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb88"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb88-1"><a href="" aria-hidden="true" tabindex="-1"></a>nsim<span class="ot">=</span> <span class="dv">100</span></span>
-<span id="cb88-2"><a href="" aria-hidden="true" tabindex="-1"></a>selected<span class="ot">=</span> <span class="fu">matrix</span>(<span class="cn">NA</span>, <span class="at">nrow=</span>nsim, <span class="at">ncol=</span><span class="fu">length</span>(beta))</span>
-<span id="cb88-3"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(selected)<span class="ot">=</span> <span class="fu">paste</span>(<span class="st">'x'</span>,<span class="dv">1</span><span class="sc">:</span><span class="fu">ncol</span>(selected),<span class="at">sep=</span><span class="st">''</span>)</span>
-<span id="cb88-4"><a href="" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>nsim) {</span>
-<span id="cb88-5"><a href="" aria-hidden="true" tabindex="-1"></a>  data<span class="ot">=</span> <span class="fu">simdata.logreg</span>(<span class="at">n=</span><span class="dv">200</span>, <span class="at">beta=</span>beta, <span class="at">rho=</span><span class="fl">0.5</span>)</span>
-<span id="cb88-6"><a href="" aria-hidden="true" tabindex="-1"></a>  fit<span class="ot">=</span> <span class="fu">bestBIC</span>(data<span class="sc">$</span>y, data<span class="sc">$</span>x, <span class="at">family=</span><span class="st">'binomial'</span>, <span class="at">verbose=</span><span class="cn">FALSE</span>)</span>
-<span id="cb88-7"><a href="" aria-hidden="true" tabindex="-1"></a>  selected[i,]<span class="ot">=</span> fit<span class="sc">$</span>varnames <span class="sc">%in%</span> fit<span class="sc">$</span>topmodel</span>
-<span id="cb88-8"><a href="" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb89"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb89-1"><a href="" aria-hidden="true" tabindex="-1"></a>nsim<span class="ot">=</span> <span class="dv">100</span></span>
+<span id="cb89-2"><a href="" aria-hidden="true" tabindex="-1"></a>selected<span class="ot">=</span> <span class="fu">matrix</span>(<span class="cn">NA</span>, <span class="at">nrow=</span>nsim, <span class="at">ncol=</span><span class="fu">length</span>(beta))</span>
+<span id="cb89-3"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(selected)<span class="ot">=</span> <span class="fu">paste</span>(<span class="st">'x'</span>,<span class="dv">1</span><span class="sc">:</span><span class="fu">ncol</span>(selected),<span class="at">sep=</span><span class="st">''</span>)</span>
+<span id="cb89-4"><a href="" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>nsim) {</span>
+<span id="cb89-5"><a href="" aria-hidden="true" tabindex="-1"></a>  data<span class="ot">=</span> <span class="fu">simdata.logreg</span>(<span class="at">n=</span><span class="dv">200</span>, <span class="at">beta=</span>beta, <span class="at">rho=</span><span class="fl">0.5</span>)</span>
+<span id="cb89-6"><a href="" aria-hidden="true" tabindex="-1"></a>  fit<span class="ot">=</span> <span class="fu">bestBIC</span>(data<span class="sc">$</span>y, data<span class="sc">$</span>x, <span class="at">family=</span><span class="st">'binomial'</span>, <span class="at">verbose=</span><span class="cn">FALSE</span>)</span>
+<span id="cb89-7"><a href="" aria-hidden="true" tabindex="-1"></a>  selected[i,]<span class="ot">=</span> fit<span class="sc">$</span>varnames <span class="sc">%in%</span> fit<span class="sc">$</span>topmodel</span>
+<span id="cb89-8"><a href="" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Repeat the exercise, now with <span class="math inline">\(n=500\)</span>. In what % of the simulations was each variable selected?</p>
 <div class="quarto-auto-generated-content">
