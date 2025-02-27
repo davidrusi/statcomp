@@ -31,7 +31,6 @@ library(keras)
 library(mlbench)
 library(mgcv)
 library(tensorflow)
-library(reshape2)
 library(caret)
 library(randomForest)
 library(randomForestExplainer)
@@ -41,8 +40,6 @@ library(plotROC)
 #install_tensorflow()  #run this the first time you use tensorflow
 source("../code/routines.R")
 ```
-
-We use `dplyr::select` to avoid tidyverse's `select` (`dplyr` package) to be confused with `select` defined in other packages
 
 ## Non-linear models
 
@@ -296,12 +293,12 @@ Convert to numeric, standardize covariates to mean 0 & variance 1 (important!), 
 
 ```{r}
 data("BreastCancer")  #package mlbench
-BreastCancer = BreastCancer[which(complete.cases(BreastCancer)==TRUE),] #exclude cases with missing values
-BreastCancer = mutate(BreastCancer, Class= ifelse(Class=='malignant',1,0)) |>
-  mutate_if(is.factor, as.numeric) |> #convert factors to numeric
-  dplyr::select(-Id)  #drop Id column
+BreastCancer = filter(BreastCancer, complete.cases(BreastCancer)) |> #exclude cases with missing values
+               mutate(Class= ifelse(Class=='malignant',1,0)) |>
+               mutate_if(is.factor, as.numeric) |> #convert factors to numeric
+               select(-Id)  #drop Id column
 
-covars= names(dplyr::select(BreastCancer, -Class))
+covars= names(select(BreastCancer, -Class))
 BreastCancer= mutate_at(BreastCancer, covars, scale) #standardize to mean 0, variance 1
 
 n= nrow(BreastCancer)
@@ -309,11 +306,11 @@ sel= sample(1:n, size=round(0.8*n), replace=FALSE)  #80% of data in training set
 train= BreastCancer[sel,]
 test= BreastCancer[-sel,]
 
-Xtrain= data.matrix(dplyr::select(train, -Class))
-ytrain= data.matrix(dplyr::select(train, Class))
+Xtrain= data.matrix(select(train, -Class))
+ytrain= data.matrix(select(train, Class))
 
-Xtest= data.matrix(dplyr::select(test, -Class))
-ytest= data.matrix(dplyr::select(test, Class))
+Xtest= data.matrix(select(test, -Class))
+ytest= data.matrix(select(test, Class))
 
 ```
 
@@ -382,7 +379,7 @@ pred
 
 
 ```{r}
-predlong= melt(pred, id.vars="ypred")  #from package reshape2
+predlong= pivot_longer(pred, cols=-ypred,  names_to="variable")
 predlong
 ```
 
@@ -596,7 +593,7 @@ Code outcome as factor, gender as numeric, exclude age (many NA's, no marginal a
 ```{r, message=FALSE}
 data= read.table('../datasets/titanic.csv',sep=',',header=TRUE)
 data= transform(data, Survived= factor(data$Survived), female= ifelse(Sex=='female', 1, 0)) |>
-  dplyr::select(-Age)  #use dplyr::select over select, other packages also define a select function
+  select(-Age)
 ```
 
 Package `caret` offers unified interface for many methods
