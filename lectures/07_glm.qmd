@@ -372,7 +372,7 @@ Generalized linear models are an ample model family based on two components
 
 1. $p(y_i \mid x_i)$ belongs to the so-called exponential family (includes Normal, Binomial, Poisson...)
 
-2. Only its expectation $\mu_i$ depends on $x_i$, and does so via $x_i^T \beta$ (in a 1-to-1 fashion)
+2. Its expectation $\mu_i=E(y_i | x_i)$ depends on $x_i$ via $x_i^T \beta$ (in a 1-to-1 fashion), and the variance $V(y_i | x_i)$ depends on $x_i$ only via $\mu_i$
 
 
 **Example.** Logistic regression. $y_i \sim \mbox{Bern}(\mu_i)$

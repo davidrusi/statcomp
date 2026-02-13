@@ -638,7 +638,7 @@ e^{10 \hat{\beta}_1 + \hat{\beta}_2}= e^{-0.064 \times 10 - 2.97}= 0.027
 <p>Generalized linear models are an ample model family based on two components</p>
 <ol type="1">
 <li><p><span class="math inline">\(p(y_i \mid x_i)\)</span> belongs to the so-called exponential family (includes Normal, Binomial, Poisson…)</p></li>
-<li><p>Only its expectation <span class="math inline">\(\mu_i\)</span> depends on <span class="math inline">\(x_i\)</span>, and does so via <span class="math inline">\(x_i^T \beta\)</span> (in a 1-to-1 fashion)</p></li>
+<li><p>Its expectation <span class="math inline">\(\mu_i=E(y_i | x_i)\)</span> depends on <span class="math inline">\(x_i\)</span> via <span class="math inline">\(x_i^T \beta\)</span> (in a 1-to-1 fashion), and the variance <span class="math inline">\(V(y_i | x_i)\)</span> depends on <span class="math inline">\(x_i\)</span> only via <span class="math inline">\(\mu_i\)</span></p></li>
 </ol>
 <p><strong>Example.</strong> Logistic regression. <span class="math inline">\(y_i \sim \mbox{Bern}(\mu_i)\)</span> <span class="math display">\[
 \mu_i = E(y_i \mid x_i)= \frac{1}{1+e^{-x_i^T \beta}}
