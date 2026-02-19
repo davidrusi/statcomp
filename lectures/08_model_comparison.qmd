@@ -25,17 +25,17 @@ bibliography: references.bib
 
 Load required R packages
 
-```{r, warning=FALSE}
+```{r, warning=FALSE, message=FALSE}
 library(tidyverse)
 library(boot)
 library(brglm)
 library(coefplot)
-library(mombf)
+library(modelSelection)
 library(openintro)
 library(pROC)
 ```
 
-`mombf` requires `sparseMatrixStats`. Install it as follows
+`modelSelection` requires `sparseMatrixStats`. Install it as follows
 ```{r, eval=FALSE}
 library(BiocManager)
 BiocManager::install("sparseMatrixStats")
@@ -714,11 +714,11 @@ data.frame(models, bic, aic)
 
 ## Searching over models
 
-`bestBIC` in package `mombf` searches all possible models (if one can enumerate them)
+`bestBIC` in package `modelSelection` searches all possible models (if one can enumerate them)
 
 ```{r}
 email= transform(email, spam= as.numeric(as.character(spam))) #convert outcome to numeric 0/1 values
-fitall= bestBIC(spam ~ to_multiple+cc+sent_email+image+attach+dollar+winner, data=email, family="binomial")
+fitall= bestBIC(spam ~ to_multiple+cc+sent_email+image+attach+dollar+winner, data=email, family="binomial", verbose=FALSE)
 fitall
 ```
 
@@ -865,7 +865,7 @@ y= x %*% beta + rnorm(n)
 `bestBIC` uses MCMC to explore the models when $p$ is large
 
 ```{r}
-fit= bestBIC(y, x)
+fit= bestBIC(y, x, verbose=FALSE)
 fit
 ```
 
