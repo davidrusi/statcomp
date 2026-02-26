@@ -133,9 +133,9 @@ More advanced examples: splines, Fourier basis etc.
 
 - $f(x)$ is a degree $d$ polynomial in each interval $(\nu_k,\nu_{k+1})$
 
-- $f(x)$ has $d-1$ continuous derivatives at $\nu_1,\ldots,\nu_K$
+- $f(x)$ has $d-1$ continuous derivatives at $\nu_1,\ldots,\nu_K$ (for $d>0$)
 
-It's easy to obtain splines. Consider
+Obtaining splines is easy. Consider
 $$f(x)= \sum_{l=1}^L w_l(x) \beta_l$$ 
 where $w_l$'s are degree $d$ polynomials and $\beta_l$'s satisfy certain restrictions, ensuring that $f(x)$ has $d-1$ continuous derivatives
 
@@ -263,7 +263,7 @@ Finally, specify loss function: least-squares, logistic regression log-likelihoo
 
 - Many parameters ($K$ layers with $N$ nodes has order $p N + K N^2$)
 
-- Many tuning parameters: number of nodes, layers. Train/test data split
+- Many tuning parameters: number of nodes, layers, regularization, dropout. Typically set via train/test data split
 
 - Loss function has many local modes. We'll trust stochastic gradient descent (run the model several times for safety)
 
@@ -338,7 +338,7 @@ model |> compile(
 )
 ```
 
-Fit the model
+Fit the model. Epochs: number of passes through data. 10% of training data to evaluate out-of-sample performance at each epoch
 
 ```{r}
 model |> fit(Xtrain, ytrain, epochs = 100, verbose = 0, validation_split = 0.1)
