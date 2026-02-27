@@ -592,7 +592,7 @@ Code outcome as factor, gender as numeric, exclude age (many NA's, no marginal a
 
 ```{r, message=FALSE}
 data= read.table('../datasets/titanic.csv',sep=',',header=TRUE)
-data= transform(data, Survived= factor(data$Survived), female= ifelse(Sex=='female', 1, 0)) |>
+data= mutate(data, Survived= factor(data$Survived), female= ifelse(Sex=='female', 1, 0)) |>
   select(-Age)
 ```
 
@@ -684,7 +684,8 @@ varImpPlot(rf)
 
 ```{r}
 importance_frame= measure_importance(rf)
-importance_frame
+select(importance_frame, variable, gini_decrease, times_a_root, mean_min_depth) |> 
+  arrange(desc(gini_decrease))
 ```
 
 
@@ -754,7 +755,7 @@ For example, `twoClassSummary` gives area under the ROC curve, sensitivity and s
 
 ```{r}
 trControl=trainControl(method='cv',number=5, classProbs=TRUE, summaryFunction=twoClassSummary)
-data= transform(data, SurvivedTxt= ifelse(Survived==1,'Yes','No'))
+data= mutate(data, SurvivedTxt= ifelse(Survived==1,'Yes','No'))
 ```
 
 :::panel-tabset
@@ -794,7 +795,7 @@ model.rf.train= caret::train(SurvivedTxt ~ Pclass + female + SibSp + Embarked + 
 Store predictions in `testing` (out of sample)
 
 ```{r}
-testing= transform(testing,
+testing= mutate(testing,
         prob.rf= predict(model.rf.train, newdata=testing, type='prob')[,2],
         prob.logreg= predict(model.logreg.train, newdata=testing, type='prob')[,2])
 ```
@@ -802,7 +803,7 @@ testing= transform(testing,
 Store predictions for all data (in-sample!)
 
 ```{r}
-data= transform(data,
+data= mutate(data,
         prob.rf= predict(model.rf, newdata=data, type='prob')[,2],
         prob.logreg= predict(model.logreg, newdata=data, type='prob')[,2])
 ```
@@ -844,7 +845,7 @@ ggplot(data, aes(d= ifelse(Survived=='1',1,0))) +  #d is the observed outcome
 ### Logistic regr.
 
 ```{r}
-testing= transform(testing, ypred.logreg= factor(ifelse(prob.logreg > 0.5, 1, 0)))
+testing= mutate(testing, ypred.logreg= factor(ifelse(prob.logreg > 0.5, 1, 0)))
 confusionMatrix(testing$ypred.logreg, testing$Survived)
 ```
 

@@ -829,7 +829,7 @@ V(\hat{y}_i)= \rho \sigma^2 + \frac{(1 - \rho)}{B} \sigma^2
 <p>Code outcome as factor, gender as numeric, exclude age (many NA’s, no marginal association with the outcome)</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="" aria-hidden="true" tabindex="-1"></a>data<span class="ot">=</span> <span class="fu">read.table</span>(<span class="st">'../datasets/titanic.csv'</span>,<span class="at">sep=</span><span class="st">','</span>,<span class="at">header=</span><span class="cn">TRUE</span>)</span>
-<span id="cb39-2"><a href="" aria-hidden="true" tabindex="-1"></a>data<span class="ot">=</span> <span class="fu">transform</span>(data, <span class="at">Survived=</span> <span class="fu">factor</span>(data<span class="sc">$</span>Survived), <span class="at">female=</span> <span class="fu">ifelse</span>(Sex<span class="sc">==</span><span class="st">'female'</span>, <span class="dv">1</span>, <span class="dv">0</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb39-2"><a href="" aria-hidden="true" tabindex="-1"></a>data<span class="ot">=</span> <span class="fu">mutate</span>(data, <span class="at">Survived=</span> <span class="fu">factor</span>(data<span class="sc">$</span>Survived), <span class="at">female=</span> <span class="fu">ifelse</span>(Sex<span class="sc">==</span><span class="st">'female'</span>, <span class="dv">1</span>, <span class="dv">0</span>)) <span class="sc">|&gt;</span></span>
 <span id="cb39-3"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>Age)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Package <code>caret</code> offers unified interface for many methods</p>
@@ -988,22 +988,16 @@ Fare             97.14092</code></pre>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "Warning: your forest does not contain information on local importance so 'accuracy_decrease' measure cannot be extracted. To add it regrow the forest with the option localImp = TRUE and run this function again."</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="" aria-hidden="true" tabindex="-1"></a>importance_frame</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">select</span>(importance_frame, variable, gini_decrease, times_a_root, mean_min_depth) <span class="sc">|&gt;</span> </span>
+<span id="cb53-2"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(gini_decrease))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>  variable mean_min_depth no_of_nodes gini_decrease no_of_trees times_a_root
-1 Embarked          2.486        5587      12.87681         500           17
-2     Fare          1.264       24211      97.14092         500           99
-3   female          0.620        1336     114.30763         500          261
-4    Parch          2.344        6649      18.39608         500            9
-5   Pclass          1.240        3353      36.71286         500          113
-6    SibSp          2.382        7626      18.22474         500            1
-  p_value
-1       1
-2       0
-3       1
-4       1
-5       1
-6       1</code></pre>
+<pre><code>  variable gini_decrease times_a_root mean_min_depth
+1   female     114.30763          261          0.620
+2     Fare      97.14092           99          1.264
+3   Pclass      36.71286          113          1.240
+4    Parch      18.39608            9          2.344
+5    SibSp      18.22474            1          2.382
+6 Embarked      12.87681           17          2.486</code></pre>
 </div>
 </div>
 </section></section>
@@ -1150,7 +1144,7 @@ The final values used for the model were size = 1 and decay = 0.1.</code></pre>
 <p>For example, <code>twoClassSummary</code> gives area under the ROC curve, sensitivity and specificity. The ROC needs predicted probabilities, we store them with <code>classProbs=TRUE</code>. We must also specify <code>metric="ROC"</code></p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="" aria-hidden="true" tabindex="-1"></a>trControl<span class="ot">=</span><span class="fu">trainControl</span>(<span class="at">method=</span><span class="st">'cv'</span>,<span class="at">number=</span><span class="dv">5</span>, <span class="at">classProbs=</span><span class="cn">TRUE</span>, <span class="at">summaryFunction=</span>twoClassSummary)</span>
-<span id="cb63-2"><a href="" aria-hidden="true" tabindex="-1"></a>data<span class="ot">=</span> <span class="fu">transform</span>(data, <span class="at">SurvivedTxt=</span> <span class="fu">ifelse</span>(Survived<span class="sc">==</span><span class="dv">1</span>,<span class="st">'Yes'</span>,<span class="st">'No'</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb63-2"><a href="" aria-hidden="true" tabindex="-1"></a>data<span class="ot">=</span> <span class="fu">mutate</span>(data, <span class="at">SurvivedTxt=</span> <span class="fu">ifelse</span>(Survived<span class="sc">==</span><span class="dv">1</span>,<span class="st">'Yes'</span>,<span class="st">'No'</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="panel-tabset">
 <ul id="tabset-7" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-7-1">Logistic regr.</a></li><li><a href="#tabset-7-2">RF</a></li></ul>
@@ -1224,13 +1218,13 @@ The final value used for the model was mtry = 7.</code></pre>
 </div>
 <p>Store predictions in <code>testing</code> (out of sample)</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="" aria-hidden="true" tabindex="-1"></a>testing<span class="ot">=</span> <span class="fu">transform</span>(testing,</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="" aria-hidden="true" tabindex="-1"></a>testing<span class="ot">=</span> <span class="fu">mutate</span>(testing,</span>
 <span id="cb70-2"><a href="" aria-hidden="true" tabindex="-1"></a>        <span class="at">prob.rf=</span> <span class="fu">predict</span>(model.rf.train, <span class="at">newdata=</span>testing, <span class="at">type=</span><span class="st">'prob'</span>)[,<span class="dv">2</span>],</span>
 <span id="cb70-3"><a href="" aria-hidden="true" tabindex="-1"></a>        <span class="at">prob.logreg=</span> <span class="fu">predict</span>(model.logreg.train, <span class="at">newdata=</span>testing, <span class="at">type=</span><span class="st">'prob'</span>)[,<span class="dv">2</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Store predictions for all data (in-sample!)</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb71"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="" aria-hidden="true" tabindex="-1"></a>data<span class="ot">=</span> <span class="fu">transform</span>(data,</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb71"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="" aria-hidden="true" tabindex="-1"></a>data<span class="ot">=</span> <span class="fu">mutate</span>(data,</span>
 <span id="cb71-2"><a href="" aria-hidden="true" tabindex="-1"></a>        <span class="at">prob.rf=</span> <span class="fu">predict</span>(model.rf, <span class="at">newdata=</span>data, <span class="at">type=</span><span class="st">'prob'</span>)[,<span class="dv">2</span>],</span>
 <span id="cb71-3"><a href="" aria-hidden="true" tabindex="-1"></a>        <span class="at">prob.logreg=</span> <span class="fu">predict</span>(model.logreg, <span class="at">newdata=</span>data, <span class="at">type=</span><span class="st">'prob'</span>)[,<span class="dv">2</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -1280,7 +1274,7 @@ The final value used for the model was mtry = 7.</code></pre>
 <div class="tab-content">
 <div id="tabset-9-1">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="" aria-hidden="true" tabindex="-1"></a>testing<span class="ot">=</span> <span class="fu">transform</span>(testing, <span class="at">ypred.logreg=</span> <span class="fu">factor</span>(<span class="fu">ifelse</span>(prob.logreg <span class="sc">&gt;</span> <span class="fl">0.5</span>, <span class="dv">1</span>, <span class="dv">0</span>)))</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="" aria-hidden="true" tabindex="-1"></a>testing<span class="ot">=</span> <span class="fu">mutate</span>(testing, <span class="at">ypred.logreg=</span> <span class="fu">factor</span>(<span class="fu">ifelse</span>(prob.logreg <span class="sc">&gt;</span> <span class="fl">0.5</span>, <span class="dv">1</span>, <span class="dv">0</span>)))</span>
 <span id="cb74-2"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">confusionMatrix</span>(testing<span class="sc">$</span>ypred.logreg, testing<span class="sc">$</span>Survived)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Confusion Matrix and Statistics
