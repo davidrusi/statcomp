@@ -149,7 +149,7 @@ Code chunks have layout attributes to arrange the output
 
 - `#| layout-nrow`: number of rows
 
-- `#| layout-nrow`: number of columns
+- `#| layout-ncol`: number of columns
 
 - `#| layout: [] `: rows / columns of different sizes
 
@@ -429,8 +429,6 @@ datatable(gapminder, rownames=FALSE, caption="Life expectancy", options = list(p
 Reproduce two examples of your choice from the [plotly gallery](https://plotly.com/r)
 
 
-Turn in an html with your solution at Aula Global
-Name your file firstname_lastname.html
 
 
 # Maps
@@ -606,7 +604,7 @@ Package `geodata` downloads geographical boundaries
 
 :::panel-tabset
 
-### Level 0
+### Level 1
 
 ```{r}
 
@@ -618,7 +616,7 @@ tm_shape(esp) + tm_polygons()
 
 ```
 
-### Level 1
+### Level 2
 
 ```{r}
 
@@ -774,23 +772,30 @@ In `server` you store all results in `output`, which is a list. The returned ele
 - `renderDataTable`: print a dynamic table (`dataTableOutput` in `ui`). For large tables/data
 
 ```{r, eval=FALSE}
+
+library(shiny)
+library(dplyr)  #dataset starwars
+
 ui= fluidPage(  #specify user interface
-
-    selectInput("color", label="Color", choices= c("Blue","Red","Green")), #dropdown menu
-    
-    verbatimTextOutput("tablehomeworld"), #print output$tablehomeworld
-
+  
+  selectInput("color", label="Color", choices= unique(starwars$skin_color)), #dropdown menu
+  
+  verbatimTextOutput("tablehomeworld"), #print output$tablehomeworld
+  
 )
 
 
 server= function(input, output, session) {  #server calculations
-
+  
   output$tablehomeworld= renderPrint({
     data= filter(starwars, skin_color == input$color) #input$color from selectInput
     table(data$homeworld)
   })
   
 }
+
+shinyApp(ui, server) #run the App
+
 ```
 
 ## Some useful functions
